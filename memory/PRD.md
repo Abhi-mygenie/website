@@ -111,3 +111,15 @@ QA: testing_agent → `/app/test_reports/iteration_6.json` (cleanup confirmed). 
 - Docs: `/app/CR-3A_Build_Spec.md` (spec+impl log), `/app/CR-3_Analytics_Ads_Discovery.md` (decisions §5a–§5g).
 - Owner-side GTM/Ads TODO: unpause OTP-Verified tags; repoint "Book demo"→`lead_verified`; create `demo_booked`/"Book appointments" Website-source conversion+tags; decommission Zapier. Conversion target: AW-16740091756/NtqdClejmOgaEOyOpq4-.
 - Next CRs: CR-7 (Internal Leads View), CR-2 missing CRM fields.
+
+### CR-3 — Tracking Enhancements Backlog (post Part A) — to address ONE BY ONE
+Doc: `/app/CR-3B_Tracking_Enhancements_Backlog.md`. Priority order:
+- P0 #1 Enhanced Conversions (Google) + Advanced Matching (Meta) — ⭐ biggest lever, recovers browser-only loss; we already send email/phone/name/city (mostly GTM-side + tiny payload tweak: first/last name, external_id).
+- P0 #2 Consent Mode v2 (Google) — modeling + EEA compliance; pairs with deferred consent banner.
+- P1 #3 Tiered conversion values (form_submitted/lead_verified/demo_booked) — needs owner ₹ values.
+- P1 #4 Lead-quality & segmentation params (otp_verified, form_location, plan_interest) — GA4 custom dimensions.
+- P2 #5 Suppression/junk signal (from anti-junk) → exclusion audiences.
+- P2 #6 Full click-ID coverage (gbraid/wbraid/msclkid — CR-2 already captures).
+- P2 #7 GA4 recommended event names (generate_lead/schedule/purchase) — GTM only.
+- P3 #8 user_id cross-device — deferred until login/portal exists.
+Low-risk single code batch unlocks #1/#4/#5/#6 together (buildLeadPayload additions). Start with P0 #1.

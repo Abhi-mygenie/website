@@ -9,7 +9,10 @@
 ### 🧭 Change-request governance (durable — NEW)
 | Doc | What it holds |
 |---|---|
-| **`CR_Control_Dashboard.md`** | CR registry + **5-gate model** (Discovery→Planning→Implementation→QA→Owner Smoke). Done & G4-passed: CR-1a/1b, CR-4 Part A **+ Part B (OTP, iteration_8)**, CR-5, CR-6 Phase 1+2a+2b+2c+2d (iteration_1..7), **CR-2 Attribution+geo (iteration_9)**. **🔜 NEXT: CR-3 Analytics & Ads.** CR-7 (Leads View) in G1 intake. |
+| **`CR_Control_Dashboard.md`** | CR registry + **5-gate model** (Discovery→Planning→Implementation→QA→Owner Smoke). Done & G4-passed: CR-1a/1b, CR-4 Part A **+ Part B (OTP, iteration_8)**, CR-5, CR-6 Phase 1+2a+2b+2c+2d (iteration_1..7), **CR-2 Attribution+geo (iteration_9)**, **CR-3 A Analytics & Ads (GTM dataLayer, 2026-06-08)**. CR-7 (Leads View) in G1 intake. |
+| **`CR-3_Analytics_Ads_Discovery.md`** | CR-3 discovery + locked decisions (§5a–§5g): IDs (GA4 `G-KWHHFEZ5Q3`, Meta Pixel `2862017797322752`, Google Ads `AW-16740091756/NtqdClejmOgaEOyOpq4-`, GTM `GTM-K5D84Z3L`), online-vs-offline reframe, event→conversion mapping, Zapier-drop decision, owner-side GTM/Ads tasks. |
+| **`CR-3A_Build_Spec.md`** | CR-3 A build spec + **implementation log (DONE & verified)**: `frontend/src/lib/gtm.js` + edits to App.js/DemoForm/CalendlyInline/MessageForm/.env. Events `form_submitted`/`lead_verified`/`demo_booked`/`page_view`, env+host-gated to www.mygenie.online. |
+| **`CR-3B_Tracking_Enhancements_Backlog.md`** | Prioritized best-tracking backlog to address ONE BY ONE: P0 #1 Enhanced Conversions + Advanced Matching, P0 #2 Consent Mode v2, P1 #3 tiered values, P1 #4 quality/segmentation params, P2 #5 suppression, #6 click-ID coverage, #7 GA4 recommended events, P3 #8 user_id. |
 | **`CR-2_Attribution_Mapping.md`** | CR-2 confirmed website→Freshsales mapping (native `first_*`/`latest_*` + cf_) + **still-missing CRM fields** list for the owner to create later. |
 | **`CR-4B_OTP_Implementation_Spec.md`** | OTP build brief (SHIPPED & live-verified). Demo-form OTP, graceful `OTP-Unverified` fallback, SMS panel contract. |
 | **`CR-7_Leads_View_Discovery.md`** | NEXT-CR intake (G1 only): read-only internal leads-triage view over existing Mongo data. |
