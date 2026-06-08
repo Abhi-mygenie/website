@@ -68,6 +68,13 @@ conversion_value:'0', outlet_name, city_name, gclid, fbclid, source (utm_source)
 
 **CR-3 B — offline conversions:** reuse captured `gclid`/`fbclid`/`fbp` + shared `event_id` to upload booked-demo signals. Existing "Data Tags" + Conversion Linker show the account is offline-ready. Needs Ads Conversion Label + Meta CAPI token. Decide: Zapier (Freshsales→Ads) vs. our backend API.
 
+## 5c. ⚠️ CORRECTION — "Book appointment" conversion already exists (2026-06-08)
+- Google Ads has a SECOND goal **"Book appointment"** (separate from "Submit lead form"/Book demo), 1 primary action, status **"Needs attention"** (likely not receiving conversions recently).
+- This = the demo/appointment-booking conversion, **already tracked in BOTH Google + Meta**. So `demo_scheduled` is NOT net-new at the GTM level — there is an EXISTING event/trigger for it (fired from the old booking/thank-you page, not the homepage that was scanned).
+- **Decision:** reuse the EXISTING "Book appointment" event — do NOT create a new one. New React site must push the SAME dataLayer event name + payload from `CalendlyInline.jsx` so existing GA4/Meta/GAds tags fire untouched.
+- **PENDING from owner:** the exact existing dataLayer event NAME, its GTM trigger, the GA4/FB/GAds tags wired to it, and the payload variable shape. (Owner to send GTM tag+trigger screenshot + the booking page `dataLayer.push` code.)
+- Note: new `CalendlyInline.jsx:86` catches `calendly.event_scheduled` and calls `POST /api/demo-booked` but pushes NOTHING to dataLayer → that's the gap to fill with the existing event name.
+
 ## 5b. 🔑 OWNER DECISIONS LOCKED (2026-06-08)
 - **Conversion definition:** ONLY a **verified** lead = a conversion. `form_submitted` alone (OTP **unverified**) is **NOT** a conversion for us. The conversion = OTP-**verified** form submit (`lead_verified`).
 - **Unverified OTP leads:** still SAVED to Mongo + Freshsales, tagged `OTP-Unverified` (never lost) — but used only for volume/remarketing/reporting, **NOT** counted/optimized as conversions, and **NOT** uploaded as offline conversions.
