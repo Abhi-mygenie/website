@@ -123,3 +123,6 @@ Doc: `/app/CR-3B_Tracking_Enhancements_Backlog.md`. Priority order:
 - P2 #7 GA4 recommended event names (generate_lead/schedule/purchase) — GTM only.
 - P3 #8 user_id cross-device — deferred until login/portal exists.
 Low-risk single code batch unlocks #1/#4/#5/#6 together (buildLeadPayload additions). Start with P0 #1.
+
+### 🚨 CRITICAL CR-3 ROLLOUT NOTE (owner-side GTM)
+REPOINT the `GAds - Book Demo` tag to fire on the `lead_verified` trigger (NOT `form_submitted`). Today it fires on `form_submitted`, so Google Ads goal "Submit lead form" counts UNVERIFIED leads. Per locked decision the PRIMARY conversion must count ONLY OTP-verified leads (`lead_verified` → Book demo / Submit lead form; `form_submitted` → Qualified leads, secondary). Skipping this makes bidding optimize toward junk. Verify in GTM before publishing. (Detail: CR-3 docs §5h / §10.)

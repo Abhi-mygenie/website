@@ -134,6 +134,9 @@ REACT_APP_GTM_ID=GTM-K5D84Z3L
 4. **Payload parity:** diff payload keys against the live-site contract (§4) — must match.
 
 ## 10. Owner-side tasks (OUT OF our scope — Google Ads + GTM)
+> ### 🚨🚨 CRITICAL — REPOINT "GAds - Book Demo" tag to the `lead_verified` trigger (NOT `form_submitted`) 🚨🚨
+> Today it fires on `form_submitted` (any submit) → "Submit lead form" counts UNVERIFIED leads. Per locked decision the PRIMARY "Book demo"/"Submit lead form" conversion must count ONLY OTP-verified leads. Repoint to `lead_verified`; route `form_submitted` → "Qualified leads" (secondary). Skipping this makes bidding optimize toward junk. **Verify in GTM before publishing.**
+
 1. UNPAUSE GA4/FB "OTP Verified" tags (trigger `lead_verified` correct — no rename).
 2. Create/point **Website-source** conversion actions + GTM Google Ads Conversion Tracking tags:
    - `form_submitted` → "Qualified leads" (secondary)

@@ -3,6 +3,14 @@
 > **Status:** G1 Discovery. Inputs gathered from owner + live-site scan + GTM container snapshot.
 > **Last updated:** 2026-06-08. No code written yet (discovery only).
 
+> ## 🚨🚨 CRITICAL — OWNER-SIDE GTM ACTION (DO NOT MISS) 🚨🚨
+> **REPOINT the `GAds - Book Demo` tag to fire on the `lead_verified` trigger — NOT `form_submitted`.**
+> Today it fires on `form_submitted` (any submit), so the Google Ads goal **"Submit lead form" is counting UNVERIFIED leads**. Per the locked decision, **"Book demo"/"Submit lead form" must count ONLY OTP-verified leads**.
+> - `lead_verified` → **Book demo** / Submit lead form (PRIMARY, bid)
+> - `form_submitted` → **Qualified leads** (secondary)
+> If this repoint is skipped, ad bidding will optimize toward junk/unverified submits. **Verify in GTM before publishing.**
+
+
 ## 1. Owner-provided IDs
 | Input | Value | For |
 |-------|-------|-----|
