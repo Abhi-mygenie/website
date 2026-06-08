@@ -9,7 +9,7 @@
 | GA4 Measurement ID | `G-KWHHFEZ5Q3` | CR-3 A (client-side). **Same ID as existing live site** → migration continuity. |
 | Meta Pixel / Dataset ID | `2862017797322752` (16-digit, valid) | CR-3 A |
 | Google Ads Conversion ID | `AW-16740091756` (from GTM "Google Tag AW-16740091756") | CR-3 A / B |
-| Google Ads Conversion **Label** | ⏳ PENDING — inside GTM tag "GAds - Book Demo" config | CR-3 A / B |
+| Google Ads Conversion **Label** | `NtqdClejmOgaEOyOpq4-` → full target `AW-16740091756/NtqdClejmOgaEOyOpq4-` (⚠️ confirm not truncated) | CR-3 A / B |
 | Meta CAPI access token | ⏳ PENDING (Events Manager → Dataset → Settings → Conversions API) | CR-3 B |
 | Consent banner | Owner: "note for later" (no banner for now) | CR-3 A |
 
