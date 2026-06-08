@@ -75,6 +75,25 @@ conversion_value:'0', outlet_name, city_name, gclid, fbclid, source (utm_source)
 - **PENDING from owner:** the exact existing dataLayer event NAME, its GTM trigger, the GA4/FB/GAds tags wired to it, and the payload variable shape. (Owner to send GTM tag+trigger screenshot + the booking page `dataLayer.push` code.)
 - Note: new `CalendlyInline.jsx:86` catches `calendly.event_scheduled` and calls `POST /api/demo-booked` but pushes NOTHING to dataLayer → that's the gap to fill with the existing event name.
 
+## 5g. 🎯 DECISION REFRAME — ONLINE vs OFFLINE (2026-06-08, FINAL)
+**Core decision:** All conversion events fire from the WEBSITE BROWSER as ONLINE events. This is the exact reason NO Meta CAPI token, NO Google Ads API, and NO Zapier are needed.
+
+**Definitions (locked):**
+- ONLINE event = conversion moment happens IN the browser on our site → browser pixel + GTM tag fires it directly; `gclid` cookie (via Conversion Linker) attributes it. No token/API/Zapier.
+- OFFLINE event = conversion moment happens with NO browser on our site (e.g., booking from a Calendly email/reschedule link, or a rep marking "qualified" in Freshsales days later) → can ONLY be sent server-side → REQUIRES CAPI / Google Ads API / Zapier.
+
+**Why we need none of those tokens/integrations:** because every event below is fired as an ONLINE (browser) event:
+- `form_submitted` (verified or not) → happens in browser ✅ online → "Qualified leads"
+- `lead_verified` (OTP) → happens in browser ✅ online → "Book demo"
+- `demo_booked` (inline Calendly widget) → happens in browser ✅ online → "Book appointments"
+
+**ACCEPTED TRADE-OFF (the flip side):** Conversions that occur with NO browser present are NOT captured, by choice:
+- Bookings made later from the Calendly email/reschedule link (off-site).
+- True CRM-stage qualification done by a sales rep in Freshsales.
+- Plus ~10-30% loss to ad-blockers / iOS ITP that server-side would have recovered.
+
+**One-line summary:** We avoid CAPI/Google Ads API/Zapier because every event now fires in the browser as an online conversion; the only thing given up is conversions that occur with no browser present (email-link bookings / CRM-side qualification).
+
 ## 5f. 📊 FINAL EVENT→CONVERSION MAPPING (2026-06-08)
 | Funnel stage | Website dataLayer event | Google Ads conversion action | Role |
 |---|---|---|---|
