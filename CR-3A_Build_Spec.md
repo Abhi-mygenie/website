@@ -134,7 +134,7 @@ REACT_APP_GTM_ID=GTM-K5D84Z3L
 4. **Payload parity:** diff payload keys against the live-site contract (§4) — must match.
 
 ## 10. Owner-side tasks (OUT OF our scope — Google Ads + GTM)
-1. Fix GTM trigger typo `lead_verifided` → `lead_verified`; UNPAUSE GA4/FB "OTP Verified" tags.
+1. UNPAUSE GA4/FB "OTP Verified" tags (trigger `lead_verified` correct — no rename).
 2. Create/point **Website-source** conversion actions + GTM Google Ads Conversion Tracking tags:
    - `form_submitted` → "Qualified leads" (secondary)
    - `lead_verified` → "Book demo" (primary)
@@ -142,7 +142,21 @@ REACT_APP_GTM_ID=GTM-K5D84Z3L
 3. Confirm Conversion Linker stays on All Pages (already present).
 4. Decommission Zapier booking/qualified zaps once browser-side verified.
 
-## 11. Open confirmations needed before build
+## 11. CONFIRMATIONS — RESOLVED (2026-06-08)
+- [x] OTP-verified → **"Book demo"** ✅. Conversion ID/Label to be used = **`AW-16740091756 / NtqdClejmOgaEOyOpq4-`** (from "GAds - Book Demo" tag). Owner to repoint this conversion to fire on the `lead_verified` trigger.
+- [x] "Qualified leads" = **secondary/observe**, "Book demo" = **primary/bid** ✅.
+- [x] `form_submitted` fires on **EVERY submit** ✅ (best practice — see note below; cumulative funnel).
+- [x] Production host allow-list = **`www.mygenie.online`** (+ apex `mygenie.online`) ✅.
+- [x] `demo_booked` = **NEW client-side event** ✅ — appointment was previously tracked SERVER-SIDE (Zapier/offline); it does NOT exist in the client GTM container today. Owner must CREATE a new custom-event trigger `demo_booked` + GA4/FB/GAds "Book appointments" tags (Website-source conversion).
+
+### Best-practice note on #3 (every submit)
+Fire `form_submitted` on EVERY submit (verified or not). Make it a SECONDARY conversion ("Qualified leads"). Fire `lead_verified` only on OTP success as the PRIMARY conversion ("Book demo"). This yields a clean cumulative funnel: all-leads (form_submitted) ⊃ verified (lead_verified) ⊃ booked (demo_booked). Quality is controlled by which conversion is *primary* for bidding — NOT by suppressing events. Suppressing `form_submitted` for verified users would break funnel continuity and lose remarketing reach, so we do NOT do that.
+
+### Existing client-container triggers available (from GTM Tags screenshot, clearer copy)
+Custom-event triggers present: `Book demo`, `lead_verified` (correctly spelled), `OTP - form_submitted` (+ data triggers). All-Pages: Conversion Linker, Facebook Pixel. Init-All-Pages: GA4 config (`G-KWHHFEZ5Q3`) + Google Tag `AW-16740091756`. PAUSED: FB/GA4 "OTP Verified", Google/Meta Lead data tags, otp Button data tag.
+- ⇒ `lead_verified` trigger already exists (just unpause its tags). `demo_booked` trigger is NET-NEW (create).
+
+## 11b. (superseded) original open confirmations
 - [ ] OTP-verified → "Book demo" (the one assumed mapping).
 - [ ] "Qualified leads" = secondary, "Book demo" = primary.
 - [ ] `form_submitted` fires on every submit (default) vs only-when-unverified.

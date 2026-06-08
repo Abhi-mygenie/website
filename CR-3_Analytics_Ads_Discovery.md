@@ -43,14 +43,14 @@ conversion_value:'0', outlet_name, city_name, gclid, fbclid, source (utm_source)
 - Google Tag `AW-16740091756` (Ads base) → Init - All Pages
 
 **PAUSED**
-- FB - OTP Verified → trigger `lead_verifided`  ⏸
-- GA4 - OTP Verified → trigger `lead_verifided`  ⏸
+- FB - OTP Verified → trigger `lead_verified` (correct) ⏸ PAUSED
+- GA4 - OTP Verified → trigger `lead_verified` (correct) ⏸ PAUSED
 - Google Lead data Tag (Data Tag) → "Google lead Data Trigger"  ⏸
 - Meta Lead Data Tag (Data Tag) → "Meta Lead data Trigger"  ⏸
 - otp Button data Tag (Data Tag) → "OTP - form_submitted" (status unconfirmed)
 
 ## 4. 🐞 Bugs / gaps found in current setup (flag to marketing/owner — GTM-side, not our code)
-1. **Trigger typo:** site fires `lead_verified`, but GTM OTP-Verified triggers listen for **`lead_verifided`** (misspelled). Mismatch = never matches. Both those tags also PAUSED ⇒ **OTP-verified conversions are NOT tracked today.**
+1. **CORRECTED 2026-06-08 (clearer GTM screenshot):** there is NO typo — the trigger is correctly spelled `lead_verified`. The real issue is only that `FB - OTP Verified` + `GA4 - OTP Verified` tags are **PAUSED** ⇒ OTP-verified conversions not firing today. Fix = UNPAUSE them (no rename needed).
 2. **Conversion fires on `form_submitted`** (any submit), not verified/booked ⇒ junk/unverified counted as conversions. With CR-4B OTP + Calendly `demo_booked`, we can fire conversions on *verified*/*actually-booked* signals = cleaner ad optimization.
 3. Several **"Data Tags"** (Google Lead / Meta Lead, enhanced-conversion/offline lead data) set up but **paused** — dormant groundwork for CR-3 B offline conversions.
 
@@ -63,7 +63,7 @@ conversion_value:'0', outlet_name, city_name, gclid, fbclid, source (utm_source)
 - Result: existing GA4/Ads/Pixel tags fire untouched; **owner edits nothing in GTM** (except the optional bug fixes below).
 
 **Recommended GTM-side fixes for owner (optional, improves quality):**
-- Fix `lead_verifided` → `lead_verified` and unpause OTP-Verified tags (track verified leads).
+- UNPAUSE OTP-Verified tags (trigger `lead_verified` is correct — no rename).
 - Consider re-pointing the Ads "Book demo" conversion to fire on `lead_verified` (OTP-verified) or a `demo_booked` (Calendly) event instead of raw `form_submitted`.
 
 **CR-3 B — offline conversions:** reuse captured `gclid`/`fbclid`/`fbp` + shared `event_id` to upload booked-demo signals. Existing "Data Tags" + Conversion Linker show the account is offline-ready. Needs Ads Conversion Label + Meta CAPI token. Decide: Zapier (Freshsales→Ads) vs. our backend API.
@@ -121,7 +121,7 @@ Owner wants to ELIMINATE Zapier and fire all events directly from the website (b
 
 **Required owner-side GTM/Ads config (NOT our code):**
 - "Book appointment" Google Ads conversion source is currently **"Website (Import from clicks)"** (offline). To fire browser-side, repoint to a standard **"Website"** source (or new website-source conversion) + add a GTM Google Ads tag on `demo_booked`.
-- Fix `lead_verifided`→`lead_verified` typo + unpause OTP-Verified tags.
+- UNPAUSE OTP-Verified tags (no typo — trigger `lead_verified` correct).
 - Decommission Zapier booking zap after browser-side verified.
 
 **Trade-offs flagged to owner (must accept):**
@@ -156,7 +156,7 @@ Zapier screenshots confirm the offline layer is FULLY managed by Zapier, trigger
 - **Conversion definition:** ONLY a **verified** lead = a conversion. `form_submitted` alone (OTP **unverified**) is **NOT** a conversion for us. The conversion = OTP-**verified** form submit (`lead_verified`).
 - **Unverified OTP leads:** still SAVED to Mongo + Freshsales, tagged `OTP-Unverified` (never lost) — but used only for volume/remarketing/reporting, **NOT** counted/optimized as conversions, and **NOT** uploaded as offline conversions.
 - **Online conversion** = `lead_verified` (OTP verified). **First/primary offline conversion** = Calendly **`demo_scheduled`** (real booking). Optional deeper offline signal later = Freshsales qualified/customer.
-- **Required GTM fixes (owner side, GTM-only — not our code):** fix trigger typo `lead_verifided` → `lead_verified`, UNPAUSE the GA4/FB "OTP Verified" tags, and (recommended) make the Google Ads "Book demo" conversion fire on `lead_verified` instead of raw `form_submitted`.
+- **Required GTM fixes (owner side, GTM-only — not our code):** UNPAUSE the GA4/FB "OTP Verified" tags (trigger `lead_verified` is correct — no rename), and (recommended) make the Google Ads "Book demo" conversion fire on `lead_verified` instead of raw `form_submitted`.
 - **Offline upload route:** TBD — Zapier (owner-managed, recommended) vs. our backend. Needs Meta CAPI token either way.
 
 ## 6. Still needed from owner
