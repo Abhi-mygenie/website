@@ -102,11 +102,14 @@ export default function DemoForm({ sector }) {
       });
       setLead({ id: res.data?.id, contactId: res.data?.freshsales_contact_id });
       setDone(true);
-      pushLead("form_submitted", form, outletValue, eventId, {
+      const leadExtra = {
         otp_verified: otpVerified,
         form_location: sector ? `sector:${sector}` : "homepage",
         lead_quality: leadQuality(signals()),
-      });
+      };
+      pushLead("form_submitted", form, outletValue, eventId, leadExtra);
+      // Book Demo conversion (-> GTM `thankyou_conversion` trigger). Calendly booking fires `demo_booked` separately.
+      pushLead("book_demo", form, outletValue, eventId, leadExtra);
       toast.success("Great! Now pick a time that works for you.");
     } catch (err) {
       toast.error("Something went wrong. Please try again.");

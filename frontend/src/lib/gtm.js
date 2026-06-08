@@ -216,29 +216,32 @@ export function buildLeadPayload(form = {}, sector, eventId, extra = {}) {
 
 /**
  * Tiered conversion values per funnel stage (CR-3B #3, owner-confirmed 2026-06-08).
- * form_submitted = Qualified leads (secondary, ₹0) · lead_verified = Book demo (primary, ₹500)
- * · demo_booked = Book appointments (₹2000). Values feed Google Ads value-based bidding via GTM.
+ * form_submitted = Qualified leads (secondary, ₹0) · lead_verified/book_demo = Book demo (₹500)
+ * · demo_booked = Calendly appointment (₹2000). Values feed Google Ads value-based bidding via GTM.
  */
 const CONVERSION_VALUES = {
   form_submitted: 0,
   lead_verified: 500,
+  book_demo: 500,
   demo_booked: 2000,
 };
 
 /**
- * Map our semantic event names -> the EXACT custom-event names the existing live GTM container
- * (`GTM-K5D84Z3L`) already listens for. The container predates this React site, so we emit ITS
- * names → all existing FB/GA4/Google-Ads tags fire untouched, ZERO GTM edits required.
+ * Map our semantic event names -> the EXACT custom-event names the live GTM container
+ * (`GTM-K5D84Z3L`) listens for, so existing FB/GA4/Google-Ads tags fire untouched.
  * Verified against the live triggers (2026-06-08):
- *   - `form_submitted`  -> "OTP - form_submitted" trigger (Event name: form_submitted)
- *   - `lead_verifided`  -> "lead_verifided" trigger (FB/GA4 OTP Verified + GAds - Book Demo).
- *                          ⚠️ The TYPO ("verifided") is intentional — it matches the live trigger.
- *   - `thankyou_conversion` -> "Book demo" trigger (FB/GA4/GAds - Book demo, the primary conversion).
+ *   - `form_submitted`      -> "OTP - form_submitted" trigger (Event name: form_submitted)
+ *   - `lead_verifided`      -> "lead_verifided" trigger (FB/GA4 OTP Verified + GAds - Book Demo).
+ *                              ⚠️ TYPO ("verifided") is intentional — it matches the live trigger.
+ *   - `thankyou_conversion` -> "Book demo" trigger (FB/GA4/GAds - Book demo). = the BOOK DEMO conversion.
+ *   - `demo_booked`         -> NET-NEW Calendly booking event. Owner will ADD a `demo_booked` trigger
+ *                              (Custom Event, Event name `demo_booked`) + appointment conversion tags.
  */
 const GTM_EVENT_NAME = {
   form_submitted: "form_submitted",
   lead_verified: "lead_verifided",
-  demo_booked: "thankyou_conversion",
+  book_demo: "thankyou_conversion",
+  demo_booked: "demo_booked",
 };
 
 /**
