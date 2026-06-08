@@ -75,6 +75,27 @@ conversion_value:'0', outlet_name, city_name, gclid, fbclid, source (utm_source)
 - **PENDING from owner:** the exact existing dataLayer event NAME, its GTM trigger, the GA4/FB/GAds tags wired to it, and the payload variable shape. (Owner to send GTM tag+trigger screenshot + the booking page `dataLayer.push` code.)
 - Note: new `CalendlyInline.jsx:86` catches `calendly.event_scheduled` and calls `POST /api/demo-booked` but pushes NOTHING to dataLayer → that's the gap to fill with the existing event name.
 
+## 5d. ✅ OFFLINE ARCHITECTURE CONFIRMED — Zapier owns it (2026-06-08)
+Zapier screenshots confirm the offline layer is FULLY managed by Zapier, triggered from Freshsales:
+- Zapier action = Google Ads "Create Click Conversion" (offline import), trigger = Freshworks CRM record (Created At / Updated At).
+- Conversion Action "Book appointments" — Source "Website (Import from clicks)" = gclid-based offline upload, timestamp from Freshsales.
+- Conversion Action "Qualified leads" — same gclid offline pattern.
+- Tracked in BOTH Google + Meta via Zapier.
+
+**Division of responsibility (FINAL):**
+| Layer | Event | Fired by | Website's job |
+|-------|-------|----------|---------------|
+| Online | `form_submitted` (any submit) | Website → GTM | push dataLayer (reporting/remarketing) |
+| Online | `lead_verified` (OTP verified) = OUR conversion | Website → GTM | push dataLayer |
+| Offline | "Book appointments" (Calendly booked) | **Zapier ← Freshsales (gclid)** | NOTHING — just ensure gclid on Freshsales record |
+| Offline | "Qualified leads" | **Zapier ← Freshsales (gclid)** | NOTHING — just ensure gclid on Freshsales record |
+
+**Implications:**
+- ❌ We do NOT build any backend offline uploader. ❌ We do NOT need Meta CAPI token. ❌ We do NOT fire "Book appointment"/demo_scheduled as a website conversion (withdraws the earlier ask for that dataLayer event — Zapier handles the booking conversion from Freshsales).
+- ✅ The ONLY website dependency for offline = **gclid/fbclid must be captured & written to Freshsales for EVERY lead, including OTP-unverified ones** (so Zapier can upload). CR-2 already writes click IDs to Freshsales — VERIFY the exact field Zapier's trigger reads.
+- ⚠️ OPEN: do they also want a browser-side GA4/Meta Pixel fire on Calendly booking (immediate, Pixel-dedup)? Optional — the booking *conversion* is already covered by Zapier offline. Confirm with owner.
+- ⚠️ EEA consent note shown in Zapier (March 2024 consent mode) — relevant to the deferred consent-banner item.
+
 ## 5b. 🔑 OWNER DECISIONS LOCKED (2026-06-08)
 - **Conversion definition:** ONLY a **verified** lead = a conversion. `form_submitted` alone (OTP **unverified**) is **NOT** a conversion for us. The conversion = OTP-**verified** form submit (`lead_verified`).
 - **Unverified OTP leads:** still SAVED to Mongo + Freshsales, tagged `OTP-Unverified` (never lost) — but used only for volume/remarketing/reporting, **NOT** counted/optimized as conversions, and **NOT** uploaded as offline conversions.
