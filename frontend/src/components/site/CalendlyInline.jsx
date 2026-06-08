@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { pushEvent, buildLeadPayload, newEventId } from "@/lib/gtm";
 
 const SCRIPT_SRC = "https://assets.calendly.com/assets/external/widget.js";
 
@@ -47,19 +48,23 @@ function withBrandParams(rawUrl, s) {
   }
 }
 
-export default function CalendlyInline({ url, prefill, utm, pageSettings, onScheduled }) {
+export default function CalendlyInline({ url, prefill, utm, pageSettings, onScheduled, eventId, leadContext }) {
   const ref = useRef(null);
   const inited = useRef(false);
   const scheduled = useRef(false);
   const prefillRef = useRef(prefill);
   const utmRef = useRef(utm);
+  const leadContextRef = useRef(leadContext);
+  const eventIdRef = useRef(eventId);
   const settings = { ...BRAND_PAGE_SETTINGS, ...(pageSettings || {}) };
   const brandedUrl = withBrandParams(url, settings);
 
   useEffect(() => {
     prefillRef.current = prefill;
     utmRef.current = utm;
-  }, [prefill, utm]);
+    leadContextRef.current = leadContext;
+    eventIdRef.current = eventId;
+  }, [prefill, utm, leadContext, eventId]);
 
   useEffect(() => {
     let active = true;
@@ -85,6 +90,8 @@ export default function CalendlyInline({ url, prefill, utm, pageSettings, onSche
       if (String(e.data.event || "").indexOf("calendly") !== 0) return;
       if (e.data.event === "calendly.event_scheduled" && !scheduled.current) {
         scheduled.current = true;
+        const ctx = leadContextRef.current || {};
+        pushEvent("demo_booked", buildLeadPayload(ctx, ctx.sector, eventIdRef.current || newEventId()));
         if (onScheduled) onScheduled();
       }
     };

@@ -1,6 +1,6 @@
 # CR-3 A — Build Spec (G2) — Client-side Analytics & Ads via GTM
 
-> **Status:** G2 scope locked, ready to build (NOT yet implemented).
+> **Status:** ✅ IMPLEMENTED & VERIFIED (2026-06-08). See §14 below.
 > **Goal:** Fire all conversion signals from the website browser into the existing GTM container
 > `GTM-K5D84Z3L` as ONLINE events. No Zapier, no Meta CAPI, no Google Ads API, no backend changes.
 > **Reference:** `/app/CR-3_Analytics_Ads_Discovery.md` (decisions §5a–§5g).
@@ -176,3 +176,25 @@ Custom-event triggers present: `Book demo`, `lead_verified` (correctly spelled),
   `App.js` (init + page_view), `DemoForm.jsx` (2 pushes + event_id + pass props),
   `CalendlyInline.jsx` (1 push + 2 props), `MessageForm.jsx` (1 push).
 - Zero backend changes. Single iteration, browser-verifiable.
+
+---
+
+## 14. IMPLEMENTATION LOG (2026-06-08) — DONE & VERIFIED
+**Files changed:**
+- NEW `frontend/src/lib/gtm.js` — `initGtm()` (env+host-gated container injection), `pushEvent()`, `newEventId()`, `buildLeadPayload()`.
+- `frontend/.env` — added `REACT_APP_GTM_ID=GTM-K5D84Z3L`.
+- `frontend/src/App.js` — `initGtm()` + `page_view` push on every route change (in `AttributionTracker`).
+- `frontend/src/components/site/DemoForm.jsx` — shared `event_id` per lead; `lead_verified` on OTP verify; `form_submitted` on submit; passes `eventId`+`leadContext` to Calendly.
+- `frontend/src/components/site/CalendlyInline.jsx` — `demo_booked` push on `calendly.event_scheduled` (+ `eventId`/`leadContext` props).
+- `frontend/src/components/site/MessageForm.jsx` — `form_submitted` on contact submit.
+
+**Verification (headless Playwright, preview host):**
+- `page_view` fires on load + on route change. ✅
+- `form_submitted` fires on demo submit with full payload incl. `gclid=TEST123`, `fbclid=FBTEST`, `source=qa`, `event_id` (UUID), `currency=INR`, `conversion_value="0"`. ✅
+- GTM container correctly NO-OPs on preview host (gating works); dataLayer still queues events. ✅
+- `lead_verified` / `demo_booked` use the same proven pushEvent+buildLeadPayload path (couldn't trigger live OTP/booking in QA, but code path identical & app renders clean).
+
+**Notes:**
+- A QA test lead ("QA Tester" / 9876543210) was submitted to `/demo-request` during verification — may exist in Mongo/Freshsales; delete if undesired.
+- Owner-side GTM/Ads tasks (§10) still pending: unpause OTP-Verified tags, repoint Book demo→`lead_verified`, create `demo_booked`/"Book appointments" Website-source conversion + tags, decommission Zapier.
+- GTM only loads on `www.mygenie.online` / `mygenie.online` — verify after production deploy (or use GTM Preview mode for QA).

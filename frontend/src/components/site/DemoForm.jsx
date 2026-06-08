@@ -6,6 +6,7 @@ import { OUTLET_TYPES, CALENDLY_URL } from "@/data/content";
 import CalendlyInline from "@/components/site/CalendlyInline";
 import { useAntiBot, Honeypot } from "@/lib/antiBot";
 import { getAttribution } from "@/lib/attribution";
+import { pushEvent, buildLeadPayload, newEventId } from "@/lib/gtm";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const EMPTY = { name: "", phone: "", email: "", outlet_type: "", business_name: "", city: "", using_pos: "" };
@@ -17,6 +18,7 @@ export default function DemoForm({ sector }) {
   const [booked, setBooked] = useState(false);
   const [lead, setLead] = useState(null);
   const { hp, setHp, signals } = useAntiBot();
+  const [eventId] = useState(() => newEventId());
 
   // --- OTP (CR-4B): verify phone before booking. Graceful — never hard-blocks. ---
   const [otpSent, setOtpSent] = useState(false);
@@ -66,6 +68,7 @@ export default function DemoForm({ sector }) {
       const res = await axios.post(`${API}/otp/verify`, { phone: form.phone, code: otpCode });
       setOtpToken(res.data?.otp_token || null);
       setOtpVerified(true);
+      pushEvent("lead_verified", buildLeadPayload(form, outletValue, eventId));
       toast.success("Phone verified!");
     } catch (err) {
       toast.error(err?.response?.data?.detail || "Incorrect OTP. Please try again.");
@@ -96,6 +99,7 @@ export default function DemoForm({ sector }) {
       });
       setLead({ id: res.data?.id, contactId: res.data?.freshsales_contact_id });
       setDone(true);
+      pushEvent("form_submitted", buildLeadPayload(form, outletValue, eventId));
       toast.success("Great! Now pick a time that works for you.");
     } catch (err) {
       toast.error("Something went wrong. Please try again.");
@@ -155,6 +159,8 @@ export default function DemoForm({ sector }) {
         <div className="mt-5 -mx-3 sm:mx-0">
           <CalendlyInline
             url={CALENDLY_URL}
+            eventId={eventId}
+            leadContext={{ ...form, outlet_type: outletValue, sector: outletValue }}
             prefill={{
               name: form.name,
               email: form.email,

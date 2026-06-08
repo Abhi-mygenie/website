@@ -101,3 +101,13 @@ QA: testing_agent → `/app/test_reports/iteration_6.json` (cleanup confirmed). 
 - `iteration_6.json` — Phase 2d G4 (100%, 3 sub-slices + regression, 0 bugs, no retest needed)
 - `iteration_8.json` — CR-4B OTP verification (backend all-green; live SMS verified)
 - `iteration_9.json` — CR-2 Attribution & geo (live-verified vs Freshsales)
+
+---
+## CR-3 A — Client-side Analytics & Ads (GTM) — ✅ DONE & VERIFIED (2026-06-08)
+- Loaded existing GTM container `GTM-K5D84Z3L` (env+host-gated to www.mygenie.online; no preview pollution) and fired browser dataLayer events — Zapier/CAPI/Ads-API not needed (all ONLINE conversions).
+- Events: `form_submitted` (→Qualified leads, every submit) · `lead_verified` (OTP verified →Book demo, primary) · `demo_booked` (Calendly →Book appointments) · `page_view` (SPA route change). Shared `event_id`; payload carries gclid/fbclid/fbp/source from CR-2.
+- New `frontend/src/lib/gtm.js`; edited App.js, DemoForm.jsx, CalendlyInline.jsx, MessageForm.jsx, frontend/.env.
+- Verified via headless Playwright: page_view + form_submitted fire with correct payload (gclid/fbclid/source/event_id/currency).
+- Docs: `/app/CR-3A_Build_Spec.md` (spec+impl log), `/app/CR-3_Analytics_Ads_Discovery.md` (decisions §5a–§5g).
+- Owner-side GTM/Ads TODO: unpause OTP-Verified tags; repoint "Book demo"→`lead_verified`; create `demo_booked`/"Book appointments" Website-source conversion+tags; decommission Zapier. Conversion target: AW-16740091756/NtqdClejmOgaEOyOpq4-.
+- Next CRs: CR-7 (Internal Leads View), CR-2 missing CRM fields.

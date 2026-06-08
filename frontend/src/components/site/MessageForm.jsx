@@ -5,6 +5,7 @@ import { CheckCircle2, Loader2, MessageCircle } from "lucide-react";
 import { COMPANY } from "@/data/company";
 import { useAntiBot, Honeypot } from "@/lib/antiBot";
 import { getAttribution } from "@/lib/attribution";
+import { pushEvent, buildLeadPayload } from "@/lib/gtm";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const EMPTY = { name: "", phone: "", email: "", message: "", preferred_contact: "whatsapp" };
@@ -47,6 +48,7 @@ export default function MessageForm() {
     try {
       await axios.post(`${API}/contact`, { ...form, source_page: "contact", ...signals(), attribution: getAttribution() });
       setDone(true);
+      pushEvent("form_submitted", buildLeadPayload(form, null));
       toast.success("Message sent! Opening WhatsApp so we can chat faster.");
       openWhatsApp();
     } catch (err) {

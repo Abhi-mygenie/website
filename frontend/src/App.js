@@ -20,6 +20,7 @@ import Legal from "@/pages/Legal";
 import CmsAdminLayer from "@/components/cms/CmsAdminLayer";
 import { REDIRECTS } from "@/data/redirects";
 import { initAttribution } from "@/lib/attribution";
+import { initGtm, pushEvent } from "@/lib/gtm";
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -32,7 +33,9 @@ function ScrollToTop() {
 function AttributionTracker() {
   const { pathname, search } = useLocation();
   useEffect(() => {
+    initGtm();
     initAttribution();
+    pushEvent("page_view", { page_path: pathname + search, page_url: window.location.href });
   }, [pathname, search]);
   return null;
 }
