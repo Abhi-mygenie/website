@@ -73,25 +73,57 @@ export function newEventId() {
   return `evt_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
+/** Normalize email for hashing/match (lowercase + trim). */
+function normEmail(v) {
+  const s = (v == null ? "" : String(v)).trim().toLowerCase();
+  return s || null;
+}
+
+/** Normalize phone to E.164 (India default +91, last 10 digits). */
+function normPhone(v) {
+  const digits = (v == null ? "" : String(v)).replace(/\D/g, "");
+  if (digits.length < 10) return null;
+  return "+91" + digits.slice(-10);
+}
+
+/** Split a full name into first/last for Meta Advanced Matching (fn/ln). */
+function splitName(v) {
+  const parts = (v == null ? "" : String(v)).trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return { first_name: null, last_name: null };
+  return { first_name: parts[0], last_name: parts.length > 1 ? parts.slice(1).join(" ") : null };
+}
+
 /**
  * Single source of truth for the lead conversion payload (mirrors the live-site contract).
  * Best-effort form fields; missing keys -> null (never omitted). Pulls click ids from CR-2.
+ * Includes Enhanced Conversions / Advanced Matching fields (email/phone normalized, name split,
+ * external_id) so GTM can hash + map them. Hashing happens in GTM — raw values never leave hashed.
  */
 export function buildLeadPayload(form = {}, sector, eventId) {
   const attr = getAttribution();
+  const email = normEmail(form.email);
+  const phone = normPhone(form.phone);
+  const { first_name, last_name } = splitName(form.name);
   return {
+    // identity (Enhanced Conversions / Advanced Matching)
     name: form.name || null,
-    email: form.email || null,
-    phone: form.phone || null,
+    first_name,
+    last_name,
+    email,
+    phone,
+    external_id: phone || email || null,
+    // lead context
     outlet_type: sector || form.outlet_type || null,
     outlet_name: form.business_name || null,
     city_name: form.city || null,
     message: form.message || "",
+    // event meta
     page_url: window.location.href,
     event_time: Math.floor(Date.now() / 1000),
     event_id: eventId || newEventId(),
     currency: "INR",
     conversion_value: "0",
+    // attribution / click ids (CR-2)
     gclid: attr.gclid || null,
     fbclid: attr.fbclid || null,
     fbp: attr.fbp || null,

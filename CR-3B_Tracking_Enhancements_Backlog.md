@@ -10,6 +10,7 @@
 ---
 
 ## P0 — #1 Enhanced Conversions (Google) + Advanced Matching (Meta)  ⭐ BIGGEST LEVER
+> **Step A (our code) DONE & VERIFIED 2026-06-08:** `buildLeadPayload` now emits `first_name`/`last_name` (split from name), normalized `email` (lowercase+trim) and `phone` (E.164 `+91…`), and `external_id` (= normalized phone). Verified in dataLayer for `form_submitted` (same helper feeds `lead_verified`/`demo_booked`). Steps B/C/D below are owner/GTM-side and still pending.
 - **What:** Send hashed email + phone (+ name/city) WITH each conversion so Google/Meta match the user even when cookies fail. Recovers most of the ~10–30% ad-blocker/iOS-ITP loss WITHOUT any server-side.
 - **What to send:** email, phone, first/last name, city (already in our dataLayer as `email`,`phone`,`name`,`city_name`). Meta Advanced Matching keys: `em`,`ph`,`fn`,`ln`,`ct`,`external_id`.
 - **Who:** Mostly GTM/owner — turn ON Google "Enhanced Conversions for Leads" + Meta "Advanced Matching", and map our dataLayer fields as user-provided data (GTM hashes automatically). Our code: ensure name is split to first/last + add `external_id` (e.g., phone) — tiny payload tweak.
