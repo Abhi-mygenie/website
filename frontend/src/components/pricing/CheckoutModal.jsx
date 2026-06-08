@@ -2,8 +2,9 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { X, CheckCircle2, Loader2 } from "lucide-react";
-import { useAntiBot, Honeypot } from "@/lib/antiBot";
+import { useAntiBot, Honeypot, leadQuality } from "@/lib/antiBot";
 import { getAttribution } from "@/lib/attribution";
+import { pushLead } from "@/lib/gtm";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -38,6 +39,11 @@ export default function CheckoutModal({ open, intent, config, onClose }) {
         was_recommended: config.wasRecommended,
       });
       setDone(true);
+      pushLead("form_submitted", form, config.outletType || null, undefined, {
+        form_location: isBuy ? "pricing-buy" : "pricing-quote",
+        plan_interest: config.plan?.name || null,
+        lead_quality: leadQuality(signals()),
+      });
       toast.success(isBuy ? "Order received!" : "Quote sent to our team!");
     } catch {
       toast.error("Something went wrong. Please try again.");

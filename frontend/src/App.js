@@ -18,6 +18,7 @@ import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Legal from "@/pages/Legal";
 import CmsAdminLayer from "@/components/cms/CmsAdminLayer";
+import ConsentBanner from "@/components/site/ConsentBanner";
 import { REDIRECTS } from "@/data/redirects";
 import { initAttribution } from "@/lib/attribution";
 import { initGtm, pushEvent } from "@/lib/gtm";
@@ -76,6 +77,7 @@ function App() {
         </Routes>
       </BrowserRouter>
       <CmsAdminLayer />
+      <ConsentBanner />
     </div>
   );
 }

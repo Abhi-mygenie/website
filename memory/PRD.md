@@ -125,4 +125,14 @@ Doc: `/app/CR-3B_Tracking_Enhancements_Backlog.md`. Priority order:
 Low-risk single code batch unlocks #1/#4/#5/#6 together (buildLeadPayload additions). Start with P0 #1.
 
 ### 🚨 CRITICAL CR-3 ROLLOUT NOTE (owner-side GTM)
-REPOINT the `GAds - Book Demo` tag to fire on the `lead_verified` trigger (NOT `form_submitted`). Today it fires on `form_submitted`, so Google Ads goal "Submit lead form" counts UNVERIFIED leads. Per locked decision the PRIMARY conversion must count ONLY OTP-verified leads (`lead_verified` → Book demo / Submit lead form; `form_submitted` → Qualified leads, secondary). Skipping this makes bidding optimize toward junk. Verify in GTM before publishing. (Detail: CR-3 docs §5h / §10.)
+REPOINT the `GAds - Book Demo` tag to fire on the `lead_verified` trigger (NOT `form_submitted`). Today it fires on `form_submitted`, so Google Ads goal "Submit lead form" counts UNVERIFIED leads. Per locked decision the PRIMARY conversion must count ONLY OTP-verified leads. Verify in GTM before publishing. (Detail: CR-3 docs §5h / §10.)
+
+## CR-3 B — Tracking enhancements code batch — ✅ SHIPPED & VERIFIED (2026-06-08, iteration_10)
+- **#3 Tiered conversion values** — new `pushLead(event,form,sector,eventId,extra)` in `gtm.js` + `CONVERSION_VALUES` map: `form_submitted=0`, `lead_verified=500` (owner-set "Book demo"), `demo_booked=2000` (default — confirm/adjust). `conversion_value` is what GTM passes to Google Ads for value-based bidding.
+- **#4 Segmentation params** — `otp_verified`, `form_location` (homepage/sector:<slug>/contact/roi/pricing-buy/pricing-quote/calendly), `plan_interest` (CheckoutModal plan name).
+- **#5 Suppression signal** — `lead_quality: "junk"|"ok"` via new `leadQuality(signals)` in `antiBot.jsx` (mirrors backend `looks_like_bot`: honeypot OR sub-2000ms = junk).
+- **#6 Full click-IDs** — `gbraid`/`wbraid`/`msclkid` added to `buildLeadPayload` (from CR-2 attribution).
+- **#2 Consent Mode v2 + banner** — `gtm.js` sets EEA-safe `consent default` (denied + `wait_for_update:500`) before container load + applies stored choice + `updateConsent()`; new `ConsentBanner.jsx` (Accept/Decline; testids `consent-banner`/`consent-accept-btn`/`consent-decline-btn`) persists `mg_consent`. Mounted in App.js (uses `<a>` not `<Link>` — renders outside `<BrowserRouter>`).
+- Files: `gtm.js`, `antiBot.jsx`, NEW `components/site/ConsentBanner.jsx`, `App.js`, `DemoForm.jsx`, `MessageForm.jsx`, `CalendlyInline.jsx`, `CheckoutModal.jsx`, `RoiCalculator.jsx`.
+- **Verified** via headless dataLayer assertion (lead API mocked → no real lead). Bug fixed: ConsentBanner `<Link>` crash outside Router → `<a>`.
+- **Remaining (owner/GTM-side):** EC for Leads + Meta Advanced Matching mapping (#1 B/C/D); map value→GA4/Ads/Meta (#3); register GA4 custom dimensions (#4); exclusion audience from junk (#5); map consent variables (#2). **Deferred:** #7 GA4 recommended names (GTM-only), #8 user_id (needs login).

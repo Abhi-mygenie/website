@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { pushEvent, buildLeadPayload, newEventId } from "@/lib/gtm";
+import { pushLead, newEventId } from "@/lib/gtm";
 
 const SCRIPT_SRC = "https://assets.calendly.com/assets/external/widget.js";
 
@@ -91,7 +91,10 @@ export default function CalendlyInline({ url, prefill, utm, pageSettings, onSche
       if (e.data.event === "calendly.event_scheduled" && !scheduled.current) {
         scheduled.current = true;
         const ctx = leadContextRef.current || {};
-        pushEvent("demo_booked", buildLeadPayload(ctx, ctx.sector, eventIdRef.current || newEventId()));
+        pushLead("demo_booked", ctx, ctx.sector, eventIdRef.current || newEventId(), {
+          form_location: "calendly",
+          otp_verified: ctx.otp_verified ?? null,
+        });
         if (onScheduled) onScheduled();
       }
     };

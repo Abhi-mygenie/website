@@ -12,6 +12,15 @@ export function useAntiBot() {
   return { hp, setHp, signals };
 }
 
+/** Derive a junk/ok lead-quality signal from the anti-bot signals (CR-3B #5).
+ *  Mirrors the backend `looks_like_bot` heuristic: honeypot filled OR sub-2s fill = junk. */
+export function leadQuality(signals = {}) {
+  const { hp, elapsed_ms } = signals;
+  if (hp) return "junk";
+  if (typeof elapsed_ms === "number" && elapsed_ms < 2000) return "junk";
+  return "ok";
+}
+
 /** Off-screen honeypot input. Real users never see or fill it; bots do. */
 export function Honeypot({ value, onChange }) {
   return (

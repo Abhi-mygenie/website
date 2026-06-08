@@ -1,0 +1,48 @@
+{
+  "iteration": 10,
+  "cr": "CR-3B",
+  "title": "Tracking enhancements code batch (#3 tiered values, #4 segmentation, #5 lead_quality, #6 click-IDs) + #2 Consent Mode v2 + consent banner",
+  "date": "2026-06-08",
+  "status": "PASS",
+  "verification_method": "headless dataLayer assertion via Playwright (screenshot tool); lead API mocked so no real Freshsales lead created",
+  "scope_owner_confirmed": {
+    "code_batch": "yes (#4 otp_verified/form_location/plan_interest, #5 lead_quality junk/ok, #6 gbraid/wbraid/msclkid)",
+    "tiered_values": "form_submitted=0, lead_verified=500 (Book demo, owner-set), demo_booked=2000 (default)",
+    "consent": "Consent Mode v2 + lightweight banner UI"
+  },
+  "files_changed": [
+    "frontend/src/lib/gtm.js (buildLeadPayload extra param + #4/#5/#6 fields; pushLead with CONVERSION_VALUES #3; gtag/setDefaultConsent/updateConsent/setConsentChoice/hasConsentChoice #2; initGtm sets default consent before container)",
+    "frontend/src/lib/antiBot.jsx (leadQuality helper, matches backend MIN_FILL_MS=2000 + honeypot)",
+    "frontend/src/components/site/ConsentBanner.jsx (NEW — Accept/Decline, persists mg_consent, brand-styled; uses <a> not <Link> since rendered outside Router)",
+    "frontend/src/App.js (mount <ConsentBanner/>)",
+    "frontend/src/components/site/DemoForm.jsx (pushLead for lead_verified + form_submitted with otp_verified/form_location/lead_quality; otp_verified added to Calendly leadContext)",
+    "frontend/src/components/site/MessageForm.jsx (pushLead form_submitted form_location=contact + lead_quality)",
+    "frontend/src/components/site/CalendlyInline.jsx (pushLead demo_booked form_location=calendly + otp_verified)",
+    "frontend/src/components/pricing/CheckoutModal.jsx (NEW pushLead form_submitted with plan_interest + form_location pricing-buy/quote + lead_quality)",
+    "frontend/src/pages/RoiCalculator.jsx (NEW pushLead form_submitted form_location=roi + lead_quality)"
+  ],
+  "assertions": {
+    "page_view_fires": true,
+    "consent_banner_renders": true,
+    "consent_update_on_accept": "ad_storage/ad_user_data/ad_personalization/analytics_storage all granted",
+    "form_submitted_payload": {
+      "conversion_value": "0 (tiered map: lead_verified=500, demo_booked=2000)",
+      "form_location": "homepage",
+      "otp_verified": false,
+      "lead_quality": "ok",
+      "gclid": "TEST123", "fbclid": "FBTEST", "gbraid": "GB123", "wbraid": "WB123", "msclkid": "MS123",
+      "source": "qa", "first_name": "QA", "last_name": "Tester", "external_id": "+919876543210", "phone": "+919876543210"
+    }
+  },
+  "bug_found_and_fixed": "ConsentBanner used react-router <Link> but is mounted outside <BrowserRouter> -> 'Cannot destructure basename' runtime crash. Swapped to plain <a href=/privacy>.",
+  "remaining_owner_gtm_side": [
+    "#1 Enhanced Conversions/Advanced Matching steps B/C/D (turn on EC for Leads + map user-data var; Meta Advanced Matching map em/ph/fn/ln/ct/external_id)",
+    "#3 map conversion_value -> GA4/Ads/Meta; set demo_booked as value-based secondary",
+    "#4 register otp_verified/form_location/plan_interest as GA4 custom dimensions",
+    "#5 build exclusion audience from lead_quality=junk",
+    "#7 GA4 recommended event-name mapping",
+    "Consent Mode: map consent variables in GTM; banner default is EEA-safe denied"
+  ],
+  "deferred": ["#8 user_id (needs login/portal)"],
+  "cleanup": "No persistent test data created (lead API mocked during QA)."
+}

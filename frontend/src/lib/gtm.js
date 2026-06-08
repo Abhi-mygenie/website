@@ -13,6 +13,7 @@ import { getAttribution } from "@/lib/attribution";
 
 const GTM_ID = process.env.REACT_APP_GTM_ID;
 const ALLOWED_HOSTS = ["www.mygenie.online", "mygenie.online"];
+const CONSENT_KEY = "mg_consent";
 
 function gtmAllowed() {
   if (!GTM_ID) return false;
@@ -31,6 +32,9 @@ export function initGtm() {
   inited = true;
   try {
     window.dataLayer = window.dataLayer || [];
+    // Consent Mode v2 (CR-3B #2): set EEA-safe defaults BEFORE the container loads,
+    // then immediately apply any stored visitor choice.
+    setDefaultConsent();
     window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
 
     const s = document.createElement("script");
@@ -60,6 +64,76 @@ export function pushEvent(event, payload = {}) {
     window.dataLayer.push({ event, ...payload });
   } catch {
     /* ignore */
+  }
+}
+
+/** gtag shim that pushes the raw `arguments` object (the form Consent Mode requires). */
+function gtag() {
+  window.dataLayer = window.dataLayer || [];
+  // eslint-disable-next-line prefer-rest-params
+  window.dataLayer.push(arguments);
+}
+
+/**
+ * Consent Mode v2 (CR-3B #2). EEA-safe denied defaults set BEFORE the container loads;
+ * a stored visitor choice is applied immediately as an update. `wait_for_update` gives
+ * the banner a brief window to respond before tags evaluate.
+ */
+export function setDefaultConsent() {
+  try {
+    window.dataLayer = window.dataLayer || [];
+    gtag("consent", "default", {
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+      analytics_storage: "denied",
+      functionality_storage: "granted",
+      security_storage: "granted",
+      wait_for_update: 500,
+    });
+    let stored = null;
+    try {
+      stored = localStorage.getItem(CONSENT_KEY);
+    } catch {
+      /* ignore */
+    }
+    if (stored === "granted") updateConsent(true);
+    else if (stored === "denied") updateConsent(false);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Update Google Consent Mode v2 after a visitor accepts/declines. */
+export function updateConsent(granted) {
+  try {
+    gtag("consent", "update", {
+      ad_storage: granted ? "granted" : "denied",
+      ad_user_data: granted ? "granted" : "denied",
+      ad_personalization: granted ? "granted" : "denied",
+      analytics_storage: granted ? "granted" : "denied",
+    });
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Persist + apply a consent choice (used by the consent banner). */
+export function setConsentChoice(granted) {
+  try {
+    localStorage.setItem(CONSENT_KEY, granted ? "granted" : "denied");
+  } catch {
+    /* ignore */
+  }
+  updateConsent(granted);
+}
+
+/** Has the visitor already chosen? (controls banner visibility) */
+export function hasConsentChoice() {
+  try {
+    return !!localStorage.getItem(CONSENT_KEY);
+  } catch {
+    return false;
   }
 }
 
@@ -99,13 +173,13 @@ function splitName(v) {
  * Includes Enhanced Conversions / Advanced Matching fields (email/phone normalized, name split,
  * external_id) so GTM can hash + map them. Hashing happens in GTM — raw values never leave hashed.
  */
-export function buildLeadPayload(form = {}, sector, eventId) {
+export function buildLeadPayload(form = {}, sector, eventId, extra = {}) {
   const attr = getAttribution();
   const email = normEmail(form.email);
   const phone = normPhone(form.phone);
   const { first_name, last_name } = splitName(form.name);
   return {
-    // identity (Enhanced Conversions / Advanced Matching)
+    // identity (Enhanced Conversions / Advanced Matching) — #1
     name: form.name || null,
     first_name,
     last_name,
@@ -117,16 +191,46 @@ export function buildLeadPayload(form = {}, sector, eventId) {
     outlet_name: form.business_name || null,
     city_name: form.city || null,
     message: form.message || "",
+    // lead quality & segmentation (CR-3B #4 / #5)
+    otp_verified: extra.otp_verified ?? null,
+    form_location: extra.form_location || null,
+    plan_interest: extra.plan_interest || null,
+    lead_quality: extra.lead_quality || null,
     // event meta
     page_url: window.location.href,
     event_time: Math.floor(Date.now() / 1000),
     event_id: eventId || newEventId(),
     currency: "INR",
-    conversion_value: "0",
-    // attribution / click ids (CR-2)
+    // tiered conversion value (CR-3B #3) — string to match the live-site contract
+    conversion_value: extra.conversion_value != null ? String(extra.conversion_value) : "0",
+    // attribution / click ids (CR-2) — full coverage (CR-3B #6)
     gclid: attr.gclid || null,
     fbclid: attr.fbclid || null,
     fbp: attr.fbp || null,
+    gbraid: attr.gbraid || null,
+    wbraid: attr.wbraid || null,
+    msclkid: attr.msclkid || null,
     source: attr.last_utm_source || attr.first_utm_source || null,
   };
+}
+
+/**
+ * Tiered conversion values per funnel stage (CR-3B #3, owner-confirmed 2026-06-08).
+ * form_submitted = Qualified leads (secondary, ₹0) · lead_verified = Book demo (primary, ₹500)
+ * · demo_booked = Book appointments (₹2000). Values feed Google Ads value-based bidding via GTM.
+ */
+const CONVERSION_VALUES = {
+  form_submitted: 0,
+  lead_verified: 500,
+  demo_booked: 2000,
+};
+
+/**
+ * Single entry point for forms: build the lead payload (with tiered conversion value) and push
+ * it as `event`. Pass per-form `extra` for segmentation (otp_verified/form_location/plan_interest)
+ * and the anti-junk derived `lead_quality`.
+ */
+export function pushLead(event, form, sector, eventId, extra = {}) {
+  const conversion_value = CONVERSION_VALUES[event] != null ? CONVERSION_VALUES[event] : 0;
+  pushEvent(event, buildLeadPayload(form, sector, eventId, { ...extra, conversion_value }));
 }

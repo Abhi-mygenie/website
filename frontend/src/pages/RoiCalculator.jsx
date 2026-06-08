@@ -6,8 +6,9 @@ import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
 import Seo from "@/components/site/Seo";
 import { PAGE_SEO } from "@/lib/seo";
-import { useAntiBot, Honeypot } from "@/lib/antiBot";
+import { useAntiBot, Honeypot, leadQuality } from "@/lib/antiBot";
 import { getAttribution } from "@/lib/attribution";
+import { pushLead } from "@/lib/gtm";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const inr = (n) => "₹" + Math.round(n).toLocaleString("en-IN");
@@ -44,6 +45,10 @@ export default function RoiCalculator() {
         source_page: `roi: rev=${revenue}/mo, outlets=${outlets}, est_annual_impact=${Math.round(calc.annual)}`,
       });
       setDone(true);
+      pushLead("form_submitted", form, null, undefined, {
+        form_location: "roi",
+        lead_quality: leadQuality(signals()),
+      });
       toast.success("Your savings plan is on the way!");
     } catch { toast.error("Something went wrong. Try again."); }
     finally { setLoading(false); }
