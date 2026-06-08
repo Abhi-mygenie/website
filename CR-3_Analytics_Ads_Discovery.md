@@ -68,6 +68,13 @@ conversion_value:'0', outlet_name, city_name, gclid, fbclid, source (utm_source)
 
 **CR-3 B — offline conversions:** reuse captured `gclid`/`fbclid`/`fbp` + shared `event_id` to upload booked-demo signals. Existing "Data Tags" + Conversion Linker show the account is offline-ready. Needs Ads Conversion Label + Meta CAPI token. Decide: Zapier (Freshsales→Ads) vs. our backend API.
 
+## 5b. 🔑 OWNER DECISIONS LOCKED (2026-06-08)
+- **Conversion definition:** ONLY a **verified** lead = a conversion. `form_submitted` alone (OTP **unverified**) is **NOT** a conversion for us. The conversion = OTP-**verified** form submit (`lead_verified`).
+- **Unverified OTP leads:** still SAVED to Mongo + Freshsales, tagged `OTP-Unverified` (never lost) — but used only for volume/remarketing/reporting, **NOT** counted/optimized as conversions, and **NOT** uploaded as offline conversions.
+- **Online conversion** = `lead_verified` (OTP verified). **First/primary offline conversion** = Calendly **`demo_scheduled`** (real booking). Optional deeper offline signal later = Freshsales qualified/customer.
+- **Required GTM fixes (owner side, GTM-only — not our code):** fix trigger typo `lead_verifided` → `lead_verified`, UNPAUSE the GA4/FB "OTP Verified" tags, and (recommended) make the Google Ads "Book demo" conversion fire on `lead_verified` instead of raw `form_submitted`.
+- **Offline upload route:** TBD — Zapier (owner-managed, recommended) vs. our backend. Needs Meta CAPI token either way.
+
 ## 6. Still needed from owner
 - [ ] Google Ads Conversion **Label** (GTM "GAds - Book Demo" tag)
 - [ ] Meta CAPI access token
