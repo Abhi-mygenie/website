@@ -1,0 +1,31 @@
+{
+  "iteration": 9,
+  "cr": "CR-2 — Attribution & Data Capture",
+  "date": "2026-06-08",
+  "summary": "Attribution capture wired into all 4 lead forms. Verified end-to-end against LIVE Freshsales: native + cf_ fields written, first-touch preserved on repeat, full attribution stored in Mongo. Frontend compiles clean (only pre-existing CmsProvider warning).",
+  "results": [
+    {"flow": "Frontend attribution.js capture", "result": "PASS", "note": "first-touch localStorage, last-touch sessionStorage, device/os/browser/lang/tz, pages/time, gclid/fbclid/utm/_fbp"},
+    {"flow": "All 4 forms attach attribution", "result": "PASS", "note": "DemoForm, RoiCalculator, MessageForm, CheckoutModal"},
+    {"flow": "Demo lead -> Freshsales native fields", "result": "PASS", "note": "first_source=google, first_medium=cpc, first_campaign=pos-launch, latest_source=gclid, latest_medium, latest_campaign all read back"},
+    {"flow": "Demo lead -> Freshsales cf_ fields", "result": "PASS", "note": "cf_pos_satifcation_level=utm_term, cf_est_name=utm_content, cf_latitude=fbclid, cf_orders_taken_via=_fbp, cf_rooms=otp(Yes/No)"},
+    {"flow": "Full attribution -> MongoDB", "result": "PASS", "note": "landing_page, conversion_page, referrer, device, os, browser, language, timezone, pages_viewed, time_on_site stored on lead doc"},
+    {"flow": "First-touch preservation on repeat submit", "result": "PASS", "note": "first_source stayed 'google'; latest_source/campaign refreshed to new values"}
+  ],
+  "files_touched": [
+    "frontend/src/lib/attribution.js (new)",
+    "frontend/src/App.js (AttributionTracker on route change)",
+    "frontend/src/components/site/DemoForm.jsx, MessageForm.jsx, pricing/CheckoutModal.jsx, pages/RoiCalculator.jsx",
+    "backend/server.py (_attribution_to_crm + attribution on 3 create models + 3 endpoints)",
+    "backend/freshsales.py (upsert_contact extra_fields w/ first-touch preservation)"
+  ],
+  "decisions": {
+    "gclid": "Option B -> latest_source (owner-confirmed)",
+    "utm_term": "cf_pos_satifcation_level",
+    "utm_content": "cf_est_name",
+    "_fbp": "cf_orders_taken_via"
+  },
+  "open_items": [
+    "Geo/city NOT captured (needs IP->geo provider).",
+    "Several fields Mongo-only pending new CRM fields — see CR-2_Attribution_Mapping.md."
+  ]
+}

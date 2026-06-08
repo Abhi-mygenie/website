@@ -1,0 +1,39 @@
+{
+  "brand_lock": "MyGenie existing brand — NO rebrand. Direction 1b (refined hybrid).",
+  "theme": "Light theme (white + soft sand) with deep brand-green premium dark sections",
+  "typography": {
+    "fonts": {
+      "headings": { "family": "Clash Display, Poppins, sans-serif", "weights": ["600", "700"], "reason": "Characterful display face paired with brand font; handles giant profit numbers." },
+      "body": { "family": "Poppins, sans-serif", "weights": ["400", "500", "600", "700"], "reason": "MyGenie's existing brand font — kept for continuity." }
+    }
+  },
+  "colors": {
+    "brand_green": "#18A84A",
+    "brand_green_dark": "#138A3C",
+    "deep_green_section": "#0C2A1A",
+    "deep_green_surface": "#14331F",
+    "accent_orange": "#F26822",
+    "accent_orange_soft": "#FFF1E8",
+    "accent_yellow": "#FFC529",
+    "page_bg": "#FFFFFF",
+    "soft_sand": "#F6F8F5",
+    "text_primary": "#14201A",
+    "text_secondary": "#5B6B61",
+    "line": "#E6EAE6",
+    "on_dark": "#F6F8F5",
+    "on_dark_secondary": "#9DB1A4"
+  },
+  "rules": [
+    "Keep MyGenie green as the primary/CTA color; orange as secondary accent; yellow sparingly.",
+    "Deep brand-green (#0C2A1A) for premium dark sections (Before/After, AI band).",
+    "Numbers/metrics (25%, ₹1 Lakh, 40%) are hero visual elements — massive, in green or orange.",
+    "Headings in Clash Display, body in Poppins. Never Inter/Roboto.",
+    "Asymmetric bento grids; pill buttons; lucide-react icons; never emoji.",
+    "Every interactive/info element gets a kebab-case data-testid."
+  ],
+  "images": {
+    "hero_owner": "https://images.pexels.com/photos/4339955/pexels-photo-4339955.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "kitchen": "https://images.pexels.com/photos/12821628/pexels-photo-12821628.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "floor_manager": "https://images.unsplash.com/photo-1530698060343-ae5da1a26d7f?crop=entropy&cs=srgb&fm=jpg&q=85&w=940"
+  }
+}

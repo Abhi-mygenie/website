@@ -1,0 +1,34 @@
+{
+  "summary": "CR-6 Phase 1 carry-over QA (blog CRUD + trust-band). 7/8 surfaces pass. Blog ADD/EDIT/Preview/Discard/Cleanup work via inline CMS slide-over. Trust-band metrics + logos editors fully functional (add/reorder/delete + image upload). Preview-hides-pencils fix from iteration 1 is verified working. Logged-out regression clean. ONE BLOCKING BUG: BlogPost.jsx redirects to /blog when a user hard-navigates to a slug that exists ONLY in CMS content (not in static blogPosts.json fallback), because the redirect fires synchronously on first render before the async published-content fetch resolves. This breaks the documented flow 'be reachable at /blog/qa-temp-post' for any post added through the CMS.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "BlogPost (pages/BlogPost.jsx)",
+        "issue": "On hard navigation to a CMS-only slug (e.g. /blog/qa-temp-post-2), the component reads `useContent('blog.posts', POSTS)` which initially returns the static fallback POSTS (21 items, no qa-temp-post), then `posts.find(...)` is undefined and `<Navigate to=\"/blog\" replace />` fires before the CMS Provider's published-content fetch resolves. Result: any blog post added through the inline CMS is unreachable by direct URL until the user first lands on /blog (which warms the published state). Reproduced 2x via API insert + direct goto. Fix options: (a) add a `loading` flag in CmsProvider (track whether the initial /api/cms/content fetch has resolved) and have BlogPost render a spinner / skip the redirect while loading; (b) keep the post in state and only redirect after the published map is populated; (c) when raw is null from useContent, also wait one tick before deciding.",
+        "selector": "Navigate after posts.find(p=>p.slug===slug) in /app/frontend/src/pages/BlogPost.jsx:27",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_cms.py", "/app/test_reports/pytest/cr6_cms_results.xml"],
+  "action_items": [
+    "Fix BlogPost.jsx early-redirect race: expose a `loaded`/`loading` flag from CmsProvider (set true after the initial GET /api/cms/content resolves) and in BlogPost.jsx, render a loading placeholder until loaded === true before deciding to <Navigate>."
+  ],
+  "critical_code_review_comments": [
+    "BlogPost.jsx synchronously redirects on first render — fragile pattern when the source of truth is async CMS content. Any CMS-only slug is unreachable by deep-link / refresh until /blog is visited.",
+    "Blog.jsx and BlogPost.jsx duplicate the `raw -> JSON.parse with fallback POSTS` block; extract to a `useBlogPosts()` hook to keep parsing logic in one place (and to centralise the loading-state fix above).",
+    "CmsProvider does not expose a loading state for `published`; consider adding `publishedLoaded` to support skeleton UIs and avoid the BlogPost redirect race.",
+    "EditableList button is positioned `absolute right-0 -top-10` which can overlap surrounding content (e.g. on small viewports the home.metrics edit button sits inside the trust-band area). Consider a sticky 'edit overlay' or scroll-aware positioning."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "100% (no backend retest needed; CMS API surface still green from iteration 1)", "frontend": "~88% — 7/8 flows pass; 1 critical race on BlogPost direct nav" },
+  "test_credentials": "admin@mygenie.online / MyGenie@Admin2026 — verified working.",
+  "seed_data_creation": "Created qa-temp-post and qa-temp-post-2 via inline editor + via API during testing. BOTH have been DELETED and the cleanup re-published — verified via GET /api/cms/content: blog.posts count back to 21 with no qa-temp-* entries. Existing post heading edits were Discarded (not published). Live site is clean. Currently-published CMS keys: home.hero.badge, blog.index.title, blog.posts (21 posts, identical to static fallback).",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "After main agent fixes the BlogPost early-redirect bug, retest by: (1) POST a new blog post via /api/cms/login + PUT /api/cms/content + POST /api/cms/publish with slug 'retest-deep-link'; (2) hard-navigate to /blog/retest-deep-link (NEW page, no prior /blog visit) and assert h1 contains the post heading and URL stays on /blog/retest-deep-link; (3) cleanup. All other CR-6 surfaces (blog ADD/EDIT/Preview/Discard, trust-band metrics+logos editors, preview-hides-pencils, logged-out regression) are green. data-testids confirmed working: edit-blog.posts, list-editor-blog.posts, list-add-blog.posts, save-blog.posts, edit-home.metrics, list-editor-home.metrics, list-add-home.metrics, edit-home.trust_logos, list-editor-home.trust_logos, list-add-home.trust_logos, cms-publish, cms-discard, cms-toggle-edit, cms-toggle-preview, cms-logout.",
+  "rca_of_the_issue": "BlogPost direct-nav redirect RCA: /app/frontend/src/lib/cms/CmsProvider.jsx initialises `published` to `{}` and populates it via useEffect → apiGet('/api/cms/content') asynchronously. useContent(key, fallback) returns `published[key] ?? fallback` synchronously, so on the very first render of BlogPost.jsx for a deep-linked CMS-only slug, posts === static POSTS (21 items), `posts.find(p => p.slug === slug)` returns undefined, and line 27 `if (!post) return <Navigate to=\"/blog\" replace />` fires. The async fetch resolves a moment later but the navigation has already happened. Reproduction: insert any new post via the CMS, then in a fresh tab go directly to /blog/<new-slug> — you land on /blog. Mitigation: add `publishedLoaded` (boolean) to CmsProvider, set true after the initial fetch resolves; in BlogPost.jsx, while `!publishedLoaded` render a lightweight skeleton instead of redirecting."
+}

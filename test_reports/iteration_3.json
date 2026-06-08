@@ -1,0 +1,26 @@
+{
+  "summary": "CR-6 Phase 2a Pricing inline CMS QA — ALL flows passing end-to-end. Verified hero text editors (eyebrow/h1/sub), plans editor slide-over with lockItems (no add/delete/reorder), 4 plans listed, plan price edit (799→999) draft→preview→publish→logged-out cart recalc, includes 'lines' textarea add/remove, 'bool' popular checkbox toggling MOST POPULAR badge, add-ons editor with lockItems + 9 items + partial override (name edit visible via preview/publish), RecommendQuiz still selects Starter for Café/1/Under 1,000/Serve faster (logic intact after CMS merge), CartSummary recalculates with merged price (Starter 999 + loyalty 399 = 1,398; after recommend → Starter 999 + scan_order 299 + captain_device 199 = 1,497), Buy modal opens with correct quote. Logged-out regression: no pencils, no cms-editbar, all interactions intact. CLEANUP COMPLETE: reverted to Starter 799 / non-popular / original includes / original addon names and PUBLISHED — re-verified via fresh logged-out page (₹799 visible, no MOST POPULAR badge, no QA bullets, no '(QA)' on addon).",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_cms.py", "/app/test_reports/pytest/cr6_cms_results.xml"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "mergeById coerces price via Number(); confirmed prices remain numeric after publish (inr() uses toLocaleString without errors). Good.",
+    "ListModal save() trims empty lines from 'lines' fields — verified Starter includes survive round-trip without trailing blanks.",
+    "lockItems correctly hides list-add, Delete, ↑ and ↓ buttons in both pricing.plans and pricing.addons editors (DOM verified: 0 of each).",
+    "EditableList 'Edit list' button positioning (absolute right-0 -top-10) overlaps near the h2 'Choose your base plan' but does not impede clicks on this page — same minor concern previously raised for trust-band.",
+    "BlogPost early-redirect race from iteration 2 is NOT in scope of Phase 2a — still pending action from main agent if not already addressed."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "n/a (frontend-only requested)", "frontend": "100% — all 8 listed flows pass" },
+  "test_credentials": "admin@mygenie.online / MyGenie@Admin2026 — verified working at POST /api/cms/login via UI.",
+  "seed_data_creation": "During testing: published Starter price=999, popular=true, +'QA Test Bullet' include, hero.h1='Build your MyGenie plan. (DRAFT)', addon captain_device name='Extra Captain Device (QA)'. ALL REVERTED AND REPUBLISHED. Final live state verified clean (logged-out fresh tab): h1='Build your MyGenie plan.', Starter ₹799 no popular badge no QA bullet, captain_device='Extra Captain Device'. Currently-published CMS keys still safe: home.hero.badge, blog.index.title, blog.posts (pricing.* keys ARE now persisted in CMS but only with values identical to the static defaults — partial overrides could be discarded if desired, but they do not affect the live UI).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Phase 2a Pricing slice is fully green. Verified data-testids: edit-pricing.hero.h1, edit-pricing.hero.eyebrow, edit-pricing.hero.sub, edit-pricing.plans, edit-pricing.addons, list-editor-pricing.plans, list-editor-pricing.addons, save-pricing.plans, save-pricing.addons, save-pricing.hero.h1, field-pricing.hero.h1, plan-card-starter/growth/pro/chain, addon-card-captain_device, plan-recommended-starter, cms-publish, cms-toggle-preview. lockItems mode confirmed: list-add-pricing.{plans,addons} = absent; 0 Delete/↑/↓ buttons inside the slide-over. mergeById preserves logic fields (includedAddons, icon, id) and coerces price→Number, popular→Boolean. Note for the next agent: pricing.* keys may persist as partial overrides matching static defaults — if a clean key list is required, hit POST /api/cms/discard while admin to wipe drafts, or PUT with empty list to remove. The Phase 2 BlogPost early-redirect bug from iteration 2 was not re-tested here (out of scope).",
+  "rca_of_the_issue": "n/a — no bugs found in Phase 2a scope."
+}

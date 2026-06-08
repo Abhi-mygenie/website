@@ -1,0 +1,30 @@
+{
+  "iteration": 8,
+  "cr": "CR-4B — OTP verification (Demo form only)",
+  "date": "2026-06-08",
+  "summary": "Phone OTP gate added to the Demo form. Backend verified end-to-end via curl (mock SMS). Frontend wired into DemoForm.jsx; compiles clean (only pre-existing CmsProvider eslint warning).",
+  "build_via_integration_expert_first": true,
+  "sms_mode": "OTP_SMS_ENABLED=false (mock — codes logged, no live SMS). Owner must flip to true for a real end-to-end SMS test.",
+  "backend_results": [
+    {"flow": "POST /api/otp/send", "result": "PASS", "note": "returns {sent:true, cooldown:30, status:'mocked'}"},
+    {"flow": "30s resend cooldown", "result": "PASS", "note": "HTTP 429 'Please wait Ns before resending.'"},
+    {"flow": "OTP verify — wrong code", "result": "PASS", "note": "HTTP 400 'Incorrect OTP'"},
+    {"flow": "OTP verify — correct code", "result": "PASS", "note": "returns signed otp_token (JWT, type=otp, bound to phone, 15-min exp)"},
+    {"flow": "5-attempt lock", "result": "PASS", "note": "6th attempt -> 'Too many incorrect attempts. Please request a new code.'"},
+    {"flow": "/api/demo-request WITH valid token", "result": "PASS", "note": "lead saved, otp_verified=true, no OTP-Unverified tag"},
+    {"flow": "/api/demo-request WITHOUT token (graceful)", "result": "PASS", "note": "lead STILL saved, otp_verified=false, Freshsales tag 'OTP-Unverified'"}
+  ],
+  "frontend_results": [
+    {"flow": "DemoForm OTP UI", "result": "IMPLEMENTED", "note": "Send OTP -> 4-digit input -> Verify -> 'Phone verified' chip; 30s resend timer; graceful soft-fail. Compiles clean. testids: otp-send-btn, otp-input, otp-verify-btn, otp-resend-btn, otp-status, otp-verified."}
+  ],
+  "files_touched": [
+    "backend/otp.py (new)",
+    "backend/server.py (otp endpoints + demo-request otp_token gate + startup index)",
+    "backend/.env (SMS_* + OTP_SMS_ENABLED keys)",
+    "frontend/src/components/site/DemoForm.jsx (OTP step)"
+  ],
+  "open_items": [
+    "Live SMS panel reachability NOT tested (OTP_SMS_ENABLED is off). Owner flips the flag for a real send.",
+    "Cleanup: a few QA test docs exist in `otp_codes` and `demo_requests` collections (auto-expire via 1h TTL on otp_codes)."
+  ]
+}

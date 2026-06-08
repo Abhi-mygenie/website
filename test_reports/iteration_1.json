@@ -1,0 +1,49 @@
+{
+  "summary": "CR-6 CMS first QA. Verified all backend CMS endpoints (login/me/content draft/publish/discard/media) and the full admin frontend flow (login modal via ?admin=1, hero badge edit, draft -> preview -> publish, fresh logged-out verification, testimonials list editor, logout, blog regression). 18/18 backend tests pass; all critical frontend flows pass. Hero badge was reset to 'The Hospitality Operating System' and republished. One minor UX bug found: Preview toggle does not hide pencils because the editable check in Editable.jsx ignores cms.preview.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Editable (EditableText/EditableImage/EditableList)",
+        "issue": "Toggling Preview (cms-toggle-preview) does NOT hide the pencils. The spec says 'Preview shows the draft without pencils', but in Editable.jsx the `editable` flag is `cms.editMode && cms.isAdmin` only — `cms.preview` is not considered. Observed 9 pencils still rendered when preview was ON. Suggested fix: `const editable = cms && cms.editMode && cms.isAdmin && !cms.preview;` in EditableText, EditableImage, and EditableList.",
+        "selector": "[data-testid^=\"edit-\"]",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_cms.py",
+    "/app/test_reports/pytest/cr6_cms_results.xml"
+  ],
+  "action_items": [
+    "Fix Preview toggle so it hides pencils: in /app/frontend/src/components/cms/Editable.jsx, add `&& !cms.preview` to the `editable` check in EditableText, EditableImage, and EditableList.",
+    "(Optional hardening) cms_login does not throttle/lock after repeated wrong passwords. The 2-fixed-admin design probably accepts this risk, but consider basic rate limiting since the JWT secret + 2 known emails are the only barrier."
+  ],
+  "critical_code_review_comments": [
+    "Editable.jsx: `editable` flag ignores `cms.preview`, breaking the documented Preview behaviour (pencils should hide).",
+    "cms_auth.authenticate uses plain-text comparison against env vars (no bcrypt). This is OK per design (env is source of truth, no DB), and uses hmac.compare_digest to prevent timing attacks — acceptable.",
+    "server.py /api/cms/discard sets every doc's draft_value back to its published_value, including docs where published_value is None. This is fine but means a doc that was only ever a draft becomes draft_value=None after discard — confirmed via tests, behaviour is consistent.",
+    "server.py /api/cms/media upload reads the entire file into memory before size check; >50MB uploads would still be buffered. For local-disk-only it's acceptable; flag for S3 phase.",
+    "CmsProvider uses localStorage for the JWT (XSS-exfiltratable). Acceptable for an admin-only CMS but worth noting; httpOnly cookie would be safer.",
+    "cms_content has no index on `key`; with a small number of keys this is fine but add a unique index on key for safety."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_cms.py (created)",
+    "/app/test_reports/pytest/cr6_cms_results.xml (created)"
+  ],
+  "success_rate": {
+    "backend": "100% (18/18)",
+    "frontend": "~95% (all flows pass; preview-hides-pencils is broken)"
+  },
+  "test_credentials": "admin@mygenie.online / MyGenie@Admin2026 and team@mygenie.online / MyGenie@Team2026 (from /app/memory/test_credentials.md). Both verified working.",
+  "seed_data_creation": "Created and cleaned ephemeral key 'test.qa.cr6_marker' during draft/publish/discard tests. Hero badge home.hero.badge was edited during frontend test and RESET to the original 'The Hospitality Operating System' and re-published, so the live site is clean.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend test file at /app/backend/tests/test_cms.py covers full CMS surface and resets hero badge at end. To rerun: `pytest /app/backend/tests/test_cms.py -v`. Frontend admin entry: /?admin=1 (creds in test_credentials.md). data-testids confirmed working: cms-login-modal, cms-username, cms-password, cms-login-submit, cms-editbar, cms-toggle-edit, cms-toggle-preview, cms-publish, cms-discard, cms-logout, edit-home.hero.badge, field-home.hero.badge, save-home.hero.badge, edit-home.testimonials, list-editor-home.testimonials, list-add-home.testimonials. After main agent fixes the preview/pencil bug, retest by entering edit mode, toggling preview ON, and asserting `[data-testid^=\"edit-\"]` count drops to 0.",
+  "rca_of_the_issue": "Preview-pencil bug RCA: /app/frontend/src/components/cms/Editable.jsx defines `const editable = cms && cms.editMode && cms.isAdmin;` in EditableText (line 321), EditableImage (line 349), and EditableList (line 368). The Preview toggle flips `cms.preview` (used in CmsProvider.getValue to switch draft vs. published source) but does not feed back into the `editable` flag, so the pencil ring + PencilButton continue rendering. Reproduction: /?admin=1, login, toggle preview ON, observe pencils still visible. Mitigation: AND-in `!cms.preview` in all three editable checks (or move the check into a single hook)."
+}
