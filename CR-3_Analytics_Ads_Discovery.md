@@ -75,6 +75,15 @@ conversion_value:'0', outlet_name, city_name, gclid, fbclid, source (utm_source)
 - **PENDING from owner:** the exact existing dataLayer event NAME, its GTM trigger, the GA4/FB/GAds tags wired to it, and the payload variable shape. (Owner to send GTM tag+trigger screenshot + the booking page `dataLayer.push` code.)
 - Note: new `CalendlyInline.jsx:86` catches `calendly.event_scheduled` and calls `POST /api/demo-booked` but pushes NOTHING to dataLayer → that's the gap to fill with the existing event name.
 
+## 5h. 🧩 CLARIFICATION — GTM "Book demo" vs Google Ads "Submit lead form" (same conversion, different layers, 2026-06-08)
+Owner asked how these relate. They are the SAME conversion at different layers:
+- GTM TRIGGER "Book demo" (Custom Event) = the signal → fires
+- GTM TAG "GAds - Book Demo" (Google Ads Conversion Tracking, Conv ID 16740091756 / Label NtqdClejmOgaEOyOpq4-) → sends to
+- Google Ads CONVERSION ACTION (that ID+Label) → categorized under
+- Google Ads GOAL "Submit lead form" → bundled in goal group "Group 2 goals" (with "Request quotes").
+"Book demo" = GTM-side technical name; "Submit lead form" = Google Ads-side goal/reporting bucket. 61 results / value 61.00 = 61 conversions @ value 1 (no real ₹ value → fix via backlog #3 tiered values).
+**IMPLICATION:** the "GAds - Book Demo" tag currently fires on the "Book demo" trigger (= `form_submitted` today). Per locked decision, owner must repoint it to fire on `lead_verified` so "Submit lead form" counts only VERIFIED leads (form_submitted → "Qualified leads" instead).
+
 ## 5g. 🎯 DECISION REFRAME — ONLINE vs OFFLINE (2026-06-08, FINAL)
 **Core decision:** All conversion events fire from the WEBSITE BROWSER as ONLINE events. This is the exact reason NO Meta CAPI token, NO Google Ads API, and NO Zapier are needed.
 
