@@ -28,7 +28,7 @@
 |----|-------|--------------|--------|----------|-------|
 | **CR-1** | Forms + CRM Integration (Contact form, number switch, `cf_` mapping, ROI structured fields) | G2 — Planning | **CR-1b BUILT (Demo/Quote/Contact)** | 🟠 Partial | `cf_` mapping live for the 15 ready fields; Quote/ROI/preferred_contact deferred (MongoDB only) by owner |
 | **CR-2** | Attribution & Data Capture (UTM, click-IDs, IP/browser/device, geo, referrer, first/last-touch) | **G4 ✅ → G5** | **BUILT & LIVE-VERIFIED (iteration_9)** | 🟢 No | All 4 forms → Freshsales native (`first_*`/`latest_*`) + cf_ (`cf_est_name`/`cf_pos_satifcation_level`/`cf_latitude`/`cf_orders_taken_via`) + full obj in Mongo. Geo/city via `ipwho.is`. Mapping + still-missing CRM fields: `/app/CR-2_Attribution_Mapping.md` |
-| **CR-3** | Analytics & Ads (GA4 + Meta Pixel events, Google/Meta Ads, server-side/offline conversions) | G1 — Discovery | **Backlog — 🔜 NEXT UP** | 🟠 Soft | Needs **GA4 Measurement ID + Meta Pixel ID** from owner. `gclid`/`fbclid`/`_fbp`/geo now captured by CR-2 → offline-conversion ready |
+| **CR-3** | Analytics & Ads (GA4 + Meta Pixel + Google Ads via GTM dataLayer; browser-first) | **CR-3 A: G4 ✅ → G5** · CR-3 B: backlog | **CR-3 A BUILT & VERIFIED (browser dataLayer into `GTM-K5D84Z3L`)** | 🟠 Soft | Browser-first (Zapier/CAPI/Ads-API DROPPED). Events `form_submitted`/`lead_verified`/`demo_booked`/`page_view`; IDs GA4 `G-KWHHFEZ5Q3` / Pixel `2862017797322752` / Ads `AW-16740091756/NtqdClejmOgaEOyOpq4-`. **🚨 Owner-side GTM repoint `GAds-Book Demo`→`lead_verified` + create `demo_booked` tags.** CR-3 B enhancements backlog: `CR-3B_Tracking_Enhancements_Backlog.md` (Step A done). Docs: `CR-3_Analytics_Ads_Discovery.md`, `CR-3A_Build_Spec.md` |
 | **CR-4** | Anti-Junk & OTP Layer — Part A (honeypot+timing+rate-limit) + Part B (OTP verify) | **G4 ✅ → G5** | **Part A + Part B BOTH DONE. OTP LIVE-VERIFIED (iteration_8)** | 🟢 No | OTP on Demo form; **live SMS ON** via owner panel; graceful `OTP-Unverified` fallback; `cf_rooms`=OTP status. Spec: `CR-4B_OTP_Implementation_Spec.md` |
 | **CR-5** | Solutions & Product overview landing pages (`/solutions`, `/product`) + clickable nav labels | G4✓ → G5 | **At G5 (owner smoke)** | No | Done & verified |
 | **CR-6** | Website Content Management — edit text / images / videos across ALL pages, no-code | G4 ✅ → G5 | **Phase 1 + Phase 2a (Pricing) + Phase 2b (AI) + Phase 2c (Solutions ×11 + Product ×6) COMPLETE. Phase 2d plan locked** | No | All 3 framework additions DONE. Pricing ✅, AI ✅, all 11 sectors ✅, all 6 products ✅ wired. Next: 2d Solutions/Product index heroes |
@@ -75,7 +75,20 @@
 
 ---
 
-## CR-3 — Analytics & Ads (NEW, Backlog)
+## CR-3 — Analytics & Ads (CR-3 A SHIPPED 2026-06-08; CR-3 B = enhancements backlog)
+
+> ### ✅ OUTCOME — built browser-first; original "server-side/offline" scope below was SUPERSEDED.
+> After discovery (Discovery §5a–§5h), the owner chose to **fire all conversions from the website browser as ONLINE events** and **DROP Zapier / Meta CAPI / Google Ads API**. The "server-side/offline" plan in the italic block below is **historical context, not the implemented design.**
+>
+> **CR-3 A — DONE & verified:** `frontend/src/lib/gtm.js` loads existing container **`GTM-K5D84Z3L`** (env + host-gated to `www.mygenie.online`) and pushes `form_submitted`→Qualified leads · `lead_verified`→Book demo · `demo_booked`→Book appointments · `page_view`. Shared `event_id`; payload has gclid/fbclid/fbp/source (CR-2) + Enhanced-Conversions identity fields (CR-3 B Step A done). IDs: GA4 `G-KWHHFEZ5Q3`, Pixel `2862017797322752`, Ads `AW-16740091756/NtqdClejmOgaEOyOpq4-`.
+>
+> **🚨 CRITICAL owner-side GTM/Ads tasks (before live):** (1) REPOINT `GAds - Book Demo` tag → `lead_verified` trigger (today it's `form_submitted` = counts unverified!); (2) UNPAUSE OTP-Verified tags; (3) create `demo_booked` trigger + "Book appointments" Website-source conversion/tags; (4) Qualified leads=secondary, Book demo=primary; (5) decommission Zapier; (6) re-verify GTM loads after prod deploy.
+>
+> **CR-3 B — enhancements backlog (one by one):** `CR-3B_Tracking_Enhancements_Backlog.md`. P0 #1 Enhanced Conversions + Advanced Matching (code Step A done; Steps B/C/D owner-side), P0 #2 Consent Mode v2, P1 #3 tiered values, P1 #4 quality/segmentation params, P2 #5 suppression, #6 click-IDs, #7 GA4 recommended events, P3 #8 user_id.
+>
+> **Docs:** `CR-3_Analytics_Ads_Discovery.md` (decisions), `CR-3A_Build_Spec.md` (spec + impl log).
+
+<details><summary>Historical (superseded) original backlog plan</summary>
 
 **Scope:** GA4 + Meta Pixel events on every interaction (form submits, CTA clicks, WhatsApp/call/email clicks),
 Google Ads + Meta Ads integration, server-side / offline conversion API back to Google & Meta.
@@ -89,6 +102,8 @@ Google Ads + Meta Ads integration, server-side / offline conversion API back to 
 - **CR-3 B — Server-side / offline conversions (P0-prioritised, do right after A):** push **booked-demo** signals back to Google (offline conversions via `gclid`) and Meta (CAPI via `fbclid`/`_fbp`), deduped with Pixel via a shared `event_id`.
   > ⭐ **Priority rationale (owner-flagged):** Once CR-3 B lands offline-conversion uploads, you're feeding Google/Meta **real booked-demo signals — not just form-fills.** This is typically the **single biggest lever on ad CPL** (the ad algorithms optimise toward people who actually book, not everyone who submits a form). So sequence it **immediately after the pixels go in (CR-3 A)** rather than deferring it. All the identifiers it needs (`gclid`, `fbclid`, `_fbp`, geo) are **already captured by CR-2** — it's mostly data-plumbing.
   > Inputs CR-3 B needs from owner: Meta **CAPI access token**, Google Ads **conversion ID + label** (and confirm whether Freshsales→ads is done via Zapier or our backend directly).
+
+</details>
 
 ---
 
