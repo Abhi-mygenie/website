@@ -1,5 +1,13 @@
 # CR-3B — Owner GTM / Ads / Meta Action Brief (blockers on YOUR side)
 
+> ## 🔄 STATUS UPDATE — 2026-06-09 (progress this session)
+> **DONE (owner, in GTM):** ✅ `calendly Trigger` created (Custom Event, Event name `demo_booked`) · ✅ `GA4 - Book Appointment` tag created on it · ✅ **container PUBLISHED** (13 tags / 9 triggers).
+> **DONE (code side, by main agent):** ✅ Site event names aligned to the live container — emits `form_submitted`, `lead_verifided` (typo matched on purpose), `thankyou_conversion` (= Book Demo), and the NET-NEW `demo_booked` (Calendly). ✅ Pre-deploy fixes: re-added missing `REACT_APP_GTM_ID` + unblocked `.env` in `.gitignore`; deployment_agent PASS.
+> **KEY FINDING:** Google Ads **"Book appointments" conversion is Source = "Import from clicks"** (Zapier-fed) → it has **no tag / Conversion-ID / Label**, so you CANNOT attach a GTM tag to it. Path chosen: the `GA4 - Book Appointment` tag sends `demo_booked` to GA4 → after a live test booking, mark `demo_booked` as a **GA4 Key event** → import it into Google Ads as the appointment conversion (your account is GA4-linked).
+> **MOOT/SUPERSEDED:** the earlier "repoint GAds - Book Demo → lead_verified" item — `GAds - Book Demo` already fires on the verified event (`lead_verifided`), so no repoint needed.
+> **REMAINING owner TODO (priority):** (1) Deploy site → 1 test booking → verify all events in GTM Preview + GA4 Realtime; (2) finish the Google Ads "Book appointment" conversion from the GA4 `demo_booked` event → set Primary → **turn off Zapier appointment import**; (3) **unpause `FB - OTP Verified` + `GA4 - OTP Verified`**; (4) #1 Enhanced Conversions + Advanced Matching; (5) #3 map values; (6) #4 GA4 custom dimensions; (7) #5 junk exclusion audience; (8) #2 consent variables.
+
+
 > Our website code is DONE — every field below is already pushed to `window.dataLayer` on
 > `www.mygenie.online`. The remaining work is configuration inside GTM / Google Ads / Meta that
 > only you (account owner) can do. Nothing here needs another code change.

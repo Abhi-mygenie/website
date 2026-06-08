@@ -136,3 +136,11 @@ REPOINT the `GAds - Book Demo` tag to fire on the `lead_verified` trigger (NOT `
 - Files: `gtm.js`, `antiBot.jsx`, NEW `components/site/ConsentBanner.jsx`, `App.js`, `DemoForm.jsx`, `MessageForm.jsx`, `CalendlyInline.jsx`, `CheckoutModal.jsx`, `RoiCalculator.jsx`.
 - **Verified** via headless dataLayer assertion (lead API mocked → no real lead). Bug fixed: ConsentBanner `<Link>` crash outside Router → `<a>`.
 - **Remaining (owner/GTM-side):** EC for Leads + Meta Advanced Matching mapping (#1 B/C/D); map value→GA4/Ads/Meta (#3); register GA4 custom dimensions (#4); exclusion audience from junk (#5); map consent variables (#2). **Deferred:** #7 GA4 recommended names (GTM-only), #8 user_id (needs login).
+
+## SESSION 2026-06-08/09 — repo re-pull + CR-3B alignment + deploy-ready
+- **Repo:** re-pulled GitHub `Abhi-mygenie/website` branch `8-june` into wiped `/app`; recreated `.env` files; services up; app live on preview.
+- **CR-3B code batch (iteration_10):** #2 Consent Mode v2 + ConsentBanner, #3 tiered values, #4 segmentation (otp_verified/form_location/plan_interest), #5 lead_quality, #6 click-IDs (gbraid/wbraid/msclkid). Bug fixed: ConsentBanner `<Link>` outside Router → `<a>`.
+- **Event-name alignment (iteration_11):** added `GTM_EVENT_NAME` map in gtm.js so the site emits the LIVE container's names — `form_submitted`, `lead_verifided` (typo matched intentionally), `thankyou_conversion` (Book Demo, fired on demo submit via new `book_demo` event), and NET-NEW `demo_booked` (Calendly). Zero GTM edits. Verified via headless dataLayer.
+- **Owner GTM:** created `calendly Trigger` (demo_booked) + `GA4 - Book Appointment` tag; container PUBLISHED. Google Ads "Book appointments" is import-from-clicks (no tag/label) → use GA4 `demo_booked` key-event import route.
+- **Pre-deploy fixes:** unblocked `.env` in `.gitignore`; re-added missing `REACT_APP_GTM_ID=GTM-K5D84Z3L` (critical — GTM host-gated to www.mygenie.online, no tags fire in prod without it). deployment_agent → PASS.
+- **NEXT (owner):** Deploy → main agent re-registers Calendly webhook → 1 test booking + GTM Preview/GA4 Realtime verify → finish Google Ads "Book appointment" conversion from GA4 event → set Primary + kill Zapier import → unpause OTP-Verified tags → #1 Enhanced Conversions/Advanced Matching → #3/#4/#5/#2 mappings.

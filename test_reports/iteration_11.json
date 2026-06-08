@@ -1,0 +1,51 @@
+{
+  "iteration": 11,
+  "session": "2026-06-08/09",
+  "title": "Repo re-pull + CR-3B refinement: event-name alignment to live GTM container, Calendly demo_booked split, pre-deploy fixes",
+  "status": "PASS",
+  "verification_method": "headless dataLayer assertion via Playwright (screenshot tool); lead API mocked so no real Freshsales lead created. deployment_agent static check.",
+  "work_done": [
+    "Pulled GitHub Abhi-mygenie/website branch 8-june into wiped /app; recreated backend/.env + frontend/.env; services up; app live on preview.",
+    "Shipped CR-3B code batch (see iteration_10): #2 consent, #3 tiered values, #4 segmentation, #5 lead_quality, #6 click-IDs, ConsentBanner.",
+    "Aligned event names to live GTM container GTM-K5D84Z3L via GTM_EVENT_NAME map in gtm.js.",
+    "Refined per owner: book_demo->thankyou_conversion (Book Demo, fired on demo submit); demo_booked kept as its own NET-NEW Calendly event.",
+    "Pre-deploy fixes: unblocked .env in .gitignore; added missing REACT_APP_GTM_ID=GTM-K5D84Z3L to frontend/.env."
+  ],
+  "event_name_mapping_verified": {
+    "form submit": "form_submitted (value 0) -> OTP - form_submitted trigger",
+    "OTP verified": "lead_verifided (value 500, typo preserved) -> FB/GA4 OTP Verified + GAds Book Demo",
+    "demo form complete": "thankyou_conversion (value 500) -> FB/GA4/GAds Book demo",
+    "calendly booking": "demo_booked (value 2000) -> owner's new calendly Trigger + GA4 - Book Appointment tag"
+  },
+  "dataLayer_assertions": {
+    "page_view_fires": true,
+    "consent_banner_renders_and_accept_grants_all_4_signals": true,
+    "demo_submit_emits": ["form_submitted(0)", "thankyou_conversion(500)"],
+    "otp_verify_emits": ["lead_verifided(500, otp_verified=true)"],
+    "payload_carries": ["gclid", "fbclid", "gbraid", "wbraid", "msclkid", "first_name", "last_name", "external_id", "form_location", "lead_quality"]
+  },
+  "bug_found_and_fixed": "ConsentBanner used react-router <Link> outside <BrowserRouter> -> 'Cannot destructure basename' crash. Switched to <a href=/privacy>.",
+  "deployment_readiness": {
+    "status": "PASS",
+    "blockers_fixed": [
+      ".gitignore removed .env/.env.*/*.env so backend/.env + frontend/.env deploy",
+      "frontend/.env added REACT_APP_GTM_ID=GTM-K5D84Z3L (was missing; GTM is host-gated to www.mygenie.online so prod tags would not fire without it)"
+    ],
+    "non_blocking_noted": "admin list endpoints use .to_list(1000/5000) caps; pre-existing low-volume patterns, not deploy blockers."
+  },
+  "owner_gtm_status": {
+    "calendly_trigger_created": true,
+    "ga4_book_appointment_tag_created": true,
+    "container_published": true,
+    "google_ads_book_appointments_is_import_from_clicks": "no tag/label; use GA4 demo_booked key event import route",
+    "otp_verified_tags_still_paused": ["FB - OTP Verified", "GA4 - OTP Verified"]
+  },
+  "next_actions_owner": [
+    "Click Deploy (Emergent) -> site live on www.mygenie.online (first time GTM loads).",
+    "Main agent re-registers Calendly webhook to prod URL.",
+    "1 test booking + GTM Preview to confirm all 4 events; check GA4 Realtime for demo_booked.",
+    "Select GA4 demo_booked event in Google Ads -> Book appointment conversion -> Primary -> turn off Zapier import.",
+    "Unpause OTP-Verified tags; then #1 Enhanced Conversions + Advanced Matching, #3 value mapping, #4 GA4 custom dimensions, #5 junk exclusion audience, #2 consent variables."
+  ],
+  "cleanup": "No persistent test data created (lead API mocked during QA)."
+}
