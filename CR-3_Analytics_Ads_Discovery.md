@@ -75,6 +75,22 @@ conversion_value:'0', outlet_name, city_name, gclid, fbclid, source (utm_source)
 - **PENDING from owner:** the exact existing dataLayer event NAME, its GTM trigger, the GA4/FB/GAds tags wired to it, and the payload variable shape. (Owner to send GTM tag+trigger screenshot + the booking page `dataLayer.push` code.)
 - Note: new `CalendlyInline.jsx:86` catches `calendly.event_scheduled` and calls `POST /api/demo-booked` but pushes NOTHING to dataLayer → that's the gap to fill with the existing event name.
 
+## 5f. 📊 FINAL EVENT→CONVERSION MAPPING (2026-06-08)
+| Funnel stage | Website dataLayer event | Google Ads conversion action | Role |
+|---|---|---|---|
+| Form submit, NOT OTP-verified | `form_submitted` (unverified) | **Qualified leads** | secondary/observe (recommended) |
+| Form submit + OTP verified | `lead_verified` | **Book demo** | PRIMARY (bid) — CONFIRM with owner |
+| Calendly booking | `demo_booked` | **Book appointments** | conversion |
+- All 3 fired from website via GTM `GTM-K5D84Z3L`. No Zapier.
+- Recommend "Qualified leads"=secondary (observation), "Book demo"=primary (bid optimization toward verified).
+- OPEN: confirm OTP-verified → "Book demo".
+
+### How to repoint "Book appointment" (and Qualified leads) for browser firing — owner/marketing, Google Ads + GTM:
+1. Google Ads source is IMMUTABLE — an "Import from clicks" action can't take a browser tag. Open Goals→Conversions→"Book appointments"→Tag setup. If it shows Conversion ID+Label → use it. If import-only → create NEW Website-source conversion action (+New→Website→Use GTM) → get Conversion ID (AW-16740091756)+new Label.
+2. GTM: New Tag → Google Ads Conversion Tracking → enter ID+Label → trigger = custom event `demo_booked` → Submit/Publish.
+3. Conversion Linker (All Pages) already exists → reads gclid cookie. Done.
+4. Repeat: GTM tag for "Qualified leads" on `form_submitted`; confirm "Book demo" on `lead_verified`.
+
 ## 5e. 🔄 DIRECTION CHANGE — fire everything from website, drop Zapier (2026-06-08)
 Owner wants to ELIMINATE Zapier and fire all events directly from the website (browser → GTM). Zapier deemed an unrequired integration at this stage.
 
