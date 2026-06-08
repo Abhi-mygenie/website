@@ -75,7 +75,28 @@ conversion_value:'0', outlet_name, city_name, gclid, fbclid, source (utm_source)
 - **PENDING from owner:** the exact existing dataLayer event NAME, its GTM trigger, the GA4/FB/GAds tags wired to it, and the payload variable shape. (Owner to send GTM tag+trigger screenshot + the booking page `dataLayer.push` code.)
 - Note: new `CalendlyInline.jsx:86` catches `calendly.event_scheduled` and calls `POST /api/demo-booked` but pushes NOTHING to dataLayer → that's the gap to fill with the existing event name.
 
-## 5d. ✅ OFFLINE ARCHITECTURE CONFIRMED — Zapier owns it (2026-06-08)
+## 5e. 🔄 DIRECTION CHANGE — fire everything from website, drop Zapier (2026-06-08)
+Owner wants to ELIMINATE Zapier and fire all events directly from the website (browser → GTM). Zapier deemed an unrequired integration at this stage.
+
+**Can move to website (browser-fired via GTM, gclid present in cookie):**
+- `form_submitted` (any submit, incl. OTP-unverified) — lead/remarketing
+- `lead_verified` (OTP verified) — PRIMARY conversion
+- `demo_booked` (Calendly inline widget `event_scheduled`) — "Book appointment" conversion
+→ Removes need for Zapier, Meta CAPI token, and Google Ads API for these three. CR-2 supplies all payload vars.
+
+**Required owner-side GTM/Ads config (NOT our code):**
+- "Book appointment" Google Ads conversion source is currently **"Website (Import from clicks)"** (offline). To fire browser-side, repoint to a standard **"Website"** source (or new website-source conversion) + add a GTM Google Ads tag on `demo_booked`.
+- Fix `lead_verifided`→`lead_verified` typo + unpause OTP-Verified tags.
+- Decommission Zapier booking zap after browser-side verified.
+
+**Trade-offs flagged to owner (must accept):**
+1. Off-site bookings (Calendly email/reschedule link, no browser session) won't fire browser-side — only a server-side webhook catches those. Need confirm: are ~all bookings done in the on-site inline widget?
+2. Browser conversions lose ~10-30% to ad-blockers/iOS ITP vs server-side. Acceptable for simplicity?
+
+**⚠️ Cannot move to website — "Qualified leads":**
+- Fires when a sales rep marks a lead Qualified in Freshsales (no browser). MUST stay server-side (a small Zapier zap OR our backend uploads via existing Freshsales/Calendly webhook). OPEN DECISION: keep (needs server path) or drop.
+
+## 5d. ✅ OFFLINE ARCHITECTURE (Zapier) — superseded by 5e above; kept for reference
 Zapier screenshots confirm the offline layer is FULLY managed by Zapier, triggered from Freshsales:
 - Zapier action = Google Ads "Create Click Conversion" (offline import), trigger = Freshworks CRM record (Created At / Updated At).
 - Conversion Action "Book appointments" — Source "Website (Import from clicks)" = gclid-based offline upload, timestamp from Freshsales.
