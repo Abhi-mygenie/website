@@ -226,11 +226,29 @@ const CONVERSION_VALUES = {
 };
 
 /**
+ * Map our semantic event names -> the EXACT custom-event names the existing live GTM container
+ * (`GTM-K5D84Z3L`) already listens for. The container predates this React site, so we emit ITS
+ * names → all existing FB/GA4/Google-Ads tags fire untouched, ZERO GTM edits required.
+ * Verified against the live triggers (2026-06-08):
+ *   - `form_submitted`  -> "OTP - form_submitted" trigger (Event name: form_submitted)
+ *   - `lead_verifided`  -> "lead_verifided" trigger (FB/GA4 OTP Verified + GAds - Book Demo).
+ *                          ⚠️ The TYPO ("verifided") is intentional — it matches the live trigger.
+ *   - `thankyou_conversion` -> "Book demo" trigger (FB/GA4/GAds - Book demo, the primary conversion).
+ */
+const GTM_EVENT_NAME = {
+  form_submitted: "form_submitted",
+  lead_verified: "lead_verifided",
+  demo_booked: "thankyou_conversion",
+};
+
+/**
  * Single entry point for forms: build the lead payload (with tiered conversion value) and push
- * it as `event`. Pass per-form `extra` for segmentation (otp_verified/form_location/plan_interest)
- * and the anti-junk derived `lead_quality`.
+ * it under the GTM-expected event name. Pass per-form `extra` for segmentation
+ * (otp_verified/form_location/plan_interest) and the anti-junk derived `lead_quality`.
  */
 export function pushLead(event, form, sector, eventId, extra = {}) {
   const conversion_value = CONVERSION_VALUES[event] != null ? CONVERSION_VALUES[event] : 0;
-  pushEvent(event, buildLeadPayload(form, sector, eventId, { ...extra, conversion_value }));
+  const payload = buildLeadPayload(form, sector, eventId, { ...extra, conversion_value });
+  const gtmEvent = GTM_EVENT_NAME[event] || event;
+  pushEvent(gtmEvent, payload);
 }

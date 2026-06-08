@@ -183,6 +183,23 @@ Custom-event triggers present: `Book demo`, `lead_verified` (correctly spelled),
 ---
 
 ## 14. IMPLEMENTATION LOG (2026-06-08) — DONE & VERIFIED
+
+### 14b. CRITICAL UPDATE 2026-06-08 — event names aligned to the LIVE container (no GTM edits)
+Owner shared the real `GTM-K5D84Z3L` trigger configs. The container's internal **Event names** differ from our clean names:
+| Our funnel stage | Container trigger | Container **Event name** | Tags fired |
+|---|---|---|---|
+| form submit | `OTP - form_submitted` | `form_submitted` | otp Button data Tag |
+| OTP verified | `lead_verifided` (typo) | `lead_verifided` | FB/GA4 - OTP Verified + GAds - Book Demo |
+| booking | `Book demo` | `thankyou_conversion` | FB/GA4/GAds - Book demo |
+
+Our site fired `lead_verified`/`demo_booked` → would NOT match → verified+booking conversions would silently fail.
+**Fix (code only):** added `GTM_EVENT_NAME` map in `gtm.js` so `pushLead()` emits the container's exact names —
+`lead_verified→lead_verifided` (typo kept on purpose), `demo_booked→thankyou_conversion`, `form_submitted` unchanged.
+`conversion_value` stays keyed by our semantic event (form_submitted=0, lead_verified=500, demo_booked=2000).
+**Owner repoint task is now MOOT:** `GAds - Book Demo` already fires on `lead_verifided` (verified event). Verified via
+headless dataLayer (OTP-verify → `lead_verifided` value=500; submit → `form_submitted` value=0). Zero GTM edits required.
+
+
 **Files changed:**
 - NEW `frontend/src/lib/gtm.js` — `initGtm()` (env+host-gated container injection), `pushEvent()`, `newEventId()`, `buildLeadPayload()`.
 - `frontend/.env` — added `REACT_APP_GTM_ID=GTM-K5D84Z3L`.
