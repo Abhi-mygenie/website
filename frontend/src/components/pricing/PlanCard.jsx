@@ -1,12 +1,9 @@
 import { Check, Star } from "lucide-react";
-import { ANNUAL_MONTHS } from "@/data/pricing";
 import { EditableText } from "@/components/cms/Editable";
 
 const inr = (n) => "₹" + n.toLocaleString("en-IN");
 
-export default function PlanCard({ plan, selected, recommended, billing, onSelect }) {
-  const effMonthly = billing === "annual" ? Math.round((plan.price * ANNUAL_MONTHS) / 12) : plan.price;
-
+export default function PlanCard({ plan, selected, recommended, onSelect }) {
   return (
     <button
       onClick={() => onSelect(plan.id)}
@@ -30,14 +27,12 @@ export default function PlanCard({ plan, selected, recommended, billing, onSelec
       <p className="text-sm text-brand-muted mt-0.5">{plan.tagline}</p>
 
       <div className="mt-4 flex items-end gap-1">
-        <span className="font-display text-4xl font-bold text-brand-green">{inr(effMonthly)}</span>
+        <span className="font-display text-4xl font-bold text-brand-green">{inr(plan.price)}</span>
         <span className="text-brand-muted mb-1 text-sm">/outlet/mo</span>
       </div>
-      {billing === "annual" && (
-        <p className="text-xs text-brand-orange font-semibold mt-1">
-          <EditableText id="pricing.plan.annual_note" fallback="Billed yearly · save 17%" />
-        </p>
-      )}
+      <p className="text-xs text-brand-orange font-semibold mt-1">
+        <EditableText id="pricing.plan.annual_note" fallback="Billed annually" />
+      </p>
 
       <div className={`mt-5 inline-flex items-center justify-center w-full rounded-full py-2.5 font-semibold text-sm transition-all ${selected ? "bg-brand-green text-white" : "bg-brand-sand text-brand-ink"}`}>
         {selected ? "Selected" : "Select plan"}

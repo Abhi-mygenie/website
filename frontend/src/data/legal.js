@@ -124,7 +124,7 @@ Our refund policy outlines the terms under which refunds will be granted for our
 **2. Cancellation Policy:**
 
 - Users can cancel their subscription at any time through their account settings.
-- Cancellations will take effect at the end of the current billing cycle. No prorated refunds will be issued for partial months or years.
+- Cancellations will take effect at the end of the current annual billing term. No prorated refunds will be issued for the unused portion of the annual term.
 
 ## Exceptional Circumstances
 

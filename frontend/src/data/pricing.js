@@ -35,8 +35,7 @@ export const QUIZ = {
   priority: ["Stop leakage & theft", "Serve faster", "Bring customers back", "Control multiple outlets", "Go online / delivery"],
 };
 
-export const ANNUAL_MONTHS = 10; // pay 10, get 12
-export const ANNUAL_SAVINGS_PCT = 17;
+export const MONTHS_PER_YEAR = 12; // annual-only billing: per-month price × 12 = yearly total
 
 export const planById = (id) => PLANS.find((p) => p.id === id);
 export const addonById = (id) => ADDONS.find((a) => a.id === id);

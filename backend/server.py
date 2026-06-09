@@ -352,7 +352,7 @@ class QuoteCreate(BaseModel):
     intent: str = "demo"  # 'buy' | 'demo'
     plan_id: str
     plan_name: str
-    billing_cycle: str = "monthly"  # 'monthly' | 'annual'
+    billing_cycle: str = "annual"  # annual-only (no monthly plan)
     addon_ids: List[str] = []
     addon_names: List[str] = []
     total_amount: float = 0

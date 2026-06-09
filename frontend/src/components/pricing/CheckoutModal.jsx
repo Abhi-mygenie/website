@@ -76,7 +76,8 @@ export default function CheckoutModal({ open, intent, config, onClose }) {
             <div className="mt-2 rounded-xl bg-brand-sand p-3 text-sm" data-testid="checkout-config">
               <span className="font-semibold text-brand-ink">{config.plan.name}</span>
               <span className="text-brand-muted"> · {config.addons.length} add-on{config.addons.length !== 1 ? "s" : ""} · </span>
-              <span className="font-semibold text-brand-green">₹{config.total.toLocaleString("en-IN")}{config.billing === "annual" ? "/yr" : "/mo"}</span>
+              <span className="font-semibold text-brand-green">₹{config.monthly.toLocaleString("en-IN")}/mo</span>
+              <span className="text-brand-muted"> · billed annually (₹{config.total.toLocaleString("en-IN")}/yr)</span>
             </div>
 
             <div className="space-y-3 mt-4">

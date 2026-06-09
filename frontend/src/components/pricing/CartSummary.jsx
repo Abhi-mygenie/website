@@ -1,13 +1,12 @@
-import { ShoppingCart, ArrowRight, CalendarClock } from "lucide-react";
-import { ANNUAL_MONTHS } from "@/data/pricing";
+import { ShoppingCart, ArrowRight, CalendarClock, CalendarCheck } from "lucide-react";
+import { MONTHS_PER_YEAR } from "@/data/pricing";
 import { EditableText } from "@/components/cms/Editable";
 
 const inr = (n) => "₹" + n.toLocaleString("en-IN");
 
-export default function CartSummary({ plan, addons, billing, setBilling, onBuy, onDemo }) {
+export default function CartSummary({ plan, addons, onBuy, onDemo }) {
   const monthly = plan.price + addons.reduce((s, a) => s + a.price, 0);
-  const annualYear = monthly * ANNUAL_MONTHS;
-  const isAnnual = billing === "annual";
+  const annualYear = monthly * MONTHS_PER_YEAR;
 
   return (
     <div className="rounded-3xl border border-brand-line bg-white shadow-[0_18px_44px_rgba(0,0,0,0.08)] overflow-hidden" data-testid="cart-summary">
@@ -17,14 +16,10 @@ export default function CartSummary({ plan, addons, billing, setBilling, onBuy, 
           <h3 className="font-display text-lg font-bold">Your MyGenie plan</h3>
         </div>
 
-        {/* billing toggle */}
-        <div className="mt-4 flex rounded-full bg-white/10 p-1 text-sm font-semibold" data-testid="billing-toggle">
-          <button onClick={() => setBilling("monthly")} data-testid="billing-monthly" className={`flex-1 rounded-full py-1.5 transition-all ${!isAnnual ? "bg-white text-brand-deep" : "text-white/80"}`}>
-            <EditableText id="pricing.billing.monthly_label" fallback="Monthly" />
-          </button>
-          <button onClick={() => setBilling("annual")} data-testid="billing-annual" className={`flex-1 rounded-full py-1.5 transition-all ${isAnnual ? "bg-brand-yellow text-brand-deep" : "text-white/80"}`}>
-            <EditableText id="pricing.billing.annual_label" fallback="Annual · save 17%" />
-          </button>
+        {/* annual-only badge (no monthly plan) */}
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-yellow/20 text-brand-yellow px-3.5 py-1.5 text-sm font-semibold" data-testid="billing-annual-badge">
+          <CalendarCheck className="w-4 h-4" />
+          <EditableText id="pricing.billing.annual_label" fallback="Billed annually" />
         </div>
       </div>
 
@@ -47,16 +42,14 @@ export default function CartSummary({ plan, addons, billing, setBilling, onBuy, 
         <div className="mt-5 pt-4 border-t border-brand-line">
           <div className="flex items-end justify-between">
             <span className="text-sm text-brand-muted">
-              {isAnnual
-                ? <EditableText id="pricing.cart.total_annual_label" fallback="Total billed yearly" />
-                : <EditableText id="pricing.cart.total_monthly_label" fallback="Total per month" />}
+              <EditableText id="pricing.cart.total_annual_label" fallback="Your price" />
             </span>
             <div className="text-right">
               <p className="font-display text-3xl font-bold text-brand-green leading-none" data-testid="cart-total">
-                {inr(isAnnual ? annualYear : monthly)}
+                {inr(monthly)}<span className="text-base font-semibold">/mo</span>
               </p>
-              <p className="text-xs text-brand-muted mt-1">
-                {isAnnual ? `≈ ${inr(Math.round(annualYear / 12))}/mo · per outlet` : "per outlet"}
+              <p className="text-xs text-brand-muted mt-1" data-testid="cart-annual-total">
+                billed annually · {inr(annualYear)}/yr · per outlet
               </p>
             </div>
           </div>
@@ -68,7 +61,7 @@ export default function CartSummary({ plan, addons, billing, setBilling, onBuy, 
         <button onClick={onDemo} data-testid="cart-demo-btn" className="mt-3 w-full bg-white border-2 border-brand-orange/40 text-brand-orange hover:bg-brand-orange hover:text-white rounded-full py-3 font-semibold transition-all flex items-center justify-center gap-2">
           <CalendarClock className="w-5 h-5" /> Book a Demo with this quote
         </button>
-        <p className="text-xs text-brand-muted text-center mt-3">Prices are indicative. Final quote confirmed on your demo call.</p>
+        <p className="text-xs text-brand-muted text-center mt-3">All plans are billed annually. Final quote confirmed on your demo call.</p>
       </div>
     </div>
   );

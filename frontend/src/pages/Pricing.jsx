@@ -11,7 +11,7 @@ import Seo from "@/components/site/Seo";
 import { EditableText, EditableList } from "@/components/cms/Editable";
 import { useContent } from "@/lib/cms/CmsProvider";
 import { PAGE_SEO } from "@/lib/seo";
-import { PLANS, ADDONS, ANNUAL_MONTHS, alsoAdded } from "@/data/pricing";
+import { PLANS, ADDONS, MONTHS_PER_YEAR, alsoAdded } from "@/data/pricing";
 
 const inr = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 
@@ -62,7 +62,6 @@ function mergeById(base, overrides, numericKeys = []) {
 }
 
 export default function Pricing() {
-  const [billing, setBilling] = useState("monthly");
   const [selectedPlanId, setSelectedPlanId] = useState("pro");
   const [selectedAddons, setSelectedAddons] = useState(["loyalty_wallet"]);
   const [reason, setReason] = useState("");
@@ -119,8 +118,8 @@ export default function Pricing() {
   );
 
   const monthly = plan.price + onAddons.reduce((s, a) => s + a.price, 0);
-  const total = billing === "annual" ? monthly * ANNUAL_MONTHS : monthly;
-  const config = { plan, addons: onAddons, billing, total, outletType, wasRecommended };
+  const total = monthly * MONTHS_PER_YEAR;
+  const config = { plan, addons: onAddons, billing: "annual", monthly, total, outletType, wasRecommended };
 
   return (
     <div className="bg-white" data-testid="pricing-page">
@@ -138,7 +137,7 @@ export default function Pricing() {
               <EditableText id="pricing.hero.h1" fallback="Build your MyGenie plan." />
             </h1>
             <p className="mt-4 text-lg text-brand-muted">
-              <EditableText id="pricing.hero.sub" fallback="Pick a base plan, add only what you need, and see your price update live. Buy online or book a demo with your exact quote." />
+              <EditableText id="pricing.hero.sub" fallback="Pick a base plan, add only what you need, and see your price update live — all plans are billed annually. Buy online or book a demo with your exact quote." />
             </p>
           </div>
 
@@ -158,7 +157,7 @@ export default function Pricing() {
                   render={() => (
                     <div className="grid sm:grid-cols-2 gap-5">
                       {PLANS_M.map((p) => (
-                        <PlanCard key={p.id} plan={p} billing={billing} selected={selectedPlanId === p.id} recommended={recPlanId === p.id} onSelect={setSelectedPlanId} />
+                        <PlanCard key={p.id} plan={p} selected={selectedPlanId === p.id} recommended={recPlanId === p.id} onSelect={setSelectedPlanId} />
                       ))}
                     </div>
                   )}
@@ -221,8 +220,6 @@ export default function Pricing() {
                 <CartSummary
                   plan={plan}
                   addons={onAddons}
-                  billing={billing}
-                  setBilling={setBilling}
                   onBuy={() => setCheckout({ open: true, intent: "buy" })}
                   onDemo={() => setCheckout({ open: true, intent: "demo" })}
                 />
