@@ -1,6 +1,7 @@
 // Company / contact details — ported from the live mygenie.online site.
 export const COMPANY = {
   name: "MyGenie POS",
+  tagline: "Streamlined Hospitality. Exceptional Experience.",
   email: "support@mygenie.online",
   supportEmail: "customersupport@mygenie.online",
   privacyEmail: "support@mail.mygenie.online",

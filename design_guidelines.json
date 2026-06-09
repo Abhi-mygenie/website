@@ -1,5 +1,5 @@
 {
-  "brand_lock": "MyGenie existing brand — NO rebrand. Direction 1b (refined hybrid).",
+  "brand_lock": "MyGenie existing brand — LOCKED 2026-06-09 (owner-confirmed). Logo: https://www.mygenie.online/asset/images/logo.svg (already live at /brand/logo.svg). Tagline: 'Streamlined Hospitality. Exceptional Experience.'",
   "theme": "Light theme (white + soft sand) with deep brand-green premium dark sections",
   "typography": {
     "fonts": {
@@ -8,13 +8,13 @@
     }
   },
   "colors": {
-    "brand_green": "#18A84A",
-    "brand_green_dark": "#138A3C",
+    "brand_green": "#10B981",
+    "brand_green_dark": "#059669",
     "deep_green_section": "#0C2A1A",
     "deep_green_surface": "#14331F",
-    "accent_orange": "#F26822",
+    "accent_orange": "#FF6B00",
     "accent_orange_soft": "#FFF1E8",
-    "accent_yellow": "#FFC529",
+    "accent_yellow": "#FFE100",
     "page_bg": "#FFFFFF",
     "soft_sand": "#F6F8F5",
     "text_primary": "#14201A",

@@ -10,13 +10,13 @@ module.exports = {
       },
       colors: {
         brand: {
-          green: "#18A84A",
-          greenDark: "#138A3C",
+          green: "#10B981",
+          greenDark: "#059669",
           deep: "#10402A",
           deepSurface: "#18512F",
-          orange: "#F26822",
+          orange: "#FF6B00",
           orangeSoft: "#FFF1E8",
-          yellow: "#FFC529",
+          yellow: "#FFE100",
           sand: "#F6F8F5",
           ink: "#14201A",
           muted: "#5B6B61",

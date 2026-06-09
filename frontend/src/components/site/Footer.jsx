@@ -11,7 +11,10 @@ export default function Footer({ onDemo }) {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-10">
           <div className="col-span-2">
             <Logo light />
-            <p className="mt-4 text-[15px] text-[#9DB1A4] max-w-xs leading-relaxed">
+            <p className="mt-4 text-sm font-semibold text-brand-yellow tracking-wide" data-testid="footer-tagline">
+              {COMPANY.tagline}
+            </p>
+            <p className="mt-2 text-[15px] text-[#9DB1A4] max-w-xs leading-relaxed">
               The hospitality operating system. More profit. Less chaos. Total control — across every outlet.
             </p>
             <button

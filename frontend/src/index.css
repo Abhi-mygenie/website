@@ -6,11 +6,11 @@
 @tailwind utilities;
 
 :root {
-  --brand-green: #18a84a;
-  --brand-green-dark: #138a3c;
+  --brand-green: #10b981;
+  --brand-green-dark: #059669;
   --deep-green: #0c2a1a;
-  --accent-orange: #f26822;
-  --accent-yellow: #ffc529;
+  --accent-orange: #ff6b00;
+  --accent-yellow: #ffe100;
 }
 
 * {

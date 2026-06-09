@@ -202,10 +202,12 @@ Rule: every AI sentence names a real hospitality task + an owner benefit (time, 
 ---
 
 ## Open inputs needed to lock branding (carry over from Strategy §19)
-1. Existing brand guidelines (logo, exact colors, fonts) — or are we free to define V2.4 visual identity?
-2. Final tagline preference from C10 options.
-3. Confirmation of which AI features are live vs roadmap (so AI tone stays honest).
-4. Approved client names/logos for proof-led content.
-5. Real aggregate numbers (outlets, ₹ saved, rating) to power proof-driven copy.
+
+### ✅ LOCKED 2026-06-09 (owner-confirmed)
+1. **Brand assets — LOCKED.** Use existing brand (no rebrand). **Logo:** `https://www.mygenie.online/asset/images/logo.svg` (already live in the site at `/brand/logo.svg`). **Official colors:** Green `#10B981`, Orange `#FF6B00`, Yellow `#FFE100`; deep-green sections `#0C2A1A`. **Fonts:** Clash Display (headings) + Poppins (body). Applied across `tailwind.config.js` + `index.css` CSS vars.
+2. **Tagline — LOCKED:** **"Streamlined Hospitality. Exceptional Experience."** Stored in `data/company.js` (`COMPANY.tagline`) and shown under the footer logo. ⚠️ Tone note: this differs from the §C10 options and leans on "Exceptional Experience" (which §C9 generally rewrites away from) — owner-chosen, applied as-is.
+3. Confirmation of which AI features are live vs roadmap (so AI tone stays honest). — ⏳ still open (content checklist item 12).
+4. Approved client names/logos for proof-led content. — ⏳ still open (content checklist items 8, 9).
+5. Real aggregate numbers (outlets, ₹ saved, rating) to power proof-driven copy. — ⏳ still open (content checklist item 7).
 
 *This playbook pairs with `MyGenie_POS_V2.4_Website_Strategy.md`. Together they give the copywriter (content + tone), the brand/designer (branding + visual), and the implementation team a complete, ready-to-build voice and identity system.*
