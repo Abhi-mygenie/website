@@ -83,6 +83,12 @@ export default function Pricing() {
     [selectedAddons, plan, ADDONS_M]
   );
 
+  // Add-ons that come free with the chosen plan — surfaced in the cart at ₹0.
+  const includedAddons = useMemo(
+    () => plan.includedAddons.map((id) => byId(ADDONS_M, id)).filter(Boolean),
+    [plan, ADDONS_M]
+  );
+
   const toggleAddon = (id) =>
     setSelectedAddons((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
@@ -220,6 +226,7 @@ export default function Pricing() {
                 <CartSummary
                   plan={plan}
                   addons={onAddons}
+                  includedAddons={includedAddons}
                   onBuy={() => setCheckout({ open: true, intent: "buy" })}
                   onDemo={() => setCheckout({ open: true, intent: "demo" })}
                 />

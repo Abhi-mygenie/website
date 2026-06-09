@@ -4,7 +4,7 @@ import { EditableText } from "@/components/cms/Editable";
 
 const inr = (n) => "₹" + n.toLocaleString("en-IN");
 
-export default function CartSummary({ plan, addons, onBuy, onDemo }) {
+export default function CartSummary({ plan, addons, includedAddons = [], onBuy, onDemo }) {
   const monthly = plan.price + addons.reduce((s, a) => s + a.price, 0);
   const annualYear = monthly * MONTHS_PER_YEAR;
 
@@ -29,12 +29,27 @@ export default function CartSummary({ plan, addons, onBuy, onDemo }) {
           <span className="text-brand-ink">{inr(plan.price)}/mo</span>
         </div>
 
-        <div className="mt-3 space-y-2 max-h-52 overflow-auto">
-          {addons.length === 0 && <p className="text-sm text-brand-muted">No add-ons yet — everything in your plan is included.</p>}
+        <div className="mt-3 space-y-2 max-h-60 overflow-auto">
+          {addons.length === 0 && includedAddons.length === 0 && (
+            <p className="text-sm text-brand-muted">No add-ons yet — everything in your plan is included.</p>
+          )}
+
+          {/* Paid add-ons */}
           {addons.map((a) => (
             <div key={a.id} className="flex items-center justify-between text-sm" data-testid={`cart-addon-${a.id}`}>
               <span className="text-brand-muted">+ {a.name}</span>
               <span className="text-brand-ink">{inr(a.price)}/mo</span>
+            </div>
+          ))}
+
+          {/* Add-ons included free with the chosen plan — shown at ₹0 */}
+          {includedAddons.map((a) => (
+            <div key={a.id} className="flex items-center justify-between text-sm" data-testid={`cart-included-${a.id}`}>
+              <span className="text-brand-muted flex items-center gap-1.5">
+                + {a.name}
+                <span className="inline-flex items-center rounded-full bg-brand-green/10 text-brand-green text-[10px] font-bold px-1.5 py-0.5">INCLUDED</span>
+              </span>
+              <span className="text-brand-green font-semibold">₹0/mo</span>
             </div>
           ))}
         </div>
