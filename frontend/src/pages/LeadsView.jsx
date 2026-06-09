@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import {
   Search, Download, ExternalLink, ShieldCheck, Filter, RefreshCw,
   LogOut, ChevronLeft, ChevronRight, Smartphone, Monitor,
@@ -128,11 +129,11 @@ export default function LeadsView() {
     return p;
   }, [filters]);
 
-  const load = useCallback(async (pageArg = 1) => {
+  const load = useCallback(async (pageArg = 1, overrides = {}) => {
     if (!token || !authed) return;
     setLoading(true);
     try {
-      const p = buildQuery();
+      const p = buildQuery(overrides);
       p.set("page", String(pageArg));
       p.set("page_size", "25");
       const res = await fetch(`${API}/api/cms/leads?${p.toString()}`, {
@@ -157,29 +158,35 @@ export default function LeadsView() {
   const onSearch = (val) => {
     setFilters((f) => ({ ...f, q: val }));
     clearTimeout(searchTimer.current);
-    searchTimer.current = setTimeout(() => load(1), 350);
+    searchTimer.current = setTimeout(() => load(1, { q: val }), 350);
   };
 
   const exportCsv = async () => {
-    const p = buildQuery();
-    p.set("page", "1");
-    p.set("page_size", "1000");
-    const res = await fetch(`${API}/api/cms/leads?${p.toString()}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const json = await res.json();
-    const cols = ["created_at", "type", "intent", "name", "phone", "email", "city",
-      "otp_verified", "paid", "source", "medium", "campaign", "summary", "freshsales_contact_id"];
-    const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-    const lines = [cols.join(",")];
-    (json.items || []).forEach((r) => lines.push(cols.map((c) => esc(r[c])).join(",")));
-    const blob = new Blob([lines.join("\n")], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `mygenie-leads-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const p = buildQuery();
+      p.set("page", "1");
+      p.set("page_size", "1000");
+      const res = await fetch(`${API}/api/cms/leads?${p.toString()}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("export failed");
+      const json = await res.json();
+      const cols = ["created_at", "type", "intent", "name", "phone", "email", "city",
+        "otp_verified", "paid", "source", "medium", "campaign", "summary", "freshsales_contact_id"];
+      const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+      const lines = [cols.join(",")];
+      (json.items || []).forEach((r) => lines.push(cols.map((c) => esc(r[c])).join(",")));
+      const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `mygenie-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success(`Exported ${(json.items || []).length} leads`);
+    } catch {
+      toast.error("CSV export failed");
+    }
   };
 
   const signOut = () => { localStorage.removeItem(TOKEN_KEY); setToken(null); setAuthed(false); };

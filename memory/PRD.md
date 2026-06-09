@@ -144,3 +144,19 @@ REPOINT the `GAds - Book Demo` tag to fire on the `lead_verified` trigger (NOT `
 - **Owner GTM:** created `calendly Trigger` (demo_booked) + `GA4 - Book Appointment` tag; container PUBLISHED. Google Ads "Book appointments" is import-from-clicks (no tag/label) → use GA4 `demo_booked` key-event import route.
 - **Pre-deploy fixes:** unblocked `.env` in `.gitignore`; re-added missing `REACT_APP_GTM_ID=GTM-K5D84Z3L` (critical — GTM host-gated to www.mygenie.online, no tags fire in prod without it). deployment_agent → PASS.
 - **NEXT (owner):** Deploy → main agent re-registers Calendly webhook → 1 test booking + GTM Preview/GA4 Realtime verify → finish Google Ads "Book appointment" conversion from GA4 event → set Primary + kill Zapier import → unpause OTP-Verified tags → #1 Enhanced Conversions/Advanced Matching → #3/#4/#5/#2 mappings.
+
+## CR-7 — Internal Leads View — ✅ BUILT & QA-PASSED (2026-06-09, iteration_12)
+- Read-only sales-triage page at `/leads` (reuses CMS JWT login: admin/admin123). Endpoint `GET /api/cms/leads` behind `cms_auth.get_current_admin`.
+- Backend `backend/leads.py` normalises `demo_requests`/`quotes`/`contact_messages` into one row shape (type, intent, name, phone, email, city, source/campaign, paid [has gclid|fbclid|gbraid|wbraid|msclkid], otp_verified, device, freshsales_url). In-memory filter + paginate (low-volume marketing site). Filters: type, verified, paid, city, date_from/date_to (date_to inclusive), q (free-text). Summary chips: total, today, demo_total, verified, paid.
+- Frontend `pages/LeadsView.jsx`: self-contained login gate (reuses `cms_token` in localStorage), unified table, summary chips, filters, CSV export (client-side, page_size up to 1000), Open-in-Freshsales links. Route in `App.js` at `/leads`.
+- Tests: `backend/tests/test_leads.py` (9/9 pass). Seed: `backend/scripts/seed_leads.py` (idempotent, ids `seed_`).
+- Bug fixed during QA: stale-closure in search debounce → pass `q` override to `load(1,{q})`; CSV export wrapped in try/catch + toast.
+
+## Pre-Production Checklist (Excel)
+- `/app/Pre_Production_Checklist.xlsx` (generator `scripts/generate_checklist.py`). Tabs: Summary, SEO, GA4, Meta, Google Ads, Deployment — each with Owner + Status + Priority columns.
+
+## NEXT / BACKLOG (post CR-7)
+- BLOCKED on owner deploy: production cutover + Cloudflare 301s (SEO Gate 1), re-register Calendly webhook to prod URL, turn off Zapier appointment import.
+- CR-2 missing CRM field mapping (blocked on owner creating `cf_` fields in Freshsales).
+- CR-6 Inline CMS Phase 3 (hardcoded-copy extraction, icon picker, SEO popover, footer/company).
+- CR-3B #8 user_id cross-device tracking (blocked on login/portal).
