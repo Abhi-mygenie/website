@@ -25,6 +25,7 @@ import freshsales
 import antijunk
 import otp
 import geo
+import leads as leads_view
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -590,9 +591,29 @@ async def cms_media_serve(name: str):
     return Response(content=data, media_type=ct)
 
 
+# ----------------------- CR-7: Internal Leads View (read-only) -----------------------
+@api_router.get("/cms/leads")
+async def cms_leads(
+    admin: str = Depends(cms_auth.get_current_admin),
+    type: str | None = None,
+    verified: bool | None = None,
+    paid: bool | None = None,
+    city: str | None = None,
+    date_from: str | None = None,
+    date_to: str | None = None,
+    q: str | None = None,
+    page: int = 1,
+    page_size: int = 25,
+):
+    page_size = max(1, min(page_size, 1000))
+    return await leads_view.query_leads(
+        db, type=type, verified=verified, paid=paid, city=city,
+        date_from=date_from, date_to=date_to, q=q, page=page, page_size=page_size,
+    )
+
+
 # Include the router in the main app
 app.include_router(api_router)
-
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

@@ -1,0 +1,40 @@
+{
+  "summary": "Tested CR-7 Internal Leads View end-to-end (backend pytest + frontend Playwright). Backend: 9/9 pytest cases pass; all curl checks (verified/paid/type/q/pagination/401) pass. Frontend: login gate, table render, OTP-verified filter, paid filter, type filter (quote/contact), city filter, summary chips, CSV download, freshsales URL, and sign-out all work. ONE BUG FOUND: the free-text search has a stale-closure bug — when typing fast or when value is set atomically the API call lags one keystroke behind (or fires with empty q), so the rendered rows can be out of sync with the input. Real typing eventually self-corrects after the next keystroke, but the bug is reproducible and should be fixed.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Free-text search on /leads",
+        "issue": "Stale closure in onSearch debounce: setTimeout captures the `load` callback from the render BEFORE setFilters({q}) commits, so the API call uses the prior `filters.q` value. When typing keystroke-by-keystroke the q sent is always one character behind (e.g. typed 'delhi' -> request q=delh). When the input is set atomically (e.g. paste/programmatic fill) only one debounced call fires with q='' and no filtering happens. useEffect deps (line 151-155) also omit filters.q so the search never re-triggers naturally.",
+        "affected_selectors": ["[data-testid=\"leads-search\"]"],
+        "priority": "MEDIUM"
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_leads.py",
+    "/app/test_reports/pytest/iteration_12.xml"
+  ],
+  "action_items": [
+    "Fix stale-closure search bug in /app/frontend/src/pages/LeadsView.jsx (onSearch). Suggested fix: either (a) add `filters.q` to the useEffect dependency list and move the debounce inside the effect, or (b) pass q as an override to load — e.g. `load(1, { q: val })` — and have load/buildQuery use the override instead of the closed-over filters, or (c) keep a ref to the latest load via useRef and call ref.current(1) inside setTimeout."
+  ],
+  "critical_code_review_comments": [
+    "LeadsView.jsx: `onSearch` setTimeout uses stale `load` reference; combine with q missing from useEffect deps → search filter is unreliable (see action_items).",
+    "leads.py uses `type` as a kwarg/local variable which shadows the builtin (line 136, 146). Minor style issue, not a bug.",
+    "leads.py FETCH_CAP=5000 per collection is fine for current volume but should be paged at the DB level if collections grow; in-memory merge is acceptable given the stated low-volume marketing-site assumption (documented in module docstring).",
+    "LeadsView.jsx CSV export silently fails if the API returns an error (no try/catch around exportCsv). Consider surfacing a toast on failure."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "92%"},
+  "test_credentials": "CMS admin/admin123 (and editor/editor123) — verified working against /api/cms/login.",
+  "seed_data_creation": "Ran /app/backend/scripts/seed_leads.py — created seed_d1 (Ravi Kumar, Mumbai, OTP-verified, gclid-paid), seed_d2 (Sneha Patel, Ahmedabad, unverified), seed_q1 (Arjun Mehta, Pune, fbclid-paid, Pro plan), seed_c1 (Priya Singh, Delhi). Script is idempotent.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All filters except free-text search verified working through UI. Backend is fully green (9/9 pytest + curl probes). After main agent fixes the onSearch stale-closure issue, re-test by: (1) calling page.fill on [data-testid=\"leads-search\"] with 'delhi' and asserting only Priya Singh row appears after ~600ms, (2) typing 'ravi' keystroke-by-keystroke and asserting the final API call query string contains q=ravi (not q=rav).",
+  "rca_of_the_issue": "Reproduction: navigate to /leads, log in as admin/admin123, programmatically fill the search box ([data-testid=leads-search]) with 'delhi'. Observed: all 4 leads remain visible; network shows NO request with q=delhi (or with stale-empty q only one request). Root cause: in LeadsView.jsx the `onSearch` handler does `setFilters({q})` and then `setTimeout(load, 350)`. Both `onSearch` and the `load` it references are React-render-scoped closures; the setFilters causes a re-render that produces a NEW `load` with the new filters, but the setTimeout was scheduled with the OLD `load`. The OLD load -> OLD buildQuery -> OLD filters.q (empty/previous char). Additionally `filters.q` is excluded from the useEffect deps array on lines 151-155, so the search never re-triggers via that path either. Mitigation: pass the new q explicitly into load (load already supports query overrides via buildQuery's first arg), OR use a useRef to track the latest load, OR debounce inside a useEffect that depends on filters.q."
+}

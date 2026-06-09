@@ -17,6 +17,7 @@ import BlogPost from "@/pages/BlogPost";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Legal from "@/pages/Legal";
+import LeadsView from "@/pages/LeadsView";
 import CmsAdminLayer from "@/components/cms/CmsAdminLayer";
 import ConsentBanner from "@/components/site/ConsentBanner";
 import { REDIRECTS } from "@/data/redirects";
@@ -66,6 +67,9 @@ function App() {
           <Route path="/terms" element={<Legal doc="terms" path="/terms" />} />
           <Route path="/privacy" element={<Legal doc="privacy" path="/privacy" />} />
           <Route path="/refund" element={<Legal doc="refund" path="/refund" />} />
+
+          {/* CR-7 — Internal Leads View (CMS-auth gated) */}
+          <Route path="/leads" element={<LeadsView />} />
 
           {/* 301-equivalent redirects from old live-site URLs */}
           {Object.entries(REDIRECTS).map(([from, to]) => (
