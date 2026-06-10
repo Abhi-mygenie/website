@@ -23,8 +23,8 @@
   .inkbg{ background:var(--ink); color:var(--sand); }
   .over{ font-size:11pt; font-weight:700; letter-spacing:3px; text-transform:uppercase; }
   .glow{ position:absolute; border-radius:50%; filter:blur(70px); }
-  .logo-chip{ display:inline-flex; background:#fff; border-radius:12px; padding:8px 13px; }
-  .logo-chip img{ height:24px; display:block; }
+  .logo-chip{ display:inline-flex; background:#fff; border-radius:16px; padding:12px 20px; }
+  .logo-chip img{ height:44px; display:block; }
   .pill{ display:inline-block; background:var(--green); color:#fff; font-weight:700; font-size:12pt; padding:13px 28px; border-radius:999px; }
   .ic{ width:60px; height:60px; stroke:var(--green); stroke-width:1.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
   .chk{ width:18px;height:18px;stroke:var(--green);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none; }
@@ -107,9 +107,12 @@
 <!-- ============ PAGE 1 — COVER ============ -->
 <div class="page deepbg" data-testid="page-cover">
   <div class="glow" style="width:360px;height:360px;background:var(--green);opacity:.45;top:-110px;right:-90px;"></div>
-  <div class="cover-head" style="position:relative;">
-    <div class="logo-chip"><img src="file:///app/frontend/public/brand/logo.svg"/></div>
-    <div class="over" style="color:var(--green);font-size:9.5pt;">The Hospitality Operating System</div>
+  <div class="cover-head" style="position:relative;align-items:flex-start;">
+    <div>
+      <div class="logo-chip"><img src="file:///app/frontend/public/brand/logo.svg"/></div>
+      <div class="disp" style="color:var(--yellow);font-size:13pt;margin-top:5mm;letter-spacing:0.01em;">Streamlined Hospitality. Exceptional Experience.</div>
+    </div>
+    <div class="over" style="color:var(--green);font-size:9.5pt;margin-top:4mm;">The Hospitality Operating System</div>
   </div>
   <div class="cover-mid" style="position:relative;">
     <h1 class="disp cover-h1">Run a more profitable hospitality business — <span style="color:var(--yellow);">from your phone.</span></h1>
