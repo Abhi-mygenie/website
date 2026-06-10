@@ -1,39 +1,112 @@
 {
-  "brand_lock": "MyGenie existing brand — LOCKED 2026-06-09 (owner-confirmed). Logo: https://www.mygenie.online/asset/images/logo.svg (already live at /brand/logo.svg). Tagline: 'Streamlined Hospitality. Exceptional Experience.'",
-  "theme": "Light theme (white + soft sand) with deep brand-green premium dark sections",
+  "theme": "Light & Dark Spread System (A4 Print-Ready)",
+  "archetype": "4 (Swiss & High-Contrast) + Editorial Density",
   "typography": {
     "fonts": {
-      "headings": { "family": "Clash Display, Poppins, sans-serif", "weights": ["600", "700"], "reason": "Characterful display face paired with brand font; handles giant profit numbers." },
-      "body": { "family": "Poppins, sans-serif", "weights": ["400", "500", "600", "700"], "reason": "MyGenie's existing brand font — kept for continuity." }
-    }
+      "headings": "'Clash Display', sans-serif",
+      "body": "'Poppins', sans-serif",
+      "numbers": "'Clash Display', sans-serif"
+    },
+    "hierarchy": {
+      "h1_massive": "text-[80px] leading-[0.85] tracking-tighter font-semibold",
+      "h1_cover": "text-[100px] leading-[0.85] tracking-tighter font-semibold",
+      "h2": "text-[64px] leading-none tracking-tight font-semibold",
+      "h3": "text-[40px] leading-[1.1] font-semibold",
+      "h4": "text-[24px] leading-snug font-semibold",
+      "body_large": "text-[18px] leading-relaxed",
+      "body": "text-[14px] leading-normal",
+      "overline": "text-[12px] uppercase tracking-widest font-bold",
+      "hero_number": "text-[120px] leading-none font-bold tracking-tighter"
+    },
+    "rules": [
+      "Headings NEVER use Poppins. Body NEVER uses Clash Display.",
+      "Use extremely tight line-heights on large text to maintain editorial density.",
+      "Numbers must always use Clash Display and be treated as graphic elements."
+    ]
   },
   "colors": {
-    "brand_green": "#10B981",
-    "brand_green_dark": "#059669",
-    "deep_green_section": "#0C2A1A",
-    "deep_green_surface": "#14331F",
+    "primary": "#10B981",
+    "primary_hover": "#059669",
     "accent_orange": "#FF6B00",
-    "accent_orange_soft": "#FFF1E8",
     "accent_yellow": "#FFE100",
-    "page_bg": "#FFFFFF",
-    "soft_sand": "#F6F8F5",
-    "text_primary": "#14201A",
-    "text_secondary": "#5B6B61",
+    "bg_dark_premium": "#0C2A1A",
+    "bg_dark_secondary": "#14331F",
+    "ink": "#14201A",
+    "muted": "#5B6B61",
+    "sand": "#F6F8F5",
     "line": "#E6EAE6",
-    "on_dark": "#F6F8F5",
-    "on_dark_secondary": "#9DB1A4"
+    "white": "#FFFFFF"
   },
-  "rules": [
-    "Keep MyGenie green as the primary/CTA color; orange as secondary accent; yellow sparingly.",
-    "Deep brand-green (#0C2A1A) for premium dark sections (Before/After, AI band).",
-    "Numbers/metrics (25%, ₹1 Lakh, 40%) are hero visual elements — massive, in green or orange.",
-    "Headings in Clash Display, body in Poppins. Never Inter/Roboto.",
-    "Asymmetric bento grids; pill buttons; lucide-react icons; never emoji.",
-    "Every interactive/info element gets a kebab-case data-testid."
+  "spacing_and_layout": {
+    "page_dimensions": "w-[210mm] h-[297mm] overflow-hidden relative bg-sand break-inside-avoid shadow-2xl shrink-0 print:shadow-none print:m-0",
+    "safe_margins": "p-12",
+    "grid_system": "grid grid-cols-12 gap-6",
+    "density_strategies": [
+      "Zero dead space: Stretch elements to fill vertical height (h-full) where possible.",
+      "Color Blocking: Use 50/50 horizontal or vertical background splits to anchor text.",
+      "Oversized Typography: If an image is missing, scale the H2 or metric number to take up 50% of the page.",
+      "Bleed Borders: Push borders and dividers to the absolute edge of the safe margin or bleed off page.",
+      "Motif: 'Before/After' split - strict diagonal or vertical line dividing two high-contrast panels."
+    ]
+  },
+  "page_layouts": {
+    "page_1_cover": {
+      "background": "bg_dark_premium",
+      "structure": "Top: White logo chip + Tagline. Center: Massive H1 scaled to fill width. Bottom: High-contrast Orange block for hero stat.",
+      "density_hack": "The hero stat block should occupy the bottom 30% of the A4 height. Inside it, use a watermarked (10% opacity) '25%' taking up the entire block."
+    },
+    "page_2_problem": {
+      "background": "bg-sand",
+      "structure": "2x2 Bento Grid stretching to fill page height. Header tight at top.",
+      "density_hack": "Each problem card has a massive Ink-colored number (01-04) pinned to the background. Cards have thick 2px #E6EAE6 borders."
+    },
+    "page_3_solution": {
+      "background": "bg-ink text-sand",
+      "structure": "Asymmetrical Grid. Top 40%: One massive horizontal card for 'Sell & Serve Faster'. Bottom 60%: 2x2 grid for remaining 4 buckets.",
+      "density_hack": "Use Emerald Green icons at 80px size. Text is scaled up. Card backgrounds are #14331F."
+    },
+    "page_4_proof": {
+      "background": "Split screen: Top half bg-sand, bottom half bg_dark_premium",
+      "structure": "Top: 4 metrics in a tight 2x2 grid. Bottom: Massive quotation mark (Yellow), testimonial, and placeholder logo strip.",
+      "density_hack": "Metrics must be text-[80px] in Emerald and Orange. The logo strip can be geometric blocks (squares/circles in #14331F) if real logos are missing."
+    },
+    "page_5_ai": {
+      "background": "bg-white",
+      "structure": "4 vertical columns, or 4 horizontal stripes stretching edge-to-edge.",
+      "density_hack": "Use massive outline typography ('A.I.') bleeding off the background behind the use-cases."
+    },
+    "page_6_sectors": {
+      "background": "bg-sand",
+      "structure": "Dense masonry or 3x4 grid for 11 sectors. 12th slot is a solid Emerald brand block.",
+      "density_hack": "Solid 1px #E6EAE6 borders forming a 'Technical/Control Room' grid. No gaps between cells (border-collapse look)."
+    },
+    "page_7_pricing": {
+      "background": "bg-white",
+      "structure": "4-column strict table stretching from top margin to bottom margin.",
+      "density_hack": "Pro column has bg_dark_premium. Reassurance row at bottom spans all 4 columns. Use large 'Billed Annually' text rotated 90deg along the left margin."
+    },
+    "page_8_back_cover": {
+      "background": "bg_dark_secondary",
+      "structure": "Massive CTA taking up top 40%. Central floating white card for QR code. Footer block for contacts.",
+      "density_hack": "Scale contact numbers/emails to text-[40px]. Use massive Lucide icons."
+    }
+  },
+  "components": {
+    "cards": {
+      "default": "p-8 border border-line bg-white h-full flex flex-col",
+      "dark": "p-8 border border-white/10 bg-[#14331F] h-full flex flex-col text-sand"
+    },
+    "numbers": {
+      "hero_metric": "text-accent_orange font-bold text-[80px] leading-[0.9]",
+      "watermark": "absolute -bottom-4 -right-4 text-[200px] font-black text-ink/5"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Build this as an HTML/CSS multi-page layout. Wrap everything in a container that renders individual A4 pages: `w-[210mm] h-[297mm]`",
+    "Use page-break-after: always or break-inside-avoid for print rendering.",
+    "Implement the density hacks to ensure there is zero empty space. If an image is missing, scale the typography or use color-blocked backgrounds.",
+    "Do NOT use generic Shadcn web UI components for this; build bespoke editorial print-style layouts using pure Tailwind CSS divs.",
+    "Apply `data-testid` to all major sections, buttons, and metrics for automated testing."
   ],
-  "images": {
-    "hero_owner": "https://images.pexels.com/photos/4339955/pexels-photo-4339955.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    "kitchen": "https://images.pexels.com/photos/12821628/pexels-photo-12821628.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    "floor_manager": "https://images.unsplash.com/photo-1530698060343-ae5da1a26d7f?crop=entropy&cs=srgb&fm=jpg&q=85&w=940"
-  }
+  "image_urls": {}
 }
