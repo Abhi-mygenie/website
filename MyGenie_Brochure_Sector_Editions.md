@@ -31,3 +31,61 @@
 - Headline: One brain for every outlet.
 - Cards: Multi-outlet stock visibility · Inter-outlet transfers · Central procurement · AI auto-reorder & forecast · Central recipe & BOM costing · Variance & theft detection
 - Line: Role-based access + consolidated reporting — run the group without flying to each outlet.
+
+================================================================
+## EDITION 2 — HOTELS & RESORTS — APPROVED 2026-06-09
+================================================================
+
+### P1 COVER (swapped)
+- H1: Rooms, restaurant, spa and bar — one app, one bill.
+- Hero stat: 20% revenue growth*
+- Sub: The hospitality operating system for hotels and resorts — even in low-internet properties.
+
+### P2 PROBLEM
+- Eyebrow: THE PROPERTY REALITY
+- Headline: Your property runs on five disconnected systems.
+- Intro: Rooms in one system, F&B in another, spa on paper — guests wait, and revenue slips between the cracks.
+- Pains: 1) Fragmented billing  2) Slow checkout  3) Low-internet blind spots  4) Leakage across departments
+- Transition: One property. One app. One bill.
+
+### P4 PROOF
+- Eyebrow: PROPERTIES RUNNING CALMER & RICHER
+- Headline: More revenue per guest, less chaos per shift.
+- Metrics: 20% revenue growth (Bamboo Yoga Retreat) · One consolidated bill across rooms+F&B+spa (Palm Forest) · Works fully offline in low-connectivity properties (Luxevista) · ₹1 Lakh leakage caught in 2 weeks (Rhino)
+- Quote: "Running F&B and wellness on one system lifted our revenue and made guest billing effortless."
+- CTA: Unify your property — book a demo.
+
+### P6 BUILT FOR HOTELS & RESORTS (deep-dive, 6 cards)
+- Eyebrow: ROOMS + F&B + WELLNESS, ONE OS
+- Headline: The whole property on one consolidated bill.
+- Cards: Hotel/room billing · Single checkout bill · Offline mode · Multi-outlet/property view · Guest CRM & loyalty · Audit & validations
+- Line: Built for resorts and low-internet properties — go live in under 48 hours.
+
+================================================================
+## EDITION 3 — QSR / CAFÉS — APPROVED 2026-06-09
+================================================================
+
+### P1 COVER (swapped)
+- H1: Clear the queue. Lock the drawer. Lift every bill.
+- Hero stat: +22% covers per shift*
+- Sub: The hospitality operating system for QSRs and cafés — fast billing, tight margins, repeat guests.
+
+### P2 PROBLEM
+- Eyebrow: THE PEAK-RUSH REALITY
+- Headline: At peak rush, every slow order costs you a customer.
+- Intro: Queues build, orders get mixed up, and thin margins leave no room for waste or leakage.
+- Pains: 1) Slow counters  2) Order errors  3) Drawer & discount leakage  4) One-time customers
+- Transition: Faster service, tighter margins, more repeat visits.
+
+### P4 PROOF
+- Eyebrow: FASTER SHIFTS, FATTER MARGINS
+- Headline: Speed that shows up in the numbers.
+- Metrics: +22% covers per shift (Terraria) · –40% order delays (La Fetta) · –28% ticket time (Bean Me Up) · 40% lower fixed cost (Love Bites)
+- Quote: "We run the whole shack on 3 phones. Table turnaround improved and costs dropped 40%."
+- CTA: Speed up every shift — book a demo.
+
+### P6 BUILT FOR QSR & CAFÉS (deep-dive, 6 cards)
+- Eyebrow: FAST COUNTERS, SMART MARGINS
+- Headline: Built for the way fast outlets actually run.
+- Cards: Lightning-fast billing · Scan & Order (QR) · QSR prepaid token flow · Ingredient-level inventory · Loyalty + WhatsApp · Drawer audit & validations
+- Line: Mobile-first — go live in under 48 hours on the phones you already have.
