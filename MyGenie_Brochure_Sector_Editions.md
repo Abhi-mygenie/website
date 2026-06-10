@@ -89,3 +89,129 @@
 - Headline: Built for the way fast outlets actually run.
 - Cards: Lightning-fast billing · Scan & Order (QR) · QSR prepaid token flow · Ingredient-level inventory · Loyalty + WhatsApp · Drawer audit & validations
 - Line: Mobile-first — go live in under 48 hours on the phones you already have.
+
+================================================================
+## EDITION 4 — RESTAURANTS — APPROVED 2026-06-09
+================================================================
+### P1 COVER (swapped)
+- H1: Turn more tables, with fewer mistakes.
+- Hero stat: 40% fewer order delays*
+- Sub: Full-service dining — captain to kitchen to owner dashboard, one OS.
+### P2 PROBLEM
+- Eyebrow: THE DINING-ROOM REALITY
+- Headline: You're leaving covers (and profit) on the table.
+- Pains: Slow table service · Order errors & lost chits · Staff dependency · No profit-per-item visibility
+### P4 PROOF
+- Headline: Faster floors, clearer P&L.
+- Metrics: 40% fewer order delays · 28% faster ticket times · +18% order profitability (Ubuntu) · ₹1 Lakh leakage caught (Rhino)
+- Quote: "Multiple waiters manage one table in real time — delays dropped 40%."
+### P6 BUILT FOR RESTAURANTS
+- Cards: Captain App · KOT/KDS · Recipe-level P&L · CRM & Loyalty · Scan & Order · Audit logs
+
+================================================================
+## EDITION 5 — CLOUD KITCHENS — APPROVED 2026-06-09
+================================================================
+### P1 COVER (swapped)
+- H1: Every brand, every aggregator — on one screen.
+- Hero stat: 40% lower fixed cost*
+- Sub: Swiggy, Zomato and multiple brands, unified into one backend.
+### P2 PROBLEM
+- Eyebrow: THE MULTI-BRAND REALITY
+- Headline: Five tablets and a spreadsheet is no way to scale.
+- Pains: Aggregator juggling · Multi-brand chaos · Inventory blind spots · Missed orders at peak
+### P4 PROOF
+- Headline: Run lean, launch fast.
+- Metrics: 40% lower fixed cost · 2× outlets on one backend (Pavan Pages) · commission-free direct delivery · central inventory across brands
+- Quote: "Launched a second kitchen on the same backend — revenue doubled, infra flat."
+### P6 BUILT FOR CLOUD KITCHENS
+- Cards: Aggregator sync (Swiggy/Zomato/Magicpin) · Multi-brand billing · Central inventory · Direct delivery link · KDS · Audit logs
+
+================================================================
+## EDITION 6 — FOOD COURTS — APPROVED 2026-06-09
+================================================================
+### P1 COVER (swapped)
+- H1: Many counters. One wallet. Auto-reconciled.
+- Hero stat: 35% less coordination time*
+- Sub: Every counter on a shared wallet, settled automatically.
+### P2 PROBLEM
+- Eyebrow: THE MULTI-VENDOR REALITY
+- Headline: Day's end shouldn't mean a messy manual settlement.
+- Pains: Multi-vendor settlement · No shared payment · Central reporting gaps · Queue build-up
+### P4 PROOF
+- Headline: One food court, one source of truth.
+- Metrics: 35% less coordination time · 1 wallet across every counter · automatic counter-wise settlement · consolidated reporting
+- Quote: "Settlement that took an hour now happens automatically."
+### P6 BUILT FOR FOOD COURTS
+- Cards: Central wallet / prepaid · Multi-counter billing · Consolidated reporting · Scan & order · Role-based access
+
+================================================================
+## EDITION 7 — CANTEENS & MESS — APPROVED 2026-06-09
+================================================================
+### P1 COVER (swapped)
+- H1: Every meal tracked. Every subsidy clean. Zero leakage.
+- Hero stat: 100% of meals tracked*
+- Sub: Prepaid balances, subsidies and headcounts — handled automatically.
+### P2 PROBLEM
+- Eyebrow: THE INSTITUTIONAL REALITY
+- Headline: Untracked meals quietly drain the budget.
+- Pains: Subsidy management · Prepaid balances · Consumption tracking · Leakage
+### P4 PROOF
+- Headline: Accountable to the last meal.
+- Metrics: 100% of meals tracked · ₹25,000/mo manpower saved · clean subsidy application · real-time WhatsApp reports
+- Quote: "Every subsidised meal is now logged against a headcount — leakage we couldn't even see before, gone."
+### P6 BUILT FOR CANTEENS & MESS
+- Cards: Wallet & prepaid · Coupons & subsidies · Consumption reports · Audit reports
+
+================================================================
+## EDITION 8 — BARS & PUBS — APPROVED 2026-06-09
+================================================================
+### P1 COVER (swapped)
+- H1: From happy hour to last call — tabs, pours and profit under control.
+- Hero stat: ₹1 Lakh theft caught in 2 weeks*
+- Sub: Manage tabs, track pour costs, control liquor, lock down the drawer.
+### P2 PROBLEM
+- Eyebrow: THE BAR REALITY
+- Headline: Open tabs and over-pours bleed margin all night.
+- Pains: Tab chaos & walkouts · Untracked pour costs · Liquor inventory blind spots · Counter theft
+### P4 PROOF
+- Headline: Tighter bar, fatter margin.
+- Metrics: ₹1 Lakh theft caught in 2 weeks (Rhino) · 40% lower fixed cost · controlled pour costs · walkout-proof running tabs
+- Quote: "A cashier was cancelling items after payment — audit logs exposed ₹1 lakh in two weeks."
+### P6 BUILT FOR BARS & PUBS
+- Cards: Bar tab management (open/split/merge/transfer) · Drink service & pour tracking · Liquor inventory control · Happy-hour pricing · Audit logs
+
+================================================================
+## EDITION 9 — BAKERIES — APPROVED 2026-06-09
+================================================================
+### P1 COVER (swapped)
+- H1: Advance orders, production and freshness — all in one app.
+- Hero stat: ₹25,000/mo saved*
+- Sub: Custom cakes, daily production and perishable stock, under control.
+### P2 PROBLEM
+- Eyebrow: THE BAKERY REALITY
+- Headline: Custom orders and perishables are easy to lose track of.
+- Pains: Advance & bulk orders · Production guesswork · Perishable inventory · Custom-order mix-ups
+### P4 PROOF
+- Headline: Lean ops, less waste.
+- Metrics: ₹25,000/mo manpower saved · +18% order profitability · 12% less wastage · never miss a celebration order
+- Quote: "The bakery is run by one person now, with real-time WhatsApp reports."
+### P6 BUILT FOR BAKERIES
+- Cards: Order management · Production planning · Perishable inventory control · Custom orders & deliveries
+
+================================================================
+## EDITION 10 — ICE CREAM & DESSERTS — APPROVED 2026-06-09
+================================================================
+### P1 COVER (swapped)
+- H1: Clear the queue. Cut the waste. Bring them back.
+- Hero stat: 20% more customers served daily*
+- Sub: Fast counters, seasonal menus and tight margins — handled.
+### P2 PROBLEM
+- Eyebrow: THE DESSERT-COUNTER REALITY
+- Headline: Evening rushes build lines and lose walk-ins.
+- Pains: Peak-hour queues · Seasonal menu churn · Topping & cone wastage · One-time footfall
+### P4 PROOF
+- Headline: Serve more, waste less.
+- Metrics: 20% more customers served daily (even offline) · ₹50,000+ saved on setup · live in 48 hours · controlled topping wastage
+- Quote: "MyGenie removed our Wi-Fi dependency — we serve 20% more customers daily."
+### P6 BUILT FOR ICE CREAM & DESSERTS
+- Cards: Fast counter billing · Scan & order · Ingredient & topping control · Loyalty & WhatsApp

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#10B981; --green-dark:#059669; --orange:#FF6B00; --yellow:#FFE100;
+    --deep:#0C2A1A; --deep2:#14331F; --ink:#14201A; --muted:#5B6B61; --sand:#F6F8F5; --line:#E6EAE6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  @page{ size:A4; margin:0; }
+  html,body{ font-family:'Poppins',sans-serif; color:var(--ink); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .page{ width:210mm; height:297mm; padding:16mm; position:relative; overflow:hidden; page-break-after:always; }
+  .page:last-child{ page-break-after:auto; }
+  .display{ font-family:'Clash Display','Poppins',sans-serif; font-weight:700; line-height:1.04; letter-spacing:-0.5px; }
+  .eyebrow{ font-size:10.5pt; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; }
+  .deepbg{ background:var(--deep); color:#fff; }
+  .sandbg{ background:var(--sand); }
+  .logo-chip{ display:inline-flex; background:#fff; border-radius:14px; padding:9px 14px; }
+  .logo-chip img{ height:26px; display:block; }
+  .pill{ display:inline-block; background:var(--green); color:#fff; font-weight:700; font-size:12pt; padding:13px 26px; border-radius:999px; }
+  .pill-ghost{ display:inline-block; border:2px solid rgba(255,255,255,.5); color:#fff; font-weight:600; font-size:11pt; padding:11px 24px; border-radius:999px; }
+  .glow{ position:absolute; border-radius:50%; filter:blur(60px); opacity:.5; }
+  .muted{ color:var(--muted); }
+  .footnote{ font-size:8pt; color:rgba(255,255,255,.55); }
+
+  /* COVER */
+  .cover-stat{ font-size:96pt; color:var(--orange); line-height:.9; }
+  .cover-h1{ font-size:38pt; }
+
+  /* cards */
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .pain{ background:#fff; border:1px solid var(--line); border-left:5px solid var(--orange); border-radius:14px; padding:18px 18px; }
+  .pain h4{ font-size:13.5pt; font-weight:700; margin-bottom:5px; }
+  .pain p{ font-size:10pt; color:var(--muted); line-height:1.45; }
+
+  .bucket{ background:var(--sand); border:1px solid var(--line); border-radius:16px; padding:18px; }
+  .bucket .dot{ width:30px;height:30px;border-radius:9px;background:var(--green);display:inline-block;margin-bottom:10px; }
+  .bucket h4{ font-size:13pt;font-weight:700;margin-bottom:4px; }
+  .bucket p{ font-size:9.5pt;color:var(--muted);line-height:1.4; }
+
+  .metric .num{ font-size:46pt; line-height:.95; }
+  .metric .lbl{ font-size:10pt; color:rgba(255,255,255,.8); margin-top:6px; line-height:1.35; }
+
+  .ai-row{ display:flex; gap:16px; align-items:flex-start; padding:15px 0; border-bottom:1px solid var(--line); }
+  .ai-row .n{ font-family:'Clash Display'; font-weight:700; font-size:22pt; color:var(--green); width:46px; flex:none; }
+  .ai-row h4{ font-size:13.5pt; font-weight:700; }
+  .ai-row p{ font-size:10pt; color:var(--muted); margin-top:2px; }
+
+  .sector-chip{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; font-weight:600; font-size:10.5pt; display:flex; align-items:center; gap:9px; }
+  .sector-chip .b{ width:9px;height:9px;border-radius:3px;background:var(--green);flex:none; }
+
+  .plan{ border:1px solid var(--line); border-radius:16px; padding:16px 14px; text-align:center; }
+  .plan.pop{ border:2px solid var(--green); box-shadow:0 10px 26px rgba(16,185,129,.16); }
+  .plan .nm{ font-family:'Clash Display'; font-weight:700; font-size:15pt; }
+  .plan .tg{ font-size:8.5pt; color:var(--muted); margin-top:3px; min-height:26px; }
+  .badge-pop{ display:inline-block; background:var(--green); color:#fff; font-size:7.5pt; font-weight:700; padding:3px 9px; border-radius:999px; letter-spacing:.5px; }
+  .reassure{ background:var(--sand); border-radius:14px; padding:14px 18px; font-size:9.5pt; color:var(--ink); font-weight:500; text-align:center; }
+
+  .contact-row{ font-size:11pt; line-height:2; }
+  .qr{ width:120px; height:120px; background:#fff; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+  .qr img{ width:104px; height:104px; }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 COVER -->
+<div class="page deepbg">
+  <div class="glow" style="width:340px;height:340px;background:var(--green);top:-90px;right:-90px;"></div>
+  <div class="glow" style="width:260px;height:260px;background:var(--orange);bottom:-80px;left:-70px;opacity:.35;"></div>
+  <div style="position:relative;height:100%;display:flex;flex-direction:column;">
+    <div class="logo-chip"><img src="/brochure/logo.svg" alt="MyGenie"/></div>
+    <div class="eyebrow" style="color:var(--green);margin-top:48px;">The Hospitality Operating System</div>
+    <h1 class="display cover-h1" style="margin-top:16px;max-width:150mm;">
+      Run a more profitable hospitality business — <span style="color:var(--yellow);">from your phone.</span>
+    </h1>
+    <div style="margin-top:auto;">
+      <div style="font-size:13pt;color:rgba(255,255,255,.8);font-weight:600;">Up to</div>
+      <div class="display cover-stat">25%</div>
+      <div style="font-size:18pt;font-weight:700;margin-top:2px;">more profit*</div>
+      <p style="font-size:11.5pt;color:rgba(255,255,255,.8);margin-top:18px;max-width:135mm;line-height:1.5;">
+        POS, kitchen, inventory, customers and reporting — one operating system for cafés, restaurants, hotels and chains.
+      </p>
+      <p class="footnote" style="margin-top:16px;">*Based on internal case studies. Individual results may vary.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2 PROBLEM -->
+<div class="page sandbg">
+  <div class="eyebrow" style="color:var(--green);">The Daily Reality</div>
+  <h2 class="display" style="font-size:30pt;margin-top:12px;max-width:160mm;">Running hospitality shouldn't feel like firefighting.</h2>
+  <p class="muted" style="font-size:12pt;margin-top:14px;max-width:165mm;line-height:1.5;">
+    Most owners lose money they never even see — to leakage, slow service, and blind spots across outlets.
+  </p>
+  <div class="grid2" style="margin-top:26px;">
+    <div class="pain"><h4>Silent leakage &amp; theft</h4><p>Voids, discounts and post-payment edits quietly drain your margin.</p></div>
+    <div class="pain"><h4>Slow service</h4><p>Queues, order mix-ups and lost kitchen chits cost you covers.</p></div>
+    <div class="pain"><h4>Staff dependency</h4><p>The business stops the moment you're not on the floor.</p></div>
+    <div class="pain"><h4>No visibility</h4><p>You can't fix what you can't see across every outlet.</p></div>
+  </div>
+  <p class="display" style="font-size:16pt;color:var(--green);margin-top:30px;">There's a calmer, more profitable way to run it. →</p>
+</div>
+
+<!-- PAGE 3 SOLUTION -->
+<div class="page">
+  <div class="eyebrow" style="color:var(--green);">One System, Not Ten Tools</div>
+  <h2 class="display" style="font-size:30pt;margin-top:12px;">One operating system. Every kind of outlet.</h2>
+  <p class="muted" style="font-size:11.5pt;margin-top:12px;max-width:165mm;line-height:1.5;">
+    MyGenie runs your whole operation — so billing, kitchen, stock, customers and reports finally talk to each other.
+  </p>
+  <div class="grid2" style="margin-top:22px;">
+    <div class="bucket"><span class="dot"></span><h4>Sell &amp; Serve Faster</h4><p>POS, Captain app, KOT/KDS, Scan &amp; Order, delivery.</p></div>
+    <div class="bucket"><span class="dot" style="background:var(--orange);"></span><h4>Run the Whole Property</h4><p>Hotel/room billing, food courts, offline mode, one checkout bill.</p></div>
+    <div class="bucket"><span class="dot"></span><h4>Bring Customers Back</h4><p>CRM, loyalty, wallet, coupons, WhatsApp automation.</p></div>
+    <div class="bucket"><span class="dot" style="background:var(--orange);"></span><h4>Protect Your Profit</h4><p>Inventory, central stock, audit logs, smart validations.</p></div>
+  </div>
+  <div class="bucket" style="margin-top:14px;"><span class="dot"></span><h4>See Everything</h4><p>Owner dashboard, reports, recipe-level P&amp;L, GST/VAT — live, from anywhere.</p></div>
+  <div class="reassure" style="margin-top:22px;">Go live in under 48 hours &nbsp;·&nbsp; Works offline &nbsp;·&nbsp; Runs on a few phones</div>
+</div>
+
+<!-- PAGE 4 PROOF -->
+<div class="page deepbg">
+  <div class="glow" style="width:300px;height:300px;background:var(--green);bottom:-90px;right:-80px;opacity:.35;"></div>
+  <div style="position:relative;">
+    <div class="eyebrow" style="color:var(--yellow);">Real Owners. Real Numbers.</div>
+    <h2 class="display" style="font-size:30pt;margin-top:12px;color:#fff;">The numbers owners actually see.</h2>
+    <div class="grid2" style="margin-top:30px;gap:26px;">
+      <div class="metric"><div class="num display" style="color:var(--orange);">₹1 Lakh</div><div class="lbl">leakage caught in 2 weeks — Rhino</div></div>
+      <div class="metric"><div class="num display" style="color:var(--green);">40%</div><div class="lbl">lower fixed cost — Love Bites</div></div>
+      <div class="metric"><div class="num display" style="color:var(--green);">+22%</div><div class="lbl">covers per shift — Terraria</div></div>
+      <div class="metric"><div class="num display" style="color:var(--orange);">2×</div><div class="lbl">revenue, flat cost — Pavan Pages</div></div>
+    </div>
+    <p style="font-size:13pt;font-style:italic;color:rgba(255,255,255,.92);margin-top:34px;max-width:160mm;line-height:1.5;">
+      "MyGenie showed us exactly where money was leaking. We caught it in two weeks."
+    </p>
+    <div style="margin-top:14px;color:rgba(255,255,255,.5);font-size:9pt;letter-spacing:.5px;">[ Approved client logo strip ]</div>
+    <div style="margin-top:30px;"><span class="pill">See it on your own data — book a demo</span></div>
+  </div>
+</div>
+
+<!-- PAGE 5 AI -->
+<div class="page">
+  <div class="eyebrow" style="color:var(--green);">Practical AI by MyGenie</div>
+  <h2 class="display" style="font-size:29pt;margin-top:12px;max-width:165mm;">AI that works on the floor — not in a pitch deck.</h2>
+  <div style="margin-top:20px;">
+    <div class="ai-row"><div class="n">01</div><div><h4>Menu in minutes</h4><p>Upload your menu, AI builds items, categories and prices. Live in minutes, not days.</p></div></div>
+    <div class="ai-row"><div class="n">02</div><div><h4>Catch what's hurting profit</h4><p>AI auto-audits every report and flags voids, over-discounts and stock variance.</p></div></div>
+    <div class="ai-row"><div class="n">03</div><div><h4>Lift every bill</h4><p>AI suggests the right add-on at the right moment. Bigger average bills, automatically.</p></div></div>
+    <div class="ai-row" style="border-bottom:none;"><div class="n">04</div><div><h4>Win back customers</h4><p>AI groups regulars, lapsed and big spenders for targeted WhatsApp offers.</p></div></div>
+  </div>
+  <p class="display" style="font-size:15pt;color:var(--orange);margin-top:26px;">Loud on results, quiet on the tech.</p>
+</div>
+
+<!-- PAGE 6 SECTORS -->
+<div class="page sandbg">
+  <div class="eyebrow" style="color:var(--green);">From a Single Café to a 50-Outlet Chain</div>
+  <h2 class="display" style="font-size:29pt;margin-top:12px;">Tuned to the way you actually run.</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:24px;">
+    <div class="sector-chip"><span class="b"></span>Restaurants</div>
+    <div class="sector-chip"><span class="b"></span>Cafés</div>
+    <div class="sector-chip"><span class="b"></span>QSR / Fast Food</div>
+    <div class="sector-chip"><span class="b"></span>Cloud Kitchens</div>
+    <div class="sector-chip"><span class="b"></span>Hotels &amp; Resorts</div>
+    <div class="sector-chip"><span class="b"></span>Food Courts</div>
+    <div class="sector-chip"><span class="b"></span>Canteens &amp; Mess</div>
+    <div class="sector-chip"><span class="b"></span>Chains &amp; Franchises</div>
+    <div class="sector-chip"><span class="b"></span>Bars &amp; Pubs</div>
+    <div class="sector-chip"><span class="b"></span>Bakeries</div>
+    <div class="sector-chip"><span class="b"></span>Ice Cream &amp; Desserts</div>
+    <div class="sector-chip" style="background:var(--deep);color:#fff;border:none;"><span class="b" style="background:var(--yellow);"></span>...and your format too</div>
+  </div>
+  <p class="display" style="font-size:15pt;color:var(--green);margin-top:30px;max-width:160mm;">One operating system, configured for your format — go live in under 48 hours.</p>
+</div>
+
+<!-- PAGE 7 PRICING -->
+<div class="page">
+  <div class="eyebrow" style="color:var(--green);">Simple, Transparent Pricing</div>
+  <h2 class="display" style="font-size:30pt;margin-top:12px;">Build your plan. Billed annually.</h2>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px;">
+    <div class="plan"><div class="nm">Starter</div><div class="tg">New &amp; single small outlets</div></div>
+    <div class="plan pop"><div class="badge-pop">MOST POPULAR</div><div class="nm" style="margin-top:6px;">Pro</div><div class="tg">Full-service, QSR &amp; high volume</div></div>
+    <div class="plan"><div class="nm">Growth</div><div class="tg">Cafés &amp; growing restaurants</div></div>
+    <div class="plan"><div class="nm">Chain</div><div class="tg">Multi-outlet, hotels &amp; franchises</div></div>
+  </div>
+  <div class="reassure" style="margin-top:24px;">Go live in 48 hours &nbsp;·&nbsp; Works offline &nbsp;·&nbsp; Runs on existing phones &nbsp;·&nbsp; Add only what you need</div>
+  <p class="muted" style="font-size:9pt;margin-top:14px;">Prices confirmed on your demo call. All plans billed annually.</p>
+  <div style="margin-top:26px;"><span class="pill">See your exact quote — book a demo</span></div>
+</div>
+
+<!-- PAGE 8 BACK -->
+<div class="page deepbg">
+  <div class="glow" style="width:320px;height:320px;background:var(--green);top:-100px;left:-80px;opacity:.4;"></div>
+  <div style="position:relative;height:100%;display:flex;flex-direction:column;">
+    <div class="logo-chip"><img src="/brochure/logo.svg" alt="MyGenie"/></div>
+    <h2 class="display" style="font-size:33pt;margin-top:54px;max-width:160mm;color:#fff;">Ready to run a more profitable business?</h2>
+    <p style="font-size:13pt;color:rgba(255,255,255,.85);margin-top:16px;max-width:150mm;line-height:1.5;">Book a free demo and see MyGenie on your own data.</p>
+    <div style="display:flex;align-items:center;gap:26px;margin-top:30px;">
+      <div class="qr"><img src="/brochure/qr.png" alt="QR"/></div>
+      <div>
+        <span class="pill" style="background:var(--orange);">Book a Free Demo</span>
+        <div class="contact-row" style="margin-top:16px;color:#fff;">
+          WhatsApp / Call &nbsp;<b>9579504871</b><br/>
+          support@mygenie.online<br/>
+          www.mygenie.online
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:auto;">
+      <div style="height:1px;background:rgba(255,255,255,.2);margin-bottom:14px;"></div>
+      <p class="display" style="font-size:15pt;color:var(--yellow);">Streamlined Hospitality. Exceptional Experience.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
