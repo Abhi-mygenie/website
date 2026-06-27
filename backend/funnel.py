@@ -615,8 +615,9 @@ async def get_executive_summary(db, date_from=None, date_to=None, status=None):
         })
 
     campaign_match = {"source": {"$in": ["meta_api", "google"]}, "level": "campaign"}
-    if status:
-        campaign_match.update(_status_filter(status))
+    conditions = _status_filter(status)
+    if conditions:
+        campaign_match["$and"] = conditions
     pipeline_top = [
         {"$match": campaign_match},
         {"$group": {
@@ -791,34 +792,35 @@ def _date_filter_match(date_from: str | None, date_to: str | None) -> dict:
         return {}
 
 
-def _status_filter(status: str | None) -> dict:
-    """Return a MongoDB match clause for effective_status filtering."""
+def _status_filter(status: str | None) -> list:
+    """Return a list of MongoDB match conditions for effective_status filtering."""
     if status and status.lower() == "active":
-        return {"$or": [{"effective_status": "ACTIVE"}, {"effective_status": None}]}
-    return {}
+        return [{"$or": [{"effective_status": "ACTIVE"}, {"effective_status": None}]}]
+    return []
 
 
 async def get_adset_performance(db, date_from: str = None, date_to: str = None, status: str = None) -> dict:
     """Return ad set level data from Meta API + Google Ads with pixel events."""
     try:
         match: dict = {"source": {"$in": ["meta_api", "google"]}, "level": "adset"}
-        if status:
-            match.update(_status_filter(status))
+        conditions = _status_filter(status)
         if date_from and date_to:
-            match["$or"] = [
+            conditions.append({"$or": [
                 {"date_start": {"$gte": date_from, "$lte": date_to}},
-                {"source": "google"},  # Google data: no date_start, always include
-            ]
+                {"source": "google"},
+            ]})
         elif date_from:
-            match["$or"] = [
+            conditions.append({"$or": [
                 {"date_start": {"$gte": date_from}},
                 {"source": "google"},
-            ]
+            ]})
         elif date_to:
-            match["$or"] = [
+            conditions.append({"$or": [
                 {"date_start": {"$lte": date_to}},
                 {"source": "google"},
-            ]
+            ]})
+        if conditions:
+            match["$and"] = conditions
         rows = await db.ad_spend.find(match, {"_id": 0}).sort("spend", -1).to_list(200)
 
         result = []
@@ -888,23 +890,24 @@ async def get_ad_performance(db, date_from: str = None, date_to: str = None, sta
     """Return individual ad-level data from Meta API + Google Ads with ROI signals."""
     try:
         match: dict = {"source": {"$in": ["meta_api", "google"]}, "level": "ad"}
-        if status:
-            match.update(_status_filter(status))
+        conditions = _status_filter(status)
         if date_from and date_to:
-            match["$or"] = [
+            conditions.append({"$or": [
                 {"date_start": {"$gte": date_from, "$lte": date_to}},
                 {"source": "google"},
-            ]
+            ]})
         elif date_from:
-            match["$or"] = [
+            conditions.append({"$or": [
                 {"date_start": {"$gte": date_from}},
                 {"source": "google"},
-            ]
+            ]})
         elif date_to:
-            match["$or"] = [
+            conditions.append({"$or": [
                 {"date_start": {"$lte": date_to}},
                 {"source": "google"},
-            ]
+            ]})
+        if conditions:
+            match["$and"] = conditions
         rows = await db.ad_spend.find(match, {"_id": 0}).sort("spend", -1).to_list(500)
 
         result = []
@@ -964,8 +967,9 @@ async def get_placement_breakdown(db, date_from: str = None, date_to: str = None
     """Return placement-level spend breakdown from Meta API (platform + position)."""
     try:
         placement_match = {"source": "meta_api", "level": "placement"}
-        if status:
-            placement_match.update(_status_filter(status))
+        conditions = _status_filter(status)
+        if conditions:
+            placement_match["$and"] = conditions
         rows = await db.ad_spend.find(
             placement_match,
             {"_id": 0}
