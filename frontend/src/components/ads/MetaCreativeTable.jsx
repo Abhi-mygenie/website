@@ -13,6 +13,7 @@ export default function MetaCreativeTable({ token, dateFrom, dateTo }) {
       const p = new URLSearchParams({ dimension: "ad_set" });
       if (dateFrom) p.set("date_from", dateFrom);
       if (dateTo)   p.set("date_to", dateTo);
+      p.set("source", "meta");
       const r = await fetch(`${API}/api/cms/funnel/by-attribution?${p}`, {
         headers: { Authorization: `Bearer ${token}` },
       });

@@ -901,8 +901,9 @@ async def cms_ads_executive_summary(
     admin: str = Depends(cms_auth.get_current_admin),
     date_from: str | None = None,
     date_to: str | None = None,
+    status: str | None = None,
 ):
-    return await funnel_module.get_executive_summary(db, date_from=date_from, date_to=date_to)
+    return await funnel_module.get_executive_summary(db, date_from=date_from, date_to=date_to, status=status)
 
 
 @api_router.get("/cms/ads/recommendations")
@@ -968,8 +969,9 @@ async def cms_ads_adset_performance(
     admin: str = Depends(cms_auth.get_current_admin),
     date_from: str | None = None,
     date_to: str | None = None,
+    status: str | None = None,
 ):
-    return await funnel_module.get_adset_performance(db, date_from=date_from, date_to=date_to)
+    return await funnel_module.get_adset_performance(db, date_from=date_from, date_to=date_to, status=status)
 
 
 @api_router.get("/cms/ads/ad-performance")
@@ -986,8 +988,9 @@ async def cms_ads_placement_breakdown(
     admin: str = Depends(cms_auth.get_current_admin),
     date_from: str | None = None,
     date_to: str | None = None,
+    status: str | None = None,
 ):
-    return await funnel_module.get_placement_breakdown(db, date_from=date_from, date_to=date_to)
+    return await funnel_module.get_placement_breakdown(db, date_from=date_from, date_to=date_to, status=status)
 
 
 @api_router.get("/cms/leads/quality-summary")

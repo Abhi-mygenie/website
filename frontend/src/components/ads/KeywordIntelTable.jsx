@@ -26,6 +26,7 @@ export default function KeywordIntelTable({ token, dateFrom, dateTo }) {
       const p = new URLSearchParams({ dimension: "keyword" });
       if (dateFrom) p.set("date_from", dateFrom);
       if (dateTo)   p.set("date_to", dateTo);
+      p.set("source", "google_paid");
       const r = await fetch(`${API}/api/cms/funnel/by-attribution?${p}`, {
         headers: { Authorization: `Bearer ${token}` },
       });

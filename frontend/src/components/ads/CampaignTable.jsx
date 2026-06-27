@@ -8,11 +8,14 @@ const STATUS_BADGE = {
 const fmt = v => v != null ? `₹${Number(v).toLocaleString("en-IN")}` : "—";
 const num = v => v != null && v !== 0 ? Number(v).toLocaleString("en-IN") : "—";
 
-export default function CampaignTable({ campaigns = [], attribution = [] }) {
-  if (!campaigns.length) return null;
+export default function CampaignTable({ campaigns = [], attribution = [], liveOnly = false }) {
+  const filtered = liveOnly
+    ? campaigns.filter(c => !c.status || c.status.toUpperCase() === "ACTIVE")
+    : campaigns;
+  if (!filtered.length) return null;
 
-  const metaCount   = campaigns.filter(c => c.source === "meta_api").length;
-  const googleCount = campaigns.filter(c => c.source === "google").length;
+  const metaCount   = filtered.filter(c => c.source === "meta_api").length;
+  const googleCount = filtered.filter(c => c.source === "google").length;
 
   // Build attribution lookup by campaign name + campaign_id
   const attrMap = {};
@@ -59,7 +62,7 @@ export default function CampaignTable({ campaigns = [], attribution = [] }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {campaigns.map((c, i) => {
+            {filtered.map((c, i) => {
               const statusKey   = (c.status || "ACTIVE").toUpperCase();
               const isActive    = statusKey === "ACTIVE";
               const isGoogle    = c.source === "google";

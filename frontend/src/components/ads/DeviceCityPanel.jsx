@@ -29,6 +29,7 @@ export default function DeviceCityPanel({ token, dateFrom, dateTo }) {
   useEffect(() => { load(); }, [load]);
 
   const deviceRows = devices?.rows || [];
+  const backfilledExcluded = devices?.backfilled_excluded || 0;
   const cityRows   = cities?.rows  || [];
 
   return (
@@ -67,6 +68,11 @@ export default function DeviceCityPanel({ token, dateFrom, dateTo }) {
               </tbody>
             </table>
           </div>
+        )}
+        {!loading && (
+          <p className="mt-2 text-[10px] text-slate-400">
+            Based on website-submitted leads only.{backfilledExcluded > 0 && ` ${backfilledExcluded.toLocaleString("en-IN")} CRM-synced contacts excluded (no device data).`}
+          </p>
         )}
       </section>
 

@@ -13,7 +13,7 @@ const fmt = (n) => n == null ? "—" : `₹${Number(n).toLocaleString("en-IN", {
 const fmtN = (n) => n == null ? "—" : Number(n).toLocaleString("en-IN");
 const fmtPct = (n) => n == null ? "—" : `${n}%`;
 
-export function AdSetTable({ token, dateFrom, dateTo, syncVersion, attribution = [] }) {
+export function AdSetTable({ token, dateFrom, dateTo, syncVersion, attribution = [], liveOnly = false }) {
   const [data, setData]     = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]   = useState(null);
@@ -25,6 +25,7 @@ export function AdSetTable({ token, dateFrom, dateTo, syncVersion, attribution =
       const params = {};
       if (dateFrom) params.date_from = dateFrom;
       if (dateTo)   params.date_to   = dateTo;
+      if (liveOnly) params.status    = "active";
       const res = await axios.get(`${API}/api/cms/ads/adset-performance`, {
         headers: { Authorization: `Bearer ${token}` },
         params,
@@ -35,7 +36,7 @@ export function AdSetTable({ token, dateFrom, dateTo, syncVersion, attribution =
     } finally {
       setLoading(false);
     }
-  }, [token, dateFrom, dateTo, syncVersion]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [token, dateFrom, dateTo, syncVersion, liveOnly]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { load(); }, [load]);
 

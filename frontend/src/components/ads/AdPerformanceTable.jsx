@@ -16,7 +16,7 @@ const fmtN  = (n) => n == null ? "—" : Number(n).toLocaleString("en-IN");
 const fmtPct = (n) => n == null ? "—" : `${n}%`;
 const fmtF  = (n) => n == null ? "—" : Number(n).toFixed(2);
 
-export function AdPerformanceTable({ token, dateFrom, dateTo, syncVersion, attribution = [] }) {
+export function AdPerformanceTable({ token, dateFrom, dateTo, syncVersion, attribution = [], liveOnly = false }) {
   const [data, setData]       = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(null);
@@ -28,6 +28,7 @@ export function AdPerformanceTable({ token, dateFrom, dateTo, syncVersion, attri
       const params = {};
       if (dateFrom) params.date_from = dateFrom;
       if (dateTo)   params.date_to   = dateTo;
+      if (liveOnly) params.status    = "active";
       const res = await axios.get(`${API}/api/cms/ads/ad-performance`, {
         headers: { Authorization: `Bearer ${token}` },
         params,
@@ -38,7 +39,7 @@ export function AdPerformanceTable({ token, dateFrom, dateTo, syncVersion, attri
     } finally {
       setLoading(false);
     }
-  }, [token, dateFrom, dateTo, syncVersion]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [token, dateFrom, dateTo, syncVersion, liveOnly]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { load(); }, [load]);
 

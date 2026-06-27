@@ -45,7 +45,7 @@ export default function LandingPagePanel({ token, dateFrom, dateTo }) {
               data-testid={`lp-card-${i}`}
               className="bg-white rounded-xl border border-slate-200 px-4 py-3 shadow-sm">
               <p className="font-mono text-xs text-slate-700 truncate font-semibold mb-2"
-                title={r.landing_page}>{r.landing_page}</p>
+                title={r.landing_page}>{r.landing_page === "/" ? "/ (Homepage)" : r.landing_page}</p>
               <div className="grid grid-cols-3 gap-1 text-center">
                 <div>
                   <div className="text-[10px] text-slate-400 uppercase">Leads</div>
@@ -69,6 +69,9 @@ export default function LandingPagePanel({ token, dateFrom, dateTo }) {
           ))}
         </div>
       )}
+      <p className="mt-2 text-[10px] text-slate-400">
+        Based on website-submitted leads with UTM tracking. CRM-synced contacts do not carry landing page data.
+      </p>
     </section>
   );
 }

@@ -466,7 +466,7 @@ async def get_funnel_by_landing_page(db, date_from=None, date_to=None, source=No
     rows = [r for r in rows if r.get("_lead_type") != "backfilled"]
     if source:
         rows = [r for r in rows if _source_label(r) == source]
-    rows = [r for r in rows if _landing_page(r) not in ("", "/")]
+    rows = [r for r in rows if _landing_page(r) not in ("",)]
 
     buckets: dict[str, list] = {}
     for r in rows:
@@ -510,6 +510,7 @@ async def get_funnel_by_landing_page(db, date_from=None, date_to=None, source=No
 async def get_funnel_by_device(db, date_from=None, date_to=None, source=None):
     """CR-24 — Funnel breakdown by device type."""
     rows = await _load_all(db, date_from, date_to, lead_type=None)
+    backfilled_count = sum(1 for r in rows if r.get("_lead_type") == "backfilled")
     rows = [r for r in rows if r.get("_lead_type") != "backfilled"]
     if source:
         rows = [r for r in rows if _source_label(r) == source]
@@ -544,7 +545,7 @@ async def get_funnel_by_device(db, date_from=None, date_to=None, source=None):
             "lead_to_win_pct": _pct(won, lead_in),
         })
 
-    return {"rows": result, "total_leads": len(rows)}
+    return {"rows": result, "total_leads": len(rows), "backfilled_excluded": backfilled_count}
 
 
 async def get_funnel_by_city(db, date_from=None, date_to=None, source=None, top_n=20):
@@ -580,7 +581,7 @@ async def get_funnel_by_city(db, date_from=None, date_to=None, source=None, top_
     return {"rows": result, "total_leads": len(rows)}
 
 
-async def get_executive_summary(db, date_from=None, date_to=None):
+async def get_executive_summary(db, date_from=None, date_to=None, status=None):
     """CR-24 — Blended ad performance summary card."""
     rows      = await _load_all(db, date_from, date_to, lead_type=None)
     spend_map = await _get_spend_by_source(db)
@@ -613,8 +614,11 @@ async def get_executive_summary(db, date_from=None, date_to=None):
             "pct_leads": _pct(len(grp), total_leads),
         })
 
+    campaign_match = {"source": {"$in": ["meta_api", "google"]}, "level": "campaign"}
+    if status:
+        campaign_match.update(_status_filter(status))
     pipeline_top = [
-        {"$match": {"source": {"$in": ["meta_api", "google"]}, "level": "campaign"}},
+        {"$match": campaign_match},
         {"$group": {
             "_id":              "$campaign",
             "spend":            {"$sum": "$spend"},
@@ -787,10 +791,19 @@ def _date_filter_match(date_from: str | None, date_to: str | None) -> dict:
         return {}
 
 
-async def get_adset_performance(db, date_from: str = None, date_to: str = None) -> dict:
+def _status_filter(status: str | None) -> dict:
+    """Return a MongoDB match clause for effective_status filtering."""
+    if status and status.lower() == "active":
+        return {"$or": [{"effective_status": "ACTIVE"}, {"effective_status": None}]}
+    return {}
+
+
+async def get_adset_performance(db, date_from: str = None, date_to: str = None, status: str = None) -> dict:
     """Return ad set level data from Meta API + Google Ads with pixel events."""
     try:
         match: dict = {"source": {"$in": ["meta_api", "google"]}, "level": "adset"}
+        if status:
+            match.update(_status_filter(status))
         if date_from and date_to:
             match["$or"] = [
                 {"date_start": {"$gte": date_from, "$lte": date_to}},
@@ -871,10 +884,12 @@ async def get_adset_performance(db, date_from: str = None, date_to: str = None) 
         return {"adsets": [], "count": 0, "error": str(e)}
 
 
-async def get_ad_performance(db, date_from: str = None, date_to: str = None) -> dict:
+async def get_ad_performance(db, date_from: str = None, date_to: str = None, status: str = None) -> dict:
     """Return individual ad-level data from Meta API + Google Ads with ROI signals."""
     try:
         match: dict = {"source": {"$in": ["meta_api", "google"]}, "level": "ad"}
+        if status:
+            match.update(_status_filter(status))
         if date_from and date_to:
             match["$or"] = [
                 {"date_start": {"$gte": date_from, "$lte": date_to}},
@@ -945,11 +960,14 @@ async def get_ad_performance(db, date_from: str = None, date_to: str = None) -> 
         return {"ads": [], "count": 0, "error": str(e)}
 
 
-async def get_placement_breakdown(db, date_from: str = None, date_to: str = None) -> dict:
+async def get_placement_breakdown(db, date_from: str = None, date_to: str = None, status: str = None) -> dict:
     """Return placement-level spend breakdown from Meta API (platform + position)."""
     try:
+        placement_match = {"source": "meta_api", "level": "placement"}
+        if status:
+            placement_match.update(_status_filter(status))
         rows = await db.ad_spend.find(
-            {"source": "meta_api", "level": "placement"},
+            placement_match,
             {"_id": 0}
         ).to_list(500)
 

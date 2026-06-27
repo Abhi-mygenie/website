@@ -41,7 +41,7 @@ const fmt    = (n) => n == null ? "—" : `₹${Number(n).toLocaleString("en-IN"
 const fmtN   = (n) => n == null ? "—" : Number(n).toLocaleString("en-IN");
 const fmtPct = (n) => n == null ? "—" : `${n}%`;
 
-export function PlacementPanel({ token, dateFrom, dateTo, syncVersion }) {
+export function PlacementPanel({ token, dateFrom, dateTo, syncVersion, liveOnly = false }) {
   const [data, setData]       = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(null);
@@ -53,6 +53,7 @@ export function PlacementPanel({ token, dateFrom, dateTo, syncVersion }) {
       const params = {};
       if (dateFrom) params.date_from = dateFrom;
       if (dateTo)   params.date_to   = dateTo;
+      if (liveOnly) params.status    = "active";
       const res = await axios.get(`${API}/api/cms/ads/placement-breakdown`, {
         headers: { Authorization: `Bearer ${token}` },
         params,
@@ -63,7 +64,7 @@ export function PlacementPanel({ token, dateFrom, dateTo, syncVersion }) {
     } finally {
       setLoading(false);
     }
-  }, [token, dateFrom, dateTo, syncVersion]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [token, dateFrom, dateTo, syncVersion, liveOnly]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { load(); }, [load]);
 

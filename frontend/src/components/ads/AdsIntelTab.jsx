@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { RefreshCw, Zap, CheckCircle, AlertCircle, Link2, Link2Off } from "lucide-react";
+import { RefreshCw, Zap, CheckCircle, AlertCircle, Link2, Link2Off, Filter } from "lucide-react";
 import ExecutiveSummary from "./ExecutiveSummary";
 import KeywordIntelTable from "./KeywordIntelTable";
 import MetaCreativeTable from "./MetaCreativeTable";
@@ -25,6 +25,7 @@ export default function AdsIntelTab({ token }) {
   const [syncing,         setSyncing]        = useState(false);
   const [syncResult,      setSyncResult]     = useState(null);
   const [syncVersion,     setSyncVersion]    = useState(0);
+  const [liveOnly,        setLiveOnly]       = useState(false);
   const [gadsStatus,      setGadsStatus]     = useState(null);
   const [gadsConnecting,  setGadsConnecting] = useState(false);
   const [gadsBanner,      setGadsBanner]     = useState(null);
@@ -40,6 +41,7 @@ export default function AdsIntelTab({ token }) {
       const p = new URLSearchParams();
       if (dateFrom) p.set("date_from", dateFrom);
       if (dateTo)   p.set("date_to", dateTo);
+      if (liveOnly) p.set("status", "active");
       const [r, ac, aa, aad] = await Promise.all([
         fetch(`${API}/api/cms/ads/executive-summary?${p}`, { headers: h }),
         fetch(`${API}/api/cms/ads/attribution-by-campaign?${p}`, { headers: h }),
@@ -54,7 +56,7 @@ export default function AdsIntelTab({ token }) {
     } finally {
       setLoading(false);
     }
-  }, [token, dateFrom, dateTo]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [token, dateFrom, dateTo, liveOnly]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // When dates are set + Meta is enabled, sync Meta for that period then reload
   const handleApply = useCallback(async () => {
@@ -181,6 +183,20 @@ export default function AdsIntelTab({ token }) {
           {syncing && metaEnabled && dateFrom && dateTo ? "Syncing…" : "Apply"}
         </button>
 
+        {/* Live Only Toggle */}
+        <button
+          data-testid="ads-live-only-toggle"
+          onClick={() => setLiveOnly(v => !v)}
+          className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+            liveOnly
+              ? "bg-emerald-600 text-white hover:bg-emerald-700"
+              : "bg-white border border-slate-300 text-slate-600 hover:border-slate-400 hover:bg-slate-50"
+          }`}
+        >
+          <Filter className="h-3.5 w-3.5" />
+          {liveOnly ? "Live Only" : "All Status"}
+        </button>
+
         {/* Spacer */}
         <div className="flex-1" />
 
@@ -298,10 +314,10 @@ export default function AdsIntelTab({ token }) {
 
       <ExecutiveSummary data={summary} loading={loading} />
       <CrossChannelPanel token={token} dateFrom={dateFrom} dateTo={dateTo} syncVersion={syncVersion} />
-      <CampaignTable campaigns={summary?.campaigns || []} attribution={attribution.campaign} />
-      <AdSetTable token={token} dateFrom={dateFrom} dateTo={dateTo} syncVersion={syncVersion} attribution={attribution.adset} />
-      <AdPerformanceTable token={token} dateFrom={dateFrom} dateTo={dateTo} syncVersion={syncVersion} attribution={attribution.ad} />
-      <PlacementPanel token={token} dateFrom={dateFrom} dateTo={dateTo} syncVersion={syncVersion} />
+      <CampaignTable campaigns={summary?.campaigns || []} attribution={attribution.campaign} liveOnly={liveOnly} />
+      <AdSetTable token={token} dateFrom={dateFrom} dateTo={dateTo} syncVersion={syncVersion} attribution={attribution.adset} liveOnly={liveOnly} />
+      <AdPerformanceTable token={token} dateFrom={dateFrom} dateTo={dateTo} syncVersion={syncVersion} attribution={attribution.ad} liveOnly={liveOnly} />
+      <PlacementPanel token={token} dateFrom={dateFrom} dateTo={dateTo} syncVersion={syncVersion} liveOnly={liveOnly} />
       <LeadQualityPanel token={token} />
       <AiRecommendations token={token} />
       <StrategyLabPanel token={token} />
