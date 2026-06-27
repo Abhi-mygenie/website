@@ -1,0 +1,33 @@
+{
+  "summary": "Phase E (GAP-17/18/19/20) full testing — 15/15 backend tests passed, frontend verified via Playwright. All new signals (LP_FRICTION x3, SCALE x1) fire correctly. FunnelRatePills render with correct color-coded pills. Badge styles correct (LP_FRICTION=purple, SCALE=emerald). Regression tests for Phase B/C/D all pass.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_phase_e.py",
+    "/app/test_reports/pytest/pytest_phase_e.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "_llm_summary function signature takes (signals: list) but internally calls db.ad_spend — db is not passed as argument. This will fail at runtime when use_llm=True is called. The function uses `db` from closure which is undefined inside it.",
+    "recommendations.py line 388: `db` is referenced inside _llm_summary() but db is not a parameter of that function — only `signals` is. This is a latent bug that will cause NameError when AI Insights is triggered."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_phase_e.py"
+  ],
+  "success_rate": {
+    "backend": "100% (15/15)",
+    "frontend": "100%"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Phase E fully verified. Signal counts: SCALE=1 (Broad Targeting, CPL=516), LP_FRICTION=3 (3 adsets with CTR>=1% but click_to_book<0.5%). WEAK_CREATIVE and CALENDLY_FRICTION correctly NOT firing. FunnelRatePills visible in UI. Badge colors correct. DB has 4 adsets, 6 ads, 15 placements. There is a latent bug in _llm_summary — db parameter is missing from function signature but referenced inside.",
+  "rca_of_issue": "Latent bug: _llm_summary(signals: list) does not accept `db` as parameter, but lines 388-412 call db.ad_spend.find(). This will throw NameError when use_llm=True is passed to get_recommendations(). Fix: add `db` as second parameter to _llm_summary and update call site in get_recommendations()."
+}
