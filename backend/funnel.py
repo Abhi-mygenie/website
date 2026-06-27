@@ -1370,6 +1370,8 @@ async def get_cross_channel_summary(db, date_from=None, date_to=None):
             spend = ch["spend"]
             leads = ch["crm_leads"]
             won = ch["crm_won"]
+            sched = ch["crm_demo_scheduled"]
+            given = ch["crm_demo_given"]
             clicks = ch["clicks"]
             impr = ch["impressions"]
             result.append({
@@ -1378,21 +1380,23 @@ async def get_cross_channel_summary(db, date_from=None, date_to=None):
                 "ctr": round(clicks / impr * 100, 2) if impr else 0,
                 "cpc": round(spend / clicks, 2) if clicks else None,
                 "crm_cpl": round(spend / leads, 2) if leads and spend else None,
+                "crm_cp_scheduled": round(spend / sched, 2) if sched and spend else None,
+                "crm_cp_demo_given": round(spend / given, 2) if given and spend else None,
                 "crm_cp_won": round(spend / won, 2) if won and spend else None,
                 "lead_to_won_pct": round(won / leads * 100, 1) if leads else 0,
-                "demo_to_won_pct": round(won / ch["crm_demo_given"] * 100, 1) if ch["crm_demo_given"] else 0,
+                "demo_to_won_pct": round(won / given * 100, 1) if given else 0,
             })
 
         result.sort(key=lambda x: x["crm_leads"], reverse=True)
 
         # Determine winners per metric
         if len(result) >= 2:
-            metrics = ["crm_cpl", "crm_cp_won", "ctr", "lead_to_won_pct", "crm_leads", "crm_won"]
+            metrics = ["crm_cpl", "crm_cp_scheduled", "crm_cp_demo_given", "crm_cp_won", "ctr", "lead_to_won_pct", "crm_leads", "crm_won"]
             winners = {}
             for m in metrics:
                 vals = [(r["channel"], r.get(m)) for r in result if r.get(m) is not None and r.get(m) > 0]
                 if len(vals) >= 2:
-                    if m in ("crm_cpl", "crm_cp_won"):
+                    if m in ("crm_cpl", "crm_cp_scheduled", "crm_cp_demo_given", "crm_cp_won"):
                         winners[m] = min(vals, key=lambda x: x[1])[0]  # lower is better
                     else:
                         winners[m] = max(vals, key=lambda x: x[1])[0]  # higher is better

@@ -39,10 +39,12 @@ export function CrossChannelPanel({ token, dateFrom, dateTo, syncVersion }) {
 
   const metrics = [
     { key: "spend", label: "Total Spend", format: fmt, lower: true },
-    { key: "crm_leads", label: "CRM Leads", format: fmtN },
-    { key: "crm_cpl", label: "CPL (CRM)", format: fmt, lower: true },
+    { key: "crm_leads", label: "CRM Leads (Book Demo)", format: fmtN },
+    { key: "crm_cpl", label: "Cost / Book Demo", format: fmt, lower: true },
     { key: "crm_demo_scheduled", label: "Demo Scheduled", format: fmtN },
+    { key: "crm_cp_scheduled", label: "Cost / Scheduled", format: fmt, lower: true },
     { key: "crm_demo_given", label: "Demo Given", format: fmtN },
+    { key: "crm_cp_demo_given", label: "Cost / Demo Given", format: fmt, lower: true },
     { key: "crm_won", label: "Won", format: fmtN },
     { key: "crm_cp_won", label: "Cost / Won", format: fmt, lower: true },
     { key: "ctr", label: "CTR", format: fmtPct },
