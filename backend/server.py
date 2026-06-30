@@ -201,8 +201,8 @@ def _attribution_to_crm(attr: dict | None) -> tuple[dict, dict]:
     native: dict = {}
 
     # ── First-touch (set-once on create) ─────────────────────────────────────
-    if _trunc(a.get("first_utm_source")):
-        native["first_source"] = _trunc(a.get("first_utm_source"))
+    # CR-39: Default to "website" for direct visitors (no UTM source)
+    native["first_source"] = _trunc(a.get("first_utm_source")) or "website"
     if _trunc(a.get("first_utm_medium")):
         native["first_medium"] = _trunc(a.get("first_utm_medium"))
     if _trunc(a.get("first_utm_campaign")):
