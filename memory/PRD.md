@@ -1,41 +1,54 @@
 # MyGenie POS Website — PRD
 
 ## Original Problem Statement
-Pull code from `https://github.com/Abhi-mygenie/website.git` (branch `30-june`), wipe /app, preserve workspace files, set up the project, install dependencies, make it run. Then read HANDOVER.md and summarize next tasks.
+Pull code from `https://github.com/Abhi-mygenie/website.git` (branch `30-june`), set up the project, install dependencies, make it run. Read HANDOVER.md, do discovery + impact analysis for CR-34 to CR-38, then implement.
 
 ## Architecture
 - **Frontend:** React 19 + Tailwind CSS + Craco + Radix UI + ShadCN components
 - **Backend:** Python FastAPI + Motor (async MongoDB driver) + APScheduler
-- **Database:** MongoDB Atlas (remote, user-managed)
+- **Database:** MongoDB Atlas (remote, production)
 - **Integrations:** Freshsales CRM, Meta Ads API, Google Ads API, Razorpay, S3 storage, Calendly
+- **Production site:** https://www.mygenie.online
+- **Production DB:** `test_database` on Atlas cluster `mygenie.xdqqdpi.mongodb.net`
 
 ## What's Been Done (2026-06-30)
-- Cloned repo from GitHub (branch `30-june`) into /app
-- Preserved `.git`, `.emergent`, `frontend/.env`, `backend/.env`, supervisor configs
-- Installed all Python (pip) and Node (yarn) dependencies
-- Started backend (FastAPI on port 8001) and frontend (React on port 3000) via supervisor
-- Both services running and website loads successfully
-- Read and summarized HANDOVER.md for next task discovery
+- Cloned repo, installed dependencies, services running
+- CR-34 verified: 1,615 backfilled_leads (919 with first_source) ✅
+- Discovery + impact analysis completed for CR-35, CR-36, CR-37, CR-38
+- Implementation plan written and approved by owner
 
-## Current State
-- Website is up and running at preview URL
-- Backend API responding on /api routes
-- Frontend compiled successfully (minor lint warnings only)
-- User will manually configure `.env` files for production DB and API keys
+## Current DB State
+```
+backfilled_leads:  1,615 docs (919 with first_source)
+demo_requests:     16 docs
+quotes:            1 doc
+contact_messages:  0
+ad_spend:          152 docs (143 meta_api + 9 google)
+```
 
-## Pending CRs (from HANDOVER.md)
-### P0 — Critical
-- **CR-35:** Leads Table to include `backfilled_leads` + Direct Lead Attribution default
-- **CR-36:** Meta Spend Date Filtering (funnel shows lifetime instead of selected period)
-- **CR-37:** Google Ads Spend Missing Date Ranges
+## Implementation Queue
 
-### P1 — Medium
-- **CR-38:** Move Ad Spend Upload Widget to Ads Intelligence Screen (UX cleanup)
+### Phase 1: CR-35 — Patch 3 Lost Leads (DB operation, no code)
+- Gffh (+919165729923) — fetch from Freshsales API → demo_requests
+- Himanshu Gupta (7368833274) — copy from backfilled_leads → demo_requests
+- Prajwal Chaubey (9120292964) — fetch from Freshsales API → demo_requests
+- Status: **READY TO EXECUTE** (owner approved)
 
-### P2 — Verify
-- **CR-34:** Verify Historical Lead Backfill (1,613+ docs, 919+ attributed)
+### Phase 2: CR-36 + CR-37 — Ad Spend Date Filtering (code changes)
+- **CR-36:** Meta sync → daily breakdowns + incremental sync + date-filtered spend
+- **CR-37:** Google sync → add segments.date + date fields + incremental sync
+- Files: `ads_mcp.py`, `funnel.py` (4 functions total)
+- Approach: Option A (daily breakdowns) + Option X (clean slate first sync, then incremental)
+- Status: **READY TO EXECUTE** (owner approved)
 
-## Next Tasks
-- Owner to update `.env` files with production credentials
-- Discovery + impact analysis for CR-35, CR-36, CR-37, CR-38
-- Verify CR-34 backfill results
+### Deferred
+- **CR-38:** Move AdSpendUpload widget to Ads Intelligence tab — owner will decide later
+- **CR-35 Part B:** Direct lead attribution default (`first_source = "website"`) — deferred, not in scope
+
+## Detailed Plan
+See `/app/memory/IMPLEMENTATION_PLAN_CR35_36_37.md`
+
+## Key Reference
+- CMS Auth: `admin` / `admin123`
+- POS DB: `mygenie_db` — DO NOT TOUCH
+- Website DB: `test_database`
