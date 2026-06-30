@@ -275,7 +275,7 @@ async def create_demo_request(payload: DemoRequestCreate, request: Request):
     # otherwise we STILL save the lead but flag it `OTP-Unverified` (graceful — a
     # missing token or SMS-panel outage must never cost a Demo lead).
     otp_verified = otp.verify_token(payload.otp_token, payload.phone)
-    demo_tags = ["Website Demo Lead"] if otp_verified else ["Website Demo Lead", "OTP-Unverified"]
+    demo_tags = ["Website Demo Lead", "OTP-Verified"] if otp_verified else ["Website Demo Lead", "OTP-Unverified"]
     # Fix CR-21: tag the landing page source so sales can filter by origin in CRM
     if obj.source_page and obj.source_page != "homepage":
         demo_tags.append(obj.source_page.replace("sector:", "src:"))

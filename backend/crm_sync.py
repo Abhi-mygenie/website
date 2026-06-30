@@ -217,7 +217,8 @@ async def run_sync(db) -> dict:
 
 async def run_otp_backfill(db) -> dict:
     """Mark backfilled paid contacts as otp_verified=True using Freshsales cf_rooms='Yes'.
-    Runs a single filtered_search (cf_rooms=Yes + source filter) and bulk-updates MongoDB."""
+    Runs a single filtered_search (cf_rooms=Yes + source filter) and bulk-updates MongoDB.
+    CR-40: Also adds 'OTP-Verified' tag to each matched Freshsales contact."""
     try:
         if not freshsales.is_enabled():
             return {"skipped": True}
@@ -248,8 +249,37 @@ async def run_otp_backfill(db) -> dict:
                 {"$set": {"otp_verified": True}},
             )
             logger.info("otp_backfill: marked %d contacts as otp_verified=True", result.modified_count)
-            return {"found_in_freshsales": len(otp_ids), "marked_in_db": result.modified_count}
-        return {"found_in_freshsales": 0, "marked_in_db": 0}
+
+            # CR-40: Tag each matched contact with "OTP-Verified" in Freshsales
+            tagged = 0
+            tag_errors = 0
+            for cid in otp_ids:
+                try:
+                    existing_tags = await freshsales._get_contact_tags(cid)
+                    if "OTP-Verified" not in existing_tags:
+                        merged = freshsales._merge_tags(existing_tags, "OTP-Verified")
+                        r = await freshsales._request(
+                            "PUT", f"/contacts/{cid}",
+                            json={"contact": {"tags": merged}},
+                        )
+                        if r.status_code < 400:
+                            tagged += 1
+                        else:
+                            logger.warning("otp_backfill tag: contact %d returned %d", cid, r.status_code)
+                            tag_errors += 1
+                    await asyncio.sleep(2.0)
+                except Exception as e:
+                    logger.error("otp_backfill tag: contact %d error: %s", cid, e)
+                    tag_errors += 1
+
+            logger.info("otp_backfill: tagged %d contacts with OTP-Verified (%d errors)", tagged, tag_errors)
+            return {
+                "found_in_freshsales": len(otp_ids),
+                "marked_in_db": result.modified_count,
+                "tagged_in_freshsales": tagged,
+                "tag_errors": tag_errors,
+            }
+        return {"found_in_freshsales": 0, "marked_in_db": 0, "tagged_in_freshsales": 0, "tag_errors": 0}
 
     except Exception as e:
         logger.error("otp_backfill: error: %s", e)

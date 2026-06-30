@@ -1,7 +1,7 @@
 # CR-40: OTP-Verified Tag + Backfill
 
 ## Date: 2026-06-30
-## Status: REGISTERED — Ready for implementation
+## Status: IMPLEMENTED
 ## Priority: MEDIUM (CRM usability / filtering)
 
 ---

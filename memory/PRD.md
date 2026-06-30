@@ -29,7 +29,12 @@ User will configure these in backend/.env after deployment:
 - S3 storage config
 - Other service-specific env vars
 
+## CR-40: OTP-Verified Tag + Backfill (2026-06-30)
+- [x] **Part 1**: `server.py:278` — new demo leads with verified OTP now get `"OTP-Verified"` tag in Freshsales (was missing)
+- [x] **Part 2**: `crm_sync.py:run_otp_backfill()` — extended to also add `"OTP-Verified"` tag to existing Freshsales contacts where `cf_rooms = "Yes"`. Triggered via `POST /api/cms/sync/otp-backfill`
+- Impact: Zero risk — tags are additive (merge, not replace). MongoDB `otp_verified` boolean unchanged. Funnel/leads queries unaffected.
+
 ## Backlog
-- P0: User adds environment variables for external services
+- P0: Run backfill via POST /api/cms/sync/otp-backfill to tag ~633 existing verified contacts
 - P1: Production build optimization (yarn build)
 - P2: SSL/domain configuration for production
