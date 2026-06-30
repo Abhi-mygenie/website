@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CR-19 Mockup — Lead Funnel & Ad Performance Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Manrope', sans-serif; }
+    .funnel-arrow {
+      width: 0; height: 0;
+      border-top: 20px solid transparent;
+      border-bottom: 20px solid transparent;
+      border-left: 14px solid #e2e8f0;
+      flex-shrink: 0;
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+    .drop-badge { font-size: 10px; }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+  <!-- ═══════════════════════════════════════════ PAGE HEADER (EXISTING — UNCHANGED) -->
+  <header class="border-b border-slate-200 bg-white sticky top-0 z-10">
+    <div class="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-bold text-slate-800" data-testid="leads-title">Leads</h1>
+        <p class="text-xs text-slate-400 mt-0.5">Internal sales triage — Demo, Quote/Buy & Contact</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">
+          ↻ Refresh
+        </button>
+        <button class="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white">
+          ↓ Export CSV
+        </button>
+        <button class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600">
+          ⏻
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-6 py-6 flex flex-col gap-6">
+
+    <!-- ═══════════════════════════════════════════ NEW SECTION 1 — GLOBAL FILTERS -->
+    <section data-testid="funnel-filter-bar" class="bg-white border border-slate-200 rounded-lg px-4 py-3 flex flex-wrap items-center gap-3 shadow-sm">
+      <span class="text-xs font-semibold uppercase tracking-widest text-slate-400">Filters</span>
+      <div class="flex items-center gap-2 text-sm">
+        <label class="text-xs text-slate-500 font-medium">From</label>
+        <input type="date" value="2026-05-01" class="rounded border border-slate-300 px-2 py-1 text-sm text-slate-700 outline-none" data-testid="funnel-filter-date-from" />
+        <span class="text-slate-400">→</span>
+        <input type="date" value="2026-06-23" class="rounded border border-slate-300 px-2 py-1 text-sm text-slate-700 outline-none" data-testid="funnel-filter-date-to" />
+      </div>
+      <select data-testid="funnel-filter-source" class="rounded border border-slate-300 px-2 py-1 text-sm text-slate-700 outline-none">
+        <option>All sources</option>
+        <option>Google Paid</option>
+        <option>Meta</option>
+        <option>Organic</option>
+        <option>Direct</option>
+      </select>
+      <select data-testid="funnel-filter-type" class="rounded border border-slate-300 px-2 py-1 text-sm text-slate-700 outline-none">
+        <option>All types</option>
+        <option>Demo</option>
+        <option>Quote / Buy</option>
+        <option>Contact</option>
+      </select>
+      <button data-testid="funnel-filter-apply" class="rounded bg-indigo-600 px-3 py-1 text-xs font-semibold text-white hover:bg-indigo-700">Apply</button>
+      <button data-testid="funnel-filter-reset" class="rounded border border-slate-300 px-3 py-1 text-xs text-slate-500 hover:bg-slate-50">Reset</button>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ NEW SECTION 2 — FUNNEL SUMMARY -->
+    <section>
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-500">Conversion Funnel</h2>
+        <span class="text-xs text-slate-400">May 1 – Jun 23, 2026 · All sources · All types</span>
+      </div>
+
+      <!-- Funnel cards row -->
+      <div class="flex items-stretch gap-0">
+
+        <!-- Stage 1: Lead In -->
+        <div data-testid="funnel-card-lead-in" class="flex-1 rounded-l-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <div class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-2">Lead In</div>
+          <div class="text-3xl font-bold text-slate-900">248</div>
+          <div class="mt-1 text-xs text-slate-400">Total leads</div>
+          <div class="mt-3 pt-3 border-t border-slate-100">
+            <span class="text-[10px] uppercase tracking-wide text-slate-400">Base</span>
+          </div>
+        </div>
+        <div class="funnel-arrow"></div>
+
+        <!-- Stage 2: OTP Verified -->
+        <div data-testid="funnel-card-otp-verified" class="flex-1 border border-blue-200 bg-blue-50 p-4 shadow-sm">
+          <div class="text-[10px] font-semibold uppercase tracking-widest text-blue-400 mb-2">OTP Verified</div>
+          <div class="text-3xl font-bold text-blue-900">181</div>
+          <div class="mt-1 text-xs text-blue-600 font-semibold">73% of leads</div>
+          <div class="mt-3 pt-3 border-t border-blue-100">
+            <span class="drop-badge inline-block bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-medium">↓ 27% dropped</span>
+          </div>
+        </div>
+        <div class="funnel-arrow" style="border-left-color:#bfdbfe"></div>
+
+        <!-- Stage 3: Demo Scheduled -->
+        <div data-testid="funnel-card-demo-scheduled" class="flex-1 border border-indigo-200 bg-indigo-50 p-4 shadow-sm">
+          <div class="text-[10px] font-semibold uppercase tracking-widest text-indigo-400 mb-2">Demo Scheduled</div>
+          <div class="text-3xl font-bold text-indigo-900">94</div>
+          <div class="mt-1 text-xs text-indigo-600 font-semibold">52% of OTP OK</div>
+          <div class="mt-3 pt-3 border-t border-indigo-100">
+            <span class="drop-badge inline-block bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-medium">↓ 48% dropped</span>
+          </div>
+        </div>
+        <div class="funnel-arrow" style="border-left-color:#c7d2fe"></div>
+
+        <!-- Stage 4: Demo Given -->
+        <div data-testid="funnel-card-demo-given" class="flex-1 border border-violet-200 bg-violet-50 p-4 shadow-sm">
+          <div class="text-[10px] font-semibold uppercase tracking-widest text-violet-400 mb-2">Demo Given</div>
+          <div class="text-3xl font-bold text-violet-900">61</div>
+          <div class="mt-1 text-xs text-violet-600 font-semibold">65% of Sched.</div>
+          <div class="mt-3 pt-3 border-t border-violet-100">
+            <span class="drop-badge inline-block bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-medium">↓ 35% dropped</span>
+          </div>
+        </div>
+        <div class="funnel-arrow" style="border-left-color:#ddd6fe"></div>
+
+        <!-- Stage 5: Won -->
+        <div data-testid="funnel-card-won" class="flex-1 rounded-r-lg border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
+          <div class="text-[10px] font-semibold uppercase tracking-widest text-emerald-500 mb-2">Won</div>
+          <div class="text-3xl font-bold text-emerald-700">31</div>
+          <div class="mt-1 text-xs text-emerald-700 font-semibold">51% of Demo</div>
+          <div class="mt-3 pt-3 border-t border-emerald-100">
+            <span class="drop-badge inline-block bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-medium">12.5% lead→win</span>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="w-5 flex items-center justify-center text-slate-300 font-bold text-lg">|</div>
+
+        <!-- Stage 6: Lost (negative — separate) -->
+        <div data-testid="funnel-card-lost" class="w-36 rounded-lg border border-red-200 bg-red-50 p-4 shadow-sm">
+          <div class="text-[10px] font-semibold uppercase tracking-widest text-red-400 mb-2">Lost ⛔</div>
+          <div class="text-3xl font-bold text-red-700">28</div>
+          <div class="mt-1 text-xs text-red-600 font-semibold">11.3% of leads</div>
+          <div class="mt-3 pt-3 border-t border-red-100">
+            <span class="drop-badge inline-block bg-red-200 text-red-700 px-1.5 py-0.5 rounded font-medium">Negative track</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Lead-to-win banner -->
+      <div class="mt-3 flex items-center gap-6 bg-white border border-slate-200 rounded-lg px-4 py-2.5 shadow-sm">
+        <span class="text-xs text-slate-500">Overall lead → win:</span>
+        <span class="text-sm font-bold text-emerald-700">12.5%</span>
+        <span class="text-slate-300">|</span>
+        <span class="text-xs text-slate-500">Lead → demo scheduled:</span>
+        <span class="text-sm font-bold text-indigo-700">37.9%</span>
+        <span class="text-slate-300">|</span>
+        <span class="text-xs text-slate-500">Demo → win:</span>
+        <span class="text-sm font-bold text-violet-700">50.8%</span>
+        <span class="text-slate-300">|</span>
+        <span class="text-xs text-slate-500">Biggest drop-off:</span>
+        <span class="text-sm font-bold text-red-600">OTP → Demo Scheduled (48%)</span>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ NEW SECTION 3 — FUNNEL BY SOURCE -->
+    <section>
+      <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3">Performance by Source</h2>
+      <div class="bg-white border border-slate-200 rounded-lg shadow-sm overflow-x-auto">
+        <table class="min-w-full text-sm" data-testid="funnel-by-source-table">
+          <thead class="bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-400 w-32">Source</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">Lead In</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-blue-400">OTP OK</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-indigo-400">Demo Sched.</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-violet-400">Demo Given</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-emerald-500">Won</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-red-400">Lost</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">Lead→Win %</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+
+            <!-- Google Paid -->
+            <tr data-testid="funnel-source-row-google" class="hover:bg-slate-50">
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
+                  <span class="text-sm font-semibold text-slate-800">Google Paid</span>
+                </div>
+                <div class="text-[10px] text-slate-400 ml-4">gclid present</div>
+              </td>
+              <td class="px-4 py-3 text-center"><span class="font-semibold text-slate-800">92</span></td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-blue-800">74</span>
+                <div class="text-[10px] text-blue-400">80%</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-indigo-800">42</span>
+                <div class="text-[10px] text-indigo-400">57%</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-violet-800">30</span>
+                <div class="text-[10px] text-violet-400">71%</div>
+              </td>
+              <td class="px-4 py-3 text-center bg-emerald-50">
+                <span class="font-bold text-emerald-700 text-base">17</span>
+                <div class="text-[10px] text-emerald-600">57% of demo</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-red-600">8</span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="inline-block bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded">18.5%</span>
+              </td>
+            </tr>
+
+            <!-- Meta -->
+            <tr data-testid="funnel-source-row-meta" class="hover:bg-slate-50">
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-block w-2 h-2 rounded-full bg-blue-400"></span>
+                  <span class="text-sm font-semibold text-slate-800">Meta</span>
+                </div>
+                <div class="text-[10px] text-slate-400 ml-4">fbclid present</div>
+              </td>
+              <td class="px-4 py-3 text-center"><span class="font-semibold text-slate-800">68</span></td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-blue-800">52</span>
+                <div class="text-[10px] text-blue-400">76%</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-indigo-800">24</span>
+                <div class="text-[10px] text-indigo-400">46%</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-violet-800">14</span>
+                <div class="text-[10px] text-violet-400">58%</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-bold text-emerald-700 text-base">6</span>
+                <div class="text-[10px] text-emerald-600">43% of demo</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-red-600">9</span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="inline-block bg-slate-100 text-slate-600 text-xs font-bold px-2 py-0.5 rounded">8.8%</span>
+              </td>
+            </tr>
+
+            <!-- Organic -->
+            <tr data-testid="funnel-source-row-organic" class="hover:bg-slate-50">
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-block w-2 h-2 rounded-full bg-slate-400"></span>
+                  <span class="text-sm font-semibold text-slate-800">Organic</span>
+                </div>
+                <div class="text-[10px] text-slate-400 ml-4">utm_source=google, no gclid</div>
+              </td>
+              <td class="px-4 py-3 text-center"><span class="font-semibold text-slate-800">52</span></td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-blue-800">36</span>
+                <div class="text-[10px] text-blue-400">69%</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-indigo-800">18</span>
+                <div class="text-[10px] text-indigo-400">50%</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-violet-800">11</span>
+                <div class="text-[10px] text-violet-400">61%</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-bold text-emerald-700 text-base">5</span>
+                <div class="text-[10px] text-emerald-600">45% of demo</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-red-600">6</span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="inline-block bg-slate-100 text-slate-600 text-xs font-bold px-2 py-0.5 rounded">9.6%</span>
+              </td>
+            </tr>
+
+            <!-- Direct -->
+            <tr data-testid="funnel-source-row-direct" class="hover:bg-slate-50">
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-block w-2 h-2 rounded-full bg-slate-300"></span>
+                  <span class="text-sm font-semibold text-slate-700">Direct / Unknown</span>
+                </div>
+                <div class="text-[10px] text-slate-400 ml-4">no UTMs</div>
+              </td>
+              <td class="px-4 py-3 text-center"><span class="font-semibold text-slate-700">36</span></td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-blue-700">19</span>
+                <div class="text-[10px] text-blue-300">53%</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-indigo-700">10</span>
+                <div class="text-[10px] text-indigo-300">53%</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-violet-700">6</span>
+                <div class="text-[10px] text-violet-300">60%</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-bold text-emerald-600 text-base">3</span>
+                <div class="text-[10px] text-emerald-500">50% of demo</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="font-semibold text-red-500">5</span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="inline-block bg-slate-100 text-slate-500 text-xs font-bold px-2 py-0.5 rounded">8.3%</span>
+              </td>
+            </tr>
+
+            <!-- Total row -->
+            <tr class="bg-slate-50 border-t-2 border-slate-200">
+              <td class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Total</td>
+              <td class="px-4 py-3 text-center font-bold text-slate-900">248</td>
+              <td class="px-4 py-3 text-center font-bold text-blue-900">181 <span class="text-[10px] font-normal text-blue-400">(73%)</span></td>
+              <td class="px-4 py-3 text-center font-bold text-indigo-900">94 <span class="text-[10px] font-normal text-indigo-400">(52%)</span></td>
+              <td class="px-4 py-3 text-center font-bold text-violet-900">61 <span class="text-[10px] font-normal text-violet-400">(65%)</span></td>
+              <td class="px-4 py-3 text-center font-bold text-emerald-700 bg-emerald-50">31 <span class="text-[10px] font-normal text-emerald-500">(51%)</span></td>
+              <td class="px-4 py-3 text-center font-bold text-red-600">28</td>
+              <td class="px-4 py-3 text-center"><span class="inline-block bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded">12.5%</span></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ NEW SECTION 4 — LOST + SYNC -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+      <!-- Lost: total -->
+      <div data-testid="lost-total-card" class="bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm">
+        <div class="text-[10px] font-semibold uppercase tracking-widest text-red-400 mb-2">Total Lost</div>
+        <div class="text-4xl font-bold text-red-700">28</div>
+        <div class="text-xs text-red-500 mt-1">11.3% of all leads</div>
+        <div class="mt-3 pt-3 border-t border-red-200 text-xs text-red-400">
+          Avg. time to lost: <span class="font-semibold text-red-600">6.2 days</span>
+        </div>
+      </div>
+
+      <!-- Lost: reasons -->
+      <div data-testid="lost-reasons-panel" class="md:col-span-2 bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+        <div class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-3">Lost Reasons</div>
+        <div class="space-y-2">
+          <!-- Reason bars -->
+          <div class="flex items-center gap-3">
+            <span class="w-32 text-xs text-slate-600 truncate">Price too high</span>
+            <div class="flex-1 bg-slate-100 rounded-full h-2">
+              <div class="bg-red-400 h-2 rounded-full" style="width:46%"></div>
+            </div>
+            <span class="text-xs font-semibold text-slate-700 w-8 text-right">13</span>
+            <span class="text-[10px] text-slate-400 w-8">46%</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="w-32 text-xs text-slate-600 truncate">No show</span>
+            <div class="flex-1 bg-slate-100 rounded-full h-2">
+              <div class="bg-red-300 h-2 rounded-full" style="width:25%"></div>
+            </div>
+            <span class="text-xs font-semibold text-slate-700 w-8 text-right">7</span>
+            <span class="text-[10px] text-slate-400 w-8">25%</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="w-32 text-xs text-slate-600 truncate">Chose competitor</span>
+            <div class="flex-1 bg-slate-100 rounded-full h-2">
+              <div class="bg-red-200 h-2 rounded-full" style="width:18%"></div>
+            </div>
+            <span class="text-xs font-semibold text-slate-700 w-8 text-right">5</span>
+            <span class="text-[10px] text-slate-400 w-8">18%</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="w-32 text-xs text-slate-600 truncate">Not ready</span>
+            <div class="flex-1 bg-slate-100 rounded-full h-2">
+              <div class="bg-slate-200 h-2 rounded-full" style="width:11%"></div>
+            </div>
+            <span class="text-xs font-semibold text-slate-700 w-8 text-right">3</span>
+            <span class="text-[10px] text-slate-400 w-8">11%</span>
+          </div>
+        </div>
+
+        <!-- Sync status bar -->
+        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+          <span class="text-[10px] text-slate-400">Last CRM sync: <span class="text-slate-600 font-medium">Today 9:14 AM</span> · 94 contacts updated</span>
+          <button data-testid="sync-now-btn" class="rounded border border-slate-300 px-2 py-1 text-[10px] font-semibold text-slate-500 hover:bg-slate-50 flex items-center gap-1">
+            ↻ Sync now
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════ EXISTING SECTION 5 — SUMMARY CHIPS (UNCHANGED) -->
+    <div>
+      <div class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-3">— Existing Leads Summary (unchanged) —</div>
+      <div class="flex flex-wrap gap-3">
+        <div class="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <div class="text-xs uppercase tracking-wide text-slate-400">Total</div>
+          <div class="mt-1 text-2xl font-semibold text-slate-800">248</div>
+        </div>
+        <div class="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <div class="text-xs uppercase tracking-wide text-slate-400">Today</div>
+          <div class="mt-1 text-2xl font-semibold text-emerald-600">11</div>
+        </div>
+        <div class="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <div class="text-xs uppercase tracking-wide text-slate-400">OTP Verified</div>
+          <div class="mt-1 text-2xl font-semibold text-sky-600">181 (73%)</div>
+        </div>
+        <div class="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <div class="text-xs uppercase tracking-wide text-slate-400">Paid Source</div>
+          <div class="mt-1 text-2xl font-semibold text-amber-600">160</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ EXISTING SECTION 6 — LEADS TABLE (UNCHANGED + Stage column) -->
+    <div>
+      <div class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-3">— Existing Leads Table (Stage column added) —</div>
+
+      <!-- Filters bar (existing, unchanged) -->
+      <div class="rounded-xl border border-slate-200 bg-white p-4 mb-4 shadow-sm">
+        <div class="flex flex-wrap items-center gap-3">
+          <input class="flex-1 min-w-[220px] rounded-lg border border-slate-300 pl-3 pr-3 py-2 text-sm" placeholder="Search name, phone, email, campaign…" />
+          <select class="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700">
+            <option>All types</option><option>Demo</option><option>Quote / Buy</option><option>Contact</option>
+          </select>
+          <input class="w-32 rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="City" />
+        </div>
+        <div class="mt-3 flex flex-wrap items-center gap-4">
+          <span class="text-xs text-slate-400">Quick filters:</span>
+          <label class="inline-flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+            <input type="checkbox" /> OTP-verified only
+          </label>
+          <label class="inline-flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+            <input type="checkbox" /> Paid source only
+          </label>
+          <!-- NEW filter -->
+          <label class="inline-flex items-center gap-2 text-sm text-red-600 cursor-pointer" data-testid="leads-filter-lost">
+            <input type="checkbox" /> Lost only
+          </label>
+        </div>
+      </div>
+
+      <!-- Table (existing with one new Stage column) -->
+      <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-400">
+            <tr>
+              <th class="px-4 py-3">Type</th>
+              <th class="px-4 py-3">Lead</th>
+              <th class="px-4 py-3">City</th>
+              <th class="px-4 py-3">Source / Campaign</th>
+              <th class="px-4 py-3">Details</th>
+              <th class="px-4 py-3 bg-indigo-50 text-indigo-400">Stage ← NEW</th>
+              <th class="px-4 py-3">Created</th>
+              <th class="px-4 py-3 text-right">CRM</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-3"><span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium bg-sky-100 text-sky-700">Demo</span></td>
+              <td class="px-4 py-3">
+                <div class="font-medium text-slate-800 flex items-center gap-1.5">Ramesh Kumar <span class="text-emerald-600 text-xs">✓</span></div>
+                <div class="text-slate-500">+91 98765 43210</div>
+              </td>
+              <td class="px-4 py-3 text-slate-600">Mumbai</td>
+              <td class="px-4 py-3">
+                <div class="text-slate-700">google <span class="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">PAID</span></div>
+                <div class="text-xs text-slate-400">mygenie-restaurant-pos</div>
+              </td>
+              <td class="px-4 py-3 text-slate-600">Cafe · 2-3 yrs</td>
+              <!-- NEW Stage cell -->
+              <td class="px-4 py-3">
+                <span data-testid="lead-stage-badge" class="inline-block rounded px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700">Won</span>
+              </td>
+              <td class="px-4 py-3 text-slate-500">Jun 10, 2026</td>
+              <td class="px-4 py-3 text-right"><a class="text-xs text-sky-600">Open ↗</a></td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-3"><span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium bg-sky-100 text-sky-700">Demo</span></td>
+              <td class="px-4 py-3">
+                <div class="font-medium text-slate-800">Priya Shah</div>
+                <div class="text-slate-500">+91 87654 32109</div>
+              </td>
+              <td class="px-4 py-3 text-slate-600">Pune</td>
+              <td class="px-4 py-3">
+                <div class="text-slate-700">facebook <span class="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">PAID</span></div>
+                <div class="text-xs text-slate-400">mygenie-summer26</div>
+              </td>
+              <td class="px-4 py-3 text-slate-600">QSR · 1-2 yrs</td>
+              <td class="px-4 py-3">
+                <span class="inline-block rounded px-2 py-0.5 text-xs font-semibold bg-red-100 text-red-600">Lost</span>
+              </td>
+              <td class="px-4 py-3 text-slate-500">Jun 14, 2026</td>
+              <td class="px-4 py-3 text-right"><a class="text-xs text-sky-600">Open ↗</a></td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-3"><span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium bg-sky-100 text-sky-700">Demo</span></td>
+              <td class="px-4 py-3">
+                <div class="font-medium text-slate-800 flex items-center gap-1.5">Sunil Mehta <span class="text-emerald-600 text-xs">✓</span></div>
+                <div class="text-slate-500">+91 76543 21098</div>
+              </td>
+              <td class="px-4 py-3 text-slate-600">Delhi</td>
+              <td class="px-4 py-3">
+                <div class="text-slate-700">google <span class="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">PAID</span></div>
+              </td>
+              <td class="px-4 py-3 text-slate-600">Restaurant · 3-5 yrs</td>
+              <td class="px-4 py-3">
+                <span class="inline-block rounded px-2 py-0.5 text-xs font-semibold bg-violet-100 text-violet-700">Demo Given</span>
+              </td>
+              <td class="px-4 py-3 text-slate-500">Jun 20, 2026</td>
+              <td class="px-4 py-3 text-right"><a class="text-xs text-sky-600">Open ↗</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Stage badge legend -->
+    <div class="flex flex-wrap gap-2 items-center text-xs text-slate-500 pb-4">
+      <span class="font-medium">Stage badges:</span>
+      <span class="inline-block rounded px-2 py-0.5 text-xs font-semibold bg-slate-100 text-slate-500">—</span>
+      <span class="inline-block rounded px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-700">OTP Verified</span>
+      <span class="inline-block rounded px-2 py-0.5 text-xs font-semibold bg-indigo-100 text-indigo-700">Demo Scheduled</span>
+      <span class="inline-block rounded px-2 py-0.5 text-xs font-semibold bg-violet-100 text-violet-700">Demo Given</span>
+      <span class="inline-block rounded px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700">Won</span>
+      <span class="inline-block rounded px-2 py-0.5 text-xs font-semibold bg-red-100 text-red-600">Lost</span>
+    </div>
+
+  </main>
+</body>
+</html>
