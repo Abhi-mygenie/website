@@ -132,11 +132,27 @@ def _extract_actions(row) -> dict:
     return out
 
 
+async def _get_last_sync_date(db, source: str) -> str | None:
+    """Find the latest date_stop for a given source in ad_spend.
+    Returns 'YYYY-MM-DD' string or None if no data exists."""
+    doc = await db.ad_spend.find_one(
+        {"source": source, "date_stop": {"$ne": None}},
+        {"date_stop": 1},
+        sort=[("date_stop", -1)]
+    )
+    if doc and doc.get("date_stop"):
+        ds = doc["date_stop"]
+        # Ensure it's a YYYY-MM-DD string (not None or garbage)
+        return ds[:10] if isinstance(ds, str) and len(ds) >= 10 else None
+    return None
+
+
 async def sync_meta(db, date_from: str = None, date_to: str = None) -> dict:
     """Pull Meta Ads data via official Graph API v21.0 and upsert into ad_spend.
 
-    If date_from/date_to are provided, fetches that specific range using time_range.
-    Otherwise fetches last_year + this_year presets for full history.
+    CR-36: Uses daily breakdowns with incremental sync.
+    If date_from/date_to are provided, fetches that specific range.
+    Otherwise calculates incremental range from last synced date.
     """
     token   = os.environ.get("META_ACCESS_TOKEN", "")
     account = os.environ.get("META_AD_ACCOUNT_ID", "")
@@ -237,53 +253,36 @@ async def sync_meta(db, date_from: str = None, date_to: str = None) -> dict:
             "spend,impressions,clicks,reach,frequency,actions,conversions"
         )
 
-        # Use specific date range if provided, else full history (last_year + this_year)
-        if date_from and date_to:
-            period_label = f"{date_from} to {date_to}"
-            campaign_rows  = await _meta_insights("campaign", campaign_fields, since=date_from, until=date_to)
-            adset_rows     = await _meta_insights("adset",    adset_fields,    since=date_from, until=date_to)
-            ad_rows        = await _meta_insights("ad",       ad_fields,       since=date_from, until=date_to)
-            placement_rows = await _meta_insights(
-                "campaign", "campaign_name,spend,impressions,clicks",
-                since=date_from, until=date_to,
-                breakdowns="publisher_platform,platform_position",
-            )
-            # Apply pixel event extraction to raw API rows (same as _merge_rows does for full history)
-            for row in campaign_rows:
-                row.update(_extract_actions(row))
-            for row in adset_rows:
-                row.update(_extract_actions(row))
-            for row in ad_rows:
-                row.update(_extract_actions(row))
-        else:
-            period_label = "2025 + 2026 (last_year + this_year)"
-            c_2025  = await _meta_insights("campaign", campaign_fields, date_preset="last_year")
-            c_2026  = await _meta_insights("campaign", campaign_fields, date_preset="this_year")
-            a_2025  = await _meta_insights("adset",    adset_fields,    date_preset="last_year")
-            a_2026  = await _meta_insights("adset",    adset_fields,    date_preset="this_year")
-            ad_2025 = await _meta_insights("ad",       ad_fields,       date_preset="last_year")
-            ad_2026 = await _meta_insights("ad",       ad_fields,       date_preset="this_year")
+        # CR-36: Always use time_range for daily breakdowns (incremental sync)
+        if not date_from or not date_to:
+            last_date = await _get_last_sync_date(db, "meta_api")
+            if last_date:
+                # Incremental: re-sync from last synced date (catches late data)
+                date_from = last_date
+                date_to = date.today().isoformat()
+                logger.info("Meta incremental sync: %s to %s", date_from, date_to)
+            else:
+                # First sync (Option X): full history
+                date_from = "2025-01-01"
+                date_to = date.today().isoformat()
+                logger.info("Meta full sync (first time): %s to %s", date_from, date_to)
 
-            def _merge_rows(rows_a, rows_b, id_key):
-                merged = {}
-                for r in rows_a + rows_b:
-                    key = r.get(id_key) or r.get("campaign_name", "?")
-                    if key not in merged:
-                        merged[key] = dict(r)
-                        merged[key].update(_extract_actions(r))
-                    else:
-                        merged[key]["spend"] = str(
-                            float(merged[key].get("spend", 0)) + float(r.get("spend", 0))
-                        )
-                        new_acts = _extract_actions(r)
-                        for k in ("book_demo_count","schedule_count","demo_given_count","purchase_count"):
-                            merged[key][k] = merged[key].get(k, 0) + new_acts.get(k, 0)
-                return list(merged.values())
-
-            campaign_rows = _merge_rows(c_2025, c_2026, "campaign_id")
-            adset_rows    = _merge_rows(a_2025, a_2026, "adset_id")
-            ad_rows       = _merge_rows(ad_2025, ad_2026, "ad_id")
-            placement_rows = []  # Placement only available via specific date range filter
+        period_label = f"{date_from} to {date_to}"
+        campaign_rows  = await _meta_insights("campaign", campaign_fields, since=date_from, until=date_to)
+        adset_rows     = await _meta_insights("adset",    adset_fields,    since=date_from, until=date_to)
+        ad_rows        = await _meta_insights("ad",       ad_fields,       since=date_from, until=date_to)
+        placement_rows = await _meta_insights(
+            "campaign", "campaign_name,spend,impressions,clicks",
+            since=date_from, until=date_to,
+            breakdowns="publisher_platform,platform_position",
+        )
+        # Apply pixel event extraction to raw API rows
+        for row in campaign_rows:
+            row.update(_extract_actions(row))
+        for row in adset_rows:
+            row.update(_extract_actions(row))
+        for row in ad_rows:
+            row.update(_extract_actions(row))
 
     except RuntimeError as e:
         logger.error("Meta API error: %s", e)
@@ -448,7 +447,11 @@ async def sync_meta(db, date_from: str = None, date_to: str = None) -> dict:
         })
 
     if docs:
-        await db.ad_spend.delete_many({"source": "meta_api"})
+        # CR-36: Incremental delete — only remove rows that overlap with the synced range
+        await db.ad_spend.delete_many({
+            "source": "meta_api",
+            "date_start": {"$gte": date_from},
+        })
         await db.ad_spend.insert_many(docs)
         logger.info("Meta API sync: upserted %d rows (campaigns=%d, adsets=%d, ads=%d)",
                     len(docs), len(campaign_rows), len(adset_rows), len(ad_rows))
@@ -485,6 +488,7 @@ def _conversion_field(action_name: str) -> str | None:
 def _run_google_ads_sync(refresh_token: str, customer_id: str,
                          date_from: str | None, date_to: str | None) -> list:
     """Synchronous Google Ads API call (runs in thread pool).
+    CR-37: Returns daily-granularity rows with date_start/date_stop fields.
     Uses all_conversions segmented by conversion_action_name for accurate
     per-funnel-stage breakdown instead of the aggregated metrics.conversions."""
     from google.ads.googleads.client import GoogleAdsClient
@@ -517,10 +521,10 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
             store[field] = store.get(field, 0) + round(value)
 
     # ── Campaign level ────────────────────────────────────────────────────
-    # Query 1a: base metrics (spend, clicks, impressions)
+    # CR-37: added segments.date for daily granularity
     base: dict[str, dict] = {}
     q_c_base = f"""
-        SELECT campaign.id, campaign.name,
+        SELECT campaign.id, campaign.name, segments.date,
                metrics.cost_micros, metrics.clicks, metrics.impressions
         FROM campaign
         WHERE {date_clause}
@@ -530,19 +534,28 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
     try:
         for batch in ga_svc.search_stream(customer_id=customer_id, query=q_c_base):
             for row in batch.results:
-                base[row.campaign.name] = {
-                    "campaign_id": str(row.campaign.id),
-                    "spend":       round(row.metrics.cost_micros / 1_000_000, 2),
-                    "clicks":      int(row.metrics.clicks),
-                    "impressions": int(row.metrics.impressions),
-                    **_empty_conv(),
-                }
+                dt = row.segments.date
+                key = f"{row.campaign.name}|{dt}"
+                if key not in base:
+                    base[key] = {
+                        "campaign_name": row.campaign.name,
+                        "campaign_id": str(row.campaign.id),
+                        "date": dt,
+                        "spend":       round(row.metrics.cost_micros / 1_000_000, 2),
+                        "clicks":      int(row.metrics.clicks),
+                        "impressions": int(row.metrics.impressions),
+                        **_empty_conv(),
+                    }
+                else:
+                    base[key]["spend"]       += round(row.metrics.cost_micros / 1_000_000, 2)
+                    base[key]["clicks"]      += int(row.metrics.clicks)
+                    base[key]["impressions"] += int(row.metrics.impressions)
     except Exception as e:
         logger.error("Google Ads campaign base query failed: %s", e)
 
     # Query 1b: per-action conversions using all_conversions
     q_c_conv = f"""
-        SELECT campaign.name,
+        SELECT campaign.name, segments.date,
                segments.conversion_action_name,
                metrics.all_conversions
         FROM campaign
@@ -553,9 +566,10 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
     try:
         for batch in ga_svc.search_stream(customer_id=customer_id, query=q_c_conv):
             for row in batch.results:
-                cname = row.campaign.name
-                if cname in base:
-                    _accumulate_conv(base[cname],
+                dt = row.segments.date
+                key = f"{row.campaign.name}|{dt}"
+                if key in base:
+                    _accumulate_conv(base[key],
                                      row.segments.conversion_action_name,
                                      row.metrics.all_conversions)
     except Exception as e:
@@ -564,7 +578,7 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
     campaign_docs = [
         {
             "source": "google", "level": "campaign",
-            "campaign": name, "campaign_id": v["campaign_id"],
+            "campaign": v["campaign_name"], "campaign_id": v["campaign_id"],
             "ad_set": "", "ad_name": "",
             "spend": v["spend"], "clicks": v["clicks"], "impressions": v["impressions"],
             "book_demo_count":  v["book_demo_count"],
@@ -572,15 +586,18 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
             "demo_given_count": v["demo_given_count"],
             "purchase_count":   v["purchase_count"],
             "publisher_platform": "google", "audience": "",
-            "campaign_created_date": "", "synced_at": now,
+            "campaign_created_date": "",
+            "date_start": v["date"],
+            "date_stop":  v["date"],
+            "synced_at": now,
         }
-        for name, v in base.items()
+        for v in base.values()
     ]
 
     # ── Ad Group (AdSet) level ────────────────────────────────────────────
     adgroups: dict[str, dict] = {}
     q_ag_base = f"""
-        SELECT campaign.name, ad_group.id, ad_group.name,
+        SELECT campaign.name, ad_group.id, ad_group.name, segments.date,
                metrics.cost_micros, metrics.clicks, metrics.impressions
         FROM ad_group
         WHERE {date_clause}
@@ -590,21 +607,28 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
     try:
         for batch in ga_svc.search_stream(customer_id=customer_id, query=q_ag_base):
             for row in batch.results:
-                key = f"{row.campaign.name}|{row.ad_group.name}"
-                adgroups[key] = {
-                    "campaign":    row.campaign.name,
-                    "ad_set":      row.ad_group.name,
-                    "ad_set_id":   str(row.ad_group.id),
-                    "spend":       round(row.metrics.cost_micros / 1_000_000, 2),
-                    "clicks":      int(row.metrics.clicks),
-                    "impressions": int(row.metrics.impressions),
-                    **_empty_conv(),
-                }
+                dt = row.segments.date
+                key = f"{row.campaign.name}|{row.ad_group.name}|{dt}"
+                if key not in adgroups:
+                    adgroups[key] = {
+                        "campaign":    row.campaign.name,
+                        "ad_set":      row.ad_group.name,
+                        "ad_set_id":   str(row.ad_group.id),
+                        "date":        dt,
+                        "spend":       round(row.metrics.cost_micros / 1_000_000, 2),
+                        "clicks":      int(row.metrics.clicks),
+                        "impressions": int(row.metrics.impressions),
+                        **_empty_conv(),
+                    }
+                else:
+                    adgroups[key]["spend"]       += round(row.metrics.cost_micros / 1_000_000, 2)
+                    adgroups[key]["clicks"]      += int(row.metrics.clicks)
+                    adgroups[key]["impressions"] += int(row.metrics.impressions)
     except Exception as e:
         logger.error("Google Ads ad_group base query failed: %s", e)
 
     q_ag_conv = f"""
-        SELECT campaign.name, ad_group.name,
+        SELECT campaign.name, ad_group.name, segments.date,
                segments.conversion_action_name,
                metrics.all_conversions
         FROM ad_group
@@ -615,7 +639,8 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
     try:
         for batch in ga_svc.search_stream(customer_id=customer_id, query=q_ag_conv):
             for row in batch.results:
-                key = f"{row.campaign.name}|{row.ad_group.name}"
+                dt = row.segments.date
+                key = f"{row.campaign.name}|{row.ad_group.name}|{dt}"
                 if key in adgroups:
                     _accumulate_conv(adgroups[key],
                                      row.segments.conversion_action_name,
@@ -633,7 +658,10 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
             "schedule_count":   v["schedule_count"],
             "demo_given_count": v["demo_given_count"],
             "purchase_count":   v["purchase_count"],
-            "publisher_platform": "google", "audience": "", "synced_at": now,
+            "publisher_platform": "google", "audience": "",
+            "date_start": v["date"],
+            "date_stop":  v["date"],
+            "synced_at": now,
         }
         for v in adgroups.values()
     ]
@@ -641,7 +669,7 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
     # ── Ad level ──────────────────────────────────────────────────────────
     ads: dict[str, dict] = {}
     q_ad_base = f"""
-        SELECT campaign.name, ad_group.name,
+        SELECT campaign.name, ad_group.name, segments.date,
                ad_group_ad.ad.id, ad_group_ad.ad.name,
                metrics.cost_micros, metrics.clicks, metrics.impressions
         FROM ad_group_ad
@@ -652,21 +680,28 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
     try:
         for batch in ga_svc.search_stream(customer_id=customer_id, query=q_ad_base):
             for row in batch.results:
-                key = str(row.ad_group_ad.ad.id)
-                ads[key] = {
-                    "campaign":    row.campaign.name,
-                    "ad_set":      row.ad_group.name,
-                    "ad_name":     row.ad_group_ad.ad.name or f"Ad {key}",
-                    "spend":       round(row.metrics.cost_micros / 1_000_000, 2),
-                    "clicks":      int(row.metrics.clicks),
-                    "impressions": int(row.metrics.impressions),
-                    **_empty_conv(),
-                }
+                dt = row.segments.date
+                key = f"{row.ad_group_ad.ad.id}|{dt}"
+                if key not in ads:
+                    ads[key] = {
+                        "campaign":    row.campaign.name,
+                        "ad_set":      row.ad_group.name,
+                        "ad_name":     row.ad_group_ad.ad.name or f"Ad {row.ad_group_ad.ad.id}",
+                        "date":        dt,
+                        "spend":       round(row.metrics.cost_micros / 1_000_000, 2),
+                        "clicks":      int(row.metrics.clicks),
+                        "impressions": int(row.metrics.impressions),
+                        **_empty_conv(),
+                    }
+                else:
+                    ads[key]["spend"]       += round(row.metrics.cost_micros / 1_000_000, 2)
+                    ads[key]["clicks"]      += int(row.metrics.clicks)
+                    ads[key]["impressions"] += int(row.metrics.impressions)
     except Exception as e:
         logger.error("Google Ads ad base query failed: %s", e)
 
     q_ad_conv = f"""
-        SELECT campaign.name, ad_group.name,
+        SELECT campaign.name, ad_group.name, segments.date,
                ad_group_ad.ad.id,
                segments.conversion_action_name,
                metrics.all_conversions
@@ -678,7 +713,8 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
     try:
         for batch in ga_svc.search_stream(customer_id=customer_id, query=q_ad_conv):
             for row in batch.results:
-                key = str(row.ad_group_ad.ad.id)
+                dt = row.segments.date
+                key = f"{row.ad_group_ad.ad.id}|{dt}"
                 if key in ads:
                     _accumulate_conv(ads[key],
                                      row.segments.conversion_action_name,
@@ -695,7 +731,10 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
             "schedule_count":   v["schedule_count"],
             "demo_given_count": v["demo_given_count"],
             "purchase_count":   v["purchase_count"],
-            "publisher_platform": "google", "audience": "", "synced_at": now,
+            "publisher_platform": "google", "audience": "",
+            "date_start": v["date"],
+            "date_stop":  v["date"],
+            "synced_at": now,
         }
         for v in ads.values()
     ]
@@ -704,7 +743,8 @@ def _run_google_ads_sync(refresh_token: str, customer_id: str,
 
 
 async def sync_google(db, date_from: str | None = None, date_to: str | None = None) -> dict:
-    """Pull Google Ads data using stored OAuth refresh token and upsert into ad_spend."""
+    """Pull Google Ads data using stored OAuth refresh token and upsert into ad_spend.
+    CR-37: Incremental sync with daily granularity and date_start/date_stop fields."""
     import asyncio
 
     dev_token   = os.environ.get("GOOGLE_ADS_DEVELOPER_TOKEN", "")
@@ -720,6 +760,18 @@ async def sync_google(db, date_from: str | None = None, date_to: str | None = No
 
     refresh_token = token_doc["refresh_token"]
 
+    # CR-37: Calculate incremental date range if not explicitly provided
+    if not date_from or not date_to:
+        last_date = await _get_last_sync_date(db, "google")
+        if last_date:
+            date_from = last_date
+            date_to = date.today().isoformat()
+            logger.info("Google incremental sync: %s to %s", date_from, date_to)
+        else:
+            date_from = "2025-01-01"
+            date_to = date.today().isoformat()
+            logger.info("Google full sync (first time): %s to %s", date_from, date_to)
+
     try:
         # Run synchronous Google Ads client in thread pool
         loop = asyncio.get_event_loop()
@@ -733,7 +785,11 @@ async def sync_google(db, date_from: str | None = None, date_to: str | None = No
         )
 
         if docs:
-            await db.ad_spend.delete_many({"source": "google"})
+            # CR-37: Incremental delete — only remove rows that overlap with synced range
+            await db.ad_spend.delete_many({
+                "source": "google",
+                "date_start": {"$gte": date_from},
+            })
             await db.ad_spend.insert_many(docs)
 
         campaigns = len({d["campaign"] for d in docs if d["level"] == "campaign"})
@@ -745,6 +801,7 @@ async def sync_google(db, date_from: str | None = None, date_to: str | None = No
             "campaigns": campaigns,
             "adsets":    adsets,
             "ads":       ads,
+            "period":    f"{date_from} to {date_to}",
         }
 
     except Exception as e:

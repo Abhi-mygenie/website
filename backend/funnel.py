@@ -188,8 +188,9 @@ async def get_funnel_summary(db, date_from=None, date_to=None, lead_type=None, s
     }
 
 
-async def _get_spend_by_source(db) -> dict:
-    """Return spend per source — covers both CSV uploads and live API syncs."""
+async def _get_spend_by_source(db, date_from=None, date_to=None) -> dict:
+    """Return spend per source — covers both CSV uploads and live API syncs.
+    CR-36/37: accepts optional date_from/date_to to filter by date_start/date_stop."""
     result = {}
 
     # CSV uploads (google, meta, google_keywords, etc.)
@@ -217,9 +218,21 @@ async def _get_spend_by_source(db) -> dict:
         ("meta_api", "meta", "campaign"),
         ("google",   "google", "campaign"),
     ):
+        # First check if this API source has ANY data (regardless of date filter)
+        has_api_data = await db.ad_spend.count_documents({"source": api_source, "level": level_filter}, limit=1)
+        if not has_api_data:
+            continue  # No API data — keep CSV result if present
+
         match = {"source": api_source}
         if level_filter:
             match["level"] = level_filter
+        # CR-36/37: filter by date range when provided
+        if date_from:
+            match["date_start"] = match.get("date_start", {})
+            match["date_start"]["$gte"] = date_from
+        if date_to:
+            match["date_stop"] = match.get("date_stop", {})
+            match["date_stop"]["$lte"] = date_to
         agg_pipe = [
             {"$match": match},
             {"$group": {
@@ -231,14 +244,14 @@ async def _get_spend_by_source(db) -> dict:
             }},
         ]
         agg = await db.ad_spend.aggregate(agg_pipe).to_list(1)
-        if agg and agg[0]["total"]:
-            result[map_key] = {
-                "spend":        agg[0]["total"],
-                "period_start": agg[0].get("date_start"),
-                "period_end":   agg[0].get("date_stop"),
-                "synced_at":    agg[0].get("synced_at"),
-                "data_source":  "api",
-            }
+        # CR-36: Always override CSV when API data exists (even if 0 for this date range)
+        result[map_key] = {
+            "spend":        agg[0]["total"] if agg else 0.0,
+            "period_start": agg[0].get("date_start") if agg else date_from,
+            "period_end":   agg[0].get("date_stop") if agg else date_to,
+            "synced_at":    agg[0].get("synced_at") if agg else None,
+            "data_source":  "api",
+        }
 
     return result
 
@@ -251,7 +264,7 @@ def _fmt_cost(spend: float, count: int) -> float | None:
 
 async def get_funnel_by_source(db, date_from=None, date_to=None, lead_type=None):
     rows = await _load_all(db, date_from, date_to, lead_type)
-    spend_map = await _get_spend_by_source(db)
+    spend_map = await _get_spend_by_source(db, date_from, date_to)
 
     # Map funnel source bucket → ad_spend source key
     SOURCE_TO_SPEND = {"google_paid": "google", "meta": "meta"}
@@ -584,7 +597,7 @@ async def get_funnel_by_city(db, date_from=None, date_to=None, source=None, top_
 async def get_executive_summary(db, date_from=None, date_to=None, status=None):
     """CR-24 — Blended ad performance summary card."""
     rows      = await _load_all(db, date_from, date_to, lead_type=None)
-    spend_map = await _get_spend_by_source(db)
+    spend_map = await _get_spend_by_source(db, date_from, date_to)
 
     total_leads    = len(rows)
     otp_verified   = sum(1 for r in rows if r.get("otp_verified") is True)
