@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-06-21T19:05:43.638310",
+  "suites": [
+    {
+      "label": "Code Audit (static)",
+      "status": "PASS",
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0,
+      "total": 39,
+      "p0_failures": 0
+    },
+    {
+      "label": "Browser Tests (Playwright)",
+      "status": "PASS",
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "total": 16,
+      "p0_failures": 0
+    },
+    {
+      "label": "Freshsales + OTP Integration",
+      "status": "PASS",
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0,
+      "total": 49,
+      "p0_failures": "?"
+    }
+  ],
+  "overall": "PASS",
+  "total_passed": 99,
+  "total_failed": 0,
+  "total_p0_failures": 0
+}

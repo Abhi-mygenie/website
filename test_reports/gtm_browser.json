@@ -1,0 +1,125 @@
+{
+  "timestamp": "2026-06-21T19:06:01.471905",
+  "type": "gtm_browser",
+  "site_url": "https://full-stack-preview-32.preview.emergentagent.com",
+  "total": 16,
+  "passed": 15,
+  "failed": 0,
+  "skipped": 0,
+  "p0_failures": 0,
+  "overall": "PASS",
+  "results": [
+    {
+      "id": "B1.1",
+      "name": "Site loads (HTTP 200 equivalent)",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "URL: https://full-stack-preview-32.preview.emergentagent.com"
+    },
+    {
+      "id": "B1.2",
+      "name": "window.dataLayer initialized",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Type: list, Length: 2"
+    },
+    {
+      "id": "B1.3",
+      "name": "Consent default (host-gated)",
+      "status": "WARN",
+      "severity": "P0",
+      "detail": "Expected on preview: GTM only loads on www.mygenie.online"
+    },
+    {
+      "id": "B1.4",
+      "name": "ConsentBanner visible on fresh page load",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Banner with Accept/Decline should appear"
+    },
+    {
+      "id": "B1.5",
+      "name": "Accept consent \u2192 dataLayer consent update (granted)",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "All 4 signals should be granted"
+    },
+    {
+      "id": "B1.14",
+      "name": "No critical JS errors (excluding expected 404s)",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Errors: none"
+    },
+    {
+      "id": "B1.7",
+      "name": "Demo form fields render (name + phone)",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Name and phone inputs found on page"
+    },
+    {
+      "id": "B1.8",
+      "name": "form_submitted fires on form submit",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Events in dataLayer: ['page_view', 'page_view', 'form_submitted', 'thankyou_conversion']"
+    },
+    {
+      "id": "B1.9",
+      "name": "Event name is form_submitted (not lead_verified)",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "event = form_submitted"
+    },
+    {
+      "id": "B1.10",
+      "name": "All 6 identity field KEYS in payload",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present: ['email', 'phone', 'first_name', 'last_name', 'city_name', 'external_id'], Missing: []"
+    },
+    {
+      "id": "B1.11",
+      "name": "All 6 click-ID field KEYS in payload",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present: ['gclid', 'fbclid', 'fbp', 'gbraid', 'wbraid', 'msclkid']"
+    },
+    {
+      "id": "B1.12a",
+      "name": "conversion_value present in payload",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "value = 0"
+    },
+    {
+      "id": "B1.12b",
+      "name": "currency = INR",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "currency = INR"
+    },
+    {
+      "id": "B1.13",
+      "name": "form_location present in payload",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "form_location = homepage"
+    },
+    {
+      "id": "B1.11b",
+      "name": "gclid value captured from URL param",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "gclid = TESTGCLID123 (expected TESTGCLID123)"
+    },
+    {
+      "id": "B1.15",
+      "name": "page_view event fires on SPA navigation",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "page_view count: 3"
+    }
+  ]
+}

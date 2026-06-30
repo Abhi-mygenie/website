@@ -1,0 +1,70 @@
+{
+  "project_context": {
+    "app_type": "dashboard",
+    "theme": "light",
+    "archetype": "4 (Swiss & High-Contrast - Admin Minimal Variant)",
+    "description": "Internal Lead Funnel & Ad Performance Dashboard extending existing leads view.",
+    "target_audience": "Internal sales and marketing team. 2 admin users. Data density and clarity are prioritized over marketing aesthetics."
+  },
+  "design_system": {
+    "colors": {
+      "background": "bg-slate-50",
+      "surface": "bg-white",
+      "primary": "bg-indigo-600 text-white",
+      "border": "border-slate-200",
+      "text": {
+        "primary": "text-slate-900",
+        "secondary": "text-slate-600",
+        "muted": "text-slate-400"
+      },
+      "semantic": {
+        "positive": "text-emerald-700 bg-emerald-50 border-emerald-200",
+        "negative": "text-red-700 bg-red-50 border-red-200",
+        "neutral": "text-slate-700 bg-slate-100 border-slate-200",
+        "funnel_stages": {
+          "lead_in": "bg-slate-50 border-slate-200",
+          "otp_verified": "bg-blue-50 border-blue-200",
+          "demo_scheduled": "bg-indigo-50 border-indigo-200",
+          "demo_given": "bg-violet-50 border-violet-200",
+          "won": "bg-emerald-50 border-emerald-200",
+          "lost": "bg-red-50 border-red-200"
+        }
+      }
+    },
+    "typography": {
+      "heading_font": "font-sans (Use Manrope or Work Sans for distinct structure, NOT Inter)",
+      "body_font": "font-sans (IBM Plex Sans or clean geometric sans)",
+      "scale": {
+        "page_title": "text-2xl font-bold tracking-tight text-slate-900",
+        "panel_title": "text-base font-semibold tracking-tight text-slate-900 uppercase",
+        "metric_value": "text-2xl font-bold text-slate-900 tracking-tight",
+        "body": "text-sm text-slate-600",
+        "label": "text-xs font-medium text-slate-500 uppercase tracking-[0.05em]"
+      }
+    },
+    "spacing_and_layout": {
+      "grid_system": "Mode B: The 'Control Room' Grid. Strict hierarchy, dense/compact spacing.",
+      "container_padding": "p-4 or p-6 for main panels",
+      "gap": "gap-4 or gap-6 between widgets",
+      "border_radius": "rounded-md or rounded-lg (max 8px). Avoid heavy pill shapes.",
+      "shadows": "shadow-sm for cards to maintain a crisp, flat look, border border-slate-200",
+      "page_structure": "Flex column with gap-6"
+    }
+  },
+  "component_instructions": {
+    "layout_integration": "The existing page header stays at the very top. Immediately below it, insert the NEW Section 1 (Filters). Then NEW Section 2 (Funnel Summary), NEW Section 3 (Funnel by Source), NEW Section 4 (Lost Analysis + Sync). Below all this, retain the EXISTING Section 5 (Summary Chips) and EXISTING Section 6 (Leads Table).",
+    "global_filters": "Horizontal flex container. Use Shadcn DatePicker, Select, and Button components. Align left. Use gap-4. Sticky positioning not required unless requested.",
+    "funnel_summary_panel": "A grid-cols-2 md:grid-cols-6 layout. Each stage is a card showing: Stage Name (label), Absolute Count (metric), Conversion Rate (badge/text - green if positive), Drop-off Rate (text - muted red). Lost stage should explicitly use muted red styling to separate it visually from the positive funnel flow.",
+    "source_performance_table": "Dense data table. Rows: Google Paid, Meta, Organic, Direct. Columns: 6 Stages. Show count and conversion % per cell. Use soft background tints to highlight highest and lowest converting sources in the final 'Won' column.",
+    "lost_analysis_panel": "Grid layout (grid-cols-1 md:grid-cols-3). 1 column for Total Lost metric, 2 columns for Recharts horizontal BarChart showing top reasons (e.g., 'Price', 'No Show').",
+    "sync_status_bar": "Flex container aligned to the right. Text showing 'Last sync: [time]' in text-xs text-slate-500. Add a 'Sync Now' ghost button (h-6 px-2 text-xs).",
+    "components_to_use": "Shadcn UI (Card, Table, Badge, Button, Select). Recharts for the BarChart."
+  },
+  "testing": {
+    "data_testid_rules": "All interactive elements, filters, buttons, table rows, and summary cards MUST have descriptive data-testid attributes. (e.g., 'filter-date-range', 'funnel-card-won', 'sync-now-btn')."
+  },
+  "assets": {
+    "icons": "lucide-react (Filter, RefreshCw, ArrowRight, ArrowDownRight, TrendingUp, TrendingDown)",
+    "image_urls": {}
+  }
+}
