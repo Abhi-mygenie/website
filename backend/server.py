@@ -420,7 +420,8 @@ async def calendly_webhook(
     # Extract Google Meet link + scheduled time from Calendly event
     scheduled = payload.get("scheduled_event") or {}
     location  = scheduled.get("location") or {}
-    join_url  = location.get("join_url") or None
+    raw_join  = location.get("join_url") or ""
+    join_url  = raw_join.split("/events/", 1)[-1] if "/events/" in raw_join else raw_join or None
     raw_start = scheduled.get("start_time")   # "2026-01-15T10:00:00.000000Z"
     raw_end   = scheduled.get("end_time")
 
