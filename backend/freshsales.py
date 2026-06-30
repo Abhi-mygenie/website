@@ -319,7 +319,7 @@ async def mark_demo_booked(
         # CR-23: Google Meet link + scheduled time
         cf: dict = {}
         if meet_link:
-            cf["cf_gmeetlink"] = meet_link
+            cf["cf_meeting_link"] = meet_link
         if demo_at:
             cf["cf_channel_manager_name"] = demo_at
         if cf:
