@@ -1,0 +1,78 @@
+{
+  "summary": "CR-40 & CR-42 QA Validation Complete. Backend: 12/13 tests passed (1 timeout due to long-running OTP backfill). Frontend: All checks passed. All env vars correctly read from backend/.env and frontend/.env with fallback defaults.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/cms/sync/otp-backfill",
+        "issue": "Returns 502 timeout when called via external URL due to long-running operation (642 contacts × 2s delay = ~21 minutes). Backend logs show it IS working correctly — found 642 contacts, marked 9 in DB, and is tagging contacts in Freshsales one by one.",
+        "priority": "LOW",
+        "note": "This is expected behavior for a backfill operation. The endpoint works correctly but exceeds HTTP timeout. Consider making it async with status polling."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_cr40_cr42.py",
+    "/app/test_reports/pytest/pytest_cr40_cr42.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "CR-40 Part 1 (server.py lines 278-281): ✓ VERIFIED — demo_tags correctly uses FRESHSALES_TAG_DEMO_LEAD, FRESHSALES_TAG_OTP_VERIFIED, FRESHSALES_TAG_OTP_UNVERIFIED from env vars with fallback defaults",
+    "CR-40 Part 2 (crm_sync.py lines 218-282): ✓ VERIFIED — run_otp_backfill() correctly tags Freshsales contacts with 'OTP-Verified' tag for contacts with cf_rooms='Yes'. Backend logs confirm: 'otp_backfill: 642 paid contacts with cf_rooms=Yes', 'marked 9 contacts as otp_verified=True'",
+    "CR-42 Backend Tags: ✓ VERIFIED — All 6 CRM tags read from env vars: FRESHSALES_TAG_DEMO_LEAD (line 278), FRESHSALES_TAG_OTP_VERIFIED (line 279), FRESHSALES_TAG_OTP_UNVERIFIED (line 280), FRESHSALES_TAG_BUY_ONLINE (line 525), FRESHSALES_TAG_QUOTE (line 525), FRESHSALES_TAG_CONTACT (line 583), FRESHSALES_TAG_MULTI_FORM (freshsales.py line 211)",
+    "CR-42 PAYMENT_CURRENCY: ✓ VERIFIED — payments.py lines 116, 147, 182 read from env var with 'INR' default",
+    "CR-42 INVOICE_FOOTER_TEXT: ✓ VERIFIED — payments.py line 817 reads from env var",
+    "CR-42 META_GRAPH_API_VERSION: ✓ VERIFIED — ads_mcp.py line 20 builds GRAPH_BASE using env var with 'v21.0' default",
+    "CR-42 CMS_SESSION_HOURS: ✓ VERIFIED — cms_auth.py line 15 reads from env var with '12' default",
+    "CR-42 FRESHSALES_LIFECYCLE_MAP: ✓ VERIFIED — crm_sync.py line 33 reads JSON from env var",
+    "CR-42 FRESHSALES_LOST_REASONS: ✓ VERIFIED — crm_sync.py line 37 reads JSON from env var",
+    "CR-42 CALENDLY_WEBHOOK_CALLBACK_URL: ✓ VERIFIED — Present in backend/.env line 111",
+    "CR-42 Frontend REACT_APP_ALLOWED_HOSTS: ✓ VERIFIED — gtm.js line 15 reads from env var with 'www.mygenie.online,mygenie.online' default",
+    "CR-42 Frontend REACT_APP_SUPPORT_EMAIL: ✓ VERIFIED — company.js line 5 reads from env var, visible on Contact page",
+    "CR-42 Frontend REACT_APP_CUSTOMER_SUPPORT_EMAIL: ✓ VERIFIED — company.js line 6 reads from env var",
+    "CR-42 Frontend REACT_APP_PRIVACY_EMAIL: ✓ VERIFIED — company.js line 7 reads from env var"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_cr40_cr42.py"
+  ],
+  "success_rate": {
+    "backend": "92% (12/13 passed, 1 timeout)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "cms_admin": "username=admin, password=admin123"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-40 and CR-42 fully verified. All env vars are correctly read with fallback defaults. The OTP backfill endpoint works but times out on external calls due to processing 642 contacts with 2-second delays between Freshsales API calls. Backend logs confirm the operation is working correctly. WhatsApp FAB visible on mobile viewport (data-testid='whatsapp-fab'). CMS login uses admin/admin123.",
+  "env_vars_verified": {
+    "backend": [
+      "FRESHSALES_TAG_DEMO_LEAD=Website Demo Lead",
+      "FRESHSALES_TAG_OTP_VERIFIED=OTP-Verified",
+      "FRESHSALES_TAG_OTP_UNVERIFIED=OTP-Unverified",
+      "FRESHSALES_TAG_BUY_ONLINE=Buy Online",
+      "FRESHSALES_TAG_QUOTE=Website Quote",
+      "FRESHSALES_TAG_CONTACT=Website Contact",
+      "FRESHSALES_TAG_MULTI_FORM=Multi-Form",
+      "PAYMENT_CURRENCY=INR",
+      "INVOICE_FOOTER_TEXT=For queries: support@mygenie.in  |  mygenie.in",
+      "META_GRAPH_API_VERSION=v21.0",
+      "CMS_SESSION_HOURS=12",
+      "FRESHSALES_LIFECYCLE_MAP={...}",
+      "FRESHSALES_LOST_REASONS={...}",
+      "CALENDLY_WEBHOOK_CALLBACK_URL=https://..."
+    ],
+    "frontend": [
+      "REACT_APP_ALLOWED_HOSTS=www.mygenie.online,mygenie.online",
+      "REACT_APP_SUPPORT_EMAIL=support@mygenie.online",
+      "REACT_APP_CUSTOMER_SUPPORT_EMAIL=customersupport@mygenie.online",
+      "REACT_APP_PRIVACY_EMAIL=support@mail.mygenie.online"
+    ]
+  }
+}

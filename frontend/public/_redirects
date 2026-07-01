@@ -1,0 +1,24 @@
+# Netlify / Cloudflare Pages style redirects (301) — old live-site URLs -> new V2.4 URLs.
+# SPA fallback at the end keeps client-side routing working.
+
+/fine-dining                  /solutions/restaurants        301
+/quick-service                /solutions/qsr                301
+/Cafe-and-coffee-shop         /solutions/cafes              301
+/cloud-kithen                 /solutions/cloud-kitchens     301
+/bar-and-pubs                 /solutions/bars-pubs          301
+/bakeries                     /solutions/bakeries           301
+/buffet-stations-restaurant   /solutions/food-courts        301
+/ice-green-and-dessert        /solutions/ice-cream-desserts 301
+/pizzerias                    /solutions/restaurants        301
+/smart-billing                /product/sell-serve           301
+/inventory-management         /product/protect-profit       301
+/reports_and-analytics        /product/see-everything       301
+/menu-management              /product/sell-serve           301
+/about-us                     /about                        301
+/contact-us                   /contact                      301
+/terms-and-conditions         /terms                        301
+/privacy-policy               /privacy                      301
+/refund-policy                /refund                       301
+/blogs                        /blog                         301
+
+/*                            /index.html                   200
