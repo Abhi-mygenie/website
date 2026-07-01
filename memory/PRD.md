@@ -33,7 +33,7 @@ Stack: React 19 (CRA + craco) · FastAPI (Python 3.11) · MongoDB · Supervisor
 
 ## Session History
 
-### 2026-07-01 — Full Setup + Feature Session
+### 2026-07-01 — Full Setup + Feature Session (Agent Fork 1)
 
 #### Environment Setup
 - Pulled codebase from GitHub (branch: 1-july) into /app
@@ -48,6 +48,23 @@ Stack: React 19 (CRA + craco) · FastAPI (Python 3.11) · MongoDB · Supervisor
 - `REACT_APP_BACKEND_URL` in backend/.env → switched from `www.mygenie.online` to current preview URL
 - `CALENDLY_WEBHOOK_CALLBACK_URL` → updated from dead old preview URL to current
 - `REACT_APP_ALLOWED_HOSTS` in frontend/.env → switched from prod domains to `all`
+
+---
+
+### 2026-07-01 — Agent Fork 2 (Current Session)
+
+#### Bug Fixes
+- **`/api/lead/otp-confirm` 500**: `if not col:` on Motor collection → `if col is None:` (`server.py`)
+- **`/api/otp/verify` 400 race condition**: Double React mount fired `sendOtp()` twice → two OTP docs, user received first code, verify checked newest. Fixed with `useRef` guard in `OtpVerifyBlock.jsx` + `verify_otp` now checks all valid docs not just latest (`otp.py`)
+
+#### CRs Implemented
+- **CR-41**: Quote plan details → Freshsales `cf_first_interest` (pipe-separated: plan|addons|₹amount|recommended/manual|intent)
+- **CR-30**: Date presets (Last 7d default · Last 30d · Last 90d · This Month · Custom) + auto-apply on `AdsIntelTab.jsx`
+- **Phone normalization**: `_normalize_phone()` helper in `server.py` applied to all 3 lead endpoints; `.slice(-10)` removed from all 3 frontend forms
+- **Post-booking copy**: DemoForm booked confirmation updated to mention WhatsApp + calendar invite
+
+#### Confirmed Already Done (Previous Session)
+- CR-31: FunnelBySource already in LeadsView + backend — no action needed
 
 ---
 
