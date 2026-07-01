@@ -176,7 +176,10 @@ export default function DemoForm({ sector }) {
           You&apos;re booked, {form.name.split(" ")[0]}!
         </h3>
         <p className="mt-3 text-brand-muted leading-relaxed">
-          Check your inbox for the calendar invite. Our specialist will walk you through MyGenie built for your
+          Your Google Meet invite is on its way to your inbox, and we've sent the details on WhatsApp too.
+        </p>
+        <p className="mt-2 text-brand-muted leading-relaxed">
+          See you soon — our specialist will walk you through MyGenie for your
           {outletValue ? <span className="font-semibold text-brand-ink"> {outletValue} </span> : " "}business.
         </p>
       </div>
