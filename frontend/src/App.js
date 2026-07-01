@@ -96,7 +96,7 @@ function App() {
       </BrowserRouter>
       <CmsAdminLayer />
       <ConsentBanner />
-      <WhatsAppFab />
+      {process.env.REACT_APP_WHATSAPP_ENABLED !== "false" && <WhatsAppFab />}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 # CR-43: WhatsApp FAB — ENV-Controlled Toggle + Number
 
 ## Date: 2026-06-30
-## Status: REGISTERED — Ready for implementation
+## Status: IMPLEMENTED ✅
 ## Priority: P1 (business flexibility)
 
 ---

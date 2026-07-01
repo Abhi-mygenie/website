@@ -7,7 +7,7 @@ export const COMPANY = {
   privacyEmail: "support@mail.mygenie.online",
   phone: "9104743156",
   phoneIntl: "+919104743156",
-  whatsapp: "919104743156",
+  whatsapp: process.env.REACT_APP_WHATSAPP_NUMBER || "919104743156",
   location: "Agra, Uttar Pradesh, India",
   social: {
     youtube: "https://www.youtube.com/channel/UCLY6mrxYUCJu5Qhcz_TDCLw",
