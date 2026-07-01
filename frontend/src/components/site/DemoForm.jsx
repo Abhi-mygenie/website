@@ -93,6 +93,10 @@ export default function DemoForm({ sector }) {
       if (String(e.data.event || "").indexOf("calendly") !== 0) return;
       if (e.data.event === "calendly.event_scheduled" && !scheduledRef.current) {
         scheduledRef.current = true;
+        pushLead("demo_booked", form, outletValue, eventId, {
+          form_location: "calendly_popup",
+          otp_verified: true,
+        });
         markBooked();
       }
     };
