@@ -38,5 +38,6 @@ User will configure these in backend/.env after deployment:
 - P0: Run backfill via POST /api/cms/sync/otp-backfill to tag ~633 existing verified contacts
 - P0: ~~Register Calendly webhook to current env~~ ✅ DONE (2026-06-30)
 - P1: **CR-42: Zero Hardcoded Values** — extract all hardcoded config to env vars (`/app/memory/CR-42_Zero_Hardcoded_Values.md`)
+- P1: **CR-43: WhatsApp FAB ENV Toggle** — enable/disable FAB + change number via env (`/app/memory/CR-43_WhatsApp_FAB_ENV_Toggle.md`)
 - P2: Production build optimization (yarn build)
 - P3: SSL/domain configuration for production
