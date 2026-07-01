@@ -446,6 +446,7 @@ async def calendly_webhook(
         email=email,
         meet_link=join_url,
         demo_at=demo_at,
+        meet_link_full=raw_join or None,
     )
     query = {"id": lead_id} if lead_id else ({"email": email} if email else None)
     if query:
@@ -455,6 +456,8 @@ async def calendly_webhook(
         }
         if join_url:
             update_fields["meet_link"] = join_url
+        if raw_join:
+            update_fields["meet_link_full"] = raw_join
         if demo_at:
             update_fields["demo_at"] = demo_at
         if demo_end_at:

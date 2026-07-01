@@ -289,6 +289,7 @@ async def mark_demo_booked(
     email: str | None = None,
     meet_link: str | None = None,
     demo_at: str | None = None,
+    meet_link_full: str | None = None,
 ) -> int | None:
     """Tag a contact as 'Demo booked' and write meet link + scheduled time.
 
@@ -320,6 +321,8 @@ async def mark_demo_booked(
         cf: dict = {}
         if meet_link:
             cf["cf_meeting_link"] = meet_link
+        if meet_link_full:
+            cf["cf_next_step"] = meet_link_full
         if demo_at:
             cf["cf_channel_manager_name"] = demo_at
         if cf:
