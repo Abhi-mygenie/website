@@ -1,6 +1,6 @@
 # CR-30 — Date Presets + Default 7-Day Period on Ads Intelligence
 
-**Status**: Planning complete — ready to implement  
+**Status**: IMPLEMENTED ✅ — 2026-07-01  
 **Scope**: Frontend only — `AdsIntelTab.jsx` (single file)  
 **Risk**: Low — purely additive UI change, no backend changes needed
 

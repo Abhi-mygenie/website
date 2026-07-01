@@ -16,9 +16,23 @@ import { CrossChannelPanel } from "./CrossChannelPanel";
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
+// ── Date preset helpers ──────────────────────────────────────────────────────
+const _toISO = d => d.toISOString().slice(0, 10);
+const _today  = () => _toISO(new Date());
+const _daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return _toISO(d); };
+
+const PRESETS = [
+  { label: "Last 7d",    from: () => _daysAgo(6),  to: _today },
+  { label: "Last 30d",   from: () => _daysAgo(29), to: _today },
+  { label: "Last 90d",   from: () => _daysAgo(89), to: _today },
+  { label: "This Month", from: () => { const d = new Date(); d.setDate(1); return _toISO(d); }, to: _today },
+  { label: "Custom",     from: null, to: null },
+];
+
 export default function AdsIntelTab({ token }) {
-  const [dateFrom,        setDateFrom]       = useState("");
-  const [dateTo,          setDateTo]         = useState("");
+  const [dateFrom,        setDateFrom]       = useState(() => _daysAgo(6));
+  const [dateTo,          setDateTo]         = useState(_today);
+  const [activePreset,    setActivePreset]   = useState("Last 7d");
   const [summary,         setSummary]        = useState(null);
   const [loading,         setLoading]        = useState(true);
   const [mcpStatus,       setMcpStatus]      = useState(null);
@@ -35,12 +49,14 @@ export default function AdsIntelTab({ token }) {
 
   const metaEnabled = mcpStatus?.meta?.enabled;
 
-  const loadSummary = useCallback(async () => {
+  const loadSummary = useCallback(async (fromOverride, toOverride) => {
+    const f = fromOverride ?? dateFrom;
+    const t = toOverride   ?? dateTo;
     setLoading(true);
     try {
       const p = new URLSearchParams();
-      if (dateFrom) p.set("date_from", dateFrom);
-      if (dateTo)   p.set("date_to", dateTo);
+      if (f) p.set("date_from", f);
+      if (t) p.set("date_to", t);
       if (liveOnly) p.set("status", "active");
       const [r, ac, aa, aad] = await Promise.all([
         fetch(`${API}/api/cms/ads/executive-summary?${p}`, { headers: h }),
@@ -77,6 +93,32 @@ export default function AdsIntelTab({ token }) {
     await loadSummary();
     setSyncVersion(v => v + 1);
   }, [token, dateFrom, dateTo, metaEnabled, loadSummary]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // CR-30: handles preset pill click — computes dates explicitly to avoid stale closure
+  const handlePreset = useCallback(async (preset) => {
+    setActivePreset(preset.label);
+    if (preset.label === "Custom") return;
+    const from = preset.from();
+    const to   = preset.to();
+    setDateFrom(from);
+    setDateTo(to);
+    // Meta sync with explicit dates
+    if (metaEnabled && from && to) {
+      setSyncing(true);
+      setSyncResult(null);
+      try {
+        const p = new URLSearchParams({ date_from: from, date_to: to });
+        const r = await fetch(`${API}/api/cms/ads/mcp/meta/sync?${p}`, { method: "POST", headers: h });
+        setSyncResult(await r.json());
+      } catch (e) {
+        setSyncResult({ error: e.message });
+      } finally {
+        setSyncing(false);
+      }
+    }
+    await loadSummary(from, to);
+    setSyncVersion(v => v + 1);
+  }, [token, metaEnabled, loadSummary]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadMcpStatus = useCallback(async () => {
     try {
@@ -169,19 +211,46 @@ export default function AdsIntelTab({ token }) {
 
       {/* ── Controls bar ── */}
       <section className="bg-white border border-slate-200 rounded-lg px-4 py-3 flex flex-wrap items-center gap-3">
-        <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">Period</span>
+
+        {/* Preset pills */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {PRESETS.map(p => (
+            <button
+              key={p.label}
+              data-testid={`ads-preset-${p.label.toLowerCase().replace(/\s+/g, "-")}`}
+              onClick={() => handlePreset(p)}
+              className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                activePreset === p.label
+                  ? "bg-slate-900 text-white"
+                  : "bg-white border border-slate-300 text-slate-600 hover:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Date pickers — always visible; editable in Custom mode */}
         <input type="date" data-testid="ads-filter-date-from"
           value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-          className="rounded border border-slate-300 px-2 py-1 text-sm text-slate-700 outline-none" />
+          className={`rounded border px-2 py-1 text-sm text-slate-700 outline-none transition-colors ${
+            activePreset === "Custom" ? "border-slate-900" : "border-slate-200 text-slate-400"
+          }`} />
         <span className="text-slate-400">to</span>
         <input type="date" data-testid="ads-filter-date-to"
           value={dateTo} onChange={e => setDateTo(e.target.value)}
-          className="rounded border border-slate-300 px-2 py-1 text-sm text-slate-700 outline-none" />
-        <button onClick={handleApply} data-testid="ads-filter-apply"
-          disabled={syncing}
-          className={`rounded px-3 py-1 text-xs font-semibold text-white transition-colors ${syncing ? "bg-slate-400 cursor-not-allowed" : "bg-slate-900 hover:bg-slate-700"}`}>
-          {syncing && metaEnabled && dateFrom && dateTo ? "Syncing…" : "Apply"}
-        </button>
+          className={`rounded border px-2 py-1 text-sm text-slate-700 outline-none transition-colors ${
+            activePreset === "Custom" ? "border-slate-900" : "border-slate-200 text-slate-400"
+          }`} />
+
+        {/* Apply — only shown in Custom mode */}
+        {activePreset === "Custom" && (
+          <button onClick={handleApply} data-testid="ads-filter-apply"
+            disabled={syncing}
+            className={`rounded px-3 py-1 text-xs font-semibold text-white transition-colors ${syncing ? "bg-slate-400 cursor-not-allowed" : "bg-slate-900 hover:bg-slate-700"}`}>
+            {syncing && metaEnabled && dateFrom && dateTo ? "Syncing…" : "Apply"}
+          </button>
+        )}
 
         {/* Live Only Toggle */}
         <button

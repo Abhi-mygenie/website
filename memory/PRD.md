@@ -140,7 +140,16 @@ Stack: React 19 (CRA + craco) · FastAPI (Python 3.11) · MongoDB · Supervisor
 
 ## CRs Registered But Not Yet Implemented
 
-### CR-41 — Quote Plan/Addon Details → Freshsales `cf_first_interest`
+### CR-30 — Date Presets + Default 7-Day Period on Ads Intelligence
+- Added `PRESETS` constant (Last 7d / Last 30d / Last 90d / This Month / Custom) outside component
+- Default state: `dateFrom = today − 6 days`, `dateTo = today` — data loads on mount with no blank state
+- `handlePreset()` — sets dates + fires Meta sync + `loadSummary(from, to)` with explicit args (avoids stale closure)
+- `loadSummary` now accepts `(fromOverride?, toOverride?)` — falls back to state for Custom/Apply flow
+- Apply button only visible when `activePreset === "Custom"`
+- Date pickers always visible; highlighted (dark border) only in Custom mode
+- Files: `frontend/src/components/ads/AdsIntelTab.jsx`
+
+
 - In `/quote` endpoint: packs `plan_name|addon_names|₹total_amount|recommended/manual|intent` as pipe-separated string into `cf_first_interest`
 - Files: `backend/server.py`
 
@@ -170,7 +179,7 @@ Stack: React 19 (CRA + craco) · FastAPI (Python 3.11) · MongoDB · Supervisor
 - Phone normalization + validation fix ✅
 
 ### P1 — Planned, awaiting go-ahead
-- CR-30: Date presets + default 30-day on Ads Intelligence
+- CR-30: Date presets + default 7-day on Ads Intelligence ✅
 - CR-31: Conversion funnel by source
 
 ### P1 — Blocked on owner
