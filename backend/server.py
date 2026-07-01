@@ -348,6 +348,39 @@ async def otp_verify(payload: OtpVerifyRequest):
     return {"verified": True, "otp_token": token}
 
 
+# CR-42: post-submit OTP confirmation — updates MongoDB + Freshsales after OTP verified
+class OtpConfirmRequest(BaseModel):
+    lead_id:   str
+    phone:     str
+    otp_token: str
+    form_type: str  # "demo" | "quote" | "contact"
+
+
+@api_router.post("/lead/otp-confirm")
+async def lead_otp_confirm(payload: OtpConfirmRequest):
+    if not otp.verify_token(payload.otp_token, payload.phone):
+        raise HTTPException(status_code=400, detail="Invalid or expired OTP token.")
+    collection_map = {
+        "demo":    db.demo_requests,
+        "quote":   db.quotes,
+        "contact": db.contact_messages,
+    }
+    col = collection_map.get(payload.form_type)
+    if not col:
+        raise HTTPException(status_code=400, detail="Invalid form_type.")
+    doc = await col.find_one({"id": payload.lead_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Lead not found.")
+    await col.update_one({"id": payload.lead_id}, {"$set": {"otp_verified": True}})
+    contact_id = doc.get("freshsales_contact_id")
+    if contact_id:
+        try:
+            await freshsales.swap_otp_tag(contact_id)
+        except Exception as exc:
+            logger.warning("otp-confirm: swap_otp_tag non-fatal: %s", exc)
+    return {"confirmed": True}
+
+
 class DemoBookedCreate(BaseModel):
     freshsales_contact_id: int | None = None
     email: str | None = None
@@ -483,14 +516,17 @@ class QuoteCreate(BaseModel):
     email: str | None = None
     business_name: str | None = None
     city: str | None = None
+    years_in_business: str | None = None
     outlet_type: str | None = None
     intent: str = "demo"  # 'buy' | 'demo'
     plan_id: str
     plan_name: str
-    billing_cycle: str = "annual"  # annual-only (no monthly plan)
+    billing_cycle: str = "annual"
     addon_ids: List[str] = []
     addon_names: List[str] = []
     total_amount: float = 0
+    gst_amount: float = 0
+    total_with_gst: float = 0
     was_recommended: bool = False
     attribution: dict | None = None
     hp: str | None = None
@@ -529,6 +565,7 @@ async def create_quote(payload: QuoteCreate, request: Request):
         tags=[os.environ.get("FRESHSALES_TAG_BUY_ONLINE", "Buy Online") if obj.intent == "buy" else os.environ.get("FRESHSALES_TAG_QUOTE", "Website Quote")],
         custom_field={
             "cf_outlet_type": obj.outlet_type,
+            "cf_sku": obj.years_in_business,
             "cf_longitude": ip,
             "cf_category": ua,
             **attr_cf,
@@ -552,8 +589,10 @@ class ContactMessageCreate(BaseModel):
     name: str
     phone: str
     email: str | None = None
+    business_name: str | None = None
+    years_in_business: str | None = None
     message: str
-    preferred_contact: str = "whatsapp"  # 'whatsapp' | 'phone' | 'email'
+    preferred_contact: str = "whatsapp"
     source_page: str | None = None
     attribution: dict | None = None
     hp: str | None = None
@@ -584,9 +623,11 @@ async def create_contact_message(payload: ContactMessageCreate, request: Request
         external_id=f"web_{obj.phone}",
         city=geo_data.get("city"),
         state=geo_data.get("region"),
+        job_title=obj.business_name,
         tags=[os.environ.get("FRESHSALES_TAG_CONTACT", "Website Contact")],
         custom_field={
             "cf_first_interest": obj.message,
+            "cf_sku": obj.years_in_business,
             "cf_longitude": ip,
             "cf_category": ua,
             **attr_cf,

@@ -284,6 +284,30 @@ async def get_contacts_by_status(status_id: int, page: int = 1) -> dict:
     return r.json()
 
 
+async def swap_otp_tag(contact_id: int) -> None:
+    """CR-42: Remove OTP-Unverified tag, add OTP-Verified, set cf_rooms=Yes (best-effort)."""
+    TAG_YES = os.environ.get("FRESHSALES_TAG_OTP_VERIFIED", "OTP-Verified")
+    TAG_NO  = os.environ.get("FRESHSALES_TAG_OTP_UNVERIFIED", "OTP-Unverified")
+    try:
+        r = await _request("GET", f"/contacts/{contact_id}")
+        if r.status_code >= 400:
+            logger.warning("swap_otp_tag: fetch %s failed: %s", contact_id, r.status_code)
+            return
+        contact = r.json().get("contact", {})
+        current_tags = contact.get("tags", []) or []
+        new_tags = [t for t in current_tags if t != TAG_NO]
+        if TAG_YES not in new_tags:
+            new_tags.append(TAG_YES)
+        upd = {"tags": new_tags, "custom_field": {"cf_rooms": "Yes"}}
+        r2 = await _request("PUT", f"/contacts/{contact_id}", json={"contact": upd})
+        if r2.status_code >= 400:
+            logger.warning("swap_otp_tag: update %s failed: %s", contact_id, r2.status_code)
+        else:
+            logger.info("swap_otp_tag: contact %s → %s", contact_id, TAG_YES)
+    except Exception as e:
+        logger.warning("swap_otp_tag error (non-fatal): %s", e)
+
+
 async def mark_demo_booked(
     contact_id: int | None = None,
     email: str | None = None,
