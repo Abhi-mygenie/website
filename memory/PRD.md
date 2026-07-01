@@ -29,15 +29,15 @@ User will configure these in backend/.env after deployment:
 - S3 storage config
 - Other service-specific env vars
 
-## CR-40: OTP-Verified Tag + Backfill (2026-06-30)
+## CR-40: OTP-Verified Tag + Backfill (2026-06-30) — ✅ QA PASSED
 - [x] **Part 1**: `server.py:278` — new demo leads with verified OTP now get `"OTP-Verified"` tag in Freshsales (was missing)
 - [x] **Part 2**: `crm_sync.py:run_otp_backfill()` — extended to also add `"OTP-Verified"` tag to existing Freshsales contacts where `cf_rooms = "Yes"`. Triggered via `POST /api/cms/sync/otp-backfill`
-- Impact: Zero risk — tags are additive (merge, not replace). MongoDB `otp_verified` boolean unchanged. Funnel/leads queries unaffected.
+- QA: 12/13 backend tests passed, 1 timeout on backfill (expected — 642 contacts × 2s = ~21 min). Backend logs confirm operation works correctly.
 
 ## Backlog
 - P0: Run backfill via POST /api/cms/sync/otp-backfill to tag ~633 existing verified contacts
 - P0: ~~Register Calendly webhook to current env~~ ✅ DONE (2026-06-30)
-- P1: ~~**CR-42: Zero Hardcoded Values**~~ ✅ IMPLEMENTED (2026-07-01) — all hardcoded config extracted to env vars
-- P1: ~~**CR-43: WhatsApp FAB ENV Toggle**~~ ✅ IMPLEMENTED (2026-06-30)
+- P1: ~~**CR-42: Zero Hardcoded Values**~~ ✅ QA PASSED (2026-07-01) — all 14 backend + 4 frontend env vars verified
+- P1: ~~**CR-43: WhatsApp FAB ENV Toggle**~~ ✅ QA PASSED (2026-06-30)
 - P2: Production build optimization (yarn build)
 - P3: SSL/domain configuration for production
