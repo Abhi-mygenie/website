@@ -23,7 +23,7 @@ function loadRazorpayScript() {
 }
 
 function validate(field, value) {
-  if (field === "phone") return /^\d{10}$/.test((value || "").replace(/\D/g, "").slice(-10)) ? null : "Enter a valid 10-digit number";
+  if (field === "phone") return /^\d{10}$/.test((value || "").replace(/\D/g, "")) ? null : "Enter a valid 10-digit number";
   if (field === "email") return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((value || "").trim()) ? null : "Enter a valid email address";
   return (value || "").trim() ? null : "This field is required";
 }

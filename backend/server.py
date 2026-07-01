@@ -141,6 +141,26 @@ def _trunc(v, n: int = 255):
     return str(v)[:n]
 
 
+import re as _re
+
+def _normalize_phone(raw: str | None) -> str | None:
+    """Normalize Indian phone number to a clean 10-digit string.
+
+    Handles:  +91XXXXXXXXXX (13 chars), 91XXXXXXXXXX (12 digits),
+              0XXXXXXXXXX (11 digits), XXXXXXXXXX (10 digits).
+    Returns the 10-digit string, or the stripped value if it doesn't
+    match any known prefix pattern (best-effort — never drops data).
+    """
+    if not raw:
+        return None
+    digits = _re.sub(r'\D', '', raw)
+    if len(digits) == 12 and digits.startswith("91"):
+        digits = digits[2:]
+    elif len(digits) == 11 and digits.startswith("0"):
+        digits = digits[1:]
+    return digits
+
+
 def _derive_lead_source_id(a: dict) -> int | None:
     """Derive Freshsales lead_source_id from UTM params and click IDs (CR-18).
 
@@ -271,7 +291,9 @@ async def create_demo_request(payload: DemoRequestCreate, request: Request):
     if antijunk.looks_like_bot(payload.hp, payload.elapsed_ms):
         return JSONResponse(content={"saved": False})
     await antijunk.enforce_rate_limit(db, request, payload.phone)
-    obj = DemoRequest(**payload.model_dump())
+    data = payload.model_dump()
+    data['phone'] = _normalize_phone(data.get('phone')) or data.get('phone')
+    obj = DemoRequest(**data)
     # OTP gate (CR-4B): a valid token bound to this phone marks the lead verified;
     # otherwise we STILL save the lead but flag it `OTP-Unverified` (graceful — a
     # missing token or SMS-panel outage must never cost a Demo lead).
@@ -544,7 +566,9 @@ async def create_quote(payload: QuoteCreate, request: Request):
     if antijunk.looks_like_bot(payload.hp, payload.elapsed_ms):
         return JSONResponse(content={"saved": False})
     await antijunk.enforce_rate_limit(db, request, payload.phone)
-    obj = Quote(**payload.model_dump())
+    data = payload.model_dump()
+    data['phone'] = _normalize_phone(data.get('phone')) or data.get('phone')
+    obj = Quote(**data)
     doc = obj.model_dump()
     doc.pop('hp', None)
     doc.pop('elapsed_ms', None)
@@ -554,6 +578,9 @@ async def create_quote(payload: QuoteCreate, request: Request):
     geo_data = await geo.lookup_city(ip)
     attr_native, attr_cf = _attribution_to_crm(payload.attribution)
     doc['geo'] = geo_data
+    # CR-41: pack plan/pricing details into cf_first_interest for sales reps
+    addon_str = ",".join(obj.addon_names) if obj.addon_names else "none"
+    cf_first_interest = f"{obj.plan_name}|{addon_str}|₹{int(obj.total_amount)}|{'recommended' if obj.was_recommended else 'manual'}|{obj.intent}"
     doc['freshsales_contact_id'] = await freshsales.upsert_contact(
         name=obj.name,
         email=obj.email,
@@ -568,6 +595,7 @@ async def create_quote(payload: QuoteCreate, request: Request):
             "cf_sku": obj.years_in_business,
             "cf_longitude": ip,
             "cf_category": ua,
+            "cf_first_interest": cf_first_interest,
             **attr_cf,
         },
         extra_fields=attr_native,
@@ -611,7 +639,9 @@ async def create_contact_message(payload: ContactMessageCreate, request: Request
     if antijunk.looks_like_bot(payload.hp, payload.elapsed_ms):
         return ContactMessage(**payload.model_dump())
     await antijunk.enforce_rate_limit(db, request, payload.phone)
-    obj = ContactMessage(**payload.model_dump())
+    data = payload.model_dump()
+    data['phone'] = _normalize_phone(data.get('phone')) or data.get('phone')
+    obj = ContactMessage(**data)
     # Best-effort CRM sync (never blocks the message capture)
     ip, ua = _client_meta(request)
     geo_data = await geo.lookup_city(ip)

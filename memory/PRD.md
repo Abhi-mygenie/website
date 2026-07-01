@@ -141,10 +141,14 @@ Stack: React 19 (CRA + craco) · FastAPI (Python 3.11) · MongoDB · Supervisor
 ## CRs Registered But Not Yet Implemented
 
 ### CR-41 — Quote Plan/Addon Details → Freshsales `cf_first_interest`
-- Pack plan_name, addon_names, total_amount, was_recommended, intent as CSV into `cf_first_interest`
-- Also fix: `gst_amount` and `total_with_gst` silently dropped — add to `QuoteCreate` model
-- Files: `backend/server.py` only (~10 lines)
-- Status: G2 Planning complete ✅ — ready to implement
+- In `/quote` endpoint: packs `plan_name|addon_names|₹total_amount|recommended/manual|intent` as pipe-separated string into `cf_first_interest`
+- Files: `backend/server.py`
+
+### Phone Normalization Fix (was P2 gap, now resolved)
+- Backend: Added `_normalize_phone()` helper in `server.py` — strips `+91`, `91`, `0` prefix, returns clean 10-digit string
+- Applied in all 3 endpoints: `/demo-request`, `/quote`, `/contact` before MongoDB save + Freshsales push
+- Frontend: Removed `.slice(-10)` anti-pattern from `DemoForm.jsx`, `CheckoutModal.jsx`, `MessageForm.jsx` — now enforces exactly 10 stripped digits
+- Fixes: duplicate Freshsales contacts from +91 prefix, external_id dedup mismatch, GTM phone mismatch
 
 ---
 
@@ -161,8 +165,9 @@ Stack: React 19 (CRA + craco) · FastAPI (Python 3.11) · MongoDB · Supervisor
 
 ## Prioritized Backlog
 
-### P0 — Ready to implement
-- CR-41: Quote plan details → Freshsales `cf_first_interest`
+### P0 — Completed
+- CR-41: Quote plan details → Freshsales `cf_first_interest` ✅
+- Phone normalization + validation fix ✅
 
 ### P1 — Planned, awaiting go-ahead
 - CR-30: Date presets + default 30-day on Ads Intelligence
@@ -178,8 +183,7 @@ Stack: React 19 (CRA + craco) · FastAPI (Python 3.11) · MongoDB · Supervisor
 - CR-24: Ads Intelligence live data (credentials in .env)
 
 ### P2 — Discovery done
-- Homepage: DemoForm above the fold (form currently section 10/10)
-- Phone normalization + validation fix
+- Homepage: DemoForm above the fold (parked)
 - WhatsApp env-control for MessageForm
 
 ---

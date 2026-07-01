@@ -41,7 +41,7 @@ function brandedUrl(url) {
 
 function validate(field, value) {
   if (field === "phone") {
-    return /^\d{10}$/.test((value || "").replace(/\D/g, "").slice(-10))
+    return /^\d{10}$/.test((value || "").replace(/\D/g, ""))
       ? null : "Enter a valid 10-digit number";
   }
   if (field === "email") {
