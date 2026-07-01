@@ -1198,8 +1198,9 @@ async def cms_sync_source_backfill(admin: str = Depends(cms_auth.get_current_adm
 @api_router.post("/cms/sync/otp-backfill")
 async def cms_sync_otp_backfill(admin: str = Depends(cms_auth.get_current_admin)):
     """Mark backfilled paid contacts as otp_verified using Freshsales cf_rooms field."""
-    result = await crm_sync.run_otp_backfill(db)
-    return {"ok": True, **result}
+    import asyncio as _asyncio
+    _asyncio.ensure_future(crm_sync.run_otp_backfill(db))
+    return {"ok": True, "message": "OTP backfill started in background"}
 
 
 @api_router.post("/cms/sync/source-sync")
