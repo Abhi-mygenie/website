@@ -95,10 +95,10 @@ export const VSP_AI = [
 export const VSP_COMP_LEAN = [
   { id: "c1", feature: "Transparent INR pricing",   sub: "Can you see the price before calling?",      mg: "✓  ₹799–₹2,499 / mo",   pp: "✗  Contact us",         ppType: "cross" },
   { id: "c2", feature: "AI features built-in",       sub: "Upsell, audit, insights, segmentation",      mg: "✓  7 features in Pro",   pp: "✗  Not available",      ppType: "cross" },
-  { id: "c3", feature: "Runs on your existing phone",sub: "No terminal purchase needed",                mg: "✓  Any device",          pp: "⚠  Terminal ₹15–30k",   ppType: "warn"  },
-  { id: "c4", feature: "WhatsApp + Loyalty",         sub: "Included — not a marketplace add-on",        mg: "✓  Included in Pro",     pp: "Add-on",                ppType: "addon" },
+  { id: "c3", feature: "Runs on any device",         sub: "No terminal purchase needed",                mg: "✓  Any device",          pp: "⚠  Terminal ₹15–30k",   ppType: "warn"  },
+  { id: "c4", feature: "WhatsApp + Loyalty",         sub: "Included — not a marketplace add-on",        mg: "✓  Included in Pro",     pp: "3rd-Party",             ppType: "warn"  },
   { id: "c5", feature: "Audit logs / theft detection",sub: "Every void & cancel flagged automatically", mg: "✓  AI-reviewed, live",   pp: "✗  Not available",      ppType: "cross" },
-  { id: "c6", feature: "Go-live time",               sub: "",                                           mg: "✓  48 hours",            pp: "⚠  Multi-day setup",    ppType: "warn"  },
+  { id: "c6", feature: "Go-live time",               sub: "",                                           mg: "✓  24 hours",            pp: "⚠  Multi-day setup",    ppType: "warn"  },
 ];
 
 export const VSP_COMP_FULL = [
@@ -115,7 +115,7 @@ export const VSP_TRUST_LOGOS = [
 ];
 
 export const VSP_SWITCH_BADGES = [
-  { icon: "⚡", title: "48-hour go-live", sub: "From sign-up to first bill taken" },
+  { icon: "⚡", title: "24-hour go-live", sub: "From sign-up to first bill taken" },
   { icon: "📦", title: "Free data migration", sub: "Your menu and CRM come across — no manual re-entry" },
   { icon: "🎯", title: "Dedicated account manager from day 1", sub: "Stays with you through the first week" },
 ];

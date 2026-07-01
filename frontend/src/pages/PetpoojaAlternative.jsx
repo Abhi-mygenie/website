@@ -119,7 +119,7 @@ function VspHero({ doc }) {
             {[
               { val: "₹1L",   label: "leakage caught in 2 weeks",  color: "text-brand-green" },
               { val: "40%",   label: "lower fixed costs",          color: "text-brand-orange" },
-              { val: "48hrs", label: "from sign-up to first bill",  color: "text-brand-green" },
+              { val: "24hrs", label: "from sign-up to first bill",  color: "text-brand-green" },
               { val: "+18%",  label: "avg bill value via AI upsell",color: "text-brand-orange" },
             ].map((s, i) => (
               <Reveal key={i} delay={i * 0.08}>
@@ -306,7 +306,7 @@ function VspPhilosophy({ doc }) {
 function VspProof({ doc }) {
   const { isAdmin } = useCms();
   const videoUrl = doc.s3?.video_url || null;
-  const showVideo = !!videoUrl || isAdmin;
+  const showVideo = !!videoUrl;
 
   return (
     <section className="bg-white py-20 sm:py-28" data-testid="vsp-proof">
@@ -482,20 +482,6 @@ function VspAi({ doc }) {
           ))}
         </div>
 
-        <Reveal delay={0.15}>
-          <div className="mt-8 bg-brand-deep rounded-2xl px-7 py-5 flex flex-col sm:flex-row sm:items-center gap-4" data-testid="vsp-ai-pp-note">
-            <p className="text-[#a3b8ac] text-sm flex-1">
-              <EditableText
-                id="vsp.s4.pp_note"
-                fallback="Petpooja has no AI features — not in any plan, not as an add-on."
-                multiline
-              />
-            </p>
-            <span className="flex-shrink-0 bg-brand-orange/15 border border-brand-orange/30 text-brand-orange text-xs font-bold px-4 py-2 rounded-lg tracking-wide uppercase whitespace-nowrap">
-              Petpooja: 0 AI features
-            </span>
-          </div>
-        </Reveal>
       </div>
     </section>
   );
@@ -513,8 +499,8 @@ function VspPricing({ doc }) {
     },
     {
       name: "Growth",
-      price: "₹1,499",
-      billing: "Billed annually · ₹17,988/yr per outlet",
+      price: "₹1,299",
+      billing: "Billed annually · ₹15,588/yr per outlet",
       feats: ["Everything in Starter", "Captain App + KDS", "Online Ordering", "CRM + Aggregator Sync"],
       pop: true,
     },
@@ -538,10 +524,7 @@ function VspPricing({ doc }) {
                 <EditableText id="vsp.s5.h2" fallback="Our prices. Right here." block />
               </h2>
             </div>
-            <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-xl px-4 py-2.5 text-sm text-[#a83d12] font-medium" data-testid="vsp-pp-price-note">
-              <span>⚠</span>
-              <EditableText id="vsp.s5.pp_note" fallback="Petpooja doesn't publish India pricing. You have to call." multiline />
-            </div>
+
           </div>
         </Reveal>
 
