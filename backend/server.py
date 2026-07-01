@@ -32,6 +32,7 @@ import payments as payments_module
 import crm_sync
 import funnel as funnel_module
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import httpx
 
 _scheduler = AsyncIOScheduler(timezone="UTC")
 
@@ -1414,6 +1415,78 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+async def _sync_calendly_webhook() -> None:
+    """CR-40: Auto-register Calendly webhook on startup.
+    Ensures CALENDLY_WEBHOOK_CALLBACK_URL is always the active subscription.
+    Best-effort — never raises (startup must not be blocked).
+    """
+    token        = os.environ.get("CALENDLY_API_TOKEN")
+    callback_url = (os.environ.get("CALENDLY_WEBHOOK_CALLBACK_URL") or "").strip().rstrip("/")
+    signing_key  = os.environ.get("CALENDLY_WEBHOOK_SIGNING_KEY")
+
+    if not token or not callback_url:
+        logger.info("CR-40: CALENDLY_API_TOKEN or CALENDLY_WEBHOOK_CALLBACK_URL not set — skipping")
+        return
+
+    api     = "https://api.calendly.com"
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            # Step 1: resolve user + org URIs
+            me = await client.get(f"{api}/users/me", headers=headers)
+            me.raise_for_status()
+            res       = me.json()["resource"]
+            user_uri  = res["uri"]
+            org_uri   = res["current_organization"]
+
+            # Step 2: fetch existing subscriptions
+            r = await client.get(
+                f"{api}/webhook_subscriptions",
+                headers=headers,
+                params={"organization": org_uri, "scope": "user", "user": user_uri},
+            )
+            r.raise_for_status()
+            subs = r.json().get("collection", [])
+
+            # Step 3: already active for this URL → nothing to do
+            if any(
+                s.get("callback_url", "").rstrip("/") == callback_url
+                and s.get("state") == "active"
+                for s in subs
+            ):
+                logger.info("CR-40: Calendly webhook already active for %s — no action needed", callback_url)
+                return
+
+            # Step 4: delete stale active subscriptions
+            for s in subs:
+                if s.get("state") == "active":
+                    sub_id = s["uri"].split("/")[-1]
+                    await client.delete(f"{api}/webhook_subscriptions/{sub_id}", headers=headers)
+                    logger.info("CR-40: Deleted stale Calendly subscription → %s", s.get("callback_url"))
+
+            # Step 5: register current URL
+            reg = await client.post(
+                f"{api}/webhook_subscriptions",
+                headers=headers,
+                json={
+                    "url":          callback_url,
+                    "events":       ["invitee.created"],
+                    "organization": org_uri,
+                    "user":         user_uri,
+                    "scope":        "user",
+                    "signing_key":  signing_key,
+                },
+            )
+            if reg.status_code in (200, 201):
+                logger.info("CR-40: Calendly webhook registered → %s", callback_url)
+            else:
+                logger.warning("CR-40: Calendly register failed %s: %s", reg.status_code, reg.text[:200])
+
+    except Exception as exc:
+        logger.warning("CR-40: Calendly webhook sync error (non-fatal): %s", exc)
+
+
 @app.on_event("startup")
 async def ensure_indexes():
     await antijunk.ensure_indexes(db)
@@ -1446,6 +1519,8 @@ async def ensure_indexes():
         next_run_time=datetime.now(timezone.utc),
     )
     _scheduler.start()
+    # CR-40: auto-register Calendly webhook to match CALENDLY_WEBHOOK_CALLBACK_URL
+    await _sync_calendly_webhook()
 
 
 @app.on_event("shutdown")
