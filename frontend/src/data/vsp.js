@@ -117,7 +117,7 @@ export const VSP_TRUST_LOGOS = [
 export const VSP_SWITCH_BADGES = [
   { icon: "⚡", title: "24-hour go-live", sub: "From sign-up to first bill taken" },
   { icon: "📦", title: "Free data migration", sub: "Your menu and CRM come across — no manual re-entry" },
-  { icon: "🎯", title: "Dedicated account manager from day 1", sub: "Stays with you through the first week" },
+  { icon: "🎯", title: "Dedicated account manager from day 1", sub: "Stays with you through the first month" },
 ];
 
 export const VSP_VIDEO_OWNERS = [
