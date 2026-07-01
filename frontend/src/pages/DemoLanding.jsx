@@ -5,6 +5,7 @@ import Reveal from "@/components/site/Reveal";
 import { EditableText } from "@/components/cms/Editable";
 import { useContentDoc } from "@/lib/cms/CmsProvider";
 import { PAGE_SEO } from "@/lib/seo";
+import { Clock3 } from "lucide-react";
 
 // ─── Shared minimal Navbar ────────────────────────────────────────────────────
 function LandingNavbar() {
@@ -88,12 +89,18 @@ export default function DemoLanding() {
 
             {/* 3 micro-proofs */}
             <Reveal>
-              <div className="flex gap-3 mb-8">
+              <div className="flex gap-3 mb-4">
                 <ProofCard value="₹1L+" label="leakage caught in 2 weeks" />
                 <ProofCard value="48hr" label="from sign-up to first bill" />
                 <ProofCard value="+18%" label="avg bill via AI upsell" accent />
               </div>
             </Reveal>
+
+            {/* Urgency line — CR-43 */}
+            <div className="flex items-center gap-2 mb-8 text-sm text-brand-muted" data-testid="demo-urgency-line">
+              <Clock3 className="w-4 h-4 text-brand-green shrink-0" />
+              <span>Scheduled within <span className="font-semibold text-brand-ink">2 business hours</span> · No commitment</span>
+            </div>
 
             {/* What you'll see */}
             <Reveal>

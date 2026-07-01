@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ArrowRight } from "lucide-react";
+import { hasConsentChoice } from "@/lib/gtm";
 
 /**
  * Sticky bottom CTA bar — mobile only (hidden on lg+).
@@ -9,7 +10,17 @@ import { ArrowRight } from "lucide-react";
 export default function StickyMobileCta({ onDemo }) {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [consentUp, setConsentUp] = useState(!hasConsentChoice());
   const heroRef = useRef(null);
+
+  // Track consent banner in DOM — adjust bottom offset when it's showing
+  useEffect(() => {
+    const check = () => setConsentUp(!!document.querySelector('[data-testid="consent-banner"]'));
+    check();
+    const obs = new MutationObserver(check);
+    obs.observe(document.body, { childList: true, subtree: true });
+    return () => obs.disconnect();
+  }, []);
 
   useEffect(() => {
     // Observe the hero sentinel — when it leaves viewport, show the bar
@@ -39,9 +50,9 @@ export default function StickyMobileCta({ onDemo }) {
 
   return (
     <div
-      className={`lg:hidden fixed bottom-0 left-0 right-0 z-50 transition-transform duration-300 ease-out ${
+      className={`lg:hidden fixed left-0 right-0 z-50 transition-all duration-300 ease-out ${
         visible ? "translate-y-0" : "translate-y-full"
-      }`}
+      } ${consentUp ? "bottom-12" : "bottom-0"}`}
       data-testid="sticky-mobile-cta"
     >
       {/* Safe-area padding for iPhone home bar */}

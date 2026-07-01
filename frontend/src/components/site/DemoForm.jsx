@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { CalendarCheck, Loader2 } from "lucide-react";
+import { CalendarCheck, Loader2, ArrowRight } from "lucide-react";
 import { OUTLET_TYPES, CALENDLY_URL } from "@/data/content";
 import CalendlyInline from "@/components/site/CalendlyInline";
 import OtpVerifyBlock from "@/components/site/OtpVerifyBlock";
@@ -302,7 +302,9 @@ export default function DemoForm({ sector }) {
           </select>
         )}
 
-        <input className={fieldCls("city")} placeholder="City (optional)" value={form.city} onChange={(e) => update("city", e.target.value)} data-testid="demo-input-city" />
+        {sector !== "meta-demo" && (
+          <input className={fieldCls("city")} placeholder="City (optional)" value={form.city} onChange={(e) => update("city", e.target.value)} data-testid="demo-input-city" />
+        )}
       </div>
 
       <button
@@ -311,9 +313,13 @@ export default function DemoForm({ sector }) {
         data-testid="demo-submit-btn"
         className="mt-6 w-full bg-brand-green hover:bg-brand-greenDark text-white rounded-full py-3.5 font-semibold transition-all hover:-translate-y-0.5 shadow-[0_8px_22px_rgba(24,168,74,0.32)] disabled:opacity-60 flex items-center justify-center gap-2"
       >
-        {loading ? <><Loader2 className="w-5 h-5 animate-spin" /> Sending...</> : "Get My Customized Walkthrough"}
+        {loading ? <><Loader2 className="w-5 h-5 animate-spin" /> Sending...</> : sector === "meta-demo" ? <><span>Book My Free Demo</span><ArrowRight className="w-4 h-4" /></> : "Get My Customized Walkthrough"}
       </button>
-      <p className="text-xs text-brand-muted text-center mt-3">No spam. We&apos;ll only use this to schedule your demo.</p>
+      {sector === "meta-demo" ? (
+        <p className="text-xs text-brand-muted text-center mt-3">100s of outlets across 75 cities already on MyGenie</p>
+      ) : (
+        <p className="text-xs text-brand-muted text-center mt-3">No spam. We&apos;ll only use this to schedule your demo.</p>
+      )}
     </form>
   );
 }
