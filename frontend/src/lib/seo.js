@@ -21,7 +21,7 @@ export const ORG_JSONLD = {
     "@type": "ContactPoint",
     telephone: "+91-9104743156",
     contactType: "customer support",
-    email: "support@mygenie.online",
+    email: process.env.REACT_APP_SUPPORT_EMAIL || "support@mygenie.online",
     areaServed: "IN",
   },
 };

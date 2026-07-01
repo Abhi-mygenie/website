@@ -12,7 +12,7 @@
 import { getAttribution } from "@/lib/attribution";
 
 const GTM_ID = process.env.REACT_APP_GTM_ID;
-const ALLOWED_HOSTS = ["www.mygenie.online", "mygenie.online"];
+const ALLOWED_HOSTS = (process.env.REACT_APP_ALLOWED_HOSTS || "www.mygenie.online,mygenie.online").split(",");
 const CONSENT_KEY = "mg_consent";
 
 function gtmAllowed() {

@@ -12,7 +12,7 @@ import jwt
 from fastapi import Request, HTTPException
 
 ALGO = "HS256"
-SESSION_HOURS = 12
+SESSION_HOURS = int(os.environ.get("CMS_SESSION_HOURS", "12"))
 
 
 def _users() -> dict:

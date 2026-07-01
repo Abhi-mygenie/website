@@ -17,7 +17,7 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-GRAPH_BASE      = "https://graph.facebook.com/v21.0"
+GRAPH_BASE      = f"https://graph.facebook.com/{os.environ.get('META_GRAPH_API_VERSION', 'v21.0')}"
 META_TOKEN      = os.environ.get("META_ACCESS_TOKEN", "")
 META_AD_ACCOUNT = os.environ.get("META_AD_ACCOUNT_ID", "")  # e.g. act_1234567890
 META_APP_ID     = os.environ.get("META_APP_ID", "")

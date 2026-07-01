@@ -2,9 +2,9 @@
 export const COMPANY = {
   name: "MyGenie POS",
   tagline: "Streamlined Hospitality. Exceptional Experience.",
-  email: "support@mygenie.online",
-  supportEmail: "customersupport@mygenie.online",
-  privacyEmail: "support@mail.mygenie.online",
+  email: process.env.REACT_APP_SUPPORT_EMAIL || "support@mygenie.online",
+  supportEmail: process.env.REACT_APP_CUSTOMER_SUPPORT_EMAIL || "customersupport@mygenie.online",
+  privacyEmail: process.env.REACT_APP_PRIVACY_EMAIL || "support@mail.mygenie.online",
   phone: "9104743156",
   phoneIntl: "+919104743156",
   whatsapp: process.env.REACT_APP_WHATSAPP_NUMBER || "919104743156",

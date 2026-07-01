@@ -113,7 +113,7 @@ def make_payments_router(db) -> APIRouter:
         try:
             rzp_order = _rzp().order.create({
                 "amount": amount_paise,
-                "currency": "INR",
+                "currency": os.environ.get("PAYMENT_CURRENCY", "INR"),
                 "payment_capture": 1,
                 "notes": {
                     "plan": payload.plan_name,
@@ -144,7 +144,7 @@ def make_payments_router(db) -> APIRouter:
             "gst": gst,
             "amount_total": total,
             "amount_paise": amount_paise,
-            "currency": "INR",
+            "currency": os.environ.get("PAYMENT_CURRENCY", "INR"),
             "billing": "annual",
             "status": "created",
             "customer": {
@@ -179,7 +179,7 @@ def make_payments_router(db) -> APIRouter:
             "order_id": order_id,
             "razorpay_order_id": rzp_order["id"],
             "amount": amount_paise,
-            "currency": "INR",
+            "currency": os.environ.get("PAYMENT_CURRENCY", "INR"),
             "key_id": KEY_ID,
             "customer": {"name": payload.name, "email": payload.email or "", "phone": payload.phone},
         }
@@ -814,7 +814,7 @@ def _generate_invoice(order: dict, razorpay_payment_id: str) -> str | None:
         c.setFont("Helvetica", 8)
         c.drawString(lm, footer_y - 5*mm, "This is a computer-generated invoice. No physical signature required.")
         c.drawString(lm, footer_y - 10*mm, "Annual subscription — non-refundable after activation.")
-        c.drawString(lm, footer_y - 15*mm, "For queries: support@mygenie.in  |  mygenie.in")
+        c.drawString(lm, footer_y - 15*mm, os.environ.get("INVOICE_FOOTER_TEXT", "For queries: support@mygenie.in  |  mygenie.in"))
 
         c.setFont("Helvetica", 7)
         c.setFillColor(hex_color("#d1d5db"))

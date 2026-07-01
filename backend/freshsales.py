@@ -208,7 +208,7 @@ async def upsert_contact(
             # Returning submitter — same contact matched across forms/visits.
             # Merge the new source tag(s) and flag 'Multi-Form' so sales can
             # spot high-intent repeat leads.
-            upd["tags"] = _merge_tags(existing.get("tags"), *(tags or []), "Multi-Form")
+            upd["tags"] = _merge_tags(existing.get("tags"), *(tags or []), os.environ.get("FRESHSALES_TAG_MULTI_FORM", "Multi-Form"))
             # NOTE: lifecycle/status are intentionally not written (account
             # ignores them); we never downgrade a progressing lead.
             if upd:

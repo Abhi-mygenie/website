@@ -1,7 +1,7 @@
 # CR-42: Zero Hardcoded Values — Full ENV Extraction
 
 ## Date: 2026-06-30
-## Status: REGISTERED — Ready for implementation
+## Status: IMPLEMENTED ✅
 ## Priority: P1 (config hygiene / multi-environment readiness)
 
 ---

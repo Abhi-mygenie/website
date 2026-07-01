@@ -275,7 +275,10 @@ async def create_demo_request(payload: DemoRequestCreate, request: Request):
     # otherwise we STILL save the lead but flag it `OTP-Unverified` (graceful — a
     # missing token or SMS-panel outage must never cost a Demo lead).
     otp_verified = otp.verify_token(payload.otp_token, payload.phone)
-    demo_tags = ["Website Demo Lead", "OTP-Verified"] if otp_verified else ["Website Demo Lead", "OTP-Unverified"]
+    TAG_DEMO = os.environ.get("FRESHSALES_TAG_DEMO_LEAD", "Website Demo Lead")
+    TAG_OTP_YES = os.environ.get("FRESHSALES_TAG_OTP_VERIFIED", "OTP-Verified")
+    TAG_OTP_NO = os.environ.get("FRESHSALES_TAG_OTP_UNVERIFIED", "OTP-Unverified")
+    demo_tags = [TAG_DEMO, TAG_OTP_YES] if otp_verified else [TAG_DEMO, TAG_OTP_NO]
     # Fix CR-21: tag the landing page source so sales can filter by origin in CRM
     if obj.source_page and obj.source_page != "homepage":
         demo_tags.append(obj.source_page.replace("sector:", "src:"))
@@ -519,7 +522,7 @@ async def create_quote(payload: QuoteCreate, request: Request):
         city=obj.city or geo_data.get("city"),
         state=geo_data.get("region"),
         job_title=obj.business_name,
-        tags=["Buy Online" if obj.intent == "buy" else "Website Quote"],
+        tags=[os.environ.get("FRESHSALES_TAG_BUY_ONLINE", "Buy Online") if obj.intent == "buy" else os.environ.get("FRESHSALES_TAG_QUOTE", "Website Quote")],
         custom_field={
             "cf_outlet_type": obj.outlet_type,
             "cf_longitude": ip,
@@ -577,7 +580,7 @@ async def create_contact_message(payload: ContactMessageCreate, request: Request
         external_id=f"web_{obj.phone}",
         city=geo_data.get("city"),
         state=geo_data.get("region"),
-        tags=["Website Contact"],
+        tags=[os.environ.get("FRESHSALES_TAG_CONTACT", "Website Contact")],
         custom_field={
             "cf_first_interest": obj.message,
             "cf_longitude": ip,

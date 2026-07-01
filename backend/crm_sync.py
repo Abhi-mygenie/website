@@ -30,25 +30,11 @@ STAGE_STATUS_IDS = {
     "lost":           LOST_ID,
 }
 
-LIFECYCLE_MAP = json.loads(os.environ.get("FRESHSALES_LIFECYCLE_MAP", "{}")) or {
-    403021121245: "lead",
-    403021121246: "qualified",
-    403021121247: "customer",
-}
+LIFECYCLE_MAP = json.loads(os.environ.get("FRESHSALES_LIFECYCLE_MAP", '{"403021121245":"lead","403021121246":"qualified","403021121247":"customer"}'))
 # Ensure keys are ints (JSON keys are strings)
 LIFECYCLE_MAP = {int(k): v for k, v in LIFECYCLE_MAP.items()}
 
-LOST_REASON_MAP = json.loads(os.environ.get("FRESHSALES_LOST_REASONS", "{}")) or {
-    403021121249: "Not able to reach",
-    403021121250: "Not interested",
-    403021121251: "Budget",
-    403021121252: "Lost to competitor",
-    403025076872: "Small Set up",
-    403025076881: "Personal reasons",
-    403025081184: "Hotel only / small restaurant",
-    403025085248: "Already using POS",
-    403038210055: "Multiple Aggregator",
-}
+LOST_REASON_MAP = json.loads(os.environ.get("FRESHSALES_LOST_REASONS", '{"403021121249":"Not able to reach","403021121250":"Not interested","403021121251":"Budget","403021121252":"Lost to competitor","403025076872":"Small Set up","403025076881":"Personal reasons","403025081184":"Hotel only / small restaurant","403025085248":"Already using POS","403038210055":"Multiple Aggregator"}'))
 LOST_REASON_MAP = {int(k): v for k, v in LOST_REASON_MAP.items()}
 
 
