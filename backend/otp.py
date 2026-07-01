@@ -166,27 +166,50 @@ async def verify_otp(db, raw_phone: str, code: str) -> str:
     """Verify the latest OTP for a phone and return a signed token on success.
 
     Raises ValueError(message) on any failure (caller maps to HTTP 400/429).
+
+    Checks ALL valid (non-expired, non-locked) docs for the phone — not just
+    the latest — to tolerate the rare race condition where two OTPs are sent
+    concurrently (double React effect fire) and the user enters the older code.
     """
     phone = antijunk._norm_phone(raw_phone)
     if not phone or len(phone) != 10:
         raise ValueError("Please enter a valid 10-digit phone number.")
     code = (code or "").strip()
 
-    doc = await db.otp_codes.find_one({"phone": phone}, sort=[("created_at", -1)])
-    if not doc:
-        raise ValueError("No OTP found. Please request a new code.")
     now = datetime.now(timezone.utc)
-    if doc.get("valid_until") and now > _aware(doc["valid_until"]):
-        raise ValueError("This OTP has expired. Please request a new code.")
-    if int(doc.get("attempts", 0)) >= MAX_VERIFY_ATTEMPTS:
+    # Fetch last 5 docs for this phone, newest first
+    cursor = db.otp_codes.find({"phone": phone}, sort=[("created_at", -1)])
+    docs = await cursor.to_list(5)
+
+    if not docs:
+        raise ValueError("No OTP found. Please request a new code.")
+
+    # Filter to valid (non-expired, non-locked, unverified) docs
+    valid_docs = [
+        d for d in docs
+        if not (d.get("valid_until") and now > _aware(d["valid_until"]))
+        and int(d.get("attempts", 0)) < MAX_VERIFY_ATTEMPTS
+        and not d.get("verified")
+    ]
+
+    if not valid_docs:
+        # All docs expired or locked — surface the most useful error
+        latest = docs[0]
+        if latest.get("valid_until") and now > _aware(latest["valid_until"]):
+            raise ValueError("This OTP has expired. Please request a new code.")
         raise ValueError("Too many incorrect attempts. Please request a new code.")
 
-    if not hmac.compare_digest(doc["code_hash"], _hash_code(phone, code)):
-        await db.otp_codes.update_one({"_id": doc["_id"]}, {"$inc": {"attempts": 1}})
-        raise ValueError("Incorrect OTP. Please try again.")
+    # Try each valid doc — first match wins
+    for doc in valid_docs:
+        if hmac.compare_digest(doc["code_hash"], _hash_code(phone, code)):
+            await db.otp_codes.update_one({"_id": doc["_id"]}, {"$set": {"verified": True}})
+            return create_token(phone)
 
-    await db.otp_codes.update_one({"_id": doc["_id"]}, {"$set": {"verified": True}})
-    return create_token(phone)
+    # No match — increment attempts on the most recent valid doc
+    await db.otp_codes.update_one(
+        {"_id": valid_docs[0]["_id"]}, {"$inc": {"attempts": 1}}
+    )
+    raise ValueError("Incorrect OTP. Please try again.")
 
 
 def create_token(raw_phone: str) -> str:

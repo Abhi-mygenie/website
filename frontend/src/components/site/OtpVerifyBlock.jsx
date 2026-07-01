@@ -16,8 +16,13 @@ export default function OtpVerifyBlock({ phone, leadId, formType, onVerified, on
     ? `+91 ••••• ${String(phone).replace(/\D/g, "").slice(-4)}`
     : "";
 
-  // Auto-send OTP on mount
-  useEffect(() => { sendOtp(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // Guard: only auto-send OTP once per mount (prevents double-fire on React re-renders)
+  const _sentRef = useRef(false);
+  useEffect(() => {
+    if (_sentRef.current) return;
+    _sentRef.current = true;
+    sendOtp();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Resend countdown
   useEffect(() => {
