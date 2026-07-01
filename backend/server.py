@@ -388,7 +388,7 @@ async def lead_otp_confirm(payload: OtpConfirmRequest):
         "contact": db.contact_messages,
     }
     col = collection_map.get(payload.form_type)
-    if not col:
+    if col is None:
         raise HTTPException(status_code=400, detail="Invalid form_type.")
     doc = await col.find_one({"id": payload.lead_id})
     if not doc:
