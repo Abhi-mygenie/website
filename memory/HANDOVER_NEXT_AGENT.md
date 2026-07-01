@@ -59,9 +59,13 @@ Read these files IN ORDER before writing a single line of code:
   - *"See you soon — our specialist will walk you through MyGenie for your {outletType} business."*
 - **File**: `frontend/src/components/site/DemoForm.jsx` (booked state, lines ~169–184)
 
-### 7. CR-31 — Confirmed Already Implemented (No Code Needed)
-- Investigated: `FunnelBySource.jsx` already exists, is imported and rendered in `LeadsView.jsx`, backend `get_funnel_by_source()` in `funnel.py` also present.
-- No action needed. `LeadQualityPanel` in `AdsIntelTab.jsx` is a separate component on a different tab — it was not replaced, just `FunnelBySource` was added to the Leads & Funnel tab.
+### 7. WhatsApp env-control for MessageForm
+- Added `const WA_ENABLED = process.env.REACT_APP_WHATSAPP_ENABLED !== "false"` at module level
+- Gates all 3 WhatsApp touch-points: auto-open on OTP verify, "Chat on WhatsApp" button in done card, default `preferred_contact` field (falls back to `"email"` when disabled)
+- **File**: `frontend/src/components/site/MessageForm.jsx`
+
+### 8. CR-23 — Calendly → WhatsApp Meet Link
+- **Confirmed working by owner** — no code changes needed. Backend webhook handler formats meeting time + saves meet link; WhatsApp delivery confirmed operational.
 
 ---
 
@@ -101,17 +105,18 @@ Read these files IN ORDER before writing a single line of code:
 | CR | What's needed |
 |---|---|
 | CR-12: Pricing expansion (Hotels plan, add-on restructure) | Owner must define new plan structure |
-| CR-13: Post-payment onboarding | Owner must define onboarding flow |
+| CR-13: Post-payment onboarding | Basic `/payment-success` page exists; owner must define full flow (email/WA/Freshsales update) |
 | CR-15: Zapier offline conversions | Owner to provide Zapier webhook URL |
-| CR-17: S3 media storage | AWS bucket credentials needed |
+| CR-17: S3 media storage | AWS bucket credentials needed (code is ready) |
 | CR-22: Freshsales webhook payload parser | Owner to define which Freshsales events to handle |
-| CR-23: Calendly → WhatsApp meet link | Owner to confirm WhatsApp template |
-| CR-24: Ads Intelligence live data | Meta + Google Ads credentials (already in .env, owner to verify) |
 
-### P2 — Future backlog
+### CONFIRMED COMPLETE (previously marked as blocked — now resolved)
+- **CR-23**: Calendly → WhatsApp meet link ✅ — owner confirmed working
+- **CR-24**: Ads Intelligence live data ✅ — Meta `enabled:true`, Google `enabled:true`, credentials live in `.env`
+- **WhatsApp env-control (MessageForm)** ✅ — implemented this session
 
-- `meta-demo` / `petpooja-alternative` stored as `cf_outlet_type` in Freshsales — these are source pages not outlet types; needs a dedicated `source_page` field mapping
-- `source_page` not stored in MongoDB on DemoRequest — only used to generate a Freshsales tag; owner may want it queryable
+### P2 — Parked
+- Homepage: DemoForm above the fold — owner explicitly parked, ask before starting
 
 ---
 
@@ -193,7 +198,7 @@ curl -X POST "$API_URL/api/otp/send" -H "Content-Type: application/json" -d '{"p
 
 ## LAST WORKING ITEM WHEN THIS SESSION ENDED
 
-Post-booking confirmation copy update in `DemoForm.jsx` (booked state). That was a 2-line copy change — verified visually in screenshot. No pending follow-up needed.
+WhatsApp env-control for `MessageForm.jsx` — implemented and verified. All 3 WhatsApp touch-points gated by `REACT_APP_WHATSAPP_ENABLED`. Docs updated to reflect all stale CR statuses corrected.
 
 ---
 

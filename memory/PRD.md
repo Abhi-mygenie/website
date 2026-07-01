@@ -60,6 +60,8 @@ Stack: React 19 (CRA + craco) · FastAPI (Python 3.11) · MongoDB · Supervisor
 #### CRs Implemented
 - **CR-41**: Quote plan details → Freshsales `cf_first_interest` (pipe-separated: plan|addons|₹amount|recommended/manual|intent)
 - **CR-30**: Date presets (Last 7d default · Last 30d · Last 90d · This Month · Custom) + auto-apply on `AdsIntelTab.jsx`
+- **CR-23**: Calendly → WhatsApp meet link — confirmed working by owner ✅
+- **WhatsApp env-control (MessageForm)**: `WA_ENABLED` const gates auto-open, button, and default `preferred_contact` in `MessageForm.jsx`
 - **Phone normalization**: `_normalize_phone()` helper in `server.py` applied to all 3 lead endpoints; `.slice(-10)` removed from all 3 frontend forms
 - **Post-booking copy**: DemoForm booked confirmation updated to mention WhatsApp + calendar invite
 
@@ -191,26 +193,24 @@ Stack: React 19 (CRA + craco) · FastAPI (Python 3.11) · MongoDB · Supervisor
 
 ## Prioritized Backlog
 
-### P0 — Completed
+### Completed ✅
 - CR-41: Quote plan details → Freshsales `cf_first_interest` ✅
-- Phone normalization + validation fix ✅
-
-### P1 — Planned, awaiting go-ahead
 - CR-30: Date presets + default 7-day on Ads Intelligence ✅
-- CR-31: Conversion funnel by source
+- CR-31: Conversion funnel by source ✅ (was already implemented)
+- CR-23: Calendly → WhatsApp meet link ✅ (confirmed working by owner)
+- CR-24: Ads Intelligence live data ✅ (credentials active, both Meta + Google enabled)
+- Phone normalization + validation fix ✅
+- WhatsApp env-control for MessageForm ✅
 
 ### P1 — Blocked on owner
-- CR-12: Pricing expansion (Hotels plan, add-on restructure)
-- CR-13: Post-payment onboarding
-- CR-15: Zapier offline conversions
-- CR-17: S3 media storage (code ready, needs AWS bucket)
-- CR-22: Freshsales webhook payload parser
-- CR-23: Calendly → WhatsApp meet link
-- CR-24: Ads Intelligence live data (credentials in .env)
+- CR-12: Pricing expansion (Hotels plan, add-on restructure) — owner must define plan structure
+- CR-13: Post-payment onboarding — basic success page exists; full flow (email/WA/Freshsales update) needs owner spec
+- CR-15: Zapier offline conversions — needs Zapier webhook URL from owner
+- CR-17: S3 media storage — code ready, needs AWS bucket credentials
+- CR-22: Freshsales webhook payload parser — owner to define which events to handle
 
-### P2 — Discovery done
-- Homepage: DemoForm above the fold (parked)
-- WhatsApp env-control for MessageForm
+### P2 — Parked
+- Homepage: DemoForm above the fold (parked by owner)
 
 ---
 

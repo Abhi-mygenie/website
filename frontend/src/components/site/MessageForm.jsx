@@ -9,7 +9,8 @@ import { pushLead } from "@/lib/gtm";
 import OtpVerifyBlock from "@/components/site/OtpVerifyBlock";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-const EMPTY = { name: "", phone: "", email: "", business_name: "", years_in_business: "", message: "", preferred_contact: "whatsapp" };
+const WA_ENABLED = process.env.REACT_APP_WHATSAPP_ENABLED !== "false";
+const EMPTY = { name: "", phone: "", email: "", business_name: "", years_in_business: "", message: "", preferred_contact: WA_ENABLED ? "whatsapp" : "email" };
 const REQUIRED = ["name", "phone", "email", "business_name", "years_in_business", "message"];
 
 const PREFERENCES = [
@@ -92,12 +93,16 @@ export default function MessageForm() {
         </div>
         <h3 className="font-display text-2xl font-bold mt-5 text-brand-ink">Thanks, {form.name.split(" ")[0]}!</h3>
         <p className="mt-3 text-brand-muted leading-relaxed">
-          We&apos;ve got your message. If WhatsApp didn&apos;t open automatically, tap below.
+          {WA_ENABLED
+            ? "We've got your message. If WhatsApp didn't open automatically, tap below."
+            : "We've got your message and will be in touch soon."}
         </p>
-        <button onClick={openWhatsApp} data-testid="message-whatsapp-btn"
-          className="mt-6 inline-flex items-center justify-center gap-2 bg-brand-green hover:bg-brand-greenDark text-white rounded-full px-6 py-3 font-semibold transition-all hover:-translate-y-0.5">
-          <MessageCircle className="w-5 h-5" /> Chat on WhatsApp
-        </button>
+        {WA_ENABLED && (
+          <button onClick={openWhatsApp} data-testid="message-whatsapp-btn"
+            className="mt-6 inline-flex items-center justify-center gap-2 bg-brand-green hover:bg-brand-greenDark text-white rounded-full px-6 py-3 font-semibold transition-all hover:-translate-y-0.5">
+            <MessageCircle className="w-5 h-5" /> Chat on WhatsApp
+          </button>
+        )}
       </div>
     );
   }
@@ -115,7 +120,7 @@ export default function MessageForm() {
           formType="contact"
           onVerified={() => {
             pushLead("book_demo", form, null, undefined, { otp_verified: true, form_location: "contact" });
-            openWhatsApp();
+            if (WA_ENABLED) openWhatsApp();
             setStage("done");
           }}
           onBack={() => setStage("form")}
