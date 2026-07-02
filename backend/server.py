@@ -213,6 +213,7 @@ def _attribution_to_crm(attr: dict | None) -> tuple[dict, dict]:
       utm_ad       -> cf_contact_person ("Ad Name / Event ID") (CR-25: moved from cf_demo_fixed which was dropdown)
       fbclid       -> cf_latitude ("fbclid")
       _fbp cookie  -> cf_orders_taken_via ("fpb")
+      _fbc cookie  -> cf_demo_fixed ("fbc")
       CR-18 new:   -> lead_source_id, country, keyword, medium, locale (all native)
       CR-25 new:   -> cf_self_delivery_take_away (ad_id), cf_inventory_used (adset_id),
                       cf_complete_address (placement), cf_account_software_integrated (utm_id),
@@ -272,6 +273,8 @@ def _attribution_to_crm(attr: dict | None) -> tuple[dict, dict]:
         cf["cf_pos_type"] = _trunc(a.get("gclid"))  # CR-28: gclid in own field (was polluting latest_source)
     if _trunc(a.get("fbp")):
         cf["cf_orders_taken_via"] = _trunc(a.get("fbp"))
+    if _trunc(a.get("fbc")):
+        cf["cf_demo_fixed"] = _trunc(a.get("fbc"))
     # CR-25: ad identifiers for attribution stitching
     if _trunc(a.get("ad_id")):
         cf["cf_self_delivery_take_away"] = _trunc(a.get("ad_id"))
