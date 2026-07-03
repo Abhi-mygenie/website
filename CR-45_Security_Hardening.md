@@ -1,10 +1,23 @@
 # CR-45 — Security Hardening: Pricing Integrity, Auth, Webhook & Config Gaps
 
 **Registered:** 2026-07-03  
-**Status:** G2 — Planning Complete  
+**Status:** G3 — Partially Implemented  
 **Priority:** P0 — Security / Pre-launch Blocker  
 **Source:** Security Audit (read-only) — 2026-07-03  
 **Files in scope:** `payments.py`, `cms_auth.py`, `server.py`, `otp.py`, `backend/.env`
+
+## Implementation Status
+
+| Issue | Status | Notes |
+|---|---|---|
+| SEC-001 Server-side price catalog | ✅ DONE | Prices seeded into `db.plans` / `db.addons` on startup; `payments.py` looks up DB prices — client values ignored |
+| SEC-002 Admin credentials / JWT | ✅ DONE (env) | Handled by user directly in `.env` |
+| SEC-003 Freshsales webhook auth | ⏸ DEFERRED | User decision — document retained for future sprint |
+| SEC-004 CORS explicit origins | ✅ DONE (env) | Handled by user directly in `.env` |
+| SEC-005 AWS key comments | ✅ DONE (env) | Handled by user directly in `.env` |
+| SEC-006 Payment endpoint auth | 📋 BACKLOG | Low priority — UUID guessing difficulty accepted for now |
+| SEC-007 TLS verify=False | ✅ DONE | Removed from `otp.py:117` and `payments.py:882` |
+| SEC-008 PII log masking | ⏸ DEFERRED | User decision — document retained for future sprint |
 
 ---
 

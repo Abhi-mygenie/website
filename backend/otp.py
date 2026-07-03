@@ -114,7 +114,7 @@ async def _send_sms(phone: str, code: str) -> str:
         "format": "JSON",
     }
     try:
-        async with httpx.AsyncClient(verify=False, timeout=10.0) as client:
+        async with httpx.AsyncClient(timeout=10.0) as client:
             r = await client.get(SMS_BASE_URL, params=params)
         if r.status_code != 200:
             logger.warning("OTP SMS panel http %s: %s", r.status_code, r.text[:200])

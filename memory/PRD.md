@@ -191,14 +191,37 @@ Stack: React 19 (CRA + craco) · FastAPI (Python 3.11) · MongoDB · Supervisor
 
 ---
 
+## Security Hardening Log (CR-45)
+
+| Issue | Status | Date |
+|---|---|---|
+| SEC-001 Client-controlled price | ✅ DONE | 2026-07-03 |
+| SEC-002 Admin credentials / JWT secret | ✅ DONE (env change by owner) | 2026-07-03 |
+| SEC-003 Unauthenticated Freshsales webhook | ⏸ DEFERRED | 2026-07-03 |
+| SEC-004 CORS wildcard | ✅ DONE (env change by owner) | 2026-07-03 |
+| SEC-005 AWS key comments in .env | ✅ DONE (env change by owner) | 2026-07-03 |
+| SEC-006 Payment endpoint auth by UUID | 📋 BACKLOG | — |
+| SEC-007 TLS verify=False | ✅ DONE | 2026-07-03 |
+| SEC-008 PII in logs | ⏸ DEFERRED | 2026-07-03 |
+
+**SEC-001 detail:** `db.plans` and `db.addons` seeded on startup from constants in `server.py`
+(`_PLANS_SEED` / `_ADDONS_SEED`). Prices are admin-editable directly in MongoDB.
+`payments.py` `create_order` fetches authoritative prices from DB; client-supplied `plan_price`
+and `addon_prices` are accepted but ignored. Unknown `plan_id` or `addon_id` → HTTP 422.
+
+---
+
 ## Prioritized Backlog
 
 ### Completed ✅
+- CR-45 Security Hardening (SEC-001, 007 code fixes; 002/004/005 env fixes by owner) ✅
 - CR-41: Quote plan details → Freshsales `cf_first_interest` ✅
+- CR-44: UTM params + loading states in mobile Calendly popup ✅
+- CR-43: OTP Mobile UX (autocomplete, focus delays, sticky CTA) ✅
 - CR-30: Date presets + default 7-day on Ads Intelligence ✅
-- CR-31: Conversion funnel by source ✅ (was already implemented)
-- CR-23: Calendly → WhatsApp meet link ✅ (confirmed working by owner)
-- CR-24: Ads Intelligence live data ✅ (credentials active, both Meta + Google enabled)
+- CR-31: Conversion funnel by source ✅
+- CR-23: Calendly → WhatsApp meet link ✅
+- CR-24: Ads Intelligence live data ✅
 - Phone normalization + validation fix ✅
 - WhatsApp env-control for MessageForm ✅
 

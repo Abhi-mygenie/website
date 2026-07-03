@@ -1561,10 +1561,50 @@ async def _sync_calendly_webhook() -> None:
         logger.warning("CR-40: Calendly webhook sync error (non-fatal): %s", exc)
 
 
+_PLANS_SEED = [
+    {"id": "starter", "name": "Starter", "price": 799, "contactOnly": False},
+    {"id": "growth",  "name": "Growth",  "price": 1499, "contactOnly": False},
+    {"id": "pro",     "name": "Pro",     "price": 2499, "contactOnly": False},
+    {"id": "custom",  "name": "Custom",  "price": None, "contactOnly": True},
+]
+
+_ADDONS_SEED = [
+    {"id": "branded_ordering",  "name": "Branded Website — Ordering Across Channels", "price": 399},
+    {"id": "whatsapp",          "name": "WhatsApp Automation",                         "price": 499},
+    {"id": "loyalty_wallet",    "name": "Loyalty + Wallet",                            "price": 399},
+    {"id": "central_inventory", "name": "Central Inventory",                           "price": 599},
+    {"id": "hotel_billing",     "name": "Hotel / Room Billing",                        "price": 699},
+    {"id": "ai_insights",       "name": "AI Insights & Upsell",                        "price": 499},
+    {"id": "priority_support",  "name": "Priority 24×7 Support",                       "price": 299},
+    {"id": "aggregator",        "name": "Aggregator Integration",                       "price": 199},
+    {"id": "kiosk",             "name": "Kiosk",                                        "price": 499},
+    {"id": "token_management",  "name": "Token Management",                             "price": 199},
+    {"id": "payment_gateway",   "name": "Payment Gateway Integration",                  "price": 199},
+    {"id": "edc",               "name": "EDC Integration",                              "price": 199},
+    {"id": "housekeeping",      "name": "Housekeeping Module",                          "price": 299},
+    {"id": "channel_manager",   "name": "Channel Manager Integration",                  "price": 499},
+    {"id": "whatsapp_marketing","name": "WhatsApp Marketing",                           "price": 799},
+]
+
+
+async def _seed_pricing(db_instance):
+    """Seed plans and addons into MongoDB if the collections are empty.
+    This is the authoritative price source used by the payment flow."""
+    if await db_instance.plans.count_documents({}) == 0:
+        await db_instance.plans.insert_many(_PLANS_SEED)
+        await db_instance.plans.create_index("id", unique=True)
+        logger.info("Seeded %d plans into db.plans", len(_PLANS_SEED))
+    if await db_instance.addons.count_documents({}) == 0:
+        await db_instance.addons.insert_many(_ADDONS_SEED)
+        await db_instance.addons.create_index("id", unique=True)
+        logger.info("Seeded %d addons into db.addons", len(_ADDONS_SEED))
+
+
 @app.on_event("startup")
 async def ensure_indexes():
     await antijunk.ensure_indexes(db)
     await otp.ensure_indexes(db)
+    await _seed_pricing(db)
     await db.cms_content.create_index("key", unique=True)
     # CR-19: funnel indexes
     for col in (db.demo_requests, db.quotes, db.contact_messages):

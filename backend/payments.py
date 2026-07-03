@@ -73,10 +73,12 @@ def _rzp():
 class OrderCreateRequest(BaseModel):
     plan_id: str
     plan_name: str
-    plan_price: float
+    # plan_price / addon_prices are accepted from the client for display purposes
+    # but are IGNORED server-side — authoritative prices come from db.plans / db.addons
+    plan_price: float | None = None
     addon_ids: list[str] = []
     addon_names: list[str] = []
-    addon_prices: list[float] = []
+    addon_prices: list[float] | None = None
     name: str
     phone: str
     email: str | None = None
@@ -103,7 +105,23 @@ def make_payments_router(db) -> APIRouter:
     # ── 1. Create order ────────────────────────────────────────────────────────
     @router.post("/razorpay/order")
     async def create_order(payload: OrderCreateRequest):
-        subtotal_mo = payload.plan_price + sum(payload.addon_prices)
+        # SEC-001: authoritative prices fetched from DB — client-supplied values ignored
+        plan_doc = await db.plans.find_one({"id": payload.plan_id}, {"_id": 0})
+        if not plan_doc:
+            raise HTTPException(status_code=422, detail=f"Unknown plan: {payload.plan_id}")
+        if plan_doc.get("contactOnly"):
+            raise HTTPException(status_code=422, detail="Custom plan requires a manual quote — please contact sales.")
+
+        server_plan_price = float(plan_doc["price"])
+
+        server_addon_prices = []
+        for addon_id in payload.addon_ids:
+            addon_doc = await db.addons.find_one({"id": addon_id}, {"_id": 0})
+            if not addon_doc:
+                raise HTTPException(status_code=422, detail=f"Unknown add-on: {addon_id}")
+            server_addon_prices.append(float(addon_doc["price"]))
+
+        subtotal_mo = server_plan_price + sum(server_addon_prices)
         subtotal_yr = subtotal_mo * 12
         gst          = round(subtotal_yr * 0.18)
         total        = subtotal_yr + gst
@@ -136,10 +154,10 @@ def make_payments_router(db) -> APIRouter:
             "razorpay_signature": None,
             "plan_id": payload.plan_id,
             "plan_name": payload.plan_name,
-            "plan_price": payload.plan_price,
+            "plan_price": server_plan_price,
             "addon_ids": payload.addon_ids,
             "addon_names": payload.addon_names,
-            "addon_prices": payload.addon_prices,
+            "addon_prices": server_addon_prices,
             "subtotal": subtotal_yr,
             "gst": gst,
             "amount_total": total,
@@ -879,7 +897,7 @@ async def _send_invoice_sms(phone: str, name: str, invoice_no: str, invoice_url:
         "format": "JSON",
     }
     try:
-        async with httpx.AsyncClient(verify=False, timeout=8.0) as client:
+        async with httpx.AsyncClient(timeout=8.0) as client:
             r = await client.get(SMS_BASE_URL, params=params)
         logger.info("Invoice SMS sent to %s: http %s", phone, r.status_code)
     except Exception as e:
