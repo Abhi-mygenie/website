@@ -31,9 +31,10 @@ export default function OtpVerifyBlock({ phone, leadId, formType, onVerified, on
     return () => clearTimeout(t);
   }, [resendIn]);
 
-  // Focus first box on mount
+  // Focus first box on mount — 300ms gives Android time to finish rendering
   useEffect(() => {
-    setTimeout(() => refs[0].current?.focus(), 100);
+    const t = setTimeout(() => { if (refs[0].current) refs[0].current.focus(); }, 300);
+    return () => clearTimeout(t);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sendOtp = async () => {

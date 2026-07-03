@@ -106,7 +106,7 @@ export default function CalendlyInline({ url, prefill, utm, pageSettings, onSche
     <div
       ref={ref}
       data-testid="calendly-inline"
-      style={{ minWidth: "280px", height: "660px" }}
+      style={{ minWidth: "280px", minHeight: "660px", height: "100%" }}
     />
   );
 }

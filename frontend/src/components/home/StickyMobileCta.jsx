@@ -11,11 +11,21 @@ export default function StickyMobileCta({ onDemo }) {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [consentUp, setConsentUp] = useState(!hasConsentChoice());
+  const [formActive, setFormActive] = useState(false);
   const heroRef = useRef(null);
 
   // Track consent banner in DOM — adjust bottom offset when it's showing
   useEffect(() => {
     const check = () => setConsentUp(!!document.querySelector('[data-testid="consent-banner"]'));
+    check();
+    const obs = new MutationObserver(check);
+    obs.observe(document.body, { childList: true, subtree: true });
+    return () => obs.disconnect();
+  }, []);
+
+  // Hide during OTP / form active stage
+  useEffect(() => {
+    const check = () => setFormActive(!!document.querySelector('[data-testid="demo-otp"]'));
     check();
     const obs = new MutationObserver(check);
     obs.observe(document.body, { childList: true, subtree: true });
@@ -46,7 +56,7 @@ export default function StickyMobileCta({ onDemo }) {
     }
   };
 
-  if (dismissed) return null;
+  if (dismissed || formActive) return null;
 
   return (
     <div

@@ -71,7 +71,10 @@ export default function DemoForm({ sector }) {
   const [loading, setLoading] = useState(false);
   const { hp, setHp, signals } = useAntiBot();
   const [eventId] = useState(() => newEventId());
+  const [popupLoading, setPopupLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const scheduledRef = useRef(false);
+  const otpCardRef = useRef(null);
 
   const outletValue = sector || form.outlet_type;
   const fieldCls = (name) => `w-full rounded-xl border px-4 py-3 text-[15px] text-brand-ink placeholder:text-brand-muted/70 focus:outline-none transition-all ${
@@ -84,6 +87,22 @@ export default function DemoForm({ sector }) {
   };
 
   const blur = (k) => setErrors((e) => ({ ...e, [k]: validate(k, form[k]) }));
+
+  // Reactive isMobile — updates on orientation change
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+
+  // Scroll OTP card into view when stage changes to otp
+  useEffect(() => {
+    if (stage === "otp" && otpCardRef.current) {
+      setTimeout(() => {
+        otpCardRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, 100);
+    }
+  }, [stage]);
 
   // Calendly event listener for mobile popup
   useEffect(() => {
@@ -152,19 +171,33 @@ export default function DemoForm({ sector }) {
   };
 
   const openPopup = async () => {
-    await loadCalendlyScript();
-    const url = brandedUrl(CALENDLY_URL);
-    if (!window.Calendly) return;
-    window.Calendly.showPopupWidget(url, {
-      prefill: {
-        name: form.name,
-        email: form.email,
-        customAnswers: {
-          a1: [outletValue && `Outlet: ${outletValue}`, form.business_name && `Biz: ${form.business_name}`].filter(Boolean).join(" | ") || undefined,
-          a2: form.phone ? `+91${form.phone.replace(/\D/g,"").slice(-10)}` : undefined,
+    setPopupLoading(true);
+    try {
+      await loadCalendlyScript();
+      const url = brandedUrl(CALENDLY_URL);
+      if (!window.Calendly) {
+        toast.error("Could not load booking widget. Please try again.");
+        return;
+      }
+      window.Calendly.showPopupWidget(url, {
+        prefill: {
+          name: form.name,
+          email: form.email,
+          customAnswers: {
+            a1: [outletValue && `Outlet: ${outletValue}`, form.business_name && `Biz: ${form.business_name}`].filter(Boolean).join(" | ") || undefined,
+            a2: form.phone ? `+91${form.phone.replace(/\D/g,"").slice(-10)}` : undefined,
+          },
         },
-      },
-    });
+        utm: {
+          utmContent: lead?.contactId ? String(lead.contactId) : undefined,
+          utmTerm:    lead?.id        ? String(lead.id)        : undefined,
+          utmSource:  "website",
+          utmMedium:  "demo_form_mobile",
+        },
+      });
+    } finally {
+      setPopupLoading(false);
+    }
   };
 
   const cardCls = "bg-white rounded-3xl p-7 sm:p-9 shadow-[0_20px_50px_rgba(0,0,0,0.1)]";
@@ -192,7 +225,6 @@ export default function DemoForm({ sector }) {
 
   // ─── Calendly stage ──────────────────────────────────────────────────
   if (stage === "calendly") {
-    const isMobile = window.innerWidth < 768;
     return (
       <div className={cardCls} data-testid="demo-success">
         <StageProgress stage="calendly" />
@@ -207,10 +239,13 @@ export default function DemoForm({ sector }) {
         {isMobile ? (
           <button
             onClick={openPopup}
+            disabled={popupLoading}
             data-testid="demo-book-slot-btn"
-            className="w-full bg-brand-green hover:bg-brand-greenDark text-white rounded-full py-3.5 font-semibold transition-all hover:-translate-y-0.5 shadow-[0_8px_22px_rgba(24,168,74,0.32)]"
+            className="w-full bg-brand-green hover:bg-brand-greenDark text-white rounded-full py-3.5 font-semibold transition-all hover:-translate-y-0.5 shadow-[0_8px_22px_rgba(24,168,74,0.32)] disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Book My Slot
+            {popupLoading
+              ? <><Loader2 className="w-4 h-4 animate-spin inline mr-2" />Loading...</>
+              : "Book My Slot"}
           </button>
         ) : (
           <div className="-mx-3 sm:mx-0">
@@ -238,7 +273,7 @@ export default function DemoForm({ sector }) {
   // ─── OTP stage ───────────────────────────────────────────────────────
   if (stage === "otp") {
     return (
-      <div className={cardCls} data-testid="demo-otp">
+      <div ref={otpCardRef} className={cardCls} data-testid="demo-otp">
         <StageProgress stage="otp" />
         <p className="text-xs text-brand-green font-medium mb-1">Details saved!</p>
         <h3 className="font-display text-xl font-bold text-brand-ink mb-5">Verify your phone</h3>
