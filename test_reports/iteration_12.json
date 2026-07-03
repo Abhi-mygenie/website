@@ -1,0 +1,45 @@
+{
+  "summary": "Full QA for CR-43 (OTP Mobile UX) and CR-44 (Calendly Mobile Experience). All 8 tasks now pass. Previous failing item (autoComplete='one-time-code') is now fixed. Frontend compiles cleanly. All desktop and mobile flows tested via Playwright and code inspection.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "task_validation": {
+    "HOMEPAGE_desktop_loads": "PASS — hero visible, Book a Free Demo CTA found, no JS errors",
+    "HOMEPAGE_sticky_mobile_cta_appears_on_scroll": "PASS — translate-y-0 applied after hero scrolls out (confirmed at 1500px scroll on 390px viewport)",
+    "HOMEPAGE_sticky_cta_hidden_when_demo_otp_active": "PASS — MutationObserver in StickyMobileCta line 27-33 sets formActive=true, line 59 returns null",
+    "DEMO_FORM_fields_present": "PASS — name, phone, email, business_name, outlet_type, years_in_business all found",
+    "DEMO_FORM_validation": "PASS — 'This field is required' errors shown on empty submit",
+    "DEMO_FORM_stage_progress_3_dots": "PASS — StageProgress renders 3 dot elements",
+    "CR43_autoComplete_one_time_code": "PASS — autoComplete='one-time-code' present on all 4 OTP inputs (line 140 of OtpVerifyBlock.jsx)",
+    "CR43_autofocus_300ms": "PASS — setTimeout 300ms with refs[0].current guard at line 36",
+    "CR43_otpCardRef_scrollIntoView": "PASS — ref created line 77, attached line 276 on demo-otp div, scrollIntoView lines 99-105",
+    "CR43_StickyMobileCta_MutationObserver": "PASS — formActive state line 14, observer for [data-testid='demo-otp'] lines 27-33",
+    "CR44_isMobile_reactive_useState": "PASS — useState line 75, resize listener lines 92-96",
+    "CR44_openPopup_utm": "PASS — utmSource='website', utmMedium='demo_form_mobile', utmContent, utmTerm all present lines 191-196",
+    "CR44_popupLoading_spinner_toast": "PASS — popupLoading line 74, try/finally in openPopup, toast.error lines 178-180",
+    "CR44_Book_My_Slot_button_mobile": "PASS — isMobile ? <button data-testid='demo-book-slot-btn'> at line 240-244",
+    "CR44_button_not_disabled_by_default": "PASS — popupLoading initializes to false",
+    "CR44_CalendlyInline_minHeight_660": "PASS — minHeight:660px + height:100% at CalendlyInline.jsx line 109",
+    "CR44_old_inline_isMobile_removed": "PASS — no inline const isMobile in calendly stage block",
+    "REGRESSION_petpooja_page": "PASS — page loads, H1 visible, demo form present, no errors",
+    "REGRESSION_no_console_errors": "PASS — no console errors on homepage load",
+    "REGRESSION_frontend_compiled": "PASS — webpack compiled successfully (confirmed from supervisor logs)"
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "frontend": "100% (all tasks pass)"
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-43 and CR-44 are fully implemented and verified. autoComplete='one-time-code' fix from iteration_11 action item is now in place. Sticky CTA shows correctly on mobile after hero scrolls out (needs ~1500px scroll since hero is 1331px tall on mobile). All OTP and Calendly stage logic verified via code inspection. Live form submission testing skipped as instructed (requires real phone for OTP).",
+  "seed_data_creation": ""
+}
