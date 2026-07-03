@@ -137,6 +137,7 @@ export default function OtpVerifyBlock({ phone, leadId, formType, onVerified, on
             ref={refs[i]}
             type="text"
             inputMode="numeric"
+            autoComplete="one-time-code"
             maxLength={1}
             value={d}
             onChange={(e) => handleChange(i, e.target.value)}
