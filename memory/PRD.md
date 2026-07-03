@@ -215,6 +215,7 @@ and `addon_prices` are accepted but ignored. Unknown `plan_id` or `addon_id` →
 
 ### Completed ✅
 - CR-45 Security Hardening (SEC-001, 007 code fixes; 002/004/005 env fixes by owner) ✅
+- CR-46 Temporarily hide "Buy Online" button (flag: REACT_APP_BUY_ONLINE_ENABLED=false) ✅
 - CR-41: Quote plan details → Freshsales `cf_first_interest` ✅
 - CR-44: UTM params + loading states in mobile Calendly popup ✅
 - CR-43: OTP Mobile UX (autocomplete, focus delays, sticky CTA) ✅

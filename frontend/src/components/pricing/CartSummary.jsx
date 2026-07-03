@@ -2,6 +2,8 @@ import { ShoppingCart, ArrowRight, CalendarClock, CalendarCheck } from "lucide-r
 import { MONTHS_PER_YEAR, GST_RATE } from "@/data/pricing";
 import { EditableText } from "@/components/cms/Editable";
 
+const BUY_ONLINE_ENABLED = process.env.REACT_APP_BUY_ONLINE_ENABLED === "true";
+
 const inr = (n) => "₹" + n.toLocaleString("en-IN");
 
 export default function CartSummary({ plan, addons, includedAddons = [], onBuy, onDemo }) {
@@ -95,9 +97,15 @@ export default function CartSummary({ plan, addons, includedAddons = [], onBuy, 
               </div>
             </div>
 
-            <button onClick={onBuy} data-testid="cart-buy-btn" className="group mt-5 w-full bg-brand-green hover:bg-brand-greenDark text-white rounded-full py-3.5 font-semibold transition-all hover:-translate-y-0.5 shadow-[0_8px_22px_rgba(24,168,74,0.3)] flex items-center justify-center gap-2">
-              Buy Online <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
+            {BUY_ONLINE_ENABLED ? (
+              <button onClick={onBuy} data-testid="cart-buy-btn" className="group mt-5 w-full bg-brand-green hover:bg-brand-greenDark text-white rounded-full py-3.5 font-semibold transition-all hover:-translate-y-0.5 shadow-[0_8px_22px_rgba(24,168,74,0.3)] flex items-center justify-center gap-2">
+                Buy Online <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+            ) : (
+              <div data-testid="cart-buy-coming-soon" className="mt-5 w-full rounded-full py-3.5 text-sm font-semibold text-center border border-brand-line text-brand-muted bg-brand-sand/50 cursor-default select-none">
+                Online purchase — coming soon
+              </div>
+            )}
             <button onClick={onDemo} data-testid="cart-demo-btn" className="mt-3 w-full bg-white border-2 border-brand-orange/40 text-brand-orange hover:bg-brand-orange hover:text-white rounded-full py-3 font-semibold transition-all flex items-center justify-center gap-2">
               <CalendarClock className="w-5 h-5" /> Book a Demo with this quote
             </button>
