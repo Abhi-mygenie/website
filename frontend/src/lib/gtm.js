@@ -18,7 +18,6 @@ const CONSENT_KEY = "mg_consent";
 function gtmAllowed() {
   if (!GTM_ID) return false;
   try {
-    if (ALLOWED_HOSTS.includes("all")) return true;
     return ALLOWED_HOSTS.includes(window.location.hostname);
   } catch {
     return false;
