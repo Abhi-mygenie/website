@@ -35,7 +35,7 @@ REACT_APP_BUY_ONLINE_ENABLED=false
 
 ### `CartSummary.jsx`
 When `REACT_APP_BUY_ONLINE_ENABLED !== "true"`:
-- "Buy Online" button is replaced with a "Coming soon" notice
+- "Buy Online" button is completely hidden — no placeholder or "coming soon" text
 - Demo CTA remains fully functional
 
 ---
