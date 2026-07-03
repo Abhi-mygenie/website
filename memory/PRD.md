@@ -68,9 +68,21 @@ Stack: React 19 (CRA + craco) · FastAPI (Python 3.11) · MongoDB · Supervisor
 #### Confirmed Already Done (Previous Session)
 - CR-31: FunnelBySource already in LeadsView + backend — no action needed
 
----
+### 2026-07-03 — Agent Fork 3 (This Session)
 
-## CRs Implemented This Session
+#### CRs Implemented
+- **CR-45 SEC-001:** DB-authoritative pricing. `db.plans` + `db.addons` seeded on startup. `payments.py` ignores client prices.
+- **CR-45 SEC-007:** Removed `verify=False` from `otp.py` + `payments.py`.
+- **CR-46:** "Buy Online" button hidden via `REACT_APP_BUY_ONLINE_ENABLED=false` flag in `frontend/.env`. No "coming soon" text — fully hidden.
+
+#### Deferred (by owner)
+- SEC-003: Freshsales webhook auth
+- SEC-008: PII log masking
+
+#### Blocked on owner
+- CR-12: Hotel plan — 5 questions asked, not yet answered (see `HANDOFF.md`)
+
+---
 
 ### CR-39 — Full Calendly Meet URL → Freshsales `cf_next_step`
 - **Files:** `backend/freshsales.py`, `backend/server.py`
