@@ -1,9 +1,13 @@
 import { useEffect, useRef } from "react";
 import { pushLead, newEventId } from "@/lib/gtm";
+import { ensureCalendlyCss } from "@/lib/calendlyCss";
 
 const SCRIPT_SRC = "https://assets.calendly.com/assets/external/widget.js";
 
 function loadCalendly() {
+  // CR-50: defensive parity with DemoForm — the same CSS must be present even
+  // if a page mounts CalendlyInline without going through DemoForm.
+  ensureCalendlyCss();
   return new Promise((resolve) => {
     if (window.Calendly) return resolve();
     const existing = document.querySelector(`script[src="${SCRIPT_SRC}"]`);
@@ -106,7 +110,10 @@ export default function CalendlyInline({ url, prefill, utm, pageSettings, onSche
     <div
       ref={ref}
       data-testid="calendly-inline"
-      style={{ minWidth: "280px", minHeight: "660px", height: "100%" }}
+      // CR-50: fixed 720 px pixel height (not %) + width:100% forces Calendly
+      // into wide-mode layout inside a card that would otherwise be < 550 px.
+      // min-width guards against extremely narrow parents (sidebar embeds).
+      style={{ minWidth: "320px", width: "100%", height: "720px" }}
     />
   );
 }

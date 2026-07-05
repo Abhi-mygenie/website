@@ -8,6 +8,7 @@ import OtpVerifyBlock from "@/components/site/OtpVerifyBlock";
 import { useAntiBot, Honeypot, leadQuality } from "@/lib/antiBot";
 import { getAttribution } from "@/lib/attribution";
 import { pushLead, newEventId } from "@/lib/gtm";
+import { ensureCalendlyCss } from "@/lib/calendlyCss";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const EMPTY = { name: "", phone: "", email: "", outlet_type: "", business_name: "", city: "", years_in_business: "" };
@@ -20,6 +21,10 @@ const BRAND_PARAMS = {
 };
 
 function loadCalendlyScript() {
+  // CR-50: ensure our overlay/popup CSS is present in the parent document.
+  // Calendly's widget.js no longer self-injects it (as of 2026-07-05), which
+  // was making the popup invisible (position:static at page bottom).
+  ensureCalendlyCss();
   const SRC = "https://assets.calendly.com/assets/external/widget.js";
   return new Promise((resolve) => {
     if (window.Calendly) return resolve();
@@ -248,7 +253,10 @@ export default function DemoForm({ sector }) {
               : "Book My Slot"}
           </button>
         ) : (
-          <div className="-mx-3 sm:mx-0">
+          // CR-50: bleed the widget past the card padding at md/lg so Calendly
+          // gets ≥ 640 px inner width and renders wide "Select a Date & Time"
+          // layout (narrow < 550 px triggers a 150 px iframe stub — the bug).
+          <div className="-mx-3 sm:-mx-6 md:-mx-8 lg:-mx-9">
             <CalendlyInline
               url={CALENDLY_URL}
               eventId={eventId}
