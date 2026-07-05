@@ -238,6 +238,8 @@ and `addon_prices` are accepted but ignored. Unknown `plan_id` or `addon_id` →
 ## Prioritized Backlog
 
 ### Completed ✅
+- **2026-02-05 · CR-57**: Sector demo anchor shifted from outer `<section>` to inner `<div id="…-demo" className="scroll-mt-20">` wrapping DemoForm on 6 pages (Petpooja, SectorPage, SolutionsIndex, ProductIndex, ProductPage, AiPage). Mobile hero CTA now lands users on the form fields, not the section H2. ✅
+- **2026-02-05 · CR-57b**: `Navbar.jsx` desktop + mobile "Book a Free Demo" CTAs now smart-scroll to the nearest local demo anchor (`vsp-demo`, `sector-demo`, `solutions-demo`, `product-index-demo`, `product-demo`, `ai-demo`, `demo`) instead of forcing `/#demo` route change. Preserves sector attribution/UTM. Falls through to `/#demo` on pages without any local anchor. ✅
 - CR-45 Security Hardening (SEC-001, 007 code fixes; 002/004/005 env fixes by owner) ✅
 - CR-46 Temporarily hide "Buy Online" button (flag: REACT_APP_BUY_ONLINE_ENABLED=false) ✅
 - CR-41: Quote plan details → Freshsales `cf_first_interest` ✅
@@ -259,6 +261,11 @@ and `addon_prices` are accepted but ignored. Unknown `plan_id` or `addon_id` →
 
 ### P2 — Parked
 - Homepage: DemoForm above the fold (parked by owner)
+
+### P1 — Queued (analyzed, awaiting go-ahead)
+- **CR-57c**: `Footer.jsx` L21 uses `window.location.href = "/#demo"` — same class of route-change bug as CR-57b. Fix pattern: reuse `DEMO_ANCHOR_IDS` list and smart-scroll before falling back to hard nav. See CR-57 impact-analysis notes in session log dated 2026-02-05.
+- **CR-45b**: Freshmarketer nested webhook payload adapter for `POST /api/webhooks/freshsales/stage` (`FreshsalesStageEvent`/`_extract`). Parked by owner.
+- **CR-54**: OTP SMS response body logging + error parsing in `otp.py` `_send_sms` (gateway returns HTTP 200 even for failures).
 
 ---
 

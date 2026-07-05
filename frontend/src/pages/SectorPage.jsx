@@ -229,7 +229,7 @@ export default function SectorPage() {
         </section>
 
         {/* DEMO */}
-        <section id="sector-demo" className="py-20 sm:py-24 bg-brand-sand" data-testid="sector-demo-section">
+        <section className="py-20 sm:py-24 bg-brand-sand" data-testid="sector-demo-section">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
             <Reveal>
               <div>
@@ -248,7 +248,9 @@ export default function SectorPage() {
               </div>
             </Reveal>
             <Reveal delay={0.1}>
-              <DemoForm sector={s.name} />
+              <div id="sector-demo" className="scroll-mt-20">
+                <DemoForm sector={s.name} />
+              </div>
             </Reveal>
           </div>
         </section>

@@ -107,7 +107,7 @@ export default function SolutionsIndex() {
         </section>
 
         {/* DEMO */}
-        <section id="solutions-demo" className="py-20 sm:py-24" data-testid="solutions-demo-section">
+        <section className="py-20 sm:py-24" data-testid="solutions-demo-section">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
             <Reveal>
               <div>
@@ -119,7 +119,7 @@ export default function SolutionsIndex() {
                 </Link>
               </div>
             </Reveal>
-            <Reveal delay={0.1}><DemoForm /></Reveal>
+            <Reveal delay={0.1}><div id="solutions-demo" className="scroll-mt-20"><DemoForm /></div></Reveal>
           </div>
         </section>
       </main>

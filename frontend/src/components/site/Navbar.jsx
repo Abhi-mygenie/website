@@ -106,6 +106,32 @@ export default function Navbar({ onDemo }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // CR-57b: On sector/product/AI/home pages, intercept the "Book a Free Demo"
+  // CTA and smooth-scroll to the local demo form instead of forcing a route
+  // change to "/#demo" (which wipes sector attribution/context).
+  const DEMO_ANCHOR_IDS = [
+    "vsp-demo",
+    "sector-demo",
+    "solutions-demo",
+    "product-index-demo",
+    "product-demo",
+    "ai-demo",
+    "demo",
+  ];
+  const handleDemoCtaClick = (e) => {
+    for (const id of DEMO_ANCHOR_IDS) {
+      const el = document.getElementById(id);
+      if (el) {
+        e.preventDefault();
+        setOpen(false);
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+    }
+    // No local anchor on this page — fall through to href="/#demo".
+    setOpen(false);
+  };
+
   return (
     <header data-testid="navbar" className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-md shadow-[0_2px_20px_rgba(0,0,0,0.05)]" : "bg-white/80 backdrop-blur-sm"}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
@@ -124,7 +150,7 @@ export default function Navbar({ onDemo }) {
           {onDemo ? (
             <button onClick={() => onDemo()} data-testid="nav-demo-btn" className="bg-brand-green hover:bg-brand-greenDark text-white rounded-full px-6 py-2.5 font-semibold text-[15px] transition-all hover:-translate-y-0.5 shadow-[0_6px_18px_rgba(24,168,74,0.3)]">Book a Free Demo</button>
           ) : (
-            <a href="/#demo" data-testid="nav-demo-btn" className="bg-brand-green hover:bg-brand-greenDark text-white rounded-full px-6 py-2.5 font-semibold text-[15px] transition-all hover:-translate-y-0.5 shadow-[0_6px_18px_rgba(24,168,74,0.3)]">Book a Free Demo</a>
+            <a href="/#demo" onClick={handleDemoCtaClick} data-testid="nav-demo-btn" className="bg-brand-green hover:bg-brand-greenDark text-white rounded-full px-6 py-2.5 font-semibold text-[15px] transition-all hover:-translate-y-0.5 shadow-[0_6px_18px_rgba(24,168,74,0.3)]">Book a Free Demo</a>
           )}
         </div>
 
@@ -156,7 +182,7 @@ export default function Navbar({ onDemo }) {
           <Link to="/blog" onClick={() => setOpen(false)} className="flex items-center justify-between py-3 text-brand-ink font-semibold border-b border-brand-line/60">Blog <ChevronRight className="w-4 h-4 text-brand-muted" /></Link>
           <Link to="/roi" onClick={() => setOpen(false)} className="flex items-center justify-between py-3 text-brand-ink font-semibold border-b border-brand-line/60">ROI Calculator <ChevronRight className="w-4 h-4 text-brand-muted" /></Link>
           <Link to="/resources" onClick={() => setOpen(false)} className="flex items-center justify-between py-3 text-brand-ink font-semibold border-b border-brand-line/60">Help & FAQ <ChevronRight className="w-4 h-4 text-brand-muted" /></Link>
-          <a href="/#demo" onClick={() => setOpen(false)} className="mt-4 block text-center w-full bg-brand-green text-white rounded-full py-3 font-semibold">Book a Free Demo</a>
+          <a href="/#demo" onClick={handleDemoCtaClick} data-testid="nav-mobile-demo-btn" className="mt-4 block text-center w-full bg-brand-green text-white rounded-full py-3 font-semibold">Book a Free Demo</a>
         </div>
       )}
     </header>

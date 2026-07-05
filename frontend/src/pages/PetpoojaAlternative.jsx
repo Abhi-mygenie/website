@@ -577,7 +577,6 @@ function VspPricing({ doc }) {
 function VspCta({ doc }) {
   return (
     <section
-      id="vsp-demo"
       className="bg-brand-deep py-20 sm:py-28 relative overflow-hidden"
       data-testid="vsp-cta"
     >
@@ -638,7 +637,7 @@ function VspCta({ doc }) {
 
           {/* Right — demo form */}
           <Reveal delay={0.1}>
-            <div className="bg-white rounded-3xl p-8 sm:p-10" data-testid="vsp-demo-form-wrap">
+            <div id="vsp-demo" className="bg-white rounded-3xl p-8 sm:p-10 scroll-mt-20" data-testid="vsp-demo-form-wrap">
               <DemoForm sector="petpooja-alternative" />
             </div>
           </Reveal>

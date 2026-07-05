@@ -226,7 +226,7 @@ export default function ProductPage() {
         </section>
 
         {/* DEMO */}
-        <section id="product-demo" className="py-20 sm:py-24 bg-brand-sand" data-testid="product-demo-section">
+        <section className="py-20 sm:py-24 bg-brand-sand" data-testid="product-demo-section">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
             <Reveal>
               <div>
@@ -244,7 +244,7 @@ export default function ProductPage() {
                 </div>
               </div>
             </Reveal>
-            <Reveal delay={0.1}><DemoForm /></Reveal>
+            <Reveal delay={0.1}><div id="product-demo" className="scroll-mt-20"><DemoForm /></div></Reveal>
           </div>
         </section>
       </main>
