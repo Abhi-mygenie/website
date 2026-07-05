@@ -184,7 +184,14 @@ export default function DemoForm({ sector }) {
         toast.error("Could not load booking widget. Please try again.");
         return;
       }
-      window.Calendly.showPopupWidget(url, {
+      // CR-50 follow-up: `showPopupWidget(url, opts)` crashes with
+      // `this.embedType.toLowerCase is not a function` in the currently-served
+      // widget.js — the second arg is walked for an `embedType` property that
+      // doesn't exist on our shape. `initPopupWidget({url, ...})` is Calendly's
+      // documented API for popup-with-options and accepts the same
+      // prefill/utm shape byte-for-byte.
+      window.Calendly.initPopupWidget({
+        url,
         prefill: {
           name: form.name,
           email: form.email,

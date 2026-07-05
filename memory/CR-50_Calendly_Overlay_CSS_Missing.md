@@ -199,4 +199,63 @@ Single commit reverting both files. No DB/state cleanup required.
 
 ---
 
-*CR-50 registered: 2026-07-05. Agent: E1, Emergent Labs.*
+## Follow-up (same-session hotfix): `showPopupWidget` → `initPopupWidget`
+
+**Discovered:** Immediately after CR-50 shipped, a user's mobile device surfaced a red error overlay from Calendly's `widget.js`:
+
+```
+ERROR: this.embedType.toLowerCase is not a function
+  inject             widget.js:1:1578
+  buildPopupContent  widget.js:1:7639
+  buildPopup         widget.js:1:7391
+  buildOverlay       widget.js:1:7033
+  show               widget.js:1:6711
+  _                  widget.js:1:10875
+  openPopup          bundle.js:16778:23        ← DemoForm.openPopup
+```
+
+**Root cause:** `Calendly.showPopupWidget(url)` accepts only a **single URL argument**. Our `openPopup()` was passing a second argument (`{prefill, utm}`). Older widget.js versions silently ignored it; the currently-served build walks that object looking for `embedType` (a string) and crashes with `undefined.toLowerCase()`. This bug was **masked by the original CR-50 CSS bug** — users never saw the JS error because the overlay was off-screen. Fixing the CSS unmasked it.
+
+**Fix:** switched to `Calendly.initPopupWidget({url, prefill, utm})` — the documented popup-with-options API, accepts the same shape byte-for-byte.
+
+### Diff (`frontend/src/components/site/DemoForm.jsx` — `openPopup()`)
+
+```diff
+- window.Calendly.showPopupWidget(url, {
++ window.Calendly.initPopupWidget({
++   url,
+    prefill: { name, email, customAnswers: {...} },
+    utm:     { utmContent, utmTerm, utmSource, utmMedium },
+  });
+```
+
+**Net change:** 2 lines removed, 3 lines added. Every other line inside `openPopup()` is unchanged.
+
+### GTM / data-flow guarantee
+
+Confirmed all GTM events still fire in full — `openPopup()` does not itself push any dataLayer events. The events fire from separate call sites:
+
+| Event | Location | Trigger | Impact of this fix |
+|---|---|---|---|
+| `form_submitted` | `submit()` L148 | POST /demo-request 200 | none — before openPopup runs |
+| `lead_verifided` + `thankyou_conversion` | `onVerified` L285-286 | OTP verify success | none — before openPopup runs |
+| `demo_booked` | message listener L108-124 | `postMessage({event:"calendly.event_scheduled"})` from Calendly iframe | ✅ **now actually fires** — previously masked because popup crashed before user could book |
+
+Calendly's `event_scheduled` postMessage is emitted by the iframe regardless of how the widget was mounted (`initInlineWidget` / `initPopupWidget` / `showPopupWidget`), so our listener catches it either way.
+
+### Verification results (Playwright, live preview URL, 2026-07-05)
+
+```
+console.error / pageerror captured:  (none — clean)
+overlay computed:                    position:fixed  top:0px  zIndex:9999  1920×1080
+popup computed:                      absolute  1000×680
+iframe rect:                         1000×680 at top:200
+Calendly-side utm passed to iframe:  TRUE
+Popup opens cleanly, user can select a date and submit
+```
+
+Bug **fixed and verified in same session** as the original CR-50 CSS work. Status: still **P0**, still **shipped** — this doc updated to include the follow-up. No additional CR opened.
+
+---
+
+*CR-50 registered: 2026-07-05. Follow-up hotfix same day. Agent: E1, Emergent Labs.*
