@@ -203,21 +203,27 @@ def _derive_lead_source_id(a: dict) -> int | None:
 def _attribution_to_crm(attr: dict | None) -> tuple[dict, dict]:
     """Map the website attribution object -> (Freshsales native fields, cf_ fields).
 
-    Owner-confirmed mapping (2026-06-08, updated CR-18 2026-06-24, CR-25 2026-06-27):
+    Owner-confirmed mapping (2026-06-08, updated CR-18 2026-06-24, CR-25
+    2026-06-27, CR-44/CR-49 2026-07-05):
       first_utm_*  -> first_source/medium/campaign   (first touch, set-once)
-      last_utm_*   -> latest_source/medium/campaign  (last touch, refreshes)
-                   -> last_source/medium/campaign    (CR-18: creation snapshot, set-once)
-      gclid        -> latest_source                  (Option B; falls back to last utm_source)
+      last_utm_*   -> last_source/medium/campaign    (creation snapshot, set-once)
       utm_term     -> cf_pos_satifcation_level + keyword (CR-18)
       utm_content  -> cf_est_name ("AD SET")
       utm_ad       -> cf_contact_person ("Ad Name / Event ID") (CR-25: moved from cf_demo_fixed which was dropdown)
       fbclid       -> cf_latitude ("fbclid")
       _fbp cookie  -> cf_orders_taken_via ("fpb")
-      _fbc cookie  -> cf_demo_fixed ("fbc")
-      CR-18 new:   -> lead_source_id, country, keyword, medium, locale (all native)
-      CR-25 new:   -> cf_self_delivery_take_away (ad_id), cf_inventory_used (adset_id),
-                      cf_complete_address (placement), cf_account_software_integrated (utm_id),
+      _fbc cookie  -> native latest_source (CR-44: UI label "fbc" — repurposed
+                        from the utm-derived duplicate flagged in CR-49; was
+                        cf_demo_fixed which was a Yes/No dropdown that silently
+                        dropped writes)
+      ad_id        -> native work_number (CR-44: UI label "Ad ID"; was
+                        cf_self_delivery_take_away which does not exist)
+      CR-18 native: -> lead_source_id, country, keyword, medium, locale
+      CR-25 cf:    -> cf_inventory_used (adset_id), cf_complete_address
+                      (placement), cf_account_software_integrated (utm_id),
                       cf_aggreator_management (site_source_name)
+      CR-49        -> latest_medium / latest_campaign no longer written (they
+                      duplicated last_* on 84% of contacts).
     """
     a = attr or {}
     native: dict = {}
@@ -230,14 +236,15 @@ def _attribution_to_crm(attr: dict | None) -> tuple[dict, dict]:
     if _trunc(a.get("first_utm_campaign")):
         native["first_campaign"] = _trunc(a.get("first_utm_campaign"))
 
-    # ── Last-touch refreshing ─────────────────────────────────────────────────
-    latest_source = _trunc(a.get("last_utm_source"))
-    if latest_source:
-        native["latest_source"] = latest_source
-    if _trunc(a.get("last_utm_medium")):
-        native["latest_medium"] = _trunc(a.get("last_utm_medium"))
-    if _trunc(a.get("last_utm_campaign")):
-        native["latest_campaign"] = _trunc(a.get("last_utm_campaign"))
+    # ── CR-44: repurpose latest_source for the Meta Click Cookie (fbc). ──────
+    # Previously we wrote last_utm_source here, which duplicated last_source
+    # on 84% of contacts (CR-49 audit). fbc is the only value that matters
+    # for Meta CAPI dedup + ad-creative attribution, so it earns the slot.
+    # Freshsales UI label for `latest_source` renamed to "fbc" alongside this.
+    # NOTE: `latest_medium` and `latest_campaign` are intentionally no longer
+    # written (they were pure duplicates of `last_medium`/`last_campaign`).
+    if _trunc(a.get("fbc")):
+        native["latest_source"] = _trunc(a.get("fbc"))
 
     # ── CR-18: Creation-time snapshot fields (set-once — guard in upsert_contact) ──
     if _trunc(a.get("last_utm_source")):
@@ -260,6 +267,12 @@ def _attribution_to_crm(attr: dict | None) -> tuple[dict, dict]:
     if _trunc(a.get("language")):
         native["locale"] = _trunc(a.get("language"), 20)
 
+    # CR-44: ad_id → native work_number (UI label "Ad ID"). Was previously
+    # written to cf_self_delivery_take_away which does not exist on this
+    # Freshsales account (silently dropped).
+    if _trunc(a.get("ad_id")):
+        native["work_number"] = _trunc(a.get("ad_id"))
+
     cf: dict = {}
     if _trunc(a.get("utm_term")):
         cf["cf_pos_satifcation_level"] = _trunc(a.get("utm_term"))
@@ -273,11 +286,10 @@ def _attribution_to_crm(attr: dict | None) -> tuple[dict, dict]:
         cf["cf_pos_type"] = _trunc(a.get("gclid"))  # CR-28: gclid in own field (was polluting latest_source)
     if _trunc(a.get("fbp")):
         cf["cf_orders_taken_via"] = _trunc(a.get("fbp"))
-    if _trunc(a.get("fbc")):
-        cf["cf_demo_fixed"] = _trunc(a.get("fbc"))
+    # CR-44: fbc is now written to native.latest_source (above); cf_demo_fixed
+    # (a Yes/No dropdown) silently dropped it and is no longer used.
     # CR-25: ad identifiers for attribution stitching
-    if _trunc(a.get("ad_id")):
-        cf["cf_self_delivery_take_away"] = _trunc(a.get("ad_id"))
+    # NB: ad_id moved to native.work_number above (CR-44).
     if _trunc(a.get("adset_id")):
         cf["cf_inventory_used"] = _trunc(a.get("adset_id"))
     if _trunc(a.get("placement")):

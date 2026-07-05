@@ -136,10 +136,35 @@ async def _get_contact_tags(contact_id) -> list:
     return []
 
 
+async def _get_contact(contact_id) -> dict:
+    """CR-47: Fetch a full Freshsales contact (tags + custom_field + natives).
+
+    Used by callers that need to MERGE new attribute writes into the existing
+    ``custom_field`` object — Freshsales' PUT semantics on ``custom_field``
+    tightened from merge → replace circa 2026-07-04, so any PUT that omits
+    existing cf_ keys will wipe them. Best-effort: returns {} on failure.
+    """
+    try:
+        r = await _request("GET", f"/contacts/{contact_id}")
+        if r.status_code < 400:
+            return r.json().get("contact") or {}
+    except Exception as e:  # noqa: BLE001
+        logger.warning("Freshsales get-contact error: %s", e)
+    return {}
+
+
 async def _create_contact(contact: dict) -> httpx.Response:
     """Create a contact; if custom fields are rejected, retry without them."""
     r = await _request("POST", "/contacts", json={"contact": contact})
     if r.status_code == 400 and contact.get("custom_field"):
+        # CR-47: log the offending payload so we can identify bad cf_ keys.
+        # Create-path has no prior cf to preserve, so we still fall back to a
+        # cf-less retry to avoid losing the lead entirely.
+        logger.warning(
+            "Freshsales create 400 (cf keys=%s): %s",
+            list(contact.get("custom_field", {}).keys()),
+            r.text[:300],
+        )
         stripped = {k: v for k, v in contact.items() if k != "custom_field"}
         logger.info("Freshsales create retry without custom_field")
         r = await _request("POST", "/contacts", json={"contact": stripped})
@@ -214,7 +239,20 @@ async def upsert_contact(
             if upd:
                 r = await _request("PUT", f"/contacts/{cid}", json={"contact": upd})
                 if r.status_code == 400 and "custom_field" in upd:
-                    upd.pop("custom_field")
+                    # CR-47: don't blindly drop the entire custom_field dict —
+                    # log what we tried, then retry with the contact's *existing*
+                    # cf snapshot so we at least preserve prior attribution.
+                    logger.warning(
+                        "Freshsales upsert 400 (cf keys=%s): %s",
+                        list(upd.get("custom_field", {}).keys()),
+                        r.text[:300],
+                    )
+                    try:
+                        existing = await _get_contact(cid)
+                        existing_cf = existing.get("custom_field") or {}
+                    except Exception:  # noqa: BLE001
+                        existing_cf = {}
+                    upd["custom_field"] = existing_cf
                     r = await _request("PUT", f"/contacts/{cid}", json={"contact": upd})
                 if r.status_code >= 400:
                     logger.warning("Freshsales update %s: %s", r.status_code, r.text[:300])
@@ -298,7 +336,14 @@ async def swap_otp_tag(contact_id: int) -> None:
         new_tags = [t for t in current_tags if t != TAG_NO]
         if TAG_YES not in new_tags:
             new_tags.append(TAG_YES)
-        upd = {"tags": new_tags, "custom_field": {"cf_rooms": "Yes"}}
+        # CR-47: Freshsales PUT on ``custom_field`` is REPLACE (not merge) since
+        # ~2026-07-04. Fetch existing cf from the GET above and merge our patch
+        # so we don't wipe attribution fields written on contact creation.
+        existing_cf = contact.get("custom_field") or {}
+        upd = {
+            "tags": new_tags,
+            "custom_field": {**existing_cf, "cf_rooms": "Yes"},
+        }
         r2 = await _request("PUT", f"/contacts/{contact_id}", json={"contact": upd})
         if r2.status_code >= 400:
             logger.warning("swap_otp_tag: update %s failed: %s", contact_id, r2.status_code)
@@ -325,14 +370,24 @@ async def mark_demo_booked(
     try:
         cid = contact_id
         existing_tags: list = []
+        existing_cf: dict = {}
         if not cid and email:
             contact = await lookup_contact_by_email(email)
             if contact:
                 cid = contact.get("id")
                 existing_tags = contact.get("tags") or []
+                # CR-47: lookup response only carries tags (not custom_field);
+                # we still need to fetch the full contact below for cf merge.
         if not cid:
             return None
-        if not existing_tags:
+        # CR-47: always fetch full contact to merge existing custom_field with
+        # our booking-time patch (Freshsales PUT on cf is REPLACE, not merge).
+        full = await _get_contact(cid)
+        if full:
+            if not existing_tags:
+                existing_tags = full.get("tags") or []
+            existing_cf = full.get("custom_field") or {}
+        elif not existing_tags:
             existing_tags = await _get_contact_tags(cid)
         merged = _merge_tags(existing_tags, DEMO_BOOKED_TAG)
         update: dict = {"tags": merged}
@@ -350,7 +405,10 @@ async def mark_demo_booked(
         if demo_at:
             cf["cf_channel_manager_name"] = demo_at
         if cf:
-            update["custom_field"] = cf
+            # CR-47: merge our booking cf on top of the existing snapshot so
+            # attribution fields (fbclid, fbp, ad_id, adset_id, event_id, …)
+            # are preserved on the Freshsales side.
+            update["custom_field"] = {**existing_cf, **cf}
         r = await _request("PUT", f"/contacts/{cid}", json={"contact": update})
         if r.status_code >= 400:
             logger.warning("Freshsales demo-booked %s: %s", r.status_code, r.text[:300])

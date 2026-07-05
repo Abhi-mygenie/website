@@ -99,7 +99,9 @@ async def _upsert_backfilled(db, contact, crm_status, lost_reason, lifecycle):
         "fbclid":         cf.get("cf_latitude"),
         "gclid":          cf.get("cf_pos_type"),  # CR-28: gclid in own field
         # CR-25: new attribution fields
-        "ad_id":            cf.get("cf_self_delivery_take_away"),
+        # CR-44: ad_id moved from cf_self_delivery_take_away (never existed
+        # on this account) to native work_number ("Ad ID" label).
+        "ad_id":            contact.get("work_number"),
         "adset_id":         cf.get("cf_inventory_used"),
         "placement":        cf.get("cf_complete_address"),
         "utm_id":           cf.get("cf_account_software_integrated"),
@@ -629,7 +631,8 @@ async def run_source_sync(db, after_date: str | None = None) -> dict:
                     "fbclid":           cf.get("cf_latitude"),
                     "gclid":            cf.get("cf_pos_type"),  # CR-28
                     # CR-25 fields
-                    "ad_id":            cf.get("cf_self_delivery_take_away"),
+                    # CR-44: ad_id moved to native work_number ("Ad ID").
+                    "ad_id":            full_contact.get("work_number"),
                     "adset_id":         cf.get("cf_inventory_used"),
                     "placement":        cf.get("cf_complete_address"),
                     "utm_id":           cf.get("cf_account_software_integrated"),
