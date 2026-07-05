@@ -176,7 +176,7 @@ async def process_lead(c: httpx.AsyncClient, lead: dict, dry_run: bool, audit) -
     return entry["status"]
 
 
-async def main(dry_run: bool):
+async def main(dry_run: bool, only_cids: set[int] | None):
     db = MongoClient(os.environ["MONGO_URL"])[os.environ["DB_NAME"]]
     q = {
         "otp_verified": True,
@@ -184,10 +184,14 @@ async def main(dry_run: bool):
         "freshsales_contact_id": {"$ne": None},
     }
     leads = list(db.demo_requests.find(q, {"_id": 0}).sort("created_at", 1))
+    if only_cids:
+        leads = [x for x in leads if x.get("freshsales_contact_id") in only_cids]
     audit: list = []
     total = len(leads)
     print(f"CR-48 backfill  (dry_run={dry_run})")
     print(f"  filter: {q}")
+    if only_cids:
+        print(f"  --contacts filter: {sorted(only_cids)}")
     print(f"  candidates: {total}")
     print(f"  idempotency threshold: ≥{IDEMPOTENCY_THRESHOLD}/{len(ATTRIBUTION_KEYS)} populated attribution keys ⇒ skip")
     print()
@@ -216,5 +220,10 @@ async def main(dry_run: bool):
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--dry-run", action="store_true", help="Preview only, no FS writes")
+    p.add_argument("--contacts", type=str, default="",
+                   help="Comma-separated Freshsales contact IDs to restrict to. Empty = all candidates.")
     args = p.parse_args()
-    asyncio.run(main(dry_run=args.dry_run))
+    only_cids = None
+    if args.contacts.strip():
+        only_cids = {int(x.strip()) for x in args.contacts.split(",") if x.strip()}
+    asyncio.run(main(dry_run=args.dry_run, only_cids=only_cids))
