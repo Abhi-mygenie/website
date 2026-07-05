@@ -350,6 +350,11 @@ async def create_demo_request(payload: DemoRequestCreate, request: Request):
     doc['created_at'] = doc['created_at'].isoformat()
     doc['otp_verified'] = otp_verified
     doc['attribution'] = payload.attribution
+    # CR-51: persist the browser-generated event_id as a durable dedup key.
+    # Previously stored only in FS.cf_contact_person, which pre-CR-47 wipes
+    # could destroy. Mongo is now our source of truth for browser↔server dedup.
+    if payload.event_id:
+        doc['event_id'] = payload.event_id
     doc['geo'] = geo_data
     await db.demo_requests.insert_one(doc)
     return obj
