@@ -8,6 +8,13 @@ Closed the CR-57 mobile-UX loop that was carried over from the previous fork.
   - Files: `PetpoojaAlternative.jsx`, `SectorPage.jsx`, `SolutionsIndex.jsx`, `ProductIndex.jsx`, `ProductPage.jsx`, `AiPage.jsx`
 - ✅ **CR-57b** — `Navbar.jsx` desktop + mobile "Book a Free Demo" CTAs now smart-scroll to nearest local demo anchor instead of forcing `/#demo` route change. Anchor ID list includes home `#demo`.
 
+**Data-fix executed this session (already live in production Freshsales):**
+- ✅ **CR-48 backfill · Shubham Rajput** (`8445507759` / FS `402211642191`)
+  - Dry-run then live PUT → HTTP 200 → 11 `cf_*` keys restored (1 pre-run → 11 post-run)
+  - Audit row `status: "success"` in `crm_backfill_log_cr48` with `existing_cf_before = {cf_rooms: "Yes"}` for rollback
+  - Skipped by design: `cf_pos_type` (gclid null), `cf_longitude` (ip null), `cf_contact_person` (event_id never persisted), `cf_pos_used`, `cf_pos_name` (source data null)
+  - Note: user restarted services once at end of session ("restart server change env") — new env values active on both backend & frontend
+
 **Not touched (per user instruction "no code edit yet" then "that's all for today"):**
 - CR-57c (Footer `/#demo`) — analyzed & queued
 - CR-45b, CR-54, CR-52, CR-53 — parked / backlog
@@ -58,6 +65,10 @@ memory/PRD.md                                 (completion log)
 
 ## Suggested enhancement offered to user (pending response)
 Adding per-page attribution capture inside `handleDemoCtaClick` (2 lines) — record `document.location.pathname` at click time into `latest_source` so Freshsales shows whether the conversion came from the sector page or generic Nav. User has not responded yet.
+
+## Ad-hoc data ops performed at end of session
+- CR-48 backfill script (`/app/scripts/cr48_backfill_wiped_cf.py`) run with `--contacts 402211642191` for lead `Shubham Rajput / 8445507759`. Live PUT succeeded. Freshsales confirmed 11 populated `cf_*` keys post-run. Full trail in `db.crm_backfill_log_cr48`.
+- Services restarted once at the very end via `sudo supervisorctl restart backend frontend` (user reported env change). Both services healthy post-restart.
 
 ## Environment status
 - Backend/frontend running via supervisor, healthy
