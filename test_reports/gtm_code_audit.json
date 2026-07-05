@@ -1,0 +1,285 @@
+{
+  "timestamp": "2026-06-21T19:05:43.664957",
+  "type": "gtm_code_audit",
+  "total": 39,
+  "passed": 38,
+  "failed": 0,
+  "warned": 1,
+  "p0_failures": 0,
+  "overall": "PASS",
+  "results": [
+    {
+      "id": "G1.1",
+      "name": "REACT_APP_GTM_ID = GTM-K5D84Z3L",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Found: GTM-K5D84Z3L"
+    },
+    {
+      "id": "G1.10",
+      "name": "REACT_APP_BACKEND_URL present",
+      "status": "WARN",
+      "severity": "P0",
+      "detail": "NOTE: must be production URL at deploy time"
+    },
+    {
+      "id": "G1.10b",
+      "name": "REACT_APP_CALENDLY_URL set",
+      "status": "PASS",
+      "severity": "P1",
+      "detail": "https://calendly.com/mygenie-abhishek/mygenie-demo"
+    },
+    {
+      "id": "G1.2",
+      "name": "Host-gated to www.mygenie.online",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "ALLOWED_HOSTS includes www.mygenie.online"
+    },
+    {
+      "id": "G1.3a",
+      "name": "setDefaultConsent() called before GTM inject",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "setDefaultConsent at pos 1348, gtm.start at pos 1398"
+    },
+    {
+      "id": "G1.3b",
+      "name": "Consent default sets all 4 signals to denied",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "All 4 consent signals default to denied \u2705"
+    },
+    {
+      "id": "G1.4a",
+      "name": "form_submitted \u2192 form_submitted",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "form_submitted correctly mapped"
+    },
+    {
+      "id": "G1.4b",
+      "name": "lead_verified \u2192 lead_verifided (typo intentional)",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Typo preserved intentionally to match live GTM trigger"
+    },
+    {
+      "id": "G1.4c",
+      "name": "book_demo \u2192 thankyou_conversion",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Maps to Book Demo conversion in GTM"
+    },
+    {
+      "id": "G1.4d",
+      "name": "demo_booked \u2192 demo_booked",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Calendly booking event \u2014 net new trigger"
+    },
+    {
+      "id": "G1.5a",
+      "name": "form_submitted value = 0",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "\u20b90 \u2014 Qualified leads (secondary)"
+    },
+    {
+      "id": "G1.5b",
+      "name": "lead_verified value = 500",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "\u20b9500 \u2014 Book Demo (owner-confirmed)"
+    },
+    {
+      "id": "G1.5c",
+      "name": "demo_booked value = 2000",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "\u20b92,000 \u2014 Calendly Appointment"
+    },
+    {
+      "id": "G1.6-email",
+      "name": "Identity field: email",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.6-phone",
+      "name": "Identity field: phone",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.6-first_name",
+      "name": "Identity field: first_name",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.6-last_name",
+      "name": "Identity field: last_name",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.6-city_name",
+      "name": "Identity field: city_name",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.6-external_id",
+      "name": "Identity field: external_id",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.7-gclid",
+      "name": "Click-ID: gclid",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.7-fbclid",
+      "name": "Click-ID: fbclid",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.7-fbp",
+      "name": "Click-ID: fbp",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.7-gbraid",
+      "name": "Click-ID: gbraid",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.7-wbraid",
+      "name": "Click-ID: wbraid",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.7-msclkid",
+      "name": "Click-ID: msclkid",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Present in buildLeadPayload"
+    },
+    {
+      "id": "G1.8-DemoForm",
+      "name": "Surface: DemoForm uses pushLead/pushEvent",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "imports gtm: True, uses push: True"
+    },
+    {
+      "id": "G1.8-MessageForm",
+      "name": "Surface: MessageForm uses pushLead/pushEvent",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "imports gtm: True, uses push: True"
+    },
+    {
+      "id": "G1.8-CalendlyInline",
+      "name": "Surface: CalendlyInline uses pushLead/pushEvent",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "imports gtm: True, uses push: True"
+    },
+    {
+      "id": "G1.8-CheckoutModal",
+      "name": "Surface: CheckoutModal uses pushLead/pushEvent",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "imports gtm: True, uses push: True"
+    },
+    {
+      "id": "G1.8-RoiCalculator",
+      "name": "Surface: RoiCalculator uses pushLead/pushEvent",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "imports gtm: True, uses push: True"
+    },
+    {
+      "id": "G1.9a",
+      "name": "ConsentBanner.jsx exists",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "File present"
+    },
+    {
+      "id": "G1.9b",
+      "name": "ConsentBanner has accept + decline buttons",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Both data-testid attributes present"
+    },
+    {
+      "id": "G1.9c",
+      "name": "ConsentBanner calls setConsentChoice",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Triggers consent update on click"
+    },
+    {
+      "id": "G1.11",
+      "name": "OTP_SMS_ENABLED set",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "\"false\""
+    },
+    {
+      "id": "G1.12a",
+      "name": "Razorpay KEY_ID present (currently test key)",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Value: rzp_test_T4H5r8lcX79... (TEST MODE)"
+    },
+    {
+      "id": "G1.12b",
+      "name": "Razorpay KEY_SECRET present",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Secret present"
+    },
+    {
+      "id": "G1.13a",
+      "name": "GST seller GSTIN not placeholder",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "GSTIN: 09AAHCH4730Q1Z0"
+    },
+    {
+      "id": "G1.13b",
+      "name": "GST seller address not placeholder",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "Address: Agra, UP set correctly"
+    },
+    {
+      "id": "G1.14",
+      "name": "Invoice prefix format correct",
+      "status": "PASS",
+      "severity": "P0",
+      "detail": "MG_2026_27_JUNE"
+    }
+  ]
+}

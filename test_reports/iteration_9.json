@@ -1,0 +1,29 @@
+{
+  "summary": "Targeted code-change validation: mobile popup Calendly handler in DemoForm.jsx now correctly calls pushLead('demo_booked') before markBooked(). All 6 verification points passed.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_9.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "CONVERSION_VALUES['demo_booked'] = 1000 IS defined in gtm.js line 227 — the concern raised in the review_request is a non-issue; demo_booked will correctly emit conversion_value=1000.",
+    "Frontend compiles with only eslint warnings (missing deps in unrelated files); no errors blocking the mobile popup change."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "100%" },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Code-change validated. DemoForm.jsx line 94-101 has the correct pushLead('demo_booked') call with all required args. CalendlyInline.jsx desktop path unchanged. GTM_EVENT_NAME and CONVERSION_VALUES both correct for demo_booked.",
+  "verification_checklist": {
+    "pushLead_imported_line10": "PASS — line 10: import { pushLead, newEventId } from '@/lib/gtm'",
+    "mobile_handler_calls_pushLead": "PASS — lines 94-101: pushLead('demo_booked', form, outletValue, eventId, { form_location: 'calendly_popup', otp_verified: true }) called before markBooked()",
+    "correct_arguments": "PASS — event='demo_booked', form, outletValue, eventId, extra={form_location:'calendly_popup', otp_verified:true}",
+    "desktop_path_unaffected": "PASS — CalendlyInline.jsx lines 87-103 fires demo_booked independently via its own message handler",
+    "scheduledRef_guard": "PASS — line 94: !scheduledRef.current guard prevents double-fire",
+    "frontend_compiles": "PASS — webpack compiled with 1 warning (unrelated eslint hooks), no errors",
+    "CONVERSION_VALUES_demo_booked": "PASS — defined as 1000 (line 227), NOT 0 — concern in review_request was incorrect"
+  }
+}

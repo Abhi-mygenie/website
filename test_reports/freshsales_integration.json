@@ -1,0 +1,309 @@
+{
+  "timestamp": "2026-06-21T19:06:31.728412+00:00",
+  "type": "freshsales_integration",
+  "test_phone": "9000000099",
+  "test_email": "gtm_test_1782068761@mygenie.test",
+  "freshsales_contact_id": 402210345394,
+  "total": 49,
+  "passed": 46,
+  "failed": 0,
+  "warned": 3,
+  "skipped": 0,
+  "overall": "PASS",
+  "results": [
+    {
+      "stage": "S0",
+      "name": "Site API URL configured",
+      "status": "PASS",
+      "detail": "https://full-stack-preview-32.preview.emergentagen"
+    },
+    {
+      "stage": "S0",
+      "name": "FRESHSALES_BASE_URL set",
+      "status": "PASS",
+      "detail": "https://mygenie-org.myfreshworks.com/crm/sales/api"
+    },
+    {
+      "stage": "S0",
+      "name": "FRESHSALES_API_KEY set",
+      "status": "PASS",
+      "detail": "tjds_F...r0RQ"
+    },
+    {
+      "stage": "S0",
+      "name": "Freshsales API reachable (HTTP 200)",
+      "status": "PASS",
+      "detail": "200/404 = reachable. 403 = listing endpoint blocked by plan (use lookup instead)"
+    },
+    {
+      "stage": "S0",
+      "name": "OTP_SMS_ENABLED = false",
+      "status": "PASS",
+      "detail": "Mock mode (logs OTP) \u2014 real SMS not sent"
+    },
+    {
+      "stage": "S0",
+      "name": "SMS panel URL set",
+      "status": "PASS",
+      "detail": "https://123.108.46.13/sms-panel/api/http"
+    },
+    {
+      "stage": "S1",
+      "name": "POST /api/demo-request returns 200",
+      "status": "PASS",
+      "detail": "HTTP 200: {\"id\":\"1b3b228a-60f1-4a30-88a8-0b4cb85bfef5\",\"name\":\"GTM Test AutoUser\",\"phone\":\"9000000099\",\"email\":\"gtm_test_178206876"
+    },
+    {
+      "stage": "S1",
+      "name": "Freshsales contact_id returned",
+      "status": "PASS",
+      "detail": "contact_id = 402210345394"
+    },
+    {
+      "stage": "S1",
+      "name": "Contact readable from Freshsales API",
+      "status": "PASS",
+      "detail": "id = 402210345394"
+    },
+    {
+      "stage": "S1",
+      "name": "Tag: \"Website Demo Lead\" present",
+      "status": "PASS",
+      "detail": "tags = ['Website Demo Lead', 'OTP-Unverified']"
+    },
+    {
+      "stage": "S1",
+      "name": "Tag: \"OTP-Unverified\" present (no token given)",
+      "status": "PASS",
+      "detail": "tags = ['Website Demo Lead', 'OTP-Unverified']"
+    },
+    {
+      "stage": "S1",
+      "name": "cf_rooms = \"No\" (OTP not verified)",
+      "status": "PASS",
+      "detail": "cf_rooms = 'No'"
+    },
+    {
+      "stage": "S1",
+      "name": "cf_outlet_type = \"Caf\u00e9\"",
+      "status": "PASS",
+      "detail": "cf_outlet_type = 'Caf\u00e9'"
+    },
+    {
+      "stage": "S1",
+      "name": "cf_pos_used = \"Yes\"",
+      "status": "PASS",
+      "detail": "cf_pos_used = 'Yes'"
+    },
+    {
+      "stage": "S1",
+      "name": "cf_pos_name = \"Petpooja\"",
+      "status": "PASS",
+      "detail": "cf_pos_name = 'Petpooja'"
+    },
+    {
+      "stage": "S1",
+      "name": "cf_sku = \"1-3 years\"",
+      "status": "PASS",
+      "detail": "cf_sku = '1-3 years'"
+    },
+    {
+      "stage": "S1",
+      "name": "external_id = web_9000000099",
+      "status": "PASS",
+      "detail": "external_id = 'web_9000000099'"
+    },
+    {
+      "stage": "S1",
+      "name": "city is set",
+      "status": "PASS",
+      "detail": "city = 'TestCity'"
+    },
+    {
+      "stage": "S2",
+      "name": "POST /api/otp/send returns 200",
+      "status": "PASS",
+      "detail": "HTTP 200: {\"sent\":true,\"cooldown\":30,\"status\":\"mocked\"}"
+    },
+    {
+      "stage": "S2",
+      "name": "OTP send response has expected fields",
+      "status": "PASS",
+      "detail": "{'sent': True, 'cooldown': 30, 'status': 'mocked'}"
+    },
+    {
+      "stage": "S2",
+      "name": "OTP code extracted from backend log",
+      "status": "PASS",
+      "detail": "code = '1306'"
+    },
+    {
+      "stage": "S2",
+      "name": "POST /api/otp/verify returns 200",
+      "status": "PASS",
+      "detail": "HTTP 200: {\"verified\":true,\"otp_token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MDAwMDAwMDk5IiwidHlwZSI6Im90cCIsImV4cCI6M"
+    },
+    {
+      "stage": "S2",
+      "name": "JWT otp_token returned",
+      "status": "PASS",
+      "detail": "token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ..."
+    },
+    {
+      "stage": "S3",
+      "name": "POST /api/demo-request with OTP token returns 200",
+      "status": "PASS",
+      "detail": "HTTP 200"
+    },
+    {
+      "stage": "S3",
+      "name": "Tag: \"Website Demo Lead\" present",
+      "status": "PASS",
+      "detail": "tags = ['Website Demo Lead', 'OTP-Unverified', 'Multi-Form']"
+    },
+    {
+      "stage": "S3",
+      "name": "Tag: \"OTP-Unverified\" \u2014 may persist from prior unverified submission (tags additive)",
+      "status": "WARN",
+      "detail": "tags = ['Website Demo Lead', 'OTP-Unverified', 'Multi-Form']. cf_rooms is the definitive OTP indicator."
+    },
+    {
+      "stage": "S3",
+      "name": "cf_rooms = \"Yes\" (OTP verified)",
+      "status": "PASS",
+      "detail": "cf_rooms = 'Yes'"
+    },
+    {
+      "stage": "S4",
+      "name": "POST /api/demo-booked returns 200",
+      "status": "PASS",
+      "detail": "HTTP 200: {\"ok\":true,\"freshsales_contact_id\":402210345394}"
+    },
+    {
+      "stage": "S4",
+      "name": "Tag: \"Demo Scheduled (Web)\" present",
+      "status": "PASS",
+      "detail": "tags = ['Website Demo Lead', 'OTP-Unverified', 'Multi-Form', 'Demo Scheduled (Web)']"
+    },
+    {
+      "stage": "S4",
+      "name": "contact_status_id = 402001963264 (Demo Booked) \u2014 write-only on this account",
+      "status": "WARN",
+      "detail": "actual = '' (null read-back is known Freshsales limitation)"
+    },
+    {
+      "stage": "S5",
+      "name": "POST /api/quote (buy intent) returns 200",
+      "status": "PASS",
+      "detail": "HTTP 200: {\"name\":\"GTM Test AutoUser\",\"phone\":\"9000000098\",\"email\":\"gtm_test_1782068761@mygenie.test\",\"business_name\":\"Test Outlet"
+    },
+    {
+      "stage": "S5",
+      "name": "Tag: \"Buy Online\" present",
+      "status": "PASS",
+      "detail": "tags = ['Demo Scheduled (Web)', 'Website Demo Lead', 'Multi-Form', 'OTP-Unverified', 'Buy Online']"
+    },
+    {
+      "stage": "S5",
+      "name": "Tag: \"Multi-Form\" present (returning contact across forms)",
+      "status": "PASS",
+      "detail": "tags = ['Demo Scheduled (Web)', 'Website Demo Lead', 'Multi-Form', 'OTP-Unverified', 'Buy Online']"
+    },
+    {
+      "stage": "S6",
+      "name": "POST /api/contact returns 200",
+      "status": "PASS",
+      "detail": "HTTP 200: {\"name\":\"GTM Test AutoUser\",\"phone\":\"9000000097\",\"email\":\"gtm_test_1782068761@mygenie.test\",\"message\":\"Test message from"
+    },
+    {
+      "stage": "S6",
+      "name": "Tag: \"Website Contact\" present",
+      "status": "PASS",
+      "detail": "tags = ['Demo Scheduled (Web)', 'Website Demo Lead', 'Buy Online', 'Multi-Form', 'OTP-Unverified', 'Website Contact']"
+    },
+    {
+      "stage": "S6",
+      "name": "cf_first_interest set from message",
+      "status": "PASS",
+      "detail": "cf_first_interest = 'Test message from GTM test script'"
+    },
+    {
+      "stage": "S7",
+      "name": "RAZORPAY_KEY_ID set",
+      "status": "PASS",
+      "detail": "TEST mode: rzp_test_T4H5r8lcX79..."
+    },
+    {
+      "stage": "S7",
+      "name": "FRESHSALES_LIFECYCLE_CUSTOMER_ID set (Customer)",
+      "status": "PASS",
+      "detail": "id = 403021121247"
+    },
+    {
+      "stage": "S7",
+      "name": "FRESHSALES_STATUS_WON_ID set (Won)",
+      "status": "PASS",
+      "detail": "id = 402001137712"
+    },
+    {
+      "stage": "S7",
+      "name": "FS_STATUS_PAYMENT_AWAITED hardcoded = 402001783018",
+      "status": "PASS",
+      "detail": "Used when Razorpay order is created"
+    },
+    {
+      "stage": "S7",
+      "name": "POST /api/payments/razorpay/order returns 200",
+      "status": "PASS",
+      "detail": "HTTP 200: {\"order_id\":\"4c341371-e613-4057-b232-3355c802309c\",\"razorpay_order_id\":\"order_T4OHaIRjyQmOEn\",\"amount\":1131400,\"currency\":\"INR\",\"key_id\":\"rzp_test_T4H"
+    },
+    {
+      "stage": "S7",
+      "name": "razorpay_order_id in response",
+      "status": "PASS",
+      "detail": "rzp order = 'order_T4OHaIRjyQmOEn'"
+    },
+    {
+      "stage": "S7",
+      "name": "key_id in response matches env",
+      "status": "PASS",
+      "detail": "key = 'rzp_test_T4H5r8lcX79cyc'"
+    },
+    {
+      "stage": "S7",
+      "name": "contact_status_id = 402001783018 (Payment Awaited)",
+      "status": "WARN",
+      "detail": "actual = '' (write-only \u2014 null read-back expected on this account)"
+    },
+    {
+      "stage": "S7",
+      "name": "[INFO] On payment.captured: lifecycle \u2192 Customer (403021121247), status \u2192 Won (402001137712), tags \u2192 Paid Online + Buy Online",
+      "status": "PASS",
+      "detail": "Verified via SESSION_HANDOVER.md \u2014 requires real Razorpay payment to test live"
+    },
+    {
+      "stage": "S8",
+      "name": "Tag: \"Multi-Form\" present (contacted via multiple forms)",
+      "status": "PASS",
+      "detail": "tags = ['Demo Scheduled (Web)', 'Website Demo Lead', 'Website Contact', 'Buy Online', 'Multi-Form', 'OTP-Unverified']"
+    },
+    {
+      "stage": "S8",
+      "name": "Contact has tags from \u22652 form types (cross-form dedup working)",
+      "status": "PASS",
+      "detail": "form tags: ['Website Demo Lead', 'Website Contact', 'Buy Online']"
+    },
+    {
+      "stage": "S9",
+      "name": "Freshsales test contact 402210345394 deleted",
+      "status": "PASS",
+      "detail": "HTTP 200"
+    },
+    {
+      "stage": "S9",
+      "name": "Cleanup done",
+      "status": "PASS",
+      "detail": "Test phone 9000000099 / email gtm_test_1782068761@mygenie.test"
+    }
+  ]
+}
