@@ -13,6 +13,7 @@ const FIRST_KEY = "mg_attr_first";
 const LAST_KEY = "mg_attr_last";
 const SESSION_START = "mg_session_start";
 const PAGES_VIEWED = "mg_pages_viewed";
+const FBC_KEY = "mg_fbc";
 
 const UTM_PARAMS = [
   "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_ad",
@@ -66,6 +67,11 @@ export function initAttribution() {
   try {
     const params = readParams();
     const now = new Date().toISOString();
+
+    // G6: format fbc as fb.1.<unix_ms>.<fbclid> at first capture (Meta CAPI EMQ)
+    if (params.fbclid && !localStorage.getItem(FBC_KEY)) {
+      localStorage.setItem(FBC_KEY, `fb.1.${Date.now()}.${params.fbclid}`);
+    }
 
     if (!localStorage.getItem(FIRST_KEY)) {
       localStorage.setItem(
@@ -145,7 +151,13 @@ export function getAttribution() {
     wbraid: last.wbraid || first.wbraid || null,
     msclkid: last.msclkid || first.msclkid || null,
     fbp: getCookie("_fbp"),
-    fbc: getCookie("_fbc"),
+    fbc: getCookie("_fbc") || (() => {
+      try {
+        return localStorage.getItem(FBC_KEY) || null;
+      } catch {
+        return null;
+      }
+    })(),
     // page context
     landing_page: first.landing_page || null,
     conversion_page: window.location.pathname || null,

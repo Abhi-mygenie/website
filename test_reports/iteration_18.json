@@ -1,0 +1,31 @@
+{
+  "summary": "Fix #7 (G6) VERIFIED — fbc formatted as fb.1.<unix_ms>.<fbclid>, persisted in localStorage 'mg_fbc', flows through to form_submitted dataLayer push. All 5 review tasks PASS. Regression (event_id, conversion_value=0 number, UTM/ad fields, phone/email, no premature lead_verified) also PASS.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "task_validation": {
+    "TASK1_mg_fbc_localStorage_format": "PASS — After loading ?fbclid=ABC123XYZ&utm_source=facebook&utm_medium=cpc and accepting cookie, localStorage['mg_fbc'] = 'fb.1.1784022203950.ABC123XYZ' matches regex ^fb\\.1\\.\\d{13}\\.ABC123XYZ$.",
+    "TASK2_form_submitted_payload_fbc": "PASS — form_submitted dataLayer push captured. payload.fbc = 'fb.1.1784022257909.ABC123XYZ' (formatted, equal to mg_fbc), payload.fbclid = 'ABC123XYZ' (raw). No _fbc cookie in test env, so localStorage fallback used as spec allows.",
+    "TASK3_persistence_across_navigation": "PASS — Navigated to homepage without fbclid; mg_fbc still holds original formatted value 'fb.1.1784022203950.ABC123XYZ'.",
+    "TASK4_first_capture_guard": "PASS — With mg_fbc already set, navigated to ?fbclid=NEWCLICK999; mg_fbc unchanged (still ABC123XYZ formatted, NEWCLICK999 NOT written). Guard `!localStorage.getItem(FBC_KEY)` in attribution.js line 72 works.",
+    "TASK5_regression_all_prior_fields": "PASS — form_submitted push contains: event_id='d64bc53a-...' (valid UUID), conversion_value=0 (int/Number), phone='+919812300099' (E.164), email='test@example.com', utm_source='facebook', utm_medium='cpc', utm_campaign='diwali', utm_content='adset42', utm_term='kw1', utm_id='1111', ad_id='222', adset_id='333'. lead_verified push count = 0 (correctly absent pre-OTP)."
+  },
+  "implementation_verified": {
+    "attribution_js_line_72_74": "if (params.fbclid && !localStorage.getItem(FBC_KEY)) { localStorage.setItem(FBC_KEY, `fb.1.${Date.now()}.${params.fbclid}`); } — first-capture-only guard correct.",
+    "attribution_js_line_154_160": "fbc: getCookie('_fbc') || localStorage.getItem(FBC_KEY) || null — cookie precedence over localStorage as specified.",
+    "gtm_js_line_210": "fbc: attr.fbc || null — passes formatted value through unchanged."
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Implementation is clean and matches spec exactly.",
+    "Note: Meta pixel did NOT set a real _fbc cookie in the preview test browser, so the localStorage fallback path is what's exercised. If Meta pixel is loaded in production and _fbc is present, it will take precedence (per line 154) — this is the correct Meta CAPI behavior.",
+    "Minor observation: unix_ms uses Date.now() at capture time (not the fbclid click time), which matches Facebook's fbc spec 'timestamp when the fbclid was observed'. Correct."
+  ],
+  "updated_files": [],
+  "success_rate": {"frontend": "100% (5/5 tasks pass)"},
+  "test_credentials": "N/A — fbc verification happens on form submit BEFORE OTP; OTP flow not exercised.",
+  "seed_data_creation": "One demo_request row created in test DB (phone 9812300099) during form submission for spy verification.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 7 funnel-tracking fixes (#1-#7) are shipped and verified. Batch C complete. fbc localStorage key is 'mg_fbc', format 'fb.1.<unix_ms>.<fbclid>'. Cookie _fbc takes precedence if present. First-capture guard correctly prevents overwrite."
+}
