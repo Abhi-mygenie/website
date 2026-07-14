@@ -1519,6 +1519,11 @@ async def _sync_calendly_webhook() -> None:
         logger.info("CR-40: CALENDLY_API_TOKEN or CALENDLY_WEBHOOK_CALLBACK_URL not set — skipping")
         return
 
+    # CR-59: never let a preview/dev environment hijack the production webhook.
+    if "preview.emergentagent.com" in callback_url:
+        logger.warning("CR-59: refusing to sync Calendly webhook to preview URL %s — skipping", callback_url)
+        return
+
     api     = "https://api.calendly.com"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 

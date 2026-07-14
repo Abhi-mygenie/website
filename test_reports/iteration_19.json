@@ -1,0 +1,31 @@
+{
+  "summary": "CR-59 regression suite: verified _sync_calendly_webhook code guard, startup log, /api/calendly/webhook signature enforcement, and MongoDB update path. All 9 pytest tests passed (100% backend).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_cr59_calendly_guard.py",
+    "/app/test_reports/pytest/pytest_cr59.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py is now ~1700 lines — approaching the split threshold; Calendly + CMS + Ads endpoints should ideally live in dedicated routers.",
+    "_sync_calendly_webhook CR-59 guard is correct (short-circuits before httpx). Consider extending the deny-list to include any host that is NOT the production host (allow-list model) so any future preview alias is also caught."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_cr59_calendly_guard.py (new)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "n/a"},
+  "test_credentials": "n/a — used CALENDLY_WEBHOOK_SIGNING_KEY from /app/backend/.env for HMAC signing; test email cr59-nomatch-test@example.invalid (guaranteed no CRM match).",
+  "seed_data_creation": "Inserted one demo_requests doc with a per-run unique id (cr59-test-lead-<hex8>). NOTE: MongoDB appuser has readWrite but NO delete permission on test_database — the doc was marked as cleaned via $set instead of deleted (leftover doc has status='cr59_test_cleanup' and cr59_test_cleaned=true).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "The test file /app/backend/tests/test_cr59_calendly_guard.py is fully reusable. All 4 review scenarios verified: (1) Code guard — 3 unit tests confirm httpx.AsyncClient is never instantiated when callback_url contains 'preview.emergentagent.com', when it is blank, or when CALENDLY_API_TOKEN missing. (2) Startup log — most recent CR-40 log line in /var/log/supervisor/backend.err.log is 'CR-40: CALENDLY_API_TOKEN or CALENDLY_WEBHOOK_CALLBACK_URL not set — skipping' (line 597 at 2026-07-14 10:02:23). (3) Webhook signature: invitee.canceled + valid sig → 200 {ignored}; invalid sig → 401; missing sig → 400; invitee.created with unknown email → 200 {status: ok, freshsales_contact_id: null}. (4) Mongo update path: valid-signed invitee.created with tracking.utm_term=lead_id updated demo_requests doc with status='demo_booked', demo_at='20 Jul 2026, 3:30 PM IST', meet_link='FAKE-UUID/google_meet', meet_link_full='https://calendly.com/events/FAKE-UUID/google_meet'. Safety rules honored: no Calendly API calls made, no scripts run, no real customer emails used, backend .env untouched.",
+  "rca of the issue": "CR-59 root cause (already fixed by main agent): the preview environment's CR-40 startup hook mutated the LIVE Calendly org's webhook_subscriptions to point at the preview URL, orphaning production. Mitigation verified in tests: (a) code guard rejects any preview.emergentagent.com callback_url before any Calendly API call, (b) preview backend/.env CALENDLY_WEBHOOK_CALLBACK_URL blanked so the guard is not even reached — the CR-40 'skipping' branch fires instead, (c) production webhook now points at https://mygenie.online/api/calendly/webhook (out-of-band, not touched by tests)."
+}
