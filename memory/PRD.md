@@ -90,3 +90,6 @@ Skipped per user decision (do NOT re-propose): G2 (external CAPI Gateway mapping
 ### Next step
 - USER ACTION: push preview → production via "Save to GitHub" (all Batch C fixes are preview-only until then).
 - CR-58 registered (BACKLOG, user said "later"): capture pathname in handleDemoCtaClick into latest_source — spec in /app/memory/CR-58_CTA_Click_Pathname_LatestSource.md.
+
+## CR-59 — Prod Calendly webhook hijack (FIXED 2026-07-14)
+Preview fork's CR-40 startup sync deleted prod's Calendly webhook subscription on 2026-07-13 → 9 bookings lost Demo Time/Meeting Link in Freshsales. Fixed: prod webhook re-registered to https://mygenie.online/api/calendly/webhook (verified live), preview .env callback blanked, code guard added (refuses preview.emergentagent.com URLs — needs GitHub push to reach prod repo), 8/9 leads backfilled into live Freshsales (1 = owner's deleted test contact). Tests: iteration_19.json 100% pass. Full spec: /app/memory/CR-59_Preview_Calendly_Webhook_Hijack.md
