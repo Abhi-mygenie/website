@@ -76,6 +76,58 @@ memory/PRD.md                                 (completion log)
 ## Suggested enhancement offered to user (pending response)
 Adding per-page attribution capture inside `handleDemoCtaClick` (2 lines) — record `document.location.pathname` at click time into `latest_source` so Freshsales shows whether the conversion came from the sector page or generic Nav. User has not responded yet.
 
+## 🔴 CRITICAL — Funnel + Attribution Fix Batch (approved, awaiting execution)
+
+**User approved a batch of 6 improvements** at end of session. NO CODE has been edited yet — user said "we will call bug fixing agent later" (testing_agent). Next agent must call `testing_agent_v3_fork` per system reminder after applying these edits.
+
+### 🎯 Locked decisions
+
+| # | Change | Files | Est. lines |
+|---|---|---|---|
+| **1** | **Conversion values**: `form_submitted=0`, `lead_verifided=200`, `thankyou_conversion=200`, `demo_booked=300` (change from 200/500/500/1000) | `frontend/src/lib/gtm.js` L223-228 `CONVERSION_VALUES` | 4 |
+| **2** | **Number cast** for `conversion_value`: change `String(v)` → `Number(v)`; and `"0"` → `0`. Ensures value-based bidding compatibility. | `frontend/src/lib/gtm.js` L205 (`buildLeadPayload`) | 1 |
+| **3** | **G1 — Delete duplicate `demo_booked` listener**: DemoForm and CalendlyInline both listen to `calendly.event_scheduled` postMessage — fires twice on desktop. Fix: gate DemoForm's listener (`useEffect` L113-128) with `if (!isMobile) return;` — mobile popup keeps it, desktop-inline path uses CalendlyInline's listener only. | `frontend/src/components/site/DemoForm.jsx` L113-128 | ~2 (add mobile guard) |
+| **4** | **G3 — Delete `lead_verified` push**: DemoForm L300 fires `pushLead("lead_verified", ...)` right before L301 `pushLead("book_demo", ...)`. Both trigger Meta Lead tag in GTM → Meta Lead fires TWICE per OTP verify. Keep only `book_demo` (mapped to `thankyou_conversion` — fires Meta Lead + GA4 + Google Ads with one clean event). | `frontend/src/components/site/DemoForm.jsx` L300 (delete 1 line) | -1 |
+| **5** | **G4 — Add stable `eventId` in 3 other forms**: RoiCalculator, CheckoutModal, MessageForm all pass `undefined` as eventId → new random UUID per push → no funnel stitching. Add `const [eventId] = useState(() => newEventId());` at top of each component and pass to `pushLead`. | `frontend/src/pages/RoiCalculator.jsx` L48, `frontend/src/components/pricing/CheckoutModal.jsx` L89, `frontend/src/components/site/MessageForm.jsx` L70 | 6 (2 per file) |
+| **6** | **G5 — Add UTM params to dataLayer payload**: Include `utm_source, utm_medium, utm_campaign, utm_content, utm_term, utm_id, ad_id, adset_id` in `buildLeadPayload` return object. Values already captured in `getAttribution()`. Unlocks ad-set-level reporting in Meta + Google Ads. | `frontend/src/lib/gtm.js` `buildLeadPayload` return block | 8 |
+| **7** | **G6 — Format `fbc` at capture**: Meta expects `fbc = fb.1.<unix_ms>.<fbclid>`. Currently we send raw `fbclid` or null. Update `getAttribution()` to format `fbc` properly at first fbclid capture. Boosts Meta Event Match Quality from ~6/10 → ~8/10. | `frontend/src/lib/attribution.js` (getAttribution function, ~L96 area) | ~5 |
+
+**Total: ~25 lines across 5 files.**
+
+### 🚫 Explicitly SKIPPED (user decisions)
+
+| Item | User decision | Rationale |
+|---|---|---|
+| **G2 — Server-side Meta event_name mismatch** | ❌ SKIP for now | User has done a lookup mapping externally; will handle in Meta CAPI Gateway UI later on their own |
+| **G7 — Backend Meta CAPI mirror (CR-53)** | ❌ NO | User does not want backend CAPI implementation at this time |
+| **G8 — Calendly webhook CAPI extension** | ❌ SKIP | Same `event_id` flows through — user will let external CAPI dedup handle re-fires |
+| **Different values per platform** | ❌ NO | Same value for both Meta & Google (Approach A) |
+
+### 📋 Execution order for next agent
+
+1. **Read** the 6 locked decisions above verbatim.
+2. **Apply in this order** (safest → riskiest):
+   - Change #1 (conversion values) + #2 (Number cast) — bundled in gtm.js
+   - Change #4 (G3 delete lead_verified) — 1-line delete, immediately kills Meta Lead double-fire
+   - Change #3 (G1 gate demo_booked listener) — kills desktop demo_booked double-fire
+   - Change #5 (G4 stable eventId in 3 forms) — funnel stitching prep
+   - Change #6 (G5 UTM in dataLayer)
+   - Change #7 (G6 fbc format in attribution.js)
+3. **Lint** all touched files with `mcp_lint_javascript`.
+4. **Smoke screenshot** on homepage + petpooja-alternative + checkout modal.
+5. **MANDATORY: Call `testing_agent_v3_fork`** with all 6 changes documented. User's iron rule "no testing agent" is OVERRIDDEN for this batch — user explicitly said "we will call bug fixing agent later" (= testing agent).
+6. Update PRD.md + HANDOVER on completion.
+
+### 🎯 Post-implementation verification checklist (for testing agent)
+
+- **G3 verify**: DesktopForm submit + OTP → dataLayer only has ONE push with `event === "thankyou_conversion"`. NO push with `event === "lead_verifided"`.
+- **G1 verify**: Desktop DemoForm → complete OTP → Calendly widget → click a slot → dataLayer only has ONE push with `event === "demo_booked"` (before fix: two, one with `form_location=calendly_popup`, one with `form_location=calendly`).
+- **G1 mobile check**: Mobile DemoForm → complete OTP → tap "Book My Slot" (popup) → complete → still exactly ONE `demo_booked` push.
+- **G4 verify**: Submit ROI Calculator → dataLayer push contains `event_id: <stable UUID>` matching what was sent to `/api/demo-request` payload.
+- **G5 verify**: Load URL `?utm_source=test&utm_content=set42&adset_id=12345` → submit form → dataLayer push contains those exact 8 UTM/ad fields with the URL values.
+- **G6 verify**: Load URL `?fbclid=ABC123` → open devtools → check `_mg_attr` cookie → `fbc` field is formatted as `fb.1.<timestamp>.ABC123`.
+- **Value verify**: form_submitted push has `conversion_value: 0` (number, not string). demo_booked push has `conversion_value: 300`.
+
 ## Ad-hoc data ops performed at end of session
 - CR-48 backfill script (`/app/scripts/cr48_backfill_wiped_cf.py`) run with `--contacts 402211642191` for lead `Shubham Rajput / 8445507759`. Live PUT succeeded. Freshsales confirmed 11 populated `cf_*` keys post-run. Full trail in `db.crm_backfill_log_cr48`.
 - Services restarted once at the very end via `sudo supervisorctl restart backend frontend` (user reported env change). Both services healthy post-restart.
