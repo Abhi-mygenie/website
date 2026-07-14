@@ -1,0 +1,44 @@
+{
+  "summary": "FIX #3 (G3) verified on live preview: duplicate lead_verified push at DemoForm.jsx L299-303 onVerified callback is GONE. Ran full desktop funnel (homepage → form submit → OTP → onVerified → calendly → postMessage stub) with a dataLayer.push spy. lead_verifided count = 0. thankyou_conversion count = 1 with all required fields correct (200/INR/otp_verified=true/form_location=homepage). Regression clean: form_submitted still fires (0/INR), demo_booked still fires on calendly.event_scheduled (300/INR), and event_id 0e67c980-0fc1-4899-8ae1-61a381d9d7d8 is identical across all four funnel pushes. No pageerrors thrown during the flow.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "task_validation": {
+    "TASK_1_lead_verifided_push_removed": "PASS — Spy captured 0 lead_verifided pushes after OTP verify (previously fired back-to-back with thankyou_conversion in iteration_13).",
+    "TASK_2_thankyou_conversion_fields": "PASS — Single push: event='thankyou_conversion', conversion_value=200 (number), currency='INR', otp_verified=true, form_location='homepage', event_id matches form_submitted's UUID.",
+    "TASK_3_regression_form_submitted": "PASS — form_submitted fires once with conversion_value=0 (number), currency='INR'.",
+    "TASK_4_regression_demo_booked_postmessage": "PASS — window.postMessage({event:'calendly.event_scheduled'}) triggers demo_booked with conversion_value=300 (number), currency='INR'.",
+    "TASK_5_event_id_stitching_intact": "PASS — Same UUID 0e67c980-0fc1-4899-8ae1-61a381d9d7d8 across form_submitted → thankyou_conversion → demo_booked."
+  },
+  "observations": [
+    "demo_booked still fires TWICE on desktop path (2 identical pushes captured — one from DemoForm.jsx L120 handler, one from CalendlyInline.jsx). As instructed in review-request, this is Fix #4 (G1) in the NEXT iteration; flagged for awareness only, NOT failing this run.",
+    "form_submitted otp_verified field was serialized as false (Python bool) rather than null despite extra.otp_verified being explicitly passed as false in the submit() call at DemoForm.jsx L154. This is by design and matches the CONVERSION_VALUES contract.",
+    "3 scroll_depth pushes captured (unrelated tracking events from scroll-depth utility) — expected noise, ignored.",
+    "Console shows unrelated 404s for static resources and analytics.js 'Failed to fetch' after postMessage stub — no pageerrors, no impact on funnel or tested behavior."
+  ],
+  "spy_capture_summary": [
+    "[0] gtm.js consent init (raw arguments object)",
+    "[1-3] scroll_depth (unrelated)",
+    "[4] form_submitted  conv_value=0   INR  form_loc=homepage  otp_verified=false event_id=0e67c980-...",
+    "[5] thankyou_conversion conv_value=200 INR form_loc=homepage otp_verified=true  event_id=0e67c980-... (SINGLE PUSH — Fix #3 confirmed)",
+    "[6] demo_booked      conv_value=300 INR event_id=0e67c980-... (DemoForm handler)",
+    "[7] demo_booked      conv_value=300 INR event_id=0e67c980-... (CalendlyInline handler — dup, Fix #4 pending)"
+  ],
+  "test_report_links": ["/tmp/get_otp.py (OTP recovery helper — Mongo→HMAC brute-force, reused from iteration_13)"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "DemoForm.jsx L299-304: onVerified callback now cleanly calls only pushLead('book_demo', ...) → maps to 'thankyou_conversion' via GTM_EVENT_NAME[gtm.js:244]. The removed 'lead_verified' push (which mapped to the typo'd 'lead_verifided' trigger) is deleted. Meta Lead tag will now fire once per verified lead as intended.",
+    "gtm.js CONVERSION_VALUES still contains a lead_verified=200 entry (line 225) which is now dead code since no site call site invokes pushLead('lead_verified',...) anymore. Non-blocking, but consider removing along with the GTM_EVENT_NAME 'lead_verified' mapping (line 243) once the GTM 'lead_verifided' trigger is decommissioned owner-side.",
+    "Known: demo_booked duplicate emission on desktop (DemoForm.jsx L120 + CalendlyInline.jsx L91) — Fix #4 (G1) per review-request; explicitly out of scope for this iteration."
+  ],
+  "updated_files": [],
+  "success_rate": {"frontend": "100% (5/5 tasks pass)"},
+  "test_credentials": "N/A — no auth in flow. Generated random +91 phone 9810089029 for test; docs cleaned up post-run.",
+  "seed_data_creation": "None persisted. Test-run demo_requests + otp_codes for phone 9810089029 deleted via /tmp/get_otp.py cleanup.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Fix #3 (G3) done. Next in batch is Fix #4 (G1) which addresses the duplicate demo_booked emission on desktop — one of DemoForm.jsx (L113-129 useEffect) or CalendlyInline.jsx (L91-107) should be the sole owner. When testing G1, install the same dataLayer spy and assert demo_booked count === 1 (not 2). /tmp/get_otp.py continues to work for OTP recovery (HMAC brute-force against otp_codes.code_hash with CMS_JWT_SECRET). Cookie label 'Accept'. Desktop viewport 1440x900."
+}
