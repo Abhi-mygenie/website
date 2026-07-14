@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { X, CheckCircle2, Loader2, Lock } from "lucide-react";
 import { useAntiBot, Honeypot, leadQuality } from "@/lib/antiBot";
 import { getAttribution } from "@/lib/attribution";
-import { pushLead } from "@/lib/gtm";
+import { pushLead, newEventId } from "@/lib/gtm";
 import { useNavigate } from "react-router-dom";
 import OtpVerifyBlock from "@/components/site/OtpVerifyBlock";
 
@@ -46,10 +46,11 @@ export default function CheckoutModal({ open, intent, config, onClose }) {
   const [lead, setLead] = useState(null);
   const [loading, setLoading] = useState(false);
   const { hp, setHp, signals } = useAntiBot();
+  const [eventId, setEventId] = useState(() => newEventId());
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (open) { setStage("form"); setForm(EMPTY); setErrors({}); setLead(null); setLoading(false); }
+    if (open) { setStage("form"); setForm(EMPTY); setErrors({}); setLead(null); setLoading(false); setEventId(newEventId()); }
   }, [open]);
 
   if (!open) return null;
@@ -86,7 +87,7 @@ export default function CheckoutModal({ open, intent, config, onClose }) {
         was_recommended: config.wasRecommended,
       });
       setLead({ id: res.data?.id, contactId: res.data?.freshsales_contact_id });
-      pushLead("form_submitted", form, config.outletType || null, undefined, {
+      pushLead("form_submitted", form, config.outletType || null, eventId, {
         form_location: isBuy ? "pricing-buy" : "pricing-quote",
         plan_interest: config.plan?.name || null,
         lead_quality: leadQuality(signals()),
@@ -172,7 +173,7 @@ export default function CheckoutModal({ open, intent, config, onClose }) {
               leadId={lead?.id}
               formType="quote"
               onVerified={async () => {
-                pushLead("book_demo", form, config.outletType || null, undefined, {
+                pushLead("book_demo", form, config.outletType || null, eventId, {
                   otp_verified: true,
                   form_location: isBuy ? "pricing-buy" : "pricing-quote",
                   plan_interest: config.plan?.name || null,

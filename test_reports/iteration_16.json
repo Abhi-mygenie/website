@@ -1,0 +1,49 @@
+{
+  "summary": "FIX #5 (G4) VERIFIED — all 3 non-DemoForm entry points (RoiCalculator, MessageForm/Contact, CheckoutModal/Pricing) now emit a stable per-mount UUIDv4 as event_id via useState(() => newEventId()) and pass it explicitly to pushLead. The CheckoutModal open-reset useEffect (setEventId(newEventId())) correctly regenerates the UUID on each modal open. Homepage DemoForm regression (Fix #1-4) also clean.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "task_validation": {
+    "TASK_1_ROI_calculator": "PASS — 1 form_submitted push, form_location='roi', conversion_value=0 (number), currency='INR', event_id=58b35d6f-e5c9-46b3-b5e4-7cf0ce3fe309 (valid UUIDv4). After page reload + resubmit → new UUID 397e2953-a721-4630-8d9d-2aae3372776d (new mount = new UUID confirmed). Same-mount resubmit UI-unreachable (form transitions to 'done'), but useState guarantees eventId is stable per mount.",
+    "TASK_2_Contact_MessageForm": "PASS — form_submitted (form_location='contact', cv=0, INR) + thankyou_conversion (form_location='contact', cv=200 number, INR, otp_verified=true) SHARE SAME event_id=dd1aec0c-2891-44b6-8c64-092ce5dd8bbd (valid UUIDv4). WA_ENABLED=false in env — no popup issue.",
+    "TASK_3_Pricing_CheckoutModal": "PASS — form_submitted (form_location='pricing-quote', cv=0, INR) + thankyou_conversion (form_location='pricing-quote', cv=200, INR, otp_verified=true) SHARE SAME event_id=1924efd6-7959-4508-a3ba-1f959bac800f (valid UUIDv4).",
+    "TASK_4_CheckoutModal_reset": "PASS — First modal open+submit yielded eid 1924efd6-... . Closed, reopened, filled+submitted → NEW eid 36a75e19-1a0c-490c-b709-6738ab147ae9 (differs from first). setEventId(newEventId()) in the open-reset useEffect works as intended. Form fields also reset (name field empty on reopen).",
+    "TASK_5_DemoForm_homepage_regression": "PASS — form_submitted (homepage, cv=0) + thankyou_conversion (homepage, cv=200) + demo_booked (calendly, cv=300, otp_verified=true) ALL share the same event_id=7547e249-e4ed-4032-a0c0-9acee2a46f5e. Fix #1-4 intact."
+  },
+  "spy_capture_summary": {
+    "roi_mount_1": ["form_submitted form_location=roi cv=0 INR eid=58b35d6f-..."],
+    "roi_mount_2_after_reload": ["form_submitted form_location=roi cv=0 INR eid=397e2953-... (DIFFERS)"],
+    "contact": [
+      "form_submitted form_location=contact cv=0 INR eid=dd1aec0c-...",
+      "thankyou_conversion form_location=contact cv=200 INR otp_verified=true eid=dd1aec0c-... (SAME)"
+    ],
+    "pricing_quote_open1": [
+      "form_submitted form_location=pricing-quote cv=0 INR eid=1924efd6-...",
+      "thankyou_conversion form_location=pricing-quote cv=200 INR otp_verified=true eid=1924efd6-... (SAME)"
+    ],
+    "pricing_quote_open2_after_close": [
+      "form_submitted form_location=pricing-quote cv=0 INR eid=36a75e19-... (DIFFERS from open1)",
+      "thankyou_conversion cv=200 INR eid=36a75e19-... (SAME as open2 form_submitted)"
+    ],
+    "homepage_full_funnel": [
+      "form_submitted form_location=homepage cv=0 eid=7547e249-...",
+      "thankyou_conversion form_location=homepage cv=200 eid=7547e249-...",
+      "demo_booked form_location=calendly cv=300 otp_verified=true eid=7547e249-... (single UUID stitched)"
+    ]
+  },
+  "test_report_links": ["/tmp/get_otp.py"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "RoiCalculator.jsx L26, MessageForm.jsx L46, CheckoutModal.jsx L49 all correctly use useState(() => newEventId()) — the lazy initializer ensures newEventId() is called exactly once per mount, not on every re-render.",
+    "CheckoutModal.jsx L52-54 useEffect keyed on [open] correctly resets both form state AND event_id when the modal opens. Verified empirically that reopening yields a new UUID.",
+    "MessageForm.jsx L71 (form_submitted) and L123 (book_demo) both pass the same eventId — funnel stitching for /contact confirmed with a single event_id.",
+    "Nit: RoiCalculator ROI page has no way in the UI to resubmit the same form on the same mount (form transitions to 'done' state on success). The per-mount stability is thus effectively enforced by the UI flow AND useState in tandem — safe.",
+    "Non-blocking (unchanged from iter_15): CONVERSION_VALUES.lead_verified=200 and GTM_EVENT_NAME.lead_verified='lead_verifided' in gtm.js are dead code post-Fix #3; can be pruned when owner decommissions the 'lead_verifided' trigger."
+  ],
+  "updated_files": [],
+  "success_rate": {"frontend": "100% (5/5 tasks pass)"},
+  "test_credentials": "N/A — no auth. Random phones used: 9855621778, 9816677885 (roi), 9873590497 (contact), 9820784365, 9735652998 (pricing), 9893279620 (homepage). All docs cleaned up post-run.",
+  "seed_data_creation": "None persisted. All TEST demo_requests + otp_codes deleted at teardown via /tmp/get_otp.py cleanup.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Fix #5 (G4) DONE — event_id stability across all 4 entry points (RoiCalculator, MessageForm, CheckoutModal, DemoForm) confirmed. 1 more fix (#6) remaining in the batch. Reusable spy pattern: window.__spy=[]; wrap dataLayer.push to serialize args. Reusable OTP helper: /tmp/get_otp.py get <phone10> for HMAC brute-force. Reusable selectors: roi-name/phone/submit, message-input-{name,phone,email,business_name,text}, message-select-years, message-submit-btn, checkout-{name,phone,email,business_name,years,submit,close,done-btn}, cart-demo-btn, cart-buy-btn, otp-digit-{0..3} auto-verifies at 4 chars. WhatsApp is disabled (WA_ENABLED=false) so no popup handling needed on /contact. Homepage funnel requires postMessage({event:'calendly.event_scheduled'}) to trigger demo_booked on desktop (CalendlyInline listens for it)."
+}

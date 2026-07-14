@@ -8,7 +8,7 @@ import Seo from "@/components/site/Seo";
 import { PAGE_SEO } from "@/lib/seo";
 import { useAntiBot, Honeypot, leadQuality } from "@/lib/antiBot";
 import { getAttribution } from "@/lib/attribution";
-import { pushLead } from "@/lib/gtm";
+import { pushLead, newEventId } from "@/lib/gtm";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const inr = (n) => "₹" + Math.round(n).toLocaleString("en-IN");
@@ -23,6 +23,7 @@ export default function RoiCalculator() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const { hp, setHp, signals } = useAntiBot();
+  const [eventId] = useState(() => newEventId());
 
   const calc = useMemo(() => {
     const leakage = revenue * RATES.leakage;
@@ -45,7 +46,7 @@ export default function RoiCalculator() {
         source_page: `roi: rev=${revenue}/mo, outlets=${outlets}, est_annual_impact=${Math.round(calc.annual)}`,
       });
       setDone(true);
-      pushLead("form_submitted", form, null, undefined, {
+      pushLead("form_submitted", form, null, eventId, {
         form_location: "roi",
         lead_quality: leadQuality(signals()),
       });

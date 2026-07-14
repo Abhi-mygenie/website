@@ -5,7 +5,7 @@ import { CheckCircle2, Loader2, MessageCircle } from "lucide-react";
 import { COMPANY } from "@/data/company";
 import { useAntiBot, Honeypot, leadQuality } from "@/lib/antiBot";
 import { getAttribution } from "@/lib/attribution";
-import { pushLead } from "@/lib/gtm";
+import { pushLead, newEventId } from "@/lib/gtm";
 import OtpVerifyBlock from "@/components/site/OtpVerifyBlock";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -43,6 +43,7 @@ export default function MessageForm() {
   const [lead, setLead] = useState(null);
   const [loading, setLoading] = useState(false);
   const { hp, setHp, signals } = useAntiBot();
+  const [eventId] = useState(() => newEventId());
 
   const update = (k, v) => {
     setForm((f) => ({ ...f, [k]: v }));
@@ -67,7 +68,7 @@ export default function MessageForm() {
         ...form, source_page: "contact", ...signals(), attribution: getAttribution(),
       });
       setLead({ id: res.data?.id, contactId: res.data?.freshsales_contact_id });
-      pushLead("form_submitted", form, null, undefined, {
+      pushLead("form_submitted", form, null, eventId, {
         form_location: "contact", lead_quality: leadQuality(signals()),
       });
       setStage("otp");
@@ -119,7 +120,7 @@ export default function MessageForm() {
           leadId={lead?.id}
           formType="contact"
           onVerified={() => {
-            pushLead("book_demo", form, null, undefined, { otp_verified: true, form_location: "contact" });
+            pushLead("book_demo", form, null, eventId, { otp_verified: true, form_location: "contact" });
             if (WA_ENABLED) openWhatsApp();
             setStage("done");
           }}
