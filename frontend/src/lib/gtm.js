@@ -201,8 +201,8 @@ export function buildLeadPayload(form = {}, sector, eventId, extra = {}) {
     event_time: Math.floor(Date.now() / 1000),
     event_id: eventId || newEventId(),
     currency: "INR",
-    // tiered conversion value (CR-3B #3) — string to match the live-site contract
-    conversion_value: extra.conversion_value != null ? String(extra.conversion_value) : "0",
+    // tiered conversion value (CR-3B #3) — number type for value-based bidding compatibility
+    conversion_value: extra.conversion_value != null ? Number(extra.conversion_value) : 0,
     // attribution / click ids (CR-2) — full coverage (CR-3B #6, CR-33)
     gclid: attr.gclid || null,
     fbclid: attr.fbclid || null,
@@ -216,15 +216,15 @@ export function buildLeadPayload(form = {}, sector, eventId, extra = {}) {
 }
 
 /**
- * Tiered conversion values per funnel stage (owner-confirmed 2026-06-22).
- * form_submitted=₹200 · lead_verified/book_demo=₹500 · demo_booked=₹1000.
+ * Tiered conversion values per funnel stage (owner-confirmed 2026-02-05, revised).
+ * form_submitted=₹0 · lead_verified/book_demo=₹200 · demo_booked=₹300.
  * Values feed Google Ads value-based bidding via GTM.
  */
 const CONVERSION_VALUES = {
-  form_submitted: 200,
-  lead_verified: 500,
-  book_demo: 500,
-  demo_booked: 1000,
+  form_submitted: 0,
+  lead_verified: 200,
+  book_demo: 200,
+  demo_booked: 300,
 };
 
 /**
