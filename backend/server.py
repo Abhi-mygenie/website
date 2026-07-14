@@ -12,6 +12,7 @@ from datetime import datetime, timezone, timedelta
 import hmac
 import hashlib
 import json
+from urllib.parse import urlparse
 from fastapi import Request, Header, HTTPException, Depends, UploadFile, File, Form, Response
 from fastapi.responses import JSONResponse
 
@@ -1506,6 +1507,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+CALENDLY_WEBHOOK_ALLOWED_HOSTS = {"mygenie.online", "www.mygenie.online"}
+
+
 async def _sync_calendly_webhook() -> None:
     """CR-40: Auto-register Calendly webhook on startup.
     Ensures CALENDLY_WEBHOOK_CALLBACK_URL is always the active subscription.
@@ -1519,9 +1523,15 @@ async def _sync_calendly_webhook() -> None:
         logger.info("CR-40: CALENDLY_API_TOKEN or CALENDLY_WEBHOOK_CALLBACK_URL not set — skipping")
         return
 
-    # CR-59: never let a preview/dev environment hijack the production webhook.
-    if "preview.emergentagent.com" in callback_url:
-        logger.warning("CR-59: refusing to sync Calendly webhook to preview URL %s — skipping", callback_url)
+    # CR-59: allow-list — only the production host may ever be registered as the
+    # Calendly webhook target. Any other host (preview forks, staging, typos) is
+    # refused, so no environment can hijack the production subscription again.
+    host = urlparse(callback_url).hostname or ""
+    if host not in CALENDLY_WEBHOOK_ALLOWED_HOSTS:
+        logger.warning(
+            "CR-59: callback host %r not in allow-list %s — skipping Calendly webhook sync",
+            host, sorted(CALENDLY_WEBHOOK_ALLOWED_HOSTS),
+        )
         return
 
     api     = "https://api.calendly.com"
