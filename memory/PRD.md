@@ -238,8 +238,13 @@ and `addon_prices` are accepted but ignored. Unknown `plan_id` or `addon_id` →
 ## Prioritized Backlog
 
 ### Completed ✅
-- **2026-02-05 · CR-48 (additional backfill)**: Ran `scripts/cr48_backfill_wiped_cf.py --contacts 402211642191` for lead Shubham Rajput (`8445507759`). Live PUT HTTP 200. 11 `cf_*` keys restored (was 1, only `cf_rooms:"Yes"`). Audit row logged to `crm_backfill_log_cr48` with rollback pointer. Ads Intelligence + CAPI attribution now correct for this lead (Instagram Reels ad set). ✅
-- **2026-02-05 · CR-57**: Sector demo anchor shifted from outer `<section>` to inner `<div id="…-demo" className="scroll-mt-20">` wrapping DemoForm on 6 pages (Petpooja, SectorPage, SolutionsIndex, ProductIndex, ProductPage, AiPage). Mobile hero CTA now lands users on the form fields, not the section H2. ✅
+- **2026-02-05 · Batch C · Funnel-tracking (5 of 7)**:
+  - Conversion values → `form_submitted=0`, `lead_verifided=200`, `thankyou_conversion=200`, `demo_booked=300` (Number type, not String). Verified `iteration_13.json` ✅
+  - **G3** — Removed duplicate `pushLead("lead_verified", ...)` in DemoForm `onVerified`. Kills Meta Lead 2x-fire per OTP. Verified `iteration_14.json` ✅
+  - **G1** — Gated DemoForm's `demo_booked` listener to `isMobile` only. Desktop-inline uses CalendlyInline handler; mobile popup uses DemoForm handler. Kills desktop double-fire. Verified `iteration_15.json` ✅
+  - **G4** — Added stable `useState(() => newEventId())` UUID to RoiCalculator, MessageForm, CheckoutModal (+ modal-open reset). Funnel stitching + CAPI dedup ready. Verified `iteration_16.json` ✅
+- **2026-02-05 · CR-48 (additional backfill)**: Ran `scripts/cr48_backfill_wiped_cf.py --contacts 402211642191` for lead Shubham Rajput (`8445507759`). Live PUT HTTP 200. 11 `cf_*` keys restored. ✅
+- **2026-02-05 · CR-57**: Sector demo anchor shifted from outer `<section>` to inner `<div id="…-demo" className="scroll-mt-20">` wrapping DemoForm on 6 pages. Mobile hero CTA now lands users on the form fields, not the section H2. ✅
 - **2026-02-05 · CR-57b**: `Navbar.jsx` desktop + mobile "Book a Free Demo" CTAs now smart-scroll to the nearest local demo anchor (`vsp-demo`, `sector-demo`, `solutions-demo`, `product-index-demo`, `product-demo`, `ai-demo`, `demo`) instead of forcing `/#demo` route change. Preserves sector attribution/UTM. Falls through to `/#demo` on pages without any local anchor. ✅
 - CR-45 Security Hardening (SEC-001, 007 code fixes; 002/004/005 env fixes by owner) ✅
 - CR-46 Temporarily hide "Buy Online" button (flag: REACT_APP_BUY_ONLINE_ENABLED=false) ✅
