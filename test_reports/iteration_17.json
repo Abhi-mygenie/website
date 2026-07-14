@@ -1,0 +1,29 @@
+{
+  "summary": "Fix #6 (G5) VERIFIED — all 4 tasks pass. The 8 UTM/ad fields (utm_source, utm_medium, utm_campaign, utm_content, utm_term, utm_id, ad_id, adset_id) are correctly added to buildLeadPayload in gtm.js (lines 216-223) and propagate correctly to all dataLayer events.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "task_validation": {
+    "TASK1_UTM_fields_in_form_submitted": "PASS — Loaded homepage with all 8 UTM params in URL. Installed spy, accepted cookie, submitted DemoForm. form_submitted push contained all 8 fields with correct values: utm_source='facebook', utm_medium='cpc', utm_campaign='diwali', utm_content='adset-42', utm_term='kw-pos', utm_id='12345', ad_id='999', adset_id='888'.",
+    "TASK2_regression_existing_fields": "PASS — Same form_submitted push: phone=+919876543210 (E.164 ok), event_id=5d99f244-3e62-4bde-a6c6-4eaa10354c7d (valid UUID), conversion_value=0 (number), fbclid='DIAGFBCLID', source='facebook', fbc=null (no _fbc cookie in test env), fbp=null (no _fbp cookie), page_url present, event_time present. All pre-existing fields intact.",
+    "TASK3_UTM_in_lead_verified": "PASS — After OTP verification (phone 9812300004, OTP brute-forced via HMAC), thankyou_conversion push contained all 8 UTM/ad fields with correct values matching URL params. Event flows: form_submitted → thankyou_conversion both have correct UTM fields.",
+    "TASK4_null_when_no_UTM_params": "PASS — Loaded homepage WITHOUT any UTM params (cleared localStorage/sessionStorage attribution keys). Submitted form. form_submitted push: all 8 UTM/ad fields present as keys with value null (not undefined/missing)."
+  },
+  "implementation_verified": {
+    "gtm_js_lines_216_223": "8 UTM fields added: utm_source=attr.last_utm_source||null, utm_medium=attr.last_utm_medium||null, utm_campaign=attr.last_utm_campaign||null, utm_content=attr.utm_content||null, utm_term=attr.utm_term||null, utm_id=attr.utm_id||null, ad_id=attr.ad_id||null, adset_id=attr.adset_id||null",
+    "attribution_js": "getAttribution() correctly returns all 8 fields from sessionStorage (last-touch) or localStorage (first-touch). utm_content, utm_term, utm_id, ad_id, adset_id prefer last touch."
+  },
+  "test_report_links": ["/tmp/get_otp_v2.py"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "G5 implementation clean. All 8 fields use || null fallback ensuring they're always present as keys (not undefined) in the payload.",
+    "Note: The review_request helper says '6-digit OTP' but otp.py OTP_LENGTH=4. The /tmp/get_otp_v2.py brute-forces 0000-9999 (4 digits) correctly.",
+    "Note: fbc and fbp are null in test env (no Facebook cookies), which is expected and acceptable."
+  ],
+  "updated_files": ["/tmp/get_otp_v2.py"],
+  "success_rate": {"frontend": "100% (4/4 tasks pass)"},
+  "test_credentials": "Random test phones used: 9876543210, 9812345678, 9812345679, 9812345671, 9812300001-9812300005. OTP brute-forced via /tmp/get_otp_v2.py using HMAC-SHA256 with CMS_JWT_SECRET.",
+  "seed_data_creation": "Multiple test demo_requests and otp_codes created in test_database during testing.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Fix #6 (G5) DONE — all 4 tasks pass 100%. OTP helper is at /tmp/get_otp_v2.py (uses /root/.venv/bin/python3 with pymongo, brute-forces 4-digit codes). Can be called from playwright via subprocess.run(['/root/.venv/bin/python3', '/tmp/get_otp_v2.py', phone]). All 7 funnel-tracking fixes (#1-#6) are now shipped and verified (iterations 13-17). The batch is complete."
+}

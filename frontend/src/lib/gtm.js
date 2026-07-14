@@ -212,6 +212,15 @@ export function buildLeadPayload(form = {}, sector, eventId, extra = {}) {
     wbraid: attr.wbraid || null,
     msclkid: attr.msclkid || null,
     source: attr.last_utm_source || attr.first_utm_source || null,
+    // UTM + ad params (G5) — full attribution passthrough for GTM tags
+    utm_source:   attr.last_utm_source   || null,
+    utm_medium:   attr.last_utm_medium   || null,
+    utm_campaign: attr.last_utm_campaign || null,
+    utm_content:  attr.utm_content       || null,
+    utm_term:     attr.utm_term          || null,
+    utm_id:       attr.utm_id            || null,
+    ad_id:        attr.ad_id             || null,
+    adset_id:     attr.adset_id          || null,
   };
 }
 
