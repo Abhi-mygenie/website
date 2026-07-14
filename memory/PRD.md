@@ -89,4 +89,4 @@ Skipped per user decision (do NOT re-propose): G2 (external CAPI Gateway mapping
 
 ### Next step
 - USER ACTION: push preview → production via "Save to GitHub" (all Batch C fixes are preview-only until then).
-- Pending user response: optional enhancement — capture pathname in handleDemoCtaClick into latest_source.
+- CR-58 registered (BACKLOG, user said "later"): capture pathname in handleDemoCtaClick into latest_source — spec in /app/memory/CR-58_CTA_Click_Pathname_LatestSource.md.
