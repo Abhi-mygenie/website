@@ -109,9 +109,12 @@ export default function DemoForm({ sector }) {
     }
   }, [stage]);
 
-  // Calendly event listener for mobile popup
+  // Calendly event listener — mobile popup path only (Fix #4 / G1)
+  // On desktop, CalendlyInline mounts and owns its own postMessage listener,
+  // so this handler would double-fire demo_booked. Restrict to mobile only.
   useEffect(() => {
     if (stage !== "calendly") return;
+    if (!isMobile) return;
     const handler = (e) => {
       if (typeof e.data !== "object" || !e.data) return;
       if (String(e.data.event || "").indexOf("calendly") !== 0) return;
@@ -126,7 +129,7 @@ export default function DemoForm({ sector }) {
     };
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
-  }, [stage]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [stage, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const submit = async (e) => {
     e.preventDefault();
