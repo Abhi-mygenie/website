@@ -297,7 +297,8 @@ export default function DemoForm({ sector }) {
           leadId={lead?.id}
           formType="demo"
           onVerified={() => {
-            pushLead("lead_verified", form, outletValue, eventId, { otp_verified: true, form_location: sector ? `sector:${sector}` : "homepage" });
+            // Fix #3 (G3): removed duplicate lead_verified push (fired Meta Lead 2x when combined with book_demo).
+            // book_demo → GTM "thankyou_conversion" already fires Meta Lead + GA4 + Google Ads with one clean event.
             pushLead("book_demo", form, outletValue, eventId, { otp_verified: true, form_location: sector ? `sector:${sector}` : "homepage" });
             setStage("calendly");
           }}
