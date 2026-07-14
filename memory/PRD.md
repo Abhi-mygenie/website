@@ -72,3 +72,21 @@ Marketing + lead-capture website for **MyGenie POS**, a hospitality operating sy
 - [x] Website running locally — frontend + backend both healthy
 - [ ] Env vars to be filled by owner
 - [ ] External integrations (Freshsales, Razorpay, Calendly, Meta, Google Ads) pending env config
+
+---
+
+## Batch C — Funnel Tracking Fixes (COMPLETE, 2026-06)
+All 7 fixes shipped in preview and verified by testing_agent (100% pass each):
+1. Conversion values 0/200/200/300 (gtm.js) — iteration_13
+2. conversion_value as Number (gtm.js) — iteration_13
+3. G3: removed duplicate lead_verified push (DemoForm.jsx) — iteration_14
+4. G1: demo_booked listener gated to isMobile (DemoForm.jsx) — iteration_15
+5. G4: stable per-mount event_id in RoiCalculator/MessageForm/CheckoutModal — iteration_16
+6. G5: 8 UTM/ad fields added to buildLeadPayload (gtm.js) — iteration_17
+7. G6: fbc formatted as fb.1.<unix_ms>.<fbclid> at first capture, persisted in localStorage 'mg_fbc' (attribution.js) — iteration_18
+
+Skipped per user decision (do NOT re-propose): G2 (external CAPI Gateway mapping), G7 (backend CAPI mirror), G8 (Calendly webhook CAPI).
+
+### Next step
+- USER ACTION: push preview → production via "Save to GitHub" (all Batch C fixes are preview-only until then).
+- Pending user response: optional enhancement — capture pathname in handleDemoCtaClick into latest_source.
