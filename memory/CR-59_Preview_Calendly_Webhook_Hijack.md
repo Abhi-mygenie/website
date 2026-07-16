@@ -32,3 +32,15 @@ fired at the (frequently sleeping) preview pod → 9 real bookings lost their Fr
 - NEVER put a production `CALENDLY_WEBHOOK_CALLBACK_URL` + real token combo in preview .env.
 - Preview should keep `CALENDLY_WEBHOOK_CALLBACK_URL` BLANK — the sync then skips entirely.
 - The CR-59 guard is a second line of defense; consider allow-list (only mygenie.online) later.
+
+## RECURRENCE 2026-07-16 (RE-FIXED)
+Another preview fork (`mygenie-runtime.preview.emergentagent.com`) hijacked prod webhook
+again on 2026-07-15 08:45:44Z because the allow-list guard lives only in THIS preview
+branch — it has NOT been pushed to GitHub yet, so any fresh preview fork clones OLD code
+(no guard). Gap window: 2026-07-15T08:45 → 2026-07-16T18:14 UTC.
+- Prod webhook re-registered via `scripts/cr59_restore_prod_calendly_webhook.py` → 201 OK.
+- 6 affected bookings backfilled in live Freshsales (3 real leads, 3 owner test bookings 404).
+  Real leads updated: Mahendra Vishwakarma (fcid 402212732712), Chandrakala Amritlal
+  Bharadwaj (402212768471), Nishant (402212701179).
+- ROOT CAUSE OF RECURRENCE: guard not deployed to prod. Any future preview fork will
+  re-hijack until `git push` runs. USER MUST use "Save to GitHub" NOW.
