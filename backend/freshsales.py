@@ -207,6 +207,15 @@ async def upsert_contact(
 
         if existing:
             cid = existing.get("id")
+            # CR-64: Freshsales PUT replaces custom_field entirely (post-2026-07-04).
+            # Fetch live snapshot to merge — prevents wiping fbclid, event_id, or
+            # any cf_ key absent from the current session. Same pattern as swap_otp_tag.
+            try:
+                live_contact = await _get_contact(cid)
+                existing_cf  = live_contact.get("custom_field") or {}
+            except Exception as _fetch_err:
+                logger.warning("CR-64: failed to fetch existing cf for %s: %s", cid, _fetch_err)
+                existing_cf = {}
             upd: dict = {}
             if phone:
                 upd["mobile_number"] = phone
@@ -218,7 +227,7 @@ async def upsert_contact(
             if job_title:
                 upd["job_title"] = job_title
             if cf:
-                upd["custom_field"] = cf
+                upd["custom_field"] = {**existing_cf, **cf}   # CR-64: merge, current session wins
             # Attribution / native fields. On an EXISTING contact we never
             # overwrite first-touch (`first_*`), creation-snapshot (`last_*`),
             # or immutable fields (country, lead_source_id). CR-18 extended guard.
@@ -239,20 +248,15 @@ async def upsert_contact(
             if upd:
                 r = await _request("PUT", f"/contacts/{cid}", json={"contact": upd})
                 if r.status_code == 400 and "custom_field" in upd:
-                    # CR-47: don't blindly drop the entire custom_field dict —
-                    # log what we tried, then retry with the contact's *existing*
-                    # cf snapshot so we at least preserve prior attribution.
+                    # CR-64: existing_cf already fetched above (fresh GET).
+                    # On persistent 400, drop cf entirely — contact still updated
+                    # for tags/phone/city. cf stays as-is in Freshsales. No data loss.
                     logger.warning(
-                        "Freshsales upsert 400 (cf keys=%s): %s",
+                        "CR-64: upsert PUT 400 (cf keys=%s): %s — retrying without custom_field",
                         list(upd.get("custom_field", {}).keys()),
                         r.text[:300],
                     )
-                    try:
-                        existing = await _get_contact(cid)
-                        existing_cf = existing.get("custom_field") or {}
-                    except Exception:  # noqa: BLE001
-                        existing_cf = {}
-                    upd["custom_field"] = existing_cf
+                    upd.pop("custom_field", None)
                     r = await _request("PUT", f"/contacts/{cid}", json={"contact": upd})
                 if r.status_code >= 400:
                     logger.warning("Freshsales update %s: %s", r.status_code, r.text[:300])
