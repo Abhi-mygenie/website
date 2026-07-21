@@ -140,6 +140,23 @@ All use `"demo_scheduled"` as an **internal MongoDB enum** — not a display str
 
 ---
 
+### 3.5a Tracking impact — GTM / Meta / Google (verified 2026-07-21)
+
+**Verdict: ZERO impact on all ad tracking.**
+
+Conversion chain (traced): Calendly booking → `CalendlyInline.jsx:98` / `DemoForm.jsx:123` → `pushLead("demo_booked", …)` → `gtm.js` dataLayer push → GTM triggers → GA4 / Meta Pixel / Google Ads tags.
+
+| Channel | Keyed on | Impact |
+|---|---|---|
+| GTM dataLayer | Event name `demo_booked` (frontend constant, unchanged) | ✅ ZERO |
+| Meta Pixel | GTM trigger on `demo_booked` | ✅ ZERO |
+| Meta CAPI | Does not exist (client-side only architecture, per gtm.js header) | ✅ N/A |
+| GA4 / Google Ads conversion (₹300) | Same GTM trigger | ✅ ZERO |
+| `ads_mcp.py` / `ad_spend.py` Meta & Google APIs | READ-ONLY spend/performance pulls; no conversion uploads | ✅ ZERO |
+| event_id / fbclid cf fields (CR-63/64) | Written at lead creation, not at demo status | ✅ ZERO |
+
+Reasons: (1) no offline conversion uploads exist anywhere in backend; (2) tracking fires at booking time in the browser, upstream of CRM status; (3) GTM container trigger `demo_booked` needs no change since the dataLayer event name is not renamed; (4) funnel/ROAS metrics bucket on internal Mongo enum `crm_status="demo_scheduled"`, which is unchanged.
+
 ### 3.5 Tag-dedup safety
 
 `_merge_tags(existing_tags, DEMO_BOOKED_TAG)` adds the new tag without removing the old one if it exists on a contact. Old contacts already tagged `"Demo Scheduled (Web)"` will accumulate both tags on next update. This is standard CRM append behaviour — not a problem, but worth noting.
