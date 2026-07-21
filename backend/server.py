@@ -1634,24 +1634,27 @@ async def _seed_pricing(db_instance):
 
 @app.on_event("startup")
 async def ensure_indexes():
-    await antijunk.ensure_indexes(db)
-    await otp.ensure_indexes(db)
-    await _seed_pricing(db)
-    await db.cms_content.create_index("key", unique=True)
-    # CR-19: funnel indexes
-    for col in (db.demo_requests, db.quotes, db.contact_messages):
-        await col.create_index("freshsales_contact_id")
-        await col.create_index("crm_status")
     try:
-        await db.backfilled_leads.create_index("freshsales_contact_id", unique=True)
-    except Exception:
-        pass  # already exists
-    await db.backfilled_leads.create_index("crm_status")
-    await db.crm_sync_log.create_index("started_at", expireAfterSeconds=2592000)
-    # CR-19 Phase 2: webhook stage events index
-    await db.crm_stage_events.create_index("contact_id")
-    await db.crm_stage_events.create_index("stage")
-    await db.crm_stage_events.create_index([("contact_id", 1), ("stage", 1)])
+        await antijunk.ensure_indexes(db)
+        await otp.ensure_indexes(db)
+        await _seed_pricing(db)
+        await db.cms_content.create_index("key", unique=True)
+        # CR-19: funnel indexes
+        for col in (db.demo_requests, db.quotes, db.contact_messages):
+            await col.create_index("freshsales_contact_id")
+            await col.create_index("crm_status")
+        try:
+            await db.backfilled_leads.create_index("freshsales_contact_id", unique=True)
+        except Exception:
+            pass  # already exists
+        await db.backfilled_leads.create_index("crm_status")
+        await db.crm_sync_log.create_index("started_at", expireAfterSeconds=2592000)
+        # CR-19 Phase 2: webhook stage events index
+        await db.crm_stage_events.create_index("contact_id")
+        await db.crm_stage_events.create_index("stage")
+        await db.crm_stage_events.create_index([("contact_id", 1), ("stage", 1)])
+    except Exception as _idx_err:
+        logger.warning("ensure_indexes: skipped (likely read-only user): %s", _idx_err)
     # CR-19: start 6-hour CRM sync scheduler
     async def _sync_job():
         await crm_sync.run_sync(db)
