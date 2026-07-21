@@ -66,6 +66,7 @@ export default function MessageForm() {
     try {
       const res = await axios.post(`${API}/contact`, {
         ...form, source_page: "contact", ...signals(), attribution: getAttribution(),
+        event_id: eventId,               // CR-63
       });
       setLead({ id: res.data?.id, contactId: res.data?.freshsales_contact_id });
       pushLead("form_submitted", form, null, eventId, {

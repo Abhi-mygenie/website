@@ -339,8 +339,8 @@ async def create_demo_request(payload: DemoRequestCreate, request: Request):
             "cf_sku": obj.years_in_business,
             "cf_pos_used": obj.using_pos,
             "cf_pos_name": obj.current_pos,
-            "cf_longitude": ip,
-            "cf_category": ua,
+            "cf_longitude": _trunc(ip),
+            "cf_category":  _trunc(ua),
             "cf_rooms": "Yes" if otp_verified else "No",
             **attr_cf,
             **({"cf_contact_person": payload.event_id} if payload.event_id else {}),  # event_id wins over utm_ad when present
@@ -574,6 +574,7 @@ class QuoteCreate(BaseModel):
     attribution: dict | None = None
     hp: str | None = None
     elapsed_ms: int | None = None
+    event_id: str | None = None          # CR-63
 
 
 class Quote(QuoteCreate):
@@ -614,13 +615,18 @@ async def create_quote(payload: QuoteCreate, request: Request):
         custom_field={
             "cf_outlet_type": obj.outlet_type,
             "cf_sku": obj.years_in_business,
-            "cf_longitude": ip,
-            "cf_category": ua,
+            "cf_longitude": _trunc(ip),
+            "cf_category":  _trunc(ua),
             "cf_first_interest": cf_first_interest,
+            "cf_rooms": "No",
             **attr_cf,
+            **({"cf_contact_person": payload.event_id} if payload.event_id else {}),  # CR-63
         },
         extra_fields=attr_native,
     )
+    doc['otp_verified'] = False                             # CR-63: initial unverified state
+    if payload.event_id:
+        doc['event_id'] = payload.event_id                  # CR-63
     await db.quotes.insert_one(doc)
     return obj
 
@@ -646,6 +652,7 @@ class ContactMessageCreate(BaseModel):
     attribution: dict | None = None
     hp: str | None = None
     elapsed_ms: int | None = None
+    event_id: str | None = None          # CR-63
 
 
 class ContactMessage(ContactMessageCreate):
@@ -679,9 +686,11 @@ async def create_contact_message(payload: ContactMessageCreate, request: Request
         custom_field={
             "cf_first_interest": obj.message,
             "cf_sku": obj.years_in_business,
-            "cf_longitude": ip,
-            "cf_category": ua,
+            "cf_longitude": _trunc(ip),
+            "cf_category":  _trunc(ua),
+            "cf_rooms": "No",
             **attr_cf,
+            **({"cf_contact_person": payload.event_id} if payload.event_id else {}),  # CR-63
         },
         extra_fields=attr_native,
     )
@@ -690,6 +699,9 @@ async def create_contact_message(payload: ContactMessageCreate, request: Request
     doc.pop('elapsed_ms', None)
     doc['created_at'] = doc['created_at'].isoformat()
     doc['geo'] = geo_data
+    doc['otp_verified'] = False                             # CR-63: initial unverified state
+    if payload.event_id:
+        doc['event_id'] = payload.event_id                  # CR-63
     await db.contact_messages.insert_one(doc)
     return obj
 

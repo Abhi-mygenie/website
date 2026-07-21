@@ -74,6 +74,7 @@ export default function CheckoutModal({ open, intent, config, onClose }) {
         ...form,
         ...signals(),
         attribution: getAttribution(),
+        event_id: eventId,               // CR-63
         intent,
         outlet_type: config.outletType || null,
         plan_id: config.plan.id,
