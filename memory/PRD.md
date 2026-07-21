@@ -30,7 +30,7 @@ Marketing + lead-capture website for **MyGenie POS**, a hospitality operating sy
 
 ---
 
-## Setup Done (2026-07-14)
+## Setup Done (2026-07-21 — re-cloned from main branch)
 - Pulled branch `14-july` from GitHub into `/app`
 - Preserved workspace files: `.emergent/`, `.git/`
 - Installed all Python deps (`requirements.txt`, litellm pre-installed)
