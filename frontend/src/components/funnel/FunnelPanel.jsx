@@ -53,7 +53,7 @@ export default function FunnelPanel({ data, loading }) {
 
   const biggestDrop = (() => {
     const entries = [
-      { label: "Lead → Demo Scheduled", val: dropoff.after_lead },
+      { label: "Lead → Follow Up for Scheduling", val: dropoff.after_lead },
       { label: "Demo Sched. → Demo Given", val: dropoff.after_schedule },
       { label: "Demo Given → Won", val: dropoff.after_given },
     ];
@@ -70,7 +70,7 @@ export default function FunnelPanel({ data, loading }) {
         <StageCard testId="funnel-card-lead-in" id="lead_in" label="Lead In" count={lead_in} />
         <Arrow color={STAGE_COLORS.lead_in.arrow} />
 
-        <StageCard testId="funnel-card-demo-scheduled" id="demo_scheduled" label="Demo Scheduled"
+        <StageCard testId="funnel-card-demo-scheduled" id="demo_scheduled" label="Follow Up for Scheduling"
           count={demo_scheduled}
           rateLabel={`${rates.schedule_rate ?? 0}% of leads`}
           dropLabel={`↓ ${dropoff.after_lead ?? 0}% dropped`}

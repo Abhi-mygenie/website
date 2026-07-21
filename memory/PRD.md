@@ -98,3 +98,14 @@ Preview fork's CR-40 startup sync deleted prod's Calendly webhook subscription o
 
 ## CR-60 — Legacy Meta Ad URL Template Contamination (LOGGED 2026-07-16, NOT ACTIONED)
 Single lead (Chandrakala, id 402212768471) captured with numeric IDs instead of names (`first_source="fb"`, `first_campaign="120232987483260558"`, etc.). Root cause: she clicked a since-DELETED Meta ad (id 120253458258350558) in "AK: Scaling | Leads" campaign whose URL params template used all-`{{...id}}` macros + `utm_source=fb`, `utm_medium=paid` (legacy). Meta continued delivering the ad briefly post-deletion. All 7 currently-visible ads in the campaign have correct standard template — verified via Graph API. NOT a code bug (git log confirms zero attribution mapping changes in session). User decision: log for reference, do not backfill (impact = 1 lead). Prevention: set `url_tags` at CAMPAIGN LEVEL in Meta Ads Manager (overrides all children). Full spec: /app/memory/CR-60_Legacy_Meta_Ad_URL_Template_Contamination.md
+
+## CR-63/CR-64 — event_id & fbclid in Freshsales (FIXED + QA'd 2026-07-21, 10/10 tests passed, iteration_20.json)
+
+## CR-65 — Demo status → "Follow Up for Scheduling" (IMPLEMENTED 2026-07-21)
+- backend/.env: FRESHSALES_STATUS_DEMO_BOOKED_ID=402001331872, FRESHSALES_DEMO_BOOKED_TAG="Follow up for scheduling demo"
+- Frontend labels updated: LeadsView.jsx, FunnelPanel.jsx (x2), CrossChannelPanel.jsx
+- Zero code-logic change; Mongo enum "demo_scheduled" unchanged. GTM/Meta/Google tracking impact: ZERO (documented in CR-65 doc §3.5a)
+- Owner pausing GTM demo_booked tags himself in GTM UI (no code)
+- Verified: backend restart OK, env loaded, crm_sync maps new ID, UI screenshot shows new labels
+
+## NEXT: CR-48 backfill (P1) — dry-run first, then live run per /app/memory/CR-48_Backfill_Wiped_CustomField.md

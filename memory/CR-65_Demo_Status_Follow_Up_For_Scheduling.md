@@ -3,7 +3,7 @@
 **Type:** Behaviour Change / CRM Status Mapping  
 **Date Raised:** 2026-07-21  
 **Raised By:** Owner  
-**Status:** INTAKE — 1 clarification pending before planning  
+**Status:** ✅ IMPLEMENTED 2026-07-21 — env + frontend labels applied, backend restarted, UI verified via screenshot. New status ID `402001331872` live. GTM `demo_booked` tag pause handled by owner in GTM UI (separate, no code).  
 **Priority:** MEDIUM  
 **Scope:** `backend/.env`, `backend/freshsales.py`, potentially `backend/crm_sync.py`, `frontend/src/pages/LeadsView.jsx`, `frontend/src/components/funnel/FunnelPanel.jsx`  
 **Related:** CR-47 (cf merge), CR-40 (OTP tag)

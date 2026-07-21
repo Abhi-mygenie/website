@@ -48,7 +48,7 @@ const STAGE_STYLE = {
 };
 const STAGE_LABEL = {
   new:            "New",
-  demo_scheduled: "Demo Scheduled",
+  demo_scheduled: "Follow Up for Scheduling",
   demo_given:     "Demo Given",
   won:            "Won",
   lost:           "Lost",
