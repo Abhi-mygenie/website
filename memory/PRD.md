@@ -117,3 +117,11 @@ Single lead (Chandrakala, id 402212768471) captured with numeric IDs instead of 
 - 2 fetch failures: FS contacts 402212437117, 402212771432 return 404 (deleted/merged in Freshsales — nothing to clean)
 - custom_field untouched on all PUTs (CR-47 protection). Audit: db.crm_retag_log_cr66 (tags_before/status_before → rollback-able)
 - Logs: /app/memory/cr66_dryrun_report.log, /app/memory/cr66_live_run.log
+
+## CR-48 — Historical cf Backfill (EXECUTED LIVE 2026-07-22)
+- Script: /app/backend/scripts/cr48_backfill_wiped_cf.py (--dry-run supported; only writes genuinely-changed fields; never overwrites existing event_id)
+- Findings: original 2 leads (Aryen 402211514598, Mustakbhai 402211617324) already restored by a partial run on 2026-07-05 (audit rows found). Wipe window actually extended to ~2026-07-16 (CR-47 prod deploy)
+- Scan: 65 unique OTP-verified contacts since 2026-07-04 → 11 genuinely wiped → ALL 11 restored HTTP 200 (8-11 cf fields each); 52 no-changes skipped; 2 deleted-in-FS skipped
+- Verified: Ashok Luthra (402213122015) FS spot-check shows restored adset ID, fbp, placement, site source, outlet type
+- Audit: db.crm_backfill_log_cr48 (existing_cf_before stored → rollback-able). Logs: /app/memory/cr48_dryrun_report.log, /app/memory/cr48_live_run.log
+- CR-48 CLOSED
