@@ -109,3 +109,11 @@ Single lead (Chandrakala, id 402212768471) captured with numeric IDs instead of 
 - Verified: backend restart OK, env loaded, crm_sync maps new ID, UI screenshot shows new labels
 
 ## NEXT: CR-48 backfill (P1) — dry-run first, then live run per /app/memory/CR-48_Backfill_Wiped_CustomField.md
+
+## CR-66 — Old Tag Cleanup Sweep (EXECUTED LIVE 2026-07-22)
+- Script: /app/backend/scripts/cr66_retag_demo_scheduled.py (one-time, --dry-run supported, idempotent)
+- Scope: last 30 days. 61 candidates (Net A Mongo 55 + Net B FS old-status 6)
+- Result: 59/59 SUCCESS — 47 retag + status migrated (402001963264→402001331872) + Mongo crm_status synced; 12 tag-only (sales-progressed statuses kept)
+- 2 fetch failures: FS contacts 402212437117, 402212771432 return 404 (deleted/merged in Freshsales — nothing to clean)
+- custom_field untouched on all PUTs (CR-47 protection). Audit: db.crm_retag_log_cr66 (tags_before/status_before → rollback-able)
+- Logs: /app/memory/cr66_dryrun_report.log, /app/memory/cr66_live_run.log
