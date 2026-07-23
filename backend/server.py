@@ -424,6 +424,26 @@ async def lead_otp_confirm(payload: OtpConfirmRequest):
     return {"confirmed": True}
 
 
+_MODULE_LOADED_AT = datetime.now(timezone.utc).isoformat()
+
+
+@api_router.get("/_diag/freshsales-tag")
+async def diag_freshsales_tag():
+    """Read-only introspection of the demo-booked write config the LIVE process
+    is holding in memory. Use to confirm whether a prod .env change was actually
+    picked up (i.e. was the backend restarted after the .env edit).
+
+    Safe: no secrets — only the tag string and the numeric stage IDs we're about
+    to write to Freshsales on the next demo booking.
+    """
+    return {
+        "freshsales_demo_booked_tag": freshsales.DEMO_BOOKED_TAG,
+        "freshsales_status_demo_booked_id": freshsales.DEMO_BOOKED_STATUS_ID,
+        "freshsales_lifecycle_demo_booked_id": freshsales.DEMO_BOOKED_LIFECYCLE_ID,
+        "module_loaded_at_utc": _MODULE_LOADED_AT,
+    }
+
+
 class DemoBookedCreate(BaseModel):
     freshsales_contact_id: int | None = None
     email: str | None = None
