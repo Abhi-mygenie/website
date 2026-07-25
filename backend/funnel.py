@@ -100,10 +100,19 @@ def _in_stage(crm_status, stage) -> bool:
 
 async def _load_all(db, date_from=None, date_to=None, lead_type=None):
     """Load all lead docs from the three collections + backfilled_leads.
-    Applies date and type filters. Returns flat list of dicts."""
+    Applies date and type filters. Returns flat list of dicts.
+
+    BUG-001 fix: deduplicate by freshsales_contact_id. Website collections
+    (demo_requests, quotes, contact_messages) load first and take priority.
+    Backfilled docs with an already-seen contact ID are skipped, but their
+    crm_status is merged into the website doc when it's more advanced
+    (the 6-hourly CRM sync updates backfilled_leads with latest Freshsales
+    status, which may be ahead of the website doc's snapshot).
+    """
     df = _parse_dt(date_from) if date_from else None
     dt = _parse_dt(date_to)   if date_to   else None
     rows = []
+    seen_fs_ids = {}  # freshsales_contact_id -> index in rows
     sources = []
     if not lead_type or lead_type == "demo":
         sources.append(("demo", db.demo_requests))
@@ -132,8 +141,30 @@ async def _load_all(db, date_from=None, date_to=None, lead_type=None):
                     continue
                 if dt and rdt > dt:
                     continue
+            # ── BUG-001: deduplicate by freshsales_contact_id ────────────
+            fs_id = d.get("freshsales_contact_id")
+            if fs_id:
+                if fs_id in seen_fs_ids:
+                    # Duplicate — skip this doc but merge crm_status if
+                    # the backfilled version is more advanced (CRM sync
+                    # may have progressed the stage since form submission).
+                    if ltype == "backfilled":
+                        existing = rows[seen_fs_ids[fs_id]]
+                        bl_status = d.get("crm_status")
+                        if bl_status and not existing.get("crm_status"):
+                            existing["crm_status"] = bl_status
+                        elif bl_status and existing.get("crm_status"):
+                            if _stage_order(bl_status) > _stage_order(existing["crm_status"]):
+                                existing["crm_status"] = bl_status
+                    continue
+                seen_fs_ids[fs_id] = len(rows)
             rows.append(d)
     return rows
+
+
+def _stage_order(status):
+    """Numeric ordering for CRM stages — higher = more advanced."""
+    return {"demo_scheduled": 1, "demo_given": 2, "won": 3, "lost": 3}.get(status or "", 0)
 
 
 def _pct(num, denom) -> float:
