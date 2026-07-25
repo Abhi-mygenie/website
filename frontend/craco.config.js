@@ -38,6 +38,13 @@ let webpackConfig = {
     },
     configure: (webpackConfig) => {
 
+      // Fix: ensure webpack resolves absolute-path entries injected by WDS v5
+      if (!webpackConfig.resolve) webpackConfig.resolve = {};
+      webpackConfig.resolve.modules = [
+        path.resolve(__dirname, 'node_modules'),
+        'node_modules',
+      ];
+
       // Add ignored patterns to reduce watched directories
         webpackConfig.watchOptions = {
           ...webpackConfig.watchOptions,
