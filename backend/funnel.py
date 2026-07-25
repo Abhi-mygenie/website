@@ -86,10 +86,11 @@ SOURCE_LABELS = {
 }
 
 # Stage counting: a lead counts for all stages it has PASSED THROUGH
+# CR-67: "won" includes payment_awaited + payment_received
 STAGE_STATUSES = {
-    "demo_scheduled": {"demo_scheduled", "demo_given", "won", "lost"},
-    "demo_given":     {"demo_given", "won", "lost"},
-    "won":            {"won"},
+    "demo_scheduled": {"demo_scheduled", "demo_given", "payment_awaited", "payment_received", "won", "lost"},
+    "demo_given":     {"demo_given", "payment_awaited", "payment_received", "won", "lost"},
+    "won":            {"payment_awaited", "payment_received", "won"},
     "lost":           {"lost"},
 }
 
@@ -163,8 +164,9 @@ async def _load_all(db, date_from=None, date_to=None, lead_type=None):
 
 
 def _stage_order(status):
-    """Numeric ordering for CRM stages — higher = more advanced."""
-    return {"demo_scheduled": 1, "demo_given": 2, "won": 3, "lost": 3}.get(status or "", 0)
+    """Numeric ordering for CRM stages — higher = more advanced.
+    CR-67: payment_awaited/payment_received sit between demo_given and won."""
+    return {"demo_scheduled": 1, "demo_given": 2, "payment_awaited": 3, "payment_received": 3, "won": 4, "lost": 4}.get(status or "", 0)
 
 
 def _pct(num, denom) -> float:
@@ -206,7 +208,7 @@ async def get_funnel_summary(db, date_from=None, date_to=None, lead_type=None, s
         "rates": {
             "otp_rate":      _pct(otp_verified, lead_in),
             "schedule_rate": _pct(demo_scheduled, lead_in),
-            "given_rate":    _pct(demo_given, demo_scheduled),
+            "given_rate":    _pct(demo_given, lead_in),  # CR-67: % of leads, not % of scheduled
             "won_rate":      _pct(won, demo_given),
             "lead_to_win":   _pct(won, lead_in),
             "lost_rate":     _pct(lost, lead_in),
@@ -331,7 +333,7 @@ async def get_funnel_by_source(db, date_from=None, date_to=None, lead_type=None)
             "demo_scheduled":  demo_scheduled,
             "schedule_rate":   _pct(demo_scheduled, otp_verified or lead_in),
             "demo_given":      demo_given,
-            "given_rate":      _pct(demo_given, demo_scheduled),
+            "given_rate":      _pct(demo_given, lead_in),  # CR-67: % of leads
             "won":             won,
             "won_rate":        _pct(won, demo_given),
             "lost":            lost,
@@ -462,7 +464,7 @@ async def get_funnel_by_attribution(db, dimension="keyword", date_from=None,
             "demo_scheduled": demo_scheduled,
             "schedule_rate":  _pct(demo_scheduled, lead_in),
             "demo_given":     demo_given,
-            "given_rate":     _pct(demo_given, demo_scheduled),
+            "given_rate":     _pct(demo_given, lead_in),  # CR-67: % of leads
             "won":            won,
             "won_rate":       _pct(won, demo_given),
             "lost":           lost,
@@ -538,7 +540,7 @@ async def get_funnel_by_landing_page(db, date_from=None, date_to=None, source=No
             "demo_scheduled":  demo_scheduled,
             "schedule_rate":   _pct(demo_scheduled, lead_in),
             "demo_given":      demo_given,
-            "given_rate":      _pct(demo_given, demo_scheduled),
+            "given_rate":      _pct(demo_given, lead_in),  # CR-67: % of leads
             "won":             won,
             "won_rate":        _pct(won, demo_given),
             "lost":            lost,
@@ -582,7 +584,7 @@ async def get_funnel_by_device(db, date_from=None, date_to=None, source=None):
             "demo_scheduled":  demo_scheduled,
             "schedule_rate":   _pct(demo_scheduled, lead_in),
             "demo_given":      demo_given,
-            "given_rate":      _pct(demo_given, demo_scheduled),
+            "given_rate":      _pct(demo_given, lead_in),  # CR-67: % of leads
             "won":             won,
             "won_rate":        _pct(won, demo_given),
             "lost":            lost,
@@ -1102,9 +1104,9 @@ async def _aggregate_crm_by_field(db, field: str, date_from=None, date_to=None):
         {"$group": {
             "_id": f"${field}",
             "leads": {"$sum": 1},
-            "demo_scheduled": {"$sum": {"$cond": [{"$in": ["$crm_status", ["demo_scheduled", "demo_given", "won"]]}, 1, 0]}},
-            "demo_given": {"$sum": {"$cond": [{"$in": ["$crm_status", ["demo_given", "won"]]}, 1, 0]}},
-            "won": {"$sum": {"$cond": [{"$eq": ["$crm_status", "won"]}, 1, 0]}},
+            "demo_scheduled": {"$sum": {"$cond": [{"$in": ["$crm_status", ["demo_scheduled", "demo_given", "payment_awaited", "payment_received", "won"]]}, 1, 0]}},
+            "demo_given": {"$sum": {"$cond": [{"$in": ["$crm_status", ["demo_given", "payment_awaited", "payment_received", "won"]]}, 1, 0]}},
+            "won": {"$sum": {"$cond": [{"$in": ["$crm_status", ["payment_awaited", "payment_received", "won"]]}, 1, 0]}},  # CR-67
             "lost": {"$sum": {"$cond": [{"$eq": ["$crm_status", "lost"]}, 1, 0]}},
         }},
     ]

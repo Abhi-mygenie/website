@@ -79,7 +79,7 @@ export default function FunnelPanel({ data, loading }) {
 
         <StageCard testId="funnel-card-demo-given" id="demo_given" label="Demo Given"
           count={demo_given}
-          rateLabel={`${rates.given_rate ?? 0}% of Sched.`}
+          rateLabel={`${rates.given_rate ?? 0}% of leads`}
           dropLabel={`↓ ${dropoff.after_schedule ?? 0}% dropped`}
         />
         <Arrow color={STAGE_COLORS.demo_given.arrow} />

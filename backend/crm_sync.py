@@ -17,17 +17,22 @@ import freshsales
 logger = logging.getLogger(__name__)
 
 # ── Stage status ID constants ──────────────────────────────────────────────
-DEMO_SCHEDULED_ID = int(os.environ.get("FRESHSALES_STATUS_DEMO_BOOKED_ID") or 0)
-DEMO_GIVEN_ID     = int(os.environ.get("FRESHSALES_STATUS_DEMO_GIVEN_ID") or 0)
-WON_ID            = int(os.environ.get("FRESHSALES_STATUS_WON_ID") or 0)
-LOST_ID           = int(os.environ.get("FRESHSALES_STATUS_LOST_ID") or 0)
-SYNC_ENABLED      = os.environ.get("CRM_SYNC_ENABLED", "true").lower() == "true"
+DEMO_SCHEDULED_ID  = int(os.environ.get("FRESHSALES_STATUS_DEMO_BOOKED_ID") or 0)
+DEMO_GIVEN_ID      = int(os.environ.get("FRESHSALES_STATUS_DEMO_GIVEN_ID") or 0)
+WON_ID             = int(os.environ.get("FRESHSALES_STATUS_WON_ID") or 0)
+# CR-67: Payment Awaited + Payment Received count as "won" in funnel
+PAYMENT_AWAITED_ID  = int(os.environ.get("FRESHSALES_STATUS_PAYMENT_AWAITED") or 0)
+PAYMENT_RECEIVED_ID = int(os.environ.get("FRESHSALES_STATUS_PAYMENT_RECEIVED") or 0)
+LOST_ID            = int(os.environ.get("FRESHSALES_STATUS_LOST_ID") or 0)
+SYNC_ENABLED       = os.environ.get("CRM_SYNC_ENABLED", "true").lower() == "true"
 
+# CR-67: Each stage maps to a list of Freshsales status IDs.
+# "won" includes Won + Payment Awaited + Payment Received — all represent conversion.
 STAGE_STATUS_IDS = {
-    "demo_scheduled": DEMO_SCHEDULED_ID,
-    "demo_given":     DEMO_GIVEN_ID,
-    "won":            WON_ID,
-    "lost":           LOST_ID,
+    "demo_scheduled": [DEMO_SCHEDULED_ID],
+    "demo_given":     [DEMO_GIVEN_ID],
+    "won":            [sid for sid in [WON_ID, PAYMENT_AWAITED_ID, PAYMENT_RECEIVED_ID] if sid],
+    "lost":           [LOST_ID],
 }
 
 LIFECYCLE_MAP = json.loads(os.environ.get("FRESHSALES_LIFECYCLE_MAP", '{"403021121245":"lead","403021121246":"qualified","403021121247":"customer"}'))
@@ -132,49 +137,50 @@ async def _run(db, trigger: str) -> dict:
     started = datetime.now(timezone.utc)
     stats = {"fetched": 0, "matched": 0, "unmatched": 0, "errors": 0}
 
-    for crm_status, status_id in STAGE_STATUS_IDS.items():
-        if not status_id:
-            logger.warning("Status ID not configured for stage=%s — skipping", crm_status)
-            continue
+    for crm_status, status_ids in STAGE_STATUS_IDS.items():
+        for status_id in status_ids:
+            if not status_id:
+                logger.warning("Status ID not configured for stage=%s — skipping", crm_status)
+                continue
 
-        page = 1
-        while True:
-            try:
-                resp = await freshsales.get_contacts_by_status(status_id, page)
-            except Exception as e:
-                logger.error("crm_sync fetch error stage=%s page=%d: %s", crm_status, page, e)
-                stats["errors"] += 1
-                break
-
-            contacts = resp.get("contacts") or []
-            if not contacts:
-                break
-
-            for contact in contacts:
-                stats["fetched"] += 1
-                contact_id = contact.get("id")
-                lost_reason_id = contact.get("lost_reason_id")
-                lost_reason = LOST_REASON_MAP.get(lost_reason_id) if lost_reason_id else None
-                lifecycle = _lifecycle_label(contact.get("lifecycle_stage_id"))
-
+            page = 1
+            while True:
                 try:
-                    matched = await _update_lead_stage(
-                        db, contact_id, crm_status, lost_reason, lifecycle
-                    )
-                    if matched:
-                        stats["matched"] += 1
-                    else:
-                        await _upsert_backfilled(db, contact, crm_status, lost_reason, lifecycle)
-                        stats["unmatched"] += 1
+                    resp = await freshsales.get_contacts_by_status(status_id, page)
                 except Exception as e:
-                    logger.error("crm_sync update error contact=%s: %s", contact_id, e)
+                    logger.error("crm_sync fetch error stage=%s page=%d: %s", crm_status, page, e)
                     stats["errors"] += 1
+                    break
 
-            if len(contacts) < 100:
-                break
+                contacts = resp.get("contacts") or []
+                if not contacts:
+                    break
 
-            page += 1
-            await asyncio.sleep(2.0)  # rate limit guard — ~30 req/min safe margin
+                for contact in contacts:
+                    stats["fetched"] += 1
+                    contact_id = contact.get("id")
+                    lost_reason_id = contact.get("lost_reason_id")
+                    lost_reason = LOST_REASON_MAP.get(lost_reason_id) if lost_reason_id else None
+                    lifecycle = _lifecycle_label(contact.get("lifecycle_stage_id"))
+
+                    try:
+                        matched = await _update_lead_stage(
+                            db, contact_id, crm_status, lost_reason, lifecycle
+                        )
+                        if matched:
+                            stats["matched"] += 1
+                        else:
+                            await _upsert_backfilled(db, contact, crm_status, lost_reason, lifecycle)
+                            stats["unmatched"] += 1
+                    except Exception as e:
+                        logger.error("crm_sync update error contact=%s: %s", contact_id, e)
+                        stats["errors"] += 1
+
+                if len(contacts) < 100:
+                    break
+
+                page += 1
+                await asyncio.sleep(2.0)  # rate limit guard — ~30 req/min safe margin
 
     ended = datetime.now(timezone.utc)
     duration = round((ended - started).total_seconds(), 2)
@@ -302,6 +308,9 @@ _STATUS_ID_TO_STAGE = {
     int(os.environ.get("FRESHSALES_STATUS_DEMO_BOOKED_ID") or 0): "demo_scheduled",
     int(os.environ.get("FRESHSALES_STATUS_DEMO_GIVEN_ID") or 0):  "demo_given",
     int(os.environ.get("FRESHSALES_STATUS_WON_ID") or 0):         "won",
+    # CR-67: Payment Awaited + Payment Received → "won"
+    int(os.environ.get("FRESHSALES_STATUS_PAYMENT_AWAITED") or 0): "won",
+    int(os.environ.get("FRESHSALES_STATUS_PAYMENT_RECEIVED") or 0): "won",
     int(os.environ.get("FRESHSALES_STATUS_LOST_ID") or 0):        "lost",
 }
 
