@@ -3,7 +3,8 @@
 **Type:** Conversion Rate Optimisation / UX  
 **Date Raised:** 2026-08-20  
 **Raised By:** Owner review during Batch 3 planning  
-**Status:** OPEN — DEFERRED (not in Batch 3)  
+**Status:** SUPERSEDED by CR-113 — 2026-08-20
+**Reason:** CR-113 implements a standalone QuickDemoSheet component local to the VSP page. The `shortForm` prop approach on the shared DemoForm is no longer needed for the Petpooja page. CR-113 covers the same intent with a better UX pattern (bottom sheet). Close once CR-113 is implemented.  
 **Priority:** HIGH  
 **Plan ID:** H-112  
 **Effort:** 45 min  
