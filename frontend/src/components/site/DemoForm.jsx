@@ -67,7 +67,7 @@ function StageProgress({ stage }) {
   );
 }
 
-export default function DemoForm({ sector }) {
+export default function DemoForm({ sector, shortForm = false }) {
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState({});
   const [stage, setStage] = useState("form");
@@ -134,7 +134,8 @@ export default function DemoForm({ sector }) {
   const submit = async (e) => {
     e.preventDefault();
     const newErrors = {};
-    REQUIRED.forEach((f) => { newErrors[f] = validate(f, form[f]); });
+    const required = shortForm ? ["name", "phone", "email"] : REQUIRED;
+    required.forEach((f) => { newErrors[f] = validate(f, form[f]); });
     setErrors(newErrors);
     if (Object.values(newErrors).some(Boolean)) {
       toast.error("Please fill in all required fields.");
@@ -324,7 +325,7 @@ export default function DemoForm({ sector }) {
           { key: "name", placeholder: "Your name *", type: "text" },
           { key: "phone", placeholder: "Phone number *", type: "tel" },
           { key: "email", placeholder: "Email address *", type: "email" },
-          { key: "business_name", placeholder: "Business name *", type: "text" },
+          { key: "business_name", placeholder: shortForm ? "Business name (optional)" : "Business name *", type: "text" },
         ].map(({ key, placeholder, type }) => (
           <div key={key}>
             <input
@@ -340,6 +341,7 @@ export default function DemoForm({ sector }) {
           </div>
         ))}
 
+        {!shortForm && (
         <div>
           <select
             className={fieldCls("years_in_business")}
@@ -355,6 +357,7 @@ export default function DemoForm({ sector }) {
           </select>
           {errors.years_in_business && <p className="text-xs text-red-500 mt-1" data-testid="demo-error-years">{errors.years_in_business}</p>}
         </div>
+        )}
 
         {!sector && (
           <select className={fieldCls("outlet_type")} value={form.outlet_type} onChange={(e) => update("outlet_type", e.target.value)} data-testid="demo-select-outlet">
@@ -363,7 +366,7 @@ export default function DemoForm({ sector }) {
           </select>
         )}
 
-        {sector !== "meta-demo" && (
+        {!shortForm && sector !== "meta-demo" && (
           <input className={fieldCls("city")} placeholder="City (optional)" value={form.city} onChange={(e) => update("city", e.target.value)} data-testid="demo-input-city" />
         )}
       </div>

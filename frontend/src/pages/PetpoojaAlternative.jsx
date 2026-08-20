@@ -992,7 +992,7 @@ function VspCta({ doc }) {
           {/* Right — demo form */}
           <Reveal delay={0.1}>
             <div id="vsp-demo" className="bg-white rounded-3xl p-8 sm:p-10 scroll-mt-20" data-testid="vsp-demo-form-wrap">
-              <DemoForm sector="petpooja-alternative" />
+              <DemoForm sector="petpooja-alternative" shortForm />
             </div>
           </Reveal>
         </div>
