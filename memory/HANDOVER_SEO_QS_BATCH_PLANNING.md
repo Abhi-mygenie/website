@@ -58,7 +58,7 @@ This session diagnosed every issue to the source code, registered 41 CRs, organi
 **What it fixes:** All 19 pages are eagerly bundled into one 2.17MB JS file — code splitting eliminates this. Soft-404s return HTTP 200 (homepage redirect instead of real 404 page) — hurts crawl budget and indexation.  
 **Impact analysis verdict:** ✅ PROCEED — Key findings: (1) `lazy` + `Suspense` must be added to the React import line; (2) 5 non-page imports must stay eager (CmsAdminLayer, ConsentBanner, Toaster, ScrollDepthTracker, WhatsAppFab); (3) Legal component needs only 1 lazy import covering 3 routes; (4) NotFound.jsx should also be lazy since it's a rare access path.
 
-### Batch 3 — Petpooja LP Full Overhaul *(CR-73 + CR-74 + CR-75 + CR-76)*
+### Batch 3 — Petpooja LP Full Overhaul *(CR-73 + CR-74 + CR-75 + CR-76 + CR-111)*
 **Files:** `src/pages/PetpoojaAlternative.jsx` (modified), `src/components/home/StickyMobileCta.jsx` (modified), `src/data/vsp.js` (modified)  
 **Time:** ~1.5 hrs dev  
 **What it fixes:** The highest-spend Google Ads LP has 4 issues — stripped footer (no phone/privacy), broken mobile sticky CTA, H1 with zero search keywords, and trust logos showing as text instead of images.  

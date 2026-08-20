@@ -9,7 +9,7 @@
 **Effort:** 15 min  
 **Improves:** QS · SEO · Keyword Relevance  
 **Scope:** `frontend/src/data/vsp.js`  
-**Related:** CR-84 (H1 fixes for sell-serve, see-everything, cloud-kitchens)
+**Related:** CR-84 (H1 fixes for sell-serve, see-everything, cloud-kitchens), CR-111 (Petpooja meta title keyword — same page, folded into Batch 3)
 
 ---
 
