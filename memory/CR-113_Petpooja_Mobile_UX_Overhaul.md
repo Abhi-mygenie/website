@@ -108,14 +108,26 @@ function LandingNavbar({ onQuickBook }) {
 ```
 [QuickDemoSheet form] → /api/demo-request → [OTP stage] → [Calendly stage] → [Booked]
 ```
-OtpVerifyBlock and CalendlyInline/popup are reused as-is. The sheet expands through all 3 stages without closing.
+OtpVerifyBlock and Calendly popup are reused. The sheet expands through all 3 stages without closing.
+
+**Exact tracking behaviour — see `/app/memory/CR-113_Tracking_Behaviour_Map.md` for full line-by-line audit.**
+
+Key tracking decisions:
+- EVENT 1: `pushLead("form_submitted")` with `form_location: "quick_book_sheet"` after API success
+- EVENT 2: `pushLead("book_demo")` → GTM `"thankyou_conversion"` (₹200) after OTP verified — NO `lead_verified` push (matches DemoForm exactly, prevents double Meta fire)
+- EVENT 3: `pushLead("demo_booked")` (₹300) from postMessage handler when Calendly schedules
+- Calendly: ALWAYS popup (never inline) — sheet is too narrow for CalendlyInline (needs 640px min per CR-50)
+- UTM medium: `"quick_book_sheet"` (distinguishes from `"demo_form"` / `"demo_form_mobile"`)
+- Anti-bot: `useAntiBot()` + `Honeypot` + `leadQuality()` — all 3 mechanisms included
+- `newEventId()` called once at QuickDemoSheet mount — same ID flows through all 3 events
+- `scheduledRef.current` flag prevents double-fire of `demo_booked`
 
 **Visual behaviour:**
 - Closed: off-screen (transform: translateY(100%))
 - Opening: slides up with 300ms ease-out transition
 - Height: auto, max-height 90vh, overflow-y scroll
 - Handle bar at top (drag indicator — cosmetic only)
-- Dark backdrop (bg-black/40) behind the sheet — tapping backdrop closes it (only on form stage; OTP and Calendly stages lock the sheet)
+- Dark backdrop (bg-black/40) behind the sheet — tapping backdrop closes it (form stage only)
 - Sheet does NOT close mid-flow (during OTP or Calendly) — only dismissible before submitting
 
 **Sheet structure:**
