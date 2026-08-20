@@ -4,7 +4,7 @@
 // Do NOT invent numbers — every claim verified against mygenie.online.
 
 export const VSP_HERO = {
-  variant_a: "We get compared to Petpooja every week. Here's the honest answer.",
+  variant_a: "The honest Petpooja alternative — see why 500+ restaurants switched to MyGenie.",
   variant_b: "Most Indian restaurants run on Petpooja. Some of them switch to us.",
   variant_a_sub:
     "Petpooja runs 1.5 lakh restaurants. It's earned that. But a holistic OS — billing, inventory, expenses, customers and AI, all connected — is a different thing entirely.",
@@ -130,9 +130,14 @@ export const VSP_COMP_FULL = [
 ];
 
 export const VSP_TRUST_LOGOS = [
-  "Hyatt Centric", "Palm Forest Resort", "Love Bites",
-  "The Mill Bakery", "Bamboo Yoga", "Ubuntu Café",
-  "Terraria Café", "La Fetta Pizzeria",
+  { name: "Hyatt Centric",      img: "/brand/hyatt-centric.png" },
+  { name: "Palm Forest Resort", img: "/brand/palm-forest.png"   },
+  { name: "Love Bites",         img: "/brand/love-bites.png"    },
+  { name: "The Mill Bakery",    img: "/brand/mill-bakery.png"   },
+  { name: "Bamboo Yoga",        img: "/brand/bamboo-yoga.png"   },
+  { name: "Ubuntu Café",        img: "/brand/ubuntu.png"        },
+  { name: "Terraria Café",      img: "/brand/terra.png"         },
+  { name: "La Fetta Pizzeria",  img: "/brand/lafetta.png"       },
 ];
 
 export const VSP_SWITCH_BADGES = [

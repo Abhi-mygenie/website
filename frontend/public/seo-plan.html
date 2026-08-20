@@ -1234,6 +1234,14 @@ if (!localStorage.getItem(SEED_KEY)) {
   localStorage.setItem(SEED_KEY, '1');
 }
 
+// One-time seed: mark Batch 3 items (C4, C5, C6, C7, C111) as done
+const SEED_KEY_B3 = 'mygenie_seo_plan_seeded_batch3';
+if (!localStorage.getItem(SEED_KEY_B3)) {
+  ['C4','C5','C6','C7','C111'].forEach(k => { state[k] = true; });
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e) {}
+  localStorage.setItem(SEED_KEY_B3, '1');
+}
+
 function save() { try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e) {} }
 
 // ── TIER COUNTS ───────────────────────────────────────────────────────────────

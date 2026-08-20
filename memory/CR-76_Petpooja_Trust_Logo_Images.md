@@ -3,7 +3,7 @@
 **Type:** Trust Signal Fix  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** OPEN — DESIGN APPROVED 2026-08-20
+**Status:** IMPLEMENTED — 2026-08-20
 **Design decision:** Greyscale by default, full colour on hover. All 8 logo files confirmed present in `/public/brand/`. Both trust strips updated (VspHero: 4 logos, VspCta: 8 logos). VSP_TRUST_LOGOS in vsp.js to be converted from string array to `{name, img}` object array.
 **Priority:** CRITICAL  
 **Plan ID:** C7  

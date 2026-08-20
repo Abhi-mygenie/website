@@ -34,7 +34,11 @@ export default function StickyMobileCta({ onDemo }) {
 
   useEffect(() => {
     // Observe the hero sentinel — when it leaves viewport, show the bar
-    heroRef.current = document.querySelector('[data-testid="hero"]');
+    heroRef.current =
+      document.querySelector('[data-testid="hero"]') ||
+      document.querySelector('[data-testid="vsp-hero"]') ||
+      document.querySelector('[data-testid="sector-hero"]') ||
+      document.querySelector('[data-testid="product-hero"]');
     if (!heroRef.current) return;
 
     const observer = new IntersectionObserver(

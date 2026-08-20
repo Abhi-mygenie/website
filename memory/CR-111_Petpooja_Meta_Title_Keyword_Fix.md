@@ -3,7 +3,7 @@
 **Type:** On-Page SEO / Keyword Relevance  
 **Date Raised:** 2026-08-20  
 **Raised By:** Batch 3 Planning Review (gap identified during CR-75 implementation planning)  
-**Status:** OPEN — FOLDED INTO BATCH 3  
+**Status:** IMPLEMENTED — 2026-08-20  
 **Priority:** CRITICAL  
 **Plan ID:** C-111 (appended to Batch 3)  
 **Effort:** 2 min  

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import StickyMobileCta from "@/components/home/StickyMobileCta";
 import { ArrowRight, ChevronDown, ChevronUp, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import DemoForm from "@/components/site/DemoForm";
@@ -13,6 +14,7 @@ import {
   VSP_COMP_LEAN, VSP_COMP_FULL, VSP_TRUST_LOGOS,
   VSP_SWITCH_BADGES,
 } from "@/data/vsp";
+import { COMPANY } from "@/data/company";
 
 // ─── Minimal landing Navbar (logo only — no exit links) ──────────────────────
 function LandingNavbar() {
@@ -25,13 +27,18 @@ function LandingNavbar() {
   );
 }
 
-// ─── Minimal landing Footer (logo + copyright — no outbound links) ────────────
+// ─── Minimal landing Footer (logo + contact + privacy — Option A, CR-73) ──────
 function LandingFooter() {
   return (
     <footer className="bg-brand-deep border-t border-[#1e4a2e]" data-testid="landing-footer">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <Logo light />
-        <span className="text-xs text-[#5B7A68]">© {new Date().getFullYear()} MyGenie Technologies Pvt. Ltd. All rights reserved.</span>
+        <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#5B7A68]">
+          <a href={`tel:${COMPANY.phoneIntl}`} className="hover:text-brand-yellow transition-colors" data-testid="landing-footer-phone">{COMPANY.phone}</a>
+          <a href={`mailto:${COMPANY.supportEmail}`} className="hover:text-brand-yellow transition-colors" data-testid="landing-footer-email">{COMPANY.supportEmail}</a>
+          <Link to="/privacy" className="hover:text-brand-yellow transition-colors" data-testid="landing-footer-privacy">Privacy Policy</Link>
+        </div>
+        <span className="text-xs text-[#5B7A68]">© {new Date().getFullYear()} MyGenie Technologies Pvt. Ltd.</span>
       </div>
     </footer>
   );
@@ -105,10 +112,17 @@ function VspHero({ doc }) {
             {/* Trust strip */}
             <div className="flex flex-wrap items-center gap-2" data-testid="vsp-trust-strip">
               <span className="text-xs text-brand-muted font-medium">Trusted by</span>
-              {["Hyatt Centric", "Palm Forest Resort", "Love Bites", "The Mill Bakery"].map((name) => (
-                <span key={name} className="bg-white border border-brand-line rounded-lg px-3 py-1 text-xs font-semibold text-brand-ink">
-                  {name}
-                </span>
+              {VSP_TRUST_LOGOS.slice(0, 4).map((logo) => (
+                <img
+                  key={logo.name}
+                  src={logo.img}
+                  alt={logo.name}
+                  title={logo.name}
+                  className="h-8 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all"
+                  loading="lazy"
+                  width={120}
+                  height={32}
+                />
               ))}
               <span className="text-xs text-brand-muted font-medium">across 75 cities in India</span>
             </div>
@@ -624,11 +638,18 @@ function VspCta({ doc }) {
                 <div className="text-[11px] font-bold uppercase tracking-widest text-[#5B7A68] mb-3">
                   Running on MyGenie
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {VSP_TRUST_LOGOS.map((name) => (
-                    <span key={name} className="bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs font-semibold text-[#a3b8ac]">
-                      {name}
-                    </span>
+                <div className="flex flex-wrap gap-3 items-center">
+                  {VSP_TRUST_LOGOS.map((logo) => (
+                    <img
+                      key={logo.name}
+                      src={logo.img}
+                      alt={logo.name}
+                      title={logo.name}
+                      className="h-7 w-auto object-contain opacity-50 hover:opacity-90 transition-opacity"
+                      loading="lazy"
+                      width={100}
+                      height={28}
+                    />
                   ))}
                 </div>
               </div>
@@ -659,7 +680,7 @@ export default function PetpoojaAlternative() {
   return (
     <div className="bg-white" data-testid="petpooja-alternative-page">
       <Seo
-        title="MyGenie vs Petpooja — The honest POS comparison | MyGenie"
+        title="Best Petpooja Alternative for Restaurants — MyGenie POS"
         description="Comparing Petpooja with MyGenie? See the full feature breakdown, transparent pricing, and real results from restaurant owners who switched. Book a free demo."
         path="/petpooja-alternative"
       />
@@ -673,6 +694,7 @@ export default function PetpoojaAlternative() {
         <VspCta                     doc={doc} />
       </main>
       <LandingFooter />
+      <StickyMobileCta onDemo={() => document.getElementById("vsp-demo")?.scrollIntoView({ behavior: "smooth", block: "center" })} />
     </div>
   );
 }

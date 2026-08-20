@@ -2,7 +2,7 @@
 **CRs:** CR-73 · CR-74 · CR-75 · CR-76 · CR-111  
 **Plan written:** 2026-08-20 — Planning Agent  
 **Design approved:** 2026-08-20 (Option A footer, same sticky bar, greyscale logos)  
-**Status:** APPROVED FOR IMPLEMENTATION  
+**Status:** IMPLEMENTED — 2026-08-20  
 **Files touched:** 3 (`PetpoojaAlternative.jsx`, `vsp.js`, `StickyMobileCta.jsx`)  
 **Estimated time:** ~1.5 hrs  
 **Execution order:** Step 1 → 2 → 3 → 4 → 5 → 6 → 7 (mandatory — see notes per step)

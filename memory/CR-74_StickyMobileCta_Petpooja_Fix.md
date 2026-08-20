@@ -3,7 +3,7 @@
 **Type:** Bug Fix / Mobile Conversion  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit (code investigation)  
-**Status:** OPEN — DESIGN APPROVED 2026-08-20
+**Status:** IMPLEMENTED — 2026-08-20
 **Design decision:** Reuse exact same `StickyMobileCta` component and visual design from homepage. Tapping scrolls to `#vsp-demo`. Selector fix expanded to 4 testids so it works on all page types going forward.
 **Priority:** CRITICAL  
 **Plan ID:** C5  

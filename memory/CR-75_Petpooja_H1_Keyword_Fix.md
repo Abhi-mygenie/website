@@ -3,7 +3,7 @@
 **Type:** Keyword Relevance / On-Page SEO  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** OPEN  
+**Status:** IMPLEMENTED — 2026-08-20  
 **Priority:** CRITICAL  
 **Plan ID:** C6  
 **Effort:** 15 min  

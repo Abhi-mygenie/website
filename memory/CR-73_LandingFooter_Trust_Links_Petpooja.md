@@ -3,7 +3,7 @@
 **Type:** Trust Signal Fix / LP Transparency  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** OPEN — DESIGN APPROVED 2026-08-20
+**Status:** IMPLEMENTED — 2026-08-20
 **Design decision:** Option A — extend minimal `LandingFooter` with phone + email + privacy link only. Full `Footer.jsx` (common site footer with navigation columns) explicitly rejected for this page — ad landing pages must not expose site navigation. Local `LandingFooter` function stays minimal, contact/legal items added inline.
 **Priority:** CRITICAL  
 **Plan ID:** C4  
