@@ -3,7 +3,7 @@
 **Type:** Performance Fix / LCP  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** IMPACT ANALYSIS COMPLETE — SCOPE REVISED — READY FOR IMPLEMENTATION  
+**Status:** IMPLEMENTED (Option B) — 2026-08-20  
 **Priority:** CRITICAL  
 **Plan ID:** C2 (+ GAP-5 merged)  
 **Effort:** 20 min  

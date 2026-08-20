@@ -7,9 +7,17 @@
         <meta name="description" content="MyGenie POS — the hospitality operating system that boosts profit up to 25%, stops revenue leakage, and gives owners total control across every outlet." />
         <meta name="facebook-domain-verification" content="52wnu6dg7xaa18lrghxek38u535rtw" />
         <link rel="icon" href="/brand/logo.svg" />
+        <!-- Fonts: preconnect for parallel discovery -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+        <!-- Non-blocking stylesheets loaded in parallel (replaces @import chain in index.css) -->
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+        <link rel="preload" as="style" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+        <noscript>
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" />
+          <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap" />
+        </noscript>
         <!--
         manifest.json provides metadata used when your web app is installed on a
         user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/

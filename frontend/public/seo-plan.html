@@ -1211,6 +1211,14 @@ const STATE_KEY = 'mygenie_seo_plan_v2';
 let state = {};
 try { state = JSON.parse(localStorage.getItem(STATE_KEY) || '{}'); } catch(e) { state = {}; }
 
+// One-time seed: mark Batch 1 items (C1, C2) as done on first load after implementation
+const SEED_KEY = 'mygenie_seo_plan_seeded_batch1';
+if (!localStorage.getItem(SEED_KEY)) {
+  ['C1','C2'].forEach(k => { state[k] = true; });
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e) {}
+  localStorage.setItem(SEED_KEY, '1');
+}
+
 function save() { try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e) {} }
 
 // ── TIER COUNTS ───────────────────────────────────────────────────────────────

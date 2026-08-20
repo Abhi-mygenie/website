@@ -2,7 +2,9 @@
 **CRs:** CR-70 (font loading) + CR-71 (hero image priority)  
 **Plan written:** 2026-08-20 — Planning Agent  
 **Scope revision:** CR-71 Option B applied — no `index.html` preload (owner decision 2026-08-20)  
-**Status:** APPROVED FOR IMPLEMENTATION — awaiting code execution  
+**Status:** IMPLEMENTED — 2026-08-20  
+**Implemented by:** Agent (coding session)  
+**All validation checks:** PASSED  
 **Files touched:** 3 (two for CR-70, one for CR-71)  
 **Estimated dev time:** 50 min  
 

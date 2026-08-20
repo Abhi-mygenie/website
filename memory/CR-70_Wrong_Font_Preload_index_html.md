@@ -3,7 +3,7 @@
 **Type:** Performance Fix / FCP  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** IMPACT ANALYSIS COMPLETE — READY FOR IMPLEMENTATION  
+**Status:** IMPLEMENTED — 2026-08-20  
 **Priority:** CRITICAL  
 **Plan ID:** C1  
 **Effort:** 30 min  
