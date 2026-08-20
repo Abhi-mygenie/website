@@ -3,7 +3,7 @@
 **Type:** Mobile UX / Conversion Rate Optimisation  
 **Date Raised:** 2026-08-20  
 **Raised By:** Owner review — real device screenshot showed broken above-fold experience  
-**Status:** OPEN — INTAKE COMPLETE  
+**Status:** IMPLEMENTED — 2026-08-20  
 **Priority:** HIGH  
 **Plan ID:** H-113  
 **Effort:** ~2.5 hrs  
