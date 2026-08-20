@@ -3,7 +3,7 @@
 **Type:** Performance Fix / LCP  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** IMPACT ANALYSIS COMPLETE — READY FOR IMPLEMENTATION  
+**Status:** IMPACT ANALYSIS COMPLETE — SCOPE REVISED — READY FOR IMPLEMENTATION  
 **Priority:** CRITICAL  
 **Plan ID:** C2 (+ GAP-5 merged)  
 **Effort:** 20 min  
@@ -46,18 +46,17 @@ Additionally, the `<img>` tag rendered by `EditableImage` has no `fetchpriority=
 
 ## 3. Exact Changes Required
 
-### Change 1 — `frontend/public/index.html`
-Add inside `<head>`, after the font preload links (CR-70):
-```html
-<!-- LCP image preload — browser discovers banner.png before JS executes -->
-<link rel="preload" as="image" href="/brand/banner.png" fetchpriority="high" />
-```
-Once WebP is created (CR-80), update to:
-```html
-<link rel="preload" as="image" href="/brand/banner.webp" type="image/webp" fetchpriority="high" />
-```
+### ~~Change 1 — `frontend/public/index.html`~~ — DROPPED (Scope Revision 2026-08-20)
 
-### Change 2 — `frontend/src/components/home/Hero.jsx`
+> **Decision by owner (2026-08-20):** The `<link rel="preload">` for `banner.png` in `index.html` was originally planned but has been **dropped**.
+>
+> **Reason:** This is a multi-route SPA. `index.html` is shared by all routes. Adding a preload here causes `banner.png` (305 KB) to be downloaded on **every page** — `/pricing`, `/blog`, `/solutions/...` etc. — even though the image is only used on the homepage. This is a known anti-pattern for SPAs.
+>
+> **Resolution:** Option B selected — implement only `fetchpriority="high"` + `loading="eager"` on `Hero.jsx`. The `fetchpriority` attribute still tells the browser to prioritise the image fetch once React renders the component. The `index.html` preload line and `frontend/public/index.html` are **out of scope for this CR**.
+>
+> **Future note:** If a homepage-only preload is ever desired, it would require SSR or a route-aware preload injection strategy — out of scope here.
+
+### Change 1 — `frontend/src/components/home/Hero.jsx`
 Add `fetchpriority="high"` and `loading="eager"` to the `EditableImage` call:
 ```jsx
 <EditableImage
@@ -78,17 +77,18 @@ Verify `EditableImage` in `Editable.jsx` passes `...rest` to the underlying `<im
 
 | File | Change |
 |---|---|
-| `frontend/public/index.html` | Add `<link rel="preload">` for banner.png with fetchpriority="high" |
+| ~~`frontend/public/index.html`~~ | ~~Add `<link rel="preload">` for banner.png~~ — **DROPPED** (scope revision 2026-08-20, see Change 1 note above) |
 | `frontend/src/components/home/Hero.jsx` | Add `fetchpriority="high"` + `loading="eager"` to EditableImage |
 
 ---
 
 ## 5. Definition of Done
 
-- [ ] `banner.png` appears near top of network waterfall on production (discovered before JS execution)
-- [ ] `fetchpriority="high"` visible on the rendered `<img>` in DevTools
+- [ ] `fetchpriority="high"` visible on the rendered `<img>` in DevTools Elements panel
+- [ ] `loading="eager"` attribute present on the rendered `<img>`
 - [ ] LCP measurement improves (target: ≤ 2.5s on mobile) — **measure on production, not preview** (see Finding 7 + 8)
 - [ ] No layout shift from the image (existing `h-[420px]` prevents CLS)
+- [ ] ~~`banner.png` appears near top of network waterfall before JS execution~~ — **NOT testable** (preload dropped, Option B)
 
 ---
 
