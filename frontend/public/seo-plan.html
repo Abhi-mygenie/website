@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MyGenie — SEO & QS Improvement Plan</title>
+<style>
+  :root {
+    --red:    #ef4444;
+    --orange: #f97316;
+    --yellow: #eab308;
+    --blue:   #3b82f6;
+    --green:  #22c55e;
+    --ink:    #0f172a;
+    --muted:  #64748b;
+    --line:   #e2e8f0;
+    --bg:     #f8fafc;
+    --card:   #ffffff;
+    --red-bg:    #fef2f2;
+    --orange-bg: #fff7ed;
+    --yellow-bg: #fefce8;
+    --blue-bg:   #eff6ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+    color: #fff;
+    padding: 32px 40px 28px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  }
+  .header-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .header h1 span { color: #4ade80; }
+  .header-meta { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+
+  .progress-wrap { margin-top: 16px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; margin-bottom: 6px; }
+  .progress-bar { background: rgba(255,255,255,0.12); border-radius: 99px; height: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #4ade80, #22d3ee); border-radius: 99px; transition: width 0.4s ease; }
+
+  /* ── DASHBOARD ── */
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 20px 40px;
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+  }
+  .dash-card {
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+    border: 1px solid var(--line);
+  }
+  .dash-card .dc-count { font-size: 28px; font-weight: 800; line-height: 1; }
+  .dash-card .dc-label { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .dash-card .dc-done  { font-size: 11px; margin-top: 6px; font-weight: 600; }
+  .dash-card.red    { background: var(--red-bg);    border-color: #fca5a5; }
+  .dash-card.orange { background: var(--orange-bg); border-color: #fdba74; }
+  .dash-card.yellow { background: var(--yellow-bg); border-color: #fde047; }
+  .dash-card.blue   { background: var(--blue-bg);   border-color: #93c5fd; }
+  .dash-card.total  { background: #f0fdf4;           border-color: #86efac; }
+  .dash-card.red    .dc-count { color: var(--red);    }
+  .dash-card.orange .dc-count { color: var(--orange); }
+  .dash-card.yellow .dc-count { color: #a16207;       }
+  .dash-card.blue   .dc-count { color: var(--blue);   }
+  .dash-card.total  .dc-count { color: #15803d;       }
+
+  /* ── FILTERS ── */
+  .filters {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 14px 40px;
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 128px;
+    z-index: 90;
+  }
+  .filter-btn {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 99px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--muted);
+  }
+  .filter-btn:hover { border-color: #94a3b8; color: var(--ink); }
+  .filter-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .filters-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .show-done-wrap { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); cursor: pointer; }
+  .show-done-wrap input { cursor: pointer; width: 15px; height: 15px; }
+
+  /* ── MAIN ── */
+  .main { padding: 24px 40px 60px; max-width: 1400px; }
+
+  /* ── TIER SECTION ── */
+  .tier { margin-bottom: 32px; }
+  .tier-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px;
+    border-radius: 12px 12px 0 0;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid var(--line);
+    border-bottom: none;
+  }
+  .tier-header:hover { filter: brightness(0.97); }
+  .tier.red    .tier-header { background: var(--red-bg);    border-color: #fca5a5; }
+  .tier.orange .tier-header { background: var(--orange-bg); border-color: #fdba74; }
+  .tier.yellow .tier-header { background: var(--yellow-bg); border-color: #fde047; }
+  .tier.blue   .tier-header { background: var(--blue-bg);   border-color: #93c5fd; }
+  .tier-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .tier.red    .tier-dot { background: var(--red);    }
+  .tier.orange .tier-dot { background: var(--orange); }
+  .tier.yellow .tier-dot { background: #a16207;       }
+  .tier.blue   .tier-dot { background: var(--blue);   }
+  .tier-title { font-size: 15px; font-weight: 700; flex: 1; }
+  .tier-subtitle { font-size: 12px; color: var(--muted); }
+  .tier-count { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: rgba(0,0,0,0.07); }
+  .tier-chevron { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
+  .tier.collapsed .tier-chevron { transform: rotate(-90deg); }
+
+  /* ── TABLE ── */
+  .tier-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 0 0 12px 12px; }
+  .tier.red    .tier-table-wrap { border-color: #fca5a5; }
+  .tier.orange .tier-table-wrap { border-color: #fdba74; }
+  .tier.yellow .tier-table-wrap { border-color: #fde047; }
+  .tier.blue   .tier-table-wrap { border-color: #93c5fd; }
+  .tier.collapsed .tier-table-wrap { display: none; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--ink); color: #fff; }
+  thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  thead th:first-child { width: 44px; text-align: center; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--line);
+    transition: background 0.12s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f8fafc; }
+  tbody tr.done { opacity: 0.45; }
+  tbody tr.done td:nth-child(3) { text-decoration: line-through; text-decoration-color: var(--muted); }
+  tbody tr.missed { background: #fff7ed !important; }
+  tbody tr.missed:hover { background: #ffedd5 !important; }
+
+  td { padding: 11px 14px; vertical-align: top; font-size: 13px; }
+  td:first-child { text-align: center; vertical-align: middle; }
+
+  .cb { width: 17px; height: 17px; cursor: pointer; accent-color: var(--green); }
+
+  .id-badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 5px;
+    white-space: nowrap;
+    margin-bottom: 4px;
+  }
+  .tier.red    .id-badge { background: var(--red-bg);    color: var(--red);    border: 1px solid #fca5a5; }
+  .tier.orange .id-badge { background: var(--orange-bg); color: #c2410c;       border: 1px solid #fdba74; }
+  .tier.yellow .id-badge { background: var(--yellow-bg); color: #a16207;       border: 1px solid #fde047; }
+  .tier.blue   .id-badge { background: var(--blue-bg);   color: #1d4ed8;       border: 1px solid #93c5fd; }
+
+  .missed-badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #fff3cd;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .issue-title { font-weight: 600; color: var(--ink); font-size: 13px; }
+  .issue-source { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .fix-text { color: #1e293b; font-size: 13px; line-height: 1.5; }
+  .fix-file { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: "SF Mono", "Consolas", monospace; }
+  .fix-file span { background: #f1f5f9; border: 1px solid var(--line); border-radius: 3px; padding: 1px 5px; display: inline-block; margin: 2px 2px 0 0; }
+
+  .effort-badge {
+    display: inline-block;
+    font-size: 12px; font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 99px;
+    white-space: nowrap;
+    background: #f1f5f9;
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag {
+    font-size: 10px; font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  .tag.qs   { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+  .tag.seo  { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .tag.perf { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+  .tag.lp   { background: #fce7f3; color: #9d174d; border: 1px solid #f9a8d4; }
+  .tag.conv { background: #f0fdf4; color: #15803d; border: 1px solid #4ade80; }
+  .tag.trust{ background: #fdf4ff; color: #7e22ce; border: 1px solid #d8b4fe; }
+  .tag.geo  { background: #fff7ed; color: #c2410c; border: 1px solid #fb923c; }
+  .tag.cls  { background: #f0f9ff; color: #0369a1; border: 1px solid #7dd3fc; }
+  .tag.ux   { background: #f5f3ff; color: #5b21b6; border: 1px solid #c4b5fd; }
+  .tag.eeat { background: #fff1f2; color: #be123c; border: 1px solid #fda4af; }
+
+  .col-id    { width: 100px; }
+  .col-issue { width: 220px; }
+  .col-fix   { min-width: 320px; }
+  .col-effort{ width: 110px; }
+  .col-tags  { width: 200px; }
+
+  /* ── MISS CALLOUT ── */
+  .miss-section {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-top: 8px;
+    margin-bottom: 32px;
+  }
+  .miss-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #92400e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .miss-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+  }
+  .miss-card {
+    background: #fff;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .miss-card .mc-id   { font-size: 11px; font-weight: 700; color: #d97706; margin-bottom: 4px; }
+  .miss-card .mc-title{ font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .miss-card .mc-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .miss-card .mc-tier { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; display: inline-block; margin-top: 6px; }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    padding: 14px 40px;
+    background: #fff;
+    border-top: 1px solid var(--line);
+  }
+  .legend-title { font-size: 11px; font-weight: 700; color: var(--muted); align-self: center; margin-right: 4px; }
+
+  /* ── PRINT ── */
+  @media print {
+    .header { position: static; }
+    .filters { position: static; }
+    .filter-btn, .show-done-wrap { display: none; }
+    .tier.collapsed .tier-table-wrap { display: block; }
+    body { background: #fff; }
+  }
+
+  @media (max-width: 768px) {
+    .header, .dashboard, .filters, .main, .legend { padding-left: 16px; padding-right: 16px; }
+    .filters { top: auto; position: static; }
+    .col-fix { min-width: 220px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>MyGenie — <span>SEO & Quality Score</span> Improvement Plan</h1>
+      <div class="header-meta">Audited: 20 Aug 2026 &nbsp;·&nbsp; SEO Health: 41/100 &nbsp;·&nbsp; QS Issue: Landing Page Experience = Below Average</div>
+    </div>
+    <button onclick="window.print()" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">⎙ Print / Export PDF</button>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Overall Completion</span>
+      <span id="prog-text">0 / 49 items done</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div class="dashboard">
+  <div class="dash-card red">
+    <div class="dc-count" id="d-c-total">10</div>
+    <div class="dc-label">Critical</div>
+    <div class="dc-done" id="d-c-done" style="color:var(--red)">0 done</div>
+  </div>
+  <div class="dash-card orange">
+    <div class="dc-count" id="d-h-total">10</div>
+    <div class="dc-label">High</div>
+    <div class="dc-done" id="d-h-done" style="color:var(--orange)">0 done</div>
+  </div>
+  <div class="dash-card yellow">
+    <div class="dc-count" id="d-m-total">12</div>
+    <div class="dc-label">Medium</div>
+    <div class="dc-done" id="d-m-done" style="color:#a16207">0 done</div>
+  </div>
+  <div class="dash-card blue">
+    <div class="dc-count" id="d-l-total">7</div>
+    <div class="dc-label">Low / Ongoing</div>
+    <div class="dc-done" id="d-l-done" style="color:var(--blue)">0 done</div>
+  </div>
+  <div class="dash-card orange" style="background:#fff7ed">
+    <div class="dc-count" id="d-g-total" style="color:#d97706">7</div>
+    <div class="dc-label">Gaps Added</div>
+    <div class="dc-done" id="d-g-done" style="color:#d97706">0 done</div>
+  </div>
+  <div class="dash-card total">
+    <div class="dc-count" id="d-all-total">49</div>
+    <div class="dc-label">Total Items</div>
+    <div class="dc-done" id="d-all-done" style="color:#15803d">0 done</div>
+  </div>
+</div>
+
+<!-- ── FILTERS ── -->
+<div class="filters">
+  <span class="filters-label">Filter:</span>
+  <button class="filter-btn active" onclick="setFilter('all',this)">All Tiers</button>
+  <button class="filter-btn" onclick="setFilter('red',this)">🔴 Critical</button>
+  <button class="filter-btn" onclick="setFilter('orange',this)">🟠 High</button>
+  <button class="filter-btn" onclick="setFilter('yellow',this)">🟡 Medium</button>
+  <button class="filter-btn" onclick="setFilter('blue',this)">🔵 Low</button>
+  <button class="filter-btn" onclick="setFilter('gap',this)">⚠️ Gaps</button>
+  <label class="show-done-wrap">
+    <input type="checkbox" id="hide-done-cb" onchange="toggleHideDone(this)"> Hide completed
+  </label>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+<!-- ░░ MISSED ITEMS CALLOUT ░░ -->
+<div class="miss-section" id="gap-section">
+  <h3>⚠️ Gaps Found — Items in Audit Documents NOT Covered in Original Plan</h3>
+  <div class="miss-grid">
+    <div class="miss-card">
+      <div class="mc-id">GAP-1</div>
+      <div class="mc-title">loading="lazy" missing on TrustBand logos & FeatureVideo posters</div>
+      <div class="mc-desc">H2/H3 cover WebP conversion and dimensions but never explicitly add <code>loading="lazy"</code> to the TrustBand marquee logos (8 images) and FeatureVideo poster frames. Audit's "Quick Win #2" directly calls this out.</div>
+      <span class="mc-tier">Suggested tier: High → merge into H2</span>
+    </div>
+    <div class="miss-card">
+      <div class="mc-id">GAP-2</div>
+      <div class="mc-title">Cookie-banner overlap at 768px tablet breakpoint</div>
+      <div class="mc-desc">M4 fixes button size and M5 fixes hamburger size, but the audit's "Also Worth Fixing" section specifically calls out the banner overlapping the hero/CTA area at the 768px tablet breakpoint. Not addressed anywhere in the plan.</div>
+      <span class="mc-tier">Suggested tier: Medium → new M13</span>
+    </div>
+    <div class="miss-card">
+      <div class="mc-id">GAP-3</div>
+      <div class="mc-title">Second independently-served sitemap on apex host</div>
+      <div class="mc-desc">Audit's Sitemap section notes "a second independently-served sitemap on the apex host — symptom of apex/www duplication." C9 adds a 301 redirect but never resolves the duplicate sitemap itself. Googlebot may continue discovering conflicting sitemaps.</div>
+      <span class="mc-tier">Suggested tier: High → append to C9</span>
+    </div>
+    <div class="miss-card">
+      <div class="mc-id">GAP-4</div>
+      <div class="mc-title">Third-party brand mention & citation investigation for GEO</div>
+      <div class="mc-desc">Action Plan Phase 3 explicitly includes "Investigate third-party brand mention / citation presence (review sites, directories, comparison articles) for GEO." Entirely absent from the plan — no discovery task, no action owner.</div>
+      <span class="mc-tier">Suggested tier: Low → new L8</span>
+    </div>
+    <div class="miss-card">
+      <div class="mc-id">GAP-5</div>
+      <div class="mc-title">fetchpriority="high" on LCP img tag itself</div>
+      <div class="mc-desc">Action Plan Phase 2 says "Add loading='lazy', fetchpriority, and explicit width/height to all 21 images." C2 adds a <code>&lt;link rel="preload" fetchpriority="high"&gt;</code> in index.html but never adds <code>fetchpriority="high"</code> directly to the LCP <code>&lt;img&gt;</code> element. Both are needed.</div>
+      <span class="mc-tier">Suggested tier: Critical → append to C2</span>
+    </div>
+    <div class="miss-card">
+      <div class="mc-id">GAP-6</div>
+      <div class="mc-title">No structured, extractable answer-style content (GEO/AI)</div>
+      <div class="mc-desc">Audit's GEO section (High severity): "No structured, extractable answer-style content." M11 expands thin pages generally but doesn't address the AI-crawler-specific need for explicit Q&A format, definition blocks, or step-by-step content that AI engines can extract and cite.</div>
+      <span class="mc-tier">Suggested tier: Low → new L9</span>
+    </div>
+    <div class="miss-card">
+      <div class="mc-id">GAP-7</div>
+      <div class="mc-title">Weak entity / brand disambiguation ("MyGenie" is generic)</div>
+      <div class="mc-desc">Audit's GEO section (Medium severity): "Weak entity/brand disambiguation — 'MyGenie' is a generic-sounding name that could be confused with other services." No action in the plan to establish entity clarity via schema, Wikipedia/Wikidata presence, or consistent brand descriptors site-wide.</div>
+      <span class="mc-tier">Suggested tier: Low → new L10</span>
+    </div>
+  </div>
+</div>
+
+<!-- ░░░ CRITICAL ░░░ -->
+<div class="tier red" id="tier-red">
+  <div class="tier-header" onclick="toggleTier('tier-red')">
+    <div class="tier-dot"></div>
+    <div>
+      <div class="tier-title">🔴 Critical — Fix within Week 1</div>
+      <div class="tier-subtitle">Direct Google Ads Quality Score bleeding · Each day of delay = impression share lost</div>
+    </div>
+    <div class="tier-count">10 items</div>
+    <div class="tier-chevron">▼</div>
+  </div>
+  <div class="tier-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th class="col-id">ID</th>
+          <th class="col-issue">Issue</th>
+          <th class="col-fix">Fix & Where</th>
+          <th class="col-effort">Effort</th>
+          <th class="col-tags">Improves</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr data-tier="red" data-id="C1">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'C1')"></td>
+          <td><span class="id-badge">C1</span></td>
+          <td>
+            <div class="issue-title">Wrong font preloaded — Inter loaded but Poppins &amp; Clash Display have no preload; both fonts are render-blocking <code>@import</code> in CSS</div>
+            <div class="issue-source">Audit: Performance · Perf Score 42/100 · My investigation: index.html</div>
+          </td>
+          <td>
+            <div class="fix-text">Delete Inter <code>&lt;link&gt;</code> from index.html. Replace both <code>@import</code> font lines in index.css with <code>&lt;link rel="stylesheet"&gt;</code> tags in &lt;head&gt;. Add <code>&lt;link rel="preload" as="style"&gt;</code> for Poppins + Clash Display.</div>
+            <div class="fix-file"><span>public/index.html</span><span>src/index.css</span></div>
+          </td>
+          <td><span class="effort-badge">30 min</span></td>
+          <td><div class="tags"><span class="tag perf">Perf</span><span class="tag qs">FCP</span></div></td>
+        </tr>
+
+        <tr data-tier="red" data-id="C2">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'C2')"></td>
+          <td><span class="id-badge">C2</span></td>
+          <td>
+            <div class="issue-title">Hero LCP image unpreloaded — banner.png (305KB) is LCP candidate; browser doesn't discover it until JS renders</div>
+            <div class="issue-source">Audit: Performance (Critical) · Action Plan Phase 2</div>
+          </td>
+          <td>
+            <div class="fix-text">Add <code>&lt;link rel="preload" as="image" href="/brand/banner.png" fetchpriority="high"&gt;</code> in index.html. Also add <code>fetchpriority="high"</code> directly to the &lt;img&gt; tag in Hero.jsx. <span style="color:#d97706;font-weight:600;">[GAP-5 merged]</span></div>
+            <div class="fix-file"><span>public/index.html</span><span>src/components/home/Hero.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">20 min</span></td>
+          <td><div class="tags"><span class="tag perf">Perf</span><span class="tag qs">LCP</span></div></td>
+        </tr>
+
+        <tr data-tier="red" data-id="C3">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'C3')"></td>
+          <td><span class="id-badge">C3</span></td>
+          <td>
+            <div class="issue-title">No code splitting — all 19 pages in single 2.17MB JS bundle; every visitor downloads Blog, LeadsView, ROI Calculator, AiPage on every page load</div>
+            <div class="issue-source">Audit: Performance (Critical) · Action Plan Phase 2</div>
+          </td>
+          <td>
+            <div class="fix-text">Wrap all non-Home page imports in App.js with <code>React.lazy()</code> + <code>&lt;Suspense fallback={&lt;div className="h-screen"/&gt;}&gt;</code>. Keep Home eager. Each route then loads only its own chunk.</div>
+            <div class="fix-file"><span>src/App.js</span></div>
+          </td>
+          <td><span class="effort-badge">2 hrs</span></td>
+          <td><div class="tags"><span class="tag perf">Perf</span><span class="tag qs">TTI</span><span class="tag lp">LP Exp</span></div></td>
+        </tr>
+
+        <tr data-tier="red" data-id="C4">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'C4')"></td>
+          <td><span class="id-badge">C4</span></td>
+          <td>
+            <div class="issue-title">LandingFooter on /petpooja-alternative stripped of all trust/legal links — no phone, no privacy policy, no email; violates Google LP transparency standard</div>
+            <div class="issue-source">My investigation: PetpoojaAlternative.jsx · Action Plan: Trust signals</div>
+          </td>
+          <td>
+            <div class="fix-text">Add <code>&lt;a href="tel:+919104743156"&gt;</code>, support email, and <code>&lt;Link to="/privacy"&gt;Privacy Policy&lt;/Link&gt;</code> to the LandingFooter component inside PetpoojaAlternative.jsx.</div>
+            <div class="fix-file"><span>src/pages/PetpoojaAlternative.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">20 min</span></td>
+          <td><div class="tags"><span class="tag qs">QS LP</span><span class="tag trust">Trust</span><span class="tag lp">LP Exp</span></div></td>
+        </tr>
+
+        <tr data-tier="red" data-id="C5">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'C5')"></td>
+          <td><span class="id-badge">C5</span></td>
+          <td>
+            <div class="issue-title">StickyMobileCta broken on /petpooja-alternative — component queries data-testid="hero" but VSP hero uses "vsp-hero"; mobile sticky CTA never fires on highest-spend ad LP</div>
+            <div class="issue-source">My investigation: StickyMobileCta.jsx · PetpoojaAlternative.jsx</div>
+          </td>
+          <td>
+            <div class="fix-text">Add StickyMobileCta import + usage to PetpoojaAlternative.jsx page shell. Update the observer selector in StickyMobileCta.jsx to accept both <code>"hero"</code> and <code>"vsp-hero"</code> testids.</div>
+            <div class="fix-file"><span>src/pages/PetpoojaAlternative.jsx</span><span>src/components/home/StickyMobileCta.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">30 min</span></td>
+          <td><div class="tags"><span class="tag conv">Conv</span><span class="tag qs">QS LP</span><span class="tag lp">Mobile</span></div></td>
+        </tr>
+
+        <tr data-tier="red" data-id="C6">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'C6')"></td>
+          <td><span class="id-badge">C6</span></td>
+          <td>
+            <div class="issue-title">Petpooja LP H1 has zero search keywords — "We get compared to Petpooja every week. Here's the honest answer." — no "alternative" or "switch" keyword signal</div>
+            <div class="issue-source">Audit: On-Page SEO · My investigation: vsp.js</div>
+          </td>
+          <td>
+            <div class="fix-text">Update <code>variant_a</code> in vsp.js to include "Petpooja alternative" or "switch from Petpooja" while preserving brand voice. One field change in one data file.</div>
+            <div class="fix-file"><span>src/data/vsp.js</span></div>
+          </td>
+          <td><span class="effort-badge">15 min</span></td>
+          <td><div class="tags"><span class="tag qs">QS</span><span class="tag seo">SEO</span></div></td>
+        </tr>
+
+        <tr data-tier="red" data-id="C7">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'C7')"></td>
+          <td><span class="id-badge">C7</span></td>
+          <td>
+            <div class="issue-title">Trust logos are text spans on /petpooja-alternative — hero strip shows styled &lt;span&gt;Hyatt Centric&lt;/span&gt; chips; actual logo image files exist in /brand/ but aren't used</div>
+            <div class="issue-source">My investigation: PetpoojaAlternative.jsx · /public/brand/ files</div>
+          </td>
+          <td>
+            <div class="fix-text">Replace the 4 text <code>&lt;span&gt;</code> badges in VspHero trust strip with <code>&lt;img src="/brand/hyatt-centric.png"&gt;</code> etc. Same for the CTA section logo strip (8 names). Files already exist in /public/brand/.</div>
+            <div class="fix-file"><span>src/pages/PetpoojaAlternative.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">20 min</span></td>
+          <td><div class="tags"><span class="tag trust">Trust</span><span class="tag conv">Conv</span><span class="tag qs">QS LP</span></div></td>
+        </tr>
+
+        <tr data-tier="red" data-id="C8">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'C8')"></td>
+          <td><span class="id-badge">C8</span></td>
+          <td>
+            <div class="issue-title">Googlebot potentially blocked at Cloudflare WAF — HTTP 403 suspected for non-browser user agents; ad-targeted pages may not be crawlable</div>
+            <div class="issue-source">Audit: Technical SEO · Marketing brief: Issue 2</div>
+          </td>
+          <td>
+            <div class="fix-text">Cloudflare dashboard → Security → WAF → Bot Fight Mode → Allow Googlebot/2.1. Verify: <code>curl -A "Googlebot/2.1 (+http://www.google.com/bot.html)" https://mygenie.online/petpooja-alternative -I</code> should return HTTP 200.</div>
+            <div class="fix-file"><span>Cloudflare Dashboard (no code change)</span></div>
+          </td>
+          <td><span class="effort-badge">30 min</span></td>
+          <td><div class="tags"><span class="tag qs">QS</span><span class="tag seo">Crawl</span></div></td>
+        </tr>
+
+        <tr data-tier="red" data-id="C9">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'C9')"></td>
+          <td><span class="id-badge">C9</span></td>
+          <td>
+            <div class="issue-title">Apex/www duplicate domain — mygenie.online and www.mygenie.online serve identical content; canonicals only exist in JS; second sitemap served on apex host <span class="missed-badge">GAP-3</span></div>
+            <div class="issue-source">Audit: Technical SEO (Critical) · Sitemap Architecture</div>
+          </td>
+          <td>
+            <div class="fix-text">Cloudflare: add Redirect Rule <code>mygenie.online/*</code> → <code>https://www.mygenie.online/$1</code> (301). Also remove or 301-redirect the duplicate sitemap served at the apex host (confirm URL via curl).</div>
+            <div class="fix-file"><span>Cloudflare Dashboard</span><span>Cloudflare: Sitemap rule</span></div>
+          </td>
+          <td><span class="effort-badge">30 min</span></td>
+          <td><div class="tags"><span class="tag seo">SEO</span><span class="tag seo">Crawl</span></div></td>
+        </tr>
+
+        <tr data-tier="red" data-id="C10">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'C10')"></td>
+          <td><span class="id-badge">C10</span></td>
+          <td>
+            <div class="issue-title">Soft 404 returns HTTP 200 — all unmatched routes silently 301-redirect to homepage; Google indexes the homepage under hundreds of ghost URLs</div>
+            <div class="issue-source">Audit: Technical SEO (High) · Action Plan Phase 1</div>
+          </td>
+          <td>
+            <div class="fix-text">Replace <code>&lt;Route path="*" element={&lt;Navigate to="/" replace /&gt;}&gt;</code> in App.js with a <code>&lt;NotFound /&gt;</code> component. Configure Nginx/Cloudflare to return HTTP 404 status for unmatched paths while still serving index.html for client-side routing.</div>
+            <div class="fix-file"><span>src/App.js</span><span>Nginx / Cloudflare config</span></div>
+          </td>
+          <td><span class="effort-badge">45 min</span></td>
+          <td><div class="tags"><span class="tag seo">SEO</span><span class="tag seo">Crawl</span></div></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div><!-- /tier red -->
+
+<!-- ░░░ HIGH ░░░ -->
+<div class="tier orange" id="tier-orange">
+  <div class="tier-header" onclick="toggleTier('tier-orange')">
+    <div class="tier-dot"></div>
+    <div>
+      <div class="tier-title">🟠 High — Fix within Weeks 2–3</div>
+      <div class="tier-subtitle">Meaningful SEO rank gains + conversion improvements + PageSpeed score jump</div>
+    </div>
+    <div class="tier-count">10 items</div>
+    <div class="tier-chevron">▼</div>
+  </div>
+  <div class="tier-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th class="col-id">ID</th>
+          <th class="col-issue">Issue</th>
+          <th class="col-fix">Fix & Where</th>
+          <th class="col-effort">Effort</th>
+          <th class="col-tags">Improves</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr data-tier="orange" data-id="H1">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'H1')"></td>
+          <td><span class="id-badge">H1</span></td>
+          <td>
+            <div class="issue-title">/pricing has zero structured data — highest commercial-intent page; no SoftwareApplication, no Offer schema anywhere on site</div>
+            <div class="issue-source">Audit: Schema (Critical) · Top 5 Quick Wins #1</div>
+          </td>
+          <td>
+            <div class="fix-text">Add <code>SoftwareApplication</code> + <code>Offer</code> JSON-LD via the existing <code>&lt;Seo jsonLd={...}&gt;</code> prop in Pricing.jsx. Also add a site-wide <code>SoftwareApplication</code> entity to ORG_JSONLD in seo.js.</div>
+            <div class="fix-file"><span>src/pages/Pricing.jsx</span><span>src/lib/seo.js</span></div>
+          </td>
+          <td><span class="effort-badge">1 hr</span></td>
+          <td><div class="tags"><span class="tag seo">SEO</span><span class="tag seo">Schema</span></div></td>
+        </tr>
+
+        <tr data-tier="orange" data-id="H2">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'H2')"></td>
+          <td><span class="id-badge">H2</span></td>
+          <td>
+            <div class="issue-title">No WebP images + no lazy-loading on TrustBand/hero images — banner.png (305KB), feature1–5.png (150–170KB each), 8 trust logos all served as unoptimised PNG with no lazy load <span class="missed-badge">GAP-1</span></div>
+            <div class="issue-source">Audit: Images (High) · Action Plan Phase 2</div>
+          </td>
+          <td>
+            <div class="fix-text">Run <code>cwebp -q 82</code> on all 6 /brand/ key images → WebP versions. Add <code>loading="lazy"</code> to TrustBand marquee logos and FeatureVideo posters. Update src references (or use &lt;picture&gt; with WebP + PNG fallback for hero).</div>
+            <div class="fix-file"><span>/public/brand/ (asset work)</span><span>src/components/home/TrustBand.jsx</span><span>src/components/site/FeatureVideo.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">3 hrs</span></td>
+          <td><div class="tags"><span class="tag perf">Perf</span><span class="tag qs">LCP</span><span class="tag perf">PageSpeed</span></div></td>
+        </tr>
+
+        <tr data-tier="orange" data-id="H3">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'H3')"></td>
+          <td><span class="id-badge">H3</span></td>
+          <td>
+            <div class="issue-title">All &lt;img&gt; tags missing width/height HTML attributes — TrustBand logos, testimonial avatars, blog hero images cause layout shift (CLS) on load</div>
+            <div class="issue-source">Audit: Images (Medium) · Action Plan Phase 2</div>
+          </td>
+          <td>
+            <div class="fix-text">Add explicit <code>width</code> and <code>height</code> HTML attributes to all &lt;img&gt; tags in: TrustBand.jsx (logos), ProofSection.jsx (avatars), SuccessStories.jsx, Blog.jsx, BlogPost.jsx.</div>
+            <div class="fix-file"><span>src/components/home/TrustBand.jsx</span><span>src/components/home/ProofSection.jsx</span><span>src/pages/Blog.jsx</span><span>src/pages/BlogPost.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">1 hr</span></td>
+          <td><div class="tags"><span class="tag cls">CLS</span><span class="tag perf">Perf</span></div></td>
+        </tr>
+
+        <tr data-tier="orange" data-id="H4">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'H4')"></td>
+          <td><span class="id-badge">H4</span></td>
+          <td>
+            <div class="issue-title">H1 keywords missing on 3 ad-targeted pages — sell-serve, see-everything, cloud-kitchens H1s contain no searchable POS/software keywords</div>
+            <div class="issue-source">Marketing brief: Issue 4 · My investigation: products.js, sectors.js</div>
+          </td>
+          <td>
+            <div class="fix-text">3 single-line data changes: (1) sell-serve <code>h1</code> in products.js → include "Restaurant POS"; (2) see-everything <code>h1</code> → include "restaurant management software"; (3) cloud-kitchens <code>h1</code> in sectors.js → include "Cloud Kitchen POS".</div>
+            <div class="fix-file"><span>src/data/products.js</span><span>src/data/sectors.js</span></div>
+          </td>
+          <td><span class="effort-badge">20 min</span></td>
+          <td><div class="tags"><span class="tag seo">SEO</span><span class="tag qs">QS</span></div></td>
+        </tr>
+
+        <tr data-tier="orange" data-id="H5">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'H5')"></td>
+          <td><span class="id-badge">H5</span></td>
+          <td>
+            <div class="issue-title">No StickyMobileCta on product/sector pages — mobile users on /product/sell-serve and /solutions/cloud-kitchens have no persistent CTA after scrolling past hero</div>
+            <div class="issue-source">My investigation: ProductPage.jsx, SectorPage.jsx</div>
+          </td>
+          <td>
+            <div class="fix-text">Import and add <code>&lt;StickyMobileCta /&gt;</code> to the page shell of ProductPage.jsx and SectorPage.jsx. Component already built — 2 lines per file.</div>
+            <div class="fix-file"><span>src/pages/ProductPage.jsx</span><span>src/pages/SectorPage.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">30 min</span></td>
+          <td><div class="tags"><span class="tag conv">Conv</span><span class="tag qs">QS LP</span><span class="tag lp">Mobile</span></div></td>
+        </tr>
+
+        <tr data-tier="orange" data-id="H6">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'H6')"></td>
+          <td><span class="id-badge">H6</span></td>
+          <td>
+            <div class="issue-title">Pricing not visible on product/sector pages — no "Plans from ₹799" anchor in hero; user must navigate away to pricing page to see cost</div>
+            <div class="issue-source">Marketing brief: Issue 5 (Trust Signals)</div>
+          </td>
+          <td>
+            <div class="fix-text">Add a small "Plans from ₹799/mo →" text link below the hero CTA button in both ProductPage.jsx and SectorPage.jsx hero sections. Mirrors the homepage "See Pricing" pattern.</div>
+            <div class="fix-file"><span>src/pages/ProductPage.jsx</span><span>src/pages/SectorPage.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">30 min</span></td>
+          <td><div class="tags"><span class="tag conv">Conv</span><span class="tag trust">Trust</span><span class="tag qs">QS LP</span></div></td>
+        </tr>
+
+        <tr data-tier="orange" data-id="H7">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'H7')"></td>
+          <td><span class="id-badge">H7</span></td>
+          <td>
+            <div class="issue-title">No dedicated /restaurant-billing-software LP — "Billing Software" ad group pointing to homepage whose H1 has zero billing keywords</div>
+            <div class="issue-source">Marketing brief: Issue 4 · Action Plan Phase 2</div>
+          </td>
+          <td>
+            <div class="fix-text">New page file RestaurantBillingSoftware.jsx: keyword-led H1 ("The smartest restaurant billing software in India"), reuse DemoForm + PricingSection + TrustBand. Add route in App.js + entry in sitemap.xml.</div>
+            <div class="fix-file"><span>src/pages/RestaurantBillingSoftware.jsx (new)</span><span>src/App.js</span><span>public/sitemap.xml</span></div>
+          </td>
+          <td><span class="effort-badge">1 day</span></td>
+          <td><div class="tags"><span class="tag seo">SEO</span><span class="tag qs">QS</span><span class="tag qs">Ad Rel</span></div></td>
+        </tr>
+
+        <tr data-tier="orange" data-id="H8">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'H8')"></td>
+          <td><span class="id-badge">H8</span></td>
+          <td>
+            <div class="issue-title">No dedicated /restaurant-pos LP — Alpha Terms ad group pointing to homepage; need POS-keyword H1, title, and FAQ for this specific intent</div>
+            <div class="issue-source">Marketing brief: Issue 4 · Action Plan Phase 2</div>
+          </td>
+          <td>
+            <div class="fix-text">New page file RestaurantPos.jsx: H1 "Best Restaurant POS System built for Indian hospitality — MyGenie". Same component reuse pattern as H7. Add route + sitemap entry.</div>
+            <div class="fix-file"><span>src/pages/RestaurantPos.jsx (new)</span><span>src/App.js</span><span>public/sitemap.xml</span></div>
+          </td>
+          <td><span class="effort-badge">1 day</span></td>
+          <td><div class="tags"><span class="tag seo">SEO</span><span class="tag qs">QS</span><span class="tag qs">Ad Rel</span></div></td>
+        </tr>
+
+        <tr data-tier="orange" data-id="H9">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'H9')"></td>
+          <td><span class="id-badge">H9</span></td>
+          <td>
+            <div class="issue-title">LandingFooter on /demo stripped of trust/legal links — Meta ad traffic LP has no phone, no privacy policy; same issue as /petpooja-alternative</div>
+            <div class="issue-source">My investigation: DemoLanding.jsx</div>
+          </td>
+          <td>
+            <div class="fix-text">Same fix as C4: add phone link + privacy policy link to LandingFooter inside DemoLanding.jsx.</div>
+            <div class="fix-file"><span>src/pages/DemoLanding.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">15 min</span></td>
+          <td><div class="tags"><span class="tag trust">Trust</span><span class="tag conv">Conv</span></div></td>
+        </tr>
+
+        <tr data-tier="orange" data-id="H10">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'H10')"></td>
+          <td><span class="id-badge">H10</span></td>
+          <td>
+            <div class="issue-title">Blog has no authors — all 21 posts lack an author field; Google E-E-A-T penalises authorless content for YMYL-adjacent topics</div>
+            <div class="issue-source">Audit: Content Quality (High) · Action Plan Phase 2</div>
+          </td>
+          <td>
+            <div class="fix-text">Add <code>author</code> (and optionally <code>authorTitle</code>) field to all 21 entries in blogPosts.json. Render author byline in BlogPost.jsx. Update BlogPosting JSON-LD in Blog.jsx / BlogPost.jsx to include <code>author</code> object.</div>
+            <div class="fix-file"><span>src/data/blogPosts.json</span><span>src/pages/BlogPost.jsx</span><span>src/pages/Blog.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">2 hrs</span></td>
+          <td><div class="tags"><span class="tag eeat">E-E-A-T</span><span class="tag seo">SEO</span></div></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div><!-- /tier orange -->
+
+<!-- ░░░ MEDIUM ░░░ -->
+<div class="tier yellow" id="tier-yellow">
+  <div class="tier-header" onclick="toggleTier('tier-yellow')">
+    <div class="tier-dot"></div>
+    <div>
+      <div class="tier-title">🟡 Medium — Fix within Month 2</div>
+      <div class="tier-subtitle">SEO authority, E-E-A-T, India-market UX quality</div>
+    </div>
+    <div class="tier-count">13 items</div>
+    <div class="tier-chevron">▼</div>
+  </div>
+  <div class="tier-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th class="col-id">ID</th>
+          <th class="col-issue">Issue</th>
+          <th class="col-fix">Fix & Where</th>
+          <th class="col-effort">Effort</th>
+          <th class="col-tags">Improves</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr data-tier="yellow" data-id="M1">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M1')"></td>
+          <td><span class="id-badge">M1</span></td>
+          <td>
+            <div class="issue-title">Testimonials lack individual owner names — business names exist but no person name, designation, or Review schema on /customers</div>
+            <div class="issue-source">Audit: Content Quality (High) · Schema: Testimonials/ratings unmarked</div>
+          </td>
+          <td>
+            <div class="fix-text">Add <code>ownerName</code> + <code>designation</code> fields to TESTIMONIALS in content.js. Render in ProofSection.jsx + SuccessStories.jsx. Add <code>Review</code> + <code>AggregateRating</code> JSON-LD to /customers Seo block.</div>
+            <div class="fix-file"><span>src/data/content.js</span><span>src/components/home/ProofSection.jsx</span><span>src/pages/SuccessStories.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">3 hrs</span></td>
+          <td><div class="tags"><span class="tag trust">Trust</span><span class="tag eeat">E-E-A-T</span><span class="tag seo">Schema</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M2">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M2')"></td>
+          <td><span class="id-badge">M2</span></td>
+          <td>
+            <div class="issue-title">/product and /solutions hub pages missing from sitemap — all child pages are listed but the hub index routes are absent</div>
+            <div class="issue-source">Audit: On-Page SEO (High) · Top 5 Quick Wins #4 · Sitemap Architecture</div>
+          </td>
+          <td>
+            <div class="fix-text">Add two <code>&lt;url&gt;</code> entries for <code>https://www.mygenie.online/product</code> and <code>https://www.mygenie.online/solutions</code> in sitemap.xml with appropriate priority and lastmod.</div>
+            <div class="fix-file"><span>public/sitemap.xml</span></div>
+          </td>
+          <td><span class="effort-badge">5 min</span></td>
+          <td><div class="tags"><span class="tag seo">SEO</span><span class="tag seo">Crawl</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M3">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M3')"></td>
+          <td><span class="id-badge">M3</span></td>
+          <td>
+            <div class="issue-title">BreadcrumbList schema inconsistent — ProductPage and AiPage have it; SectorPage, Blog, BlogPost, Pricing do not</div>
+            <div class="issue-source">Audit: Schema (Medium) · Action Plan Phase 3</div>
+          </td>
+          <td>
+            <div class="fix-text">Add <code>BreadcrumbList</code> JSON-LD block to the Seo component call in SectorPage.jsx, Blog.jsx, BlogPost.jsx, and Pricing.jsx. Follow the same pattern used in ProductPage.jsx.</div>
+            <div class="fix-file"><span>src/pages/SectorPage.jsx</span><span>src/pages/Blog.jsx</span><span>src/pages/BlogPost.jsx</span><span>src/pages/Pricing.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">1 hr</span></td>
+          <td><div class="tags"><span class="tag seo">SEO</span><span class="tag seo">Schema</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M4">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M4')"></td>
+          <td><span class="id-badge">M4</span></td>
+          <td>
+            <div class="issue-title">Cookie "Accept" button is ~20px tall — py-1 + text-xs inside a 48px strip; well below the 44px minimum touch target</div>
+            <div class="issue-source">Audit: Visual/Mobile (Also Worth Fixing)</div>
+          </td>
+          <td>
+            <div class="fix-text">Change <code>py-1</code> to <code>py-2.5</code> on both Decline and Accept buttons in ConsentBanner.jsx. This brings each button to ~44px height.</div>
+            <div class="fix-file"><span>src/components/site/ConsentBanner.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">10 min</span></td>
+          <td><div class="tags"><span class="tag ux">UX</span><span class="tag lp">Mobile</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M5">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M5')"></td>
+          <td><span class="id-badge">M5</span></td>
+          <td>
+            <div class="issue-title">Hamburger button is 40px — p-2 + 24px Menu icon = 40px; just under the 44px minimum tap target</div>
+            <div class="issue-source">Audit: Visual/Mobile (Also Worth Fixing)</div>
+          </td>
+          <td>
+            <div class="fix-text">Change <code>p-2</code> to <code>p-2.5</code> on the mobile toggle button in Navbar.jsx. Brings it to 44px exactly.</div>
+            <div class="fix-file"><span>src/components/site/Navbar.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">5 min</span></td>
+          <td><div class="tags"><span class="tag ux">UX</span><span class="tag lp">Mobile</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M6">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M6')"></td>
+          <td><span class="id-badge">M6</span></td>
+          <td>
+            <div class="issue-title">Marketing claims unsubstantiated — "+25% profit", "₹1 Lakh leakage", "40% lower costs" backed only by a one-line disclaimer with no linked source or methodology</div>
+            <div class="issue-source">Audit: Content Quality (High) · Action Plan Phase 3</div>
+          </td>
+          <td>
+            <div class="fix-text">Add a <code>/case-studies</code> page or methodology anchor; link each stat on homepage/petpooja-alternative to a named, dated case study (e.g. "Palm Forest Resort, Aug 2025"). Update disclaimer text to include link.</div>
+            <div class="fix-file"><span>src/pages/ (new CaseStudy or methodology page)</span><span>src/data/content.js</span><span>src/components/home/Hero.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">1 day</span></td>
+          <td><div class="tags"><span class="tag trust">Trust</span><span class="tag eeat">E-E-A-T</span><span class="tag conv">Conv</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M7">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M7')"></td>
+          <td><span class="id-badge">M7</span></td>
+          <td>
+            <div class="issue-title">ROI calculator buried in footer — high-value middle-funnel tool has no above-fold mention, no navbar item, no homepage CTA section</div>
+            <div class="issue-source">Audit: SXO (Top 5 Quick Wins #5) · Action Plan Phase 3</div>
+          </td>
+          <td>
+            <div class="fix-text">Add /roi CTA card between ProblemGrid and BeforeAfter in Home.jsx. Add "ROI Calculator" to the Navbar Resources dropdown in Navbar.jsx. ROI page already exists — this is purely a promotion/linking change.</div>
+            <div class="fix-file"><span>src/pages/Home.jsx</span><span>src/components/site/Navbar.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">1 hr</span></td>
+          <td><div class="tags"><span class="tag conv">Conv</span><span class="tag seo">SEO</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M8">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M8')"></td>
+          <td><span class="id-badge">M8</span></td>
+          <td>
+            <div class="issue-title">GST/UPI/aggregator trust signals missing above fold — India-specific signals (GST-ready, UPI/Paytm, Swiggy/Zomato sync) not prominent on homepage or key LPs</div>
+            <div class="issue-source">Audit: On-Page SEO (Medium) · SXO: GST buyers 34/100 · Action Plan Phase 3</div>
+          </td>
+          <td>
+            <div class="fix-text">Add a "Works with Swiggy, Zomato, UPI, Paytm · GST-ready" badge row below the homepage hero CTAs in Hero.jsx. Surface same badge on cloud-kitchens SectorPage hero section in sectors.js sub copy.</div>
+            <div class="fix-file"><span>src/components/home/Hero.jsx</span><span>src/data/sectors.js (cloud-kitchens)</span></div>
+          </td>
+          <td><span class="effort-badge">1 hr</span></td>
+          <td><div class="tags"><span class="tag conv">Conv</span><span class="tag trust">Trust</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M9">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M9')"></td>
+          <td><span class="id-badge">M9</span></td>
+          <td>
+            <div class="issue-title">Phone number not above fold on homepage — phone is in footer only; India visitors expect direct contact visible near the primary CTA</div>
+            <div class="issue-source">Marketing brief: Issue 5 · My investigation</div>
+          </td>
+          <td>
+            <div class="fix-text">Add a small <code>&lt;a href="tel:+919104743156"&gt;</code> link in the hero sub-area or Navbar right side on desktop, using company.js COMPANY.phoneIntl value.</div>
+            <div class="fix-file"><span>src/components/home/Hero.jsx</span><span>(or) src/components/site/Navbar.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">30 min</span></td>
+          <td><div class="tags"><span class="tag trust">Trust</span><span class="tag conv">Conv</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M10">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M10')"></td>
+          <td><span class="id-badge">M10</span></td>
+          <td>
+            <div class="issue-title">Calendly widget double-loaded — DemoForm.jsx and CalendlyInline.jsx each have their own loadCalendlyScript(); potential race condition + duplicate network request</div>
+            <div class="issue-source">My investigation: DemoForm.jsx, CalendlyInline.jsx</div>
+          </td>
+          <td>
+            <div class="fix-text">Extract <code>loadCalendlyScript()</code> into a shared <code>src/lib/calendly.js</code> utility that uses a singleton promise. Import from both DemoForm.jsx and CalendlyInline.jsx.</div>
+            <div class="fix-file"><span>src/lib/calendly.js (new)</span><span>src/components/site/DemoForm.jsx</span><span>src/components/site/CalendlyInline.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">30 min</span></td>
+          <td><div class="tags"><span class="tag perf">Perf</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M11">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M11')"></td>
+          <td><span class="id-badge">M11</span></td>
+          <td>
+            <div class="issue-title">Thin product/sector pages — ~250 words avg; template-generated content too brief for competitive keywords; Google E-E-A-T requires depth</div>
+            <div class="issue-source">Audit: Content Quality (Medium) · Action Plan Phase 3</div>
+          </td>
+          <td>
+            <div class="fix-text">Expand products.js and sectors.js data entries with 2–3 additional proof points, India-specific detail (aggregator names, GST compliance, regional examples), and a "Why it matters for [sector]" paragraph per page. Content work, not template changes.</div>
+            <div class="fix-file"><span>src/data/products.js</span><span>src/data/sectors.js</span></div>
+          </td>
+          <td><span class="effort-badge">1 week</span></td>
+          <td><div class="tags"><span class="tag seo">SEO</span><span class="tag eeat">E-E-A-T</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M12">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M12')"></td>
+          <td><span class="id-badge">M12</span></td>
+          <td>
+            <div class="issue-title">Sitemap lastmod bulk-stamped — all 22 site pages show 2026-06-07 regardless of actual last-changed date; crawlers deprioritise stale-looking sitemaps</div>
+            <div class="issue-source">Audit: Sitemap Architecture · Action Plan Phase 4</div>
+          </td>
+          <td>
+            <div class="fix-text">Generate <code>lastmod</code> from git commit history or CMS update timestamp at build time instead of a hardcoded date. Alternatively update the dates manually for each page based on last actual content change.</div>
+            <div class="fix-file"><span>public/sitemap.xml</span><span>(or build script generating sitemap)</span></div>
+          </td>
+          <td><span class="effort-badge">1 hr</span></td>
+          <td><div class="tags"><span class="tag seo">Crawl</span></div></td>
+        </tr>
+
+        <tr data-tier="yellow" data-id="M13" class="missed">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'M13')"></td>
+          <td><span class="id-badge">M13</span> <span class="missed-badge">GAP-2</span></td>
+          <td>
+            <div class="issue-title">Cookie-banner overlaps hero/CTA at 768px tablet breakpoint — banner positioned over content at the exact viewport where conversion forms are visible</div>
+            <div class="issue-source">Audit: Visual/Mobile (Also Worth Fixing) — NOT in original plan</div>
+          </td>
+          <td>
+            <div class="fix-text">Inspect ConsentBanner.jsx at the 768px breakpoint. The fixed banner (z-[70]) likely needs a conditional padding-bottom on the hero/Navbar container at sm: breakpoint, or increase the banner's safe-area handling to prevent overlap.</div>
+            <div class="fix-file"><span>src/components/site/ConsentBanner.jsx</span><span>src/components/home/Hero.jsx (padding-bottom sm:)</span></div>
+          </td>
+          <td><span class="effort-badge">30 min</span></td>
+          <td><div class="tags"><span class="tag ux">UX</span><span class="tag conv">Conv</span><span class="tag lp">Mobile</span></div></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div><!-- /tier yellow -->
+
+<!-- ░░░ LOW / ONGOING ░░░ -->
+<div class="tier blue" id="tier-blue">
+  <div class="tier-header" onclick="toggleTier('tier-blue')">
+    <div class="tier-dot"></div>
+    <div>
+      <div class="tier-title">🔵 Low / Ongoing — Backlog &amp; Long-term</div>
+      <div class="tier-subtitle">Structural authority, AI search readiness, monitoring infrastructure</div>
+    </div>
+    <div class="tier-count">10 items</div>
+    <div class="tier-chevron">▼</div>
+  </div>
+  <div class="tier-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th class="col-id">ID</th>
+          <th class="col-issue">Issue</th>
+          <th class="col-fix">Fix & Where</th>
+          <th class="col-effort">Effort</th>
+          <th class="col-tags">Improves</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr data-tier="blue" data-id="L1">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'L1')"></td>
+          <td><span class="id-badge">L1</span></td>
+          <td>
+            <div class="issue-title">SSR / pre-rendering — root cause of all JS-rendering issues; single fix resolves Technical, On-Page, Performance, and GEO scores simultaneously</div>
+            <div class="issue-source">Audit: All categories · Top 5 Critical #1 · Action Plan Phase 1</div>
+          </td>
+          <td>
+            <div class="fix-text">Option A: Migrate to Next.js 14+ with SSG for static routes + SSR for dynamic (Blog, LeadsView). Option B (interim): Add react-snap as post-build step to generate static HTML snapshots — faster to ship, less robust long-term.</div>
+            <div class="fix-file"><span>Full framework migration or build pipeline change</span></div>
+          </td>
+          <td><span class="effort-badge">4–8 weeks</span></td>
+          <td><div class="tags"><span class="tag seo">Everything</span><span class="tag geo">GEO</span><span class="tag perf">Perf</span><span class="tag qs">QS</span></div></td>
+        </tr>
+
+        <tr data-tier="blue" data-id="L2">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'L2')"></td>
+          <td><span class="id-badge">L2</span></td>
+          <td>
+            <div class="issue-title">Blog publishing gap — 15 months since last post (May 2025); 21 posts all without authors; comparison/buyer's-guide content entirely missing</div>
+            <div class="issue-source">Audit: Content Quality (Medium) · Action Plan Phase 3</div>
+          </td>
+          <td>
+            <div class="fix-text">Publish minimum 2 posts/month. Priority topics: "MyGenie vs Posist", "How to choose a POS in India 2026", "GST billing software for restaurants". Revise the 5 earliest 2024 posts which may have AI-content markers.</div>
+            <div class="fix-file"><span>src/data/blogPosts.json</span><span>public/blog/ (new images)</span></div>
+          </td>
+          <td><span class="effort-badge">Ongoing</span></td>
+          <td><div class="tags"><span class="tag seo">SEO</span><span class="tag eeat">Authority</span></div></td>
+        </tr>
+
+        <tr data-tier="blue" data-id="L3">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'L3')"></td>
+          <td><span class="id-badge">L3</span></td>
+          <td>
+            <div class="issue-title">No llms.txt — AI crawlers (GPTBot, PerplexityBot) have no guidance on site content scope; low value until SSR is live and content is actually crawlable</div>
+            <div class="issue-source">Audit: GEO (Medium) · Action Plan Phase 3</div>
+          </td>
+          <td>
+            <div class="fix-text">After L1 (SSR) is complete, create <code>/public/llms.txt</code> with brand description, content scope, allowed/disallowed sections, and key page summaries. Follow emerging llms.txt spec.</div>
+            <div class="fix-file"><span>public/llms.txt (new — after L1)</span></div>
+          </td>
+          <td><span class="effort-badge">1 hr (after L1)</span></td>
+          <td><div class="tags"><span class="tag geo">GEO</span><span class="tag seo">AI Search</span></div></td>
+        </tr>
+
+        <tr data-tier="blue" data-id="L4">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'L4')"></td>
+          <td><span class="id-badge">L4</span></td>
+          <td>
+            <div class="issue-title">HSTS and CSP headers missing — security headers Strict-Transport-Security and Content-Security-Policy absent from HTTP responses</div>
+            <div class="issue-source">Audit: Technical SEO (Medium) · Action Plan Phase 4</div>
+          </td>
+          <td>
+            <div class="fix-text">Add HSTS (<code>Strict-Transport-Security: max-age=31536000; includeSubDomains</code>) and a permissive CSP header in Cloudflare → Transform Rules → Modify Response Headers. Test carefully — CSP can break GTM/PostHog if too restrictive.</div>
+            <div class="fix-file"><span>Cloudflare Dashboard: Transform Rules</span></div>
+          </td>
+          <td><span class="effort-badge">2 hrs</span></td>
+          <td><div class="tags"><span class="tag seo">Security</span><span class="tag seo">Technical</span></div></td>
+        </tr>
+
+        <tr data-tier="blue" data-id="L5">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'L5')"></td>
+          <td><span class="id-badge">L5</span></td>
+          <td>
+            <div class="issue-title">No CWV monitoring pipeline — no PSI/CrUX field data; no Lighthouse CI; no regression alerting on deploys</div>
+            <div class="issue-source">Audit: Performance (Medium) · Action Plan Phase 4</div>
+          </td>
+          <td>
+            <div class="fix-text">Configure Google PSI API + CrUX field data pull for the 5 key LP URLs. Set up weekly Lighthouse CI on critical URLs (homepage, /petpooja-alternative, /pricing). Add a drift-check step to the deploy pipeline.</div>
+            <div class="fix-file"><span>CI/CD pipeline config</span><span>Google Search Console + PSI API</span></div>
+          </td>
+          <td><span class="effort-badge">1 day</span></td>
+          <td><div class="tags"><span class="tag perf">Monitoring</span></div></td>
+        </tr>
+
+        <tr data-tier="blue" data-id="L6">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'L6')"></td>
+          <td><span class="id-badge">L6</span></td>
+          <td>
+            <div class="issue-title">FAQPage schema yields no rich results since May 2026 (Google retired) — ProductPage and SectorPage generate this schema pointlessly; leaves opportunity for HowTo/QAPage schema instead</div>
+            <div class="issue-source">Audit: Schema (Info) · Verified via web search</div>
+          </td>
+          <td>
+            <div class="fix-text">Leave existing FAQPage JSON-LD in place (harmless per Google). Evaluate replacing with <code>HowTo</code> or <code>QAPage</code> schema for applicable FAQ items. No urgency — schedule for next schema audit cycle.</div>
+            <div class="fix-file"><span>src/pages/ProductPage.jsx</span><span>src/pages/SectorPage.jsx</span></div>
+          </td>
+          <td><span class="effort-badge">1 hr</span></td>
+          <td><div class="tags"><span class="tag seo">Schema</span></div></td>
+        </tr>
+
+        <tr data-tier="blue" data-id="L7">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'L7')"></td>
+          <td><span class="id-badge">L7</span></td>
+          <td>
+            <div class="issue-title">Third-party script consolidation — 12 scripts on main thread (from live network inspection); 5 PostHog bundles suspected from GTM; multiple competing for INP budget</div>
+            <div class="issue-source">Audit: Performance (High) · Action Plan Phase 2</div>
+          </td>
+          <td>
+            <div class="fix-text">Live GTM container audit: identify and remove redundant/legacy tags; defer non-critical scripts (chat widgets, supplementary analytics); target &lt;6 third-party requests on initial load. Requires GTM container access.</div>
+            <div class="fix-file"><span>GTM Container (GTM-K5D84Z3L)</span><span>src/lib/gtm.js (review defer logic)</span></div>
+          </td>
+          <td><span class="effort-badge">1 day</span></td>
+          <td><div class="tags"><span class="tag perf">Perf</span><span class="tag qs">INP</span></div></td>
+        </tr>
+
+        <tr data-tier="blue" data-id="L8" class="missed">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'L8')"></td>
+          <td><span class="id-badge">L8</span> <span class="missed-badge">GAP-4</span></td>
+          <td>
+            <div class="issue-title">Third-party brand mention &amp; citation investigation for GEO — no research done on review sites, directories, comparison articles that cite MyGenie</div>
+            <div class="issue-source">Audit: GEO (Info) · Action Plan Phase 3 — NOT in original plan</div>
+          </td>
+          <td>
+            <div class="fix-text">Research task: audit presence on G2, Capterra, SoftwareSuggest, Justdial, IndiaMART, GetApp. Check for comparison articles on leading restaurant/hospitality blogs. Submit or claim listings where absent. Build backlink + citation map.</div>
+            <div class="fix-file"><span>External research task — no code change</span></div>
+          </td>
+          <td><span class="effort-badge">2 days</span></td>
+          <td><div class="tags"><span class="tag geo">GEO</span><span class="tag eeat">Authority</span><span class="tag seo">Backlinks</span></div></td>
+        </tr>
+
+        <tr data-tier="blue" data-id="L9" class="missed">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'L9')"></td>
+          <td><span class="id-badge">L9</span> <span class="missed-badge">GAP-6</span></td>
+          <td>
+            <div class="issue-title">No structured answer-style content for AI crawlers — GEO High severity; no Q&amp;A blocks, definition sections, or step-by-step content that GPTBot/PerplexityBot can extract and cite</div>
+            <div class="issue-source">Audit: GEO (High) — NOT in original plan</div>
+          </td>
+          <td>
+            <div class="fix-text">After L1 (SSR), add explicit answer-style content sections to /resources, /blog posts, and key sector pages: definition blocks ("What is a cloud kitchen POS?"), numbered step sections, comparison tables. Structure for extractability, not just readability.</div>
+            <div class="fix-file"><span>src/pages/Resources.jsx</span><span>src/data/sectors.js (new sections)</span><span>New blog posts with Q&A format</span></div>
+          </td>
+          <td><span class="effort-badge">Ongoing (after L1)</span></td>
+          <td><div class="tags"><span class="tag geo">GEO</span><span class="tag seo">AI Search</span></div></td>
+        </tr>
+
+        <tr data-tier="blue" data-id="L10" class="missed">
+          <td><input type="checkbox" class="cb" onchange="markDone(this,'L10')"></td>
+          <td><span class="id-badge">L10</span> <span class="missed-badge">GAP-7</span></td>
+          <td>
+            <div class="issue-title">Weak entity/brand disambiguation — "MyGenie" is generic-sounding; AI engines and Google's Knowledge Graph may confuse with other services using this name</div>
+            <div class="issue-source">Audit: GEO (Medium) — NOT in original plan</div>
+          </td>
+          <td>
+            <div class="fix-text">Add explicit entity-disambiguation language to ORG_JSONLD in seo.js: include <code>description</code>, <code>foundingDate</code>, <code>areaServed</code>: "India", <code>keywords</code>. Create/claim Wikidata + Google Knowledge Panel. Add consistent brand descriptor "MyGenie POS — India's Hospitality Operating System" site-wide.</div>
+            <div class="fix-file"><span>src/lib/seo.js (ORG_JSONLD)</span><span>Wikidata / Google Business</span></div>
+          </td>
+          <td><span class="effort-badge">1 day</span></td>
+          <td><div class="tags"><span class="tag geo">GEO</span><span class="tag seo">Entity</span></div></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div><!-- /tier blue -->
+
+</div><!-- /main -->
+
+<!-- ── LEGEND ── -->
+<div class="legend">
+  <span class="legend-title">TAG KEY:</span>
+  <span class="tag qs">QS</span><span style="font-size:11px;color:#64748b"> Google Ads Quality Score</span>
+  <span class="tag lp">LP Exp</span><span style="font-size:11px;color:#64748b"> Landing Page Experience</span>
+  <span class="tag perf">Perf</span><span style="font-size:11px;color:#64748b"> Core Web Vitals / PageSpeed</span>
+  <span class="tag seo">SEO</span><span style="font-size:11px;color:#64748b"> Organic rank</span>
+  <span class="tag conv">Conv</span><span style="font-size:11px;color:#64748b"> Conversion rate</span>
+  <span class="tag trust">Trust</span><span style="font-size:11px;color:#64748b"> User trust signals</span>
+  <span class="tag eeat">E-E-A-T</span><span style="font-size:11px;color:#64748b"> Experience/Expertise/Authority/Trust</span>
+  <span class="tag geo">GEO</span><span style="font-size:11px;color:#64748b"> AI search / Generative Engine Optimisation</span>
+  <span class="tag cls">CLS</span><span style="font-size:11px;color:#64748b"> Cumulative Layout Shift</span>
+  <span class="tag ux">UX</span><span style="font-size:11px;color:#64748b"> User Experience</span>
+  &nbsp;|&nbsp;
+  <span class="missed-badge">GAP</span><span style="font-size:11px;color:#64748b"> Item was missing from the original plan — added from audit cross-check</span>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────────
+const STATE_KEY = 'mygenie_seo_plan_v2';
+let state = {};
+try { state = JSON.parse(localStorage.getItem(STATE_KEY) || '{}'); } catch(e) { state = {}; }
+
+function save() { try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e) {} }
+
+// ── TIER COUNTS ───────────────────────────────────────────────────────────────
+const TIER_MAP = {
+  red: 'c', orange: 'h', yellow: 'm', blue: 'l'
+};
+function countTier(tier) {
+  const rows = document.querySelectorAll(`tr[data-tier="${tier}"]`);
+  let total = rows.length, done = 0;
+  rows.forEach(r => { if(state[r.dataset.id]) done++; });
+  return { total, done };
+}
+function countGaps() {
+  const rows = document.querySelectorAll('tr.missed');
+  let total = rows.length, done = 0;
+  rows.forEach(r => { if(state[r.dataset.id]) done++; });
+  return { total, done };
+}
+
+function updateDashboard() {
+  const tiers = ['red','orange','yellow','blue'];
+  const keys  = ['c','h','m','l'];
+  let allTotal = 0, allDone = 0;
+
+  tiers.forEach((tier, i) => {
+    const { total, done } = countTier(tier);
+    document.getElementById(`d-${keys[i]}-total`).textContent = total;
+    document.getElementById(`d-${keys[i]}-done`).textContent  = done + ' done';
+    allTotal += total; allDone += done;
+  });
+
+  const g = countGaps();
+  document.getElementById('d-g-total').textContent = g.total;
+  document.getElementById('d-g-done').textContent  = g.done + ' done';
+
+  document.getElementById('d-all-total').textContent = allTotal;
+  document.getElementById('d-all-done').textContent  = allDone + ' done';
+
+  const pct = allTotal ? Math.round((allDone / allTotal) * 100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = `${allDone} / ${allTotal} items done (${pct}%)`;
+}
+
+// ── INIT CHECKBOXES ────────────────────────────────────────────────────────────
+document.querySelectorAll('tr[data-id]').forEach(row => {
+  const id = row.dataset.id;
+  const cb = row.querySelector('.cb');
+  if (state[id]) { cb.checked = true; row.classList.add('done'); }
+});
+updateDashboard();
+
+// ── MARK DONE ─────────────────────────────────────────────────────────────────
+function markDone(cb, id) {
+  const row = cb.closest('tr');
+  if (cb.checked) { state[id] = true;  row.classList.add('done'); }
+  else            { delete state[id];  row.classList.remove('done'); }
+  save();
+  updateDashboard();
+  if (hideDone) applyHideDone();
+}
+
+// ── TIER COLLAPSE ─────────────────────────────────────────────────────────────
+function toggleTier(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+// ── FILTER BY TIER ────────────────────────────────────────────────────────────
+let currentFilter = 'all';
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const tierIds = ['tier-red','tier-orange','tier-yellow','tier-blue'];
+  const tierMap  = { red:'tier-red', orange:'tier-orange', yellow:'tier-yellow', blue:'tier-blue' };
+
+  if (f === 'all') {
+    tierIds.forEach(id => { document.getElementById(id).style.display = ''; });
+    document.getElementById('gap-section').style.display = '';
+  } else if (f === 'gap') {
+    tierIds.forEach(id => { document.getElementById(id).style.display = ''; });
+    document.getElementById('gap-section').style.display = '';
+    // within tables, hide non-gap rows
+    document.querySelectorAll('tbody tr').forEach(r => {
+      r.style.display = r.classList.contains('missed') ? '' : 'none';
+    });
+    return;
+  } else {
+    tierIds.forEach(id => {
+      document.getElementById(id).style.display = tierMap[f] === id ? '' : 'none';
+    });
+    document.getElementById('gap-section').style.display = 'none';
+  }
+  // restore all rows if not gap filter
+  document.querySelectorAll('tbody tr').forEach(r => { r.style.display = ''; });
+  if (hideDone) applyHideDone();
+}
+
+// ── HIDE DONE ─────────────────────────────────────────────────────────────────
+let hideDone = false;
+function toggleHideDone(cb) {
+  hideDone = cb.checked;
+  applyHideDone();
+}
+function applyHideDone() {
+  document.querySelectorAll('tbody tr[data-id]').forEach(r => {
+    if (hideDone && r.classList.contains('done')) r.style.display = 'none';
+    else if (r.style.display === 'none' && !r.classList.contains('done')) r.style.display = '';
+    else if (!r.classList.contains('done')) r.style.display = '';
+  });
+}
+</script>
+
+</body>
+</html>
