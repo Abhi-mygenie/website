@@ -380,7 +380,7 @@ export default function DemoForm({ sector, shortForm = false }) {
         {loading ? <><Loader2 className="w-5 h-5 animate-spin" /> Sending...</> : sector === "meta-demo" ? <><span>Book My Free Demo</span><ArrowRight className="w-4 h-4" /></> : "Get My Customized Walkthrough"}
       </button>
       {sector === "meta-demo" ? (
-        <p className="text-xs text-brand-muted text-center mt-3">100s of outlets across 75 cities already on MyGenie</p>
+        <p className="text-xs text-brand-muted text-center mt-3">100s of restaurants switched to MyGenie across 75 cities</p>
       ) : (
         <p className="text-xs text-brand-muted text-center mt-3">No spam. We&apos;ll only use this to schedule your demo.</p>
       )}

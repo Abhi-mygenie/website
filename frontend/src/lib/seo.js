@@ -26,6 +26,60 @@ export const ORG_JSONLD = {
   },
 };
 
+// SoftwareApplication entity — added to /pricing (Offer schema) and / (entity declaration).
+// AggregateRating deferred — no verified review source. Add when Google My Business reviews established.
+export const SOFTWARE_APP_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "MyGenie POS",
+  applicationCategory: "BusinessApplication",
+  applicationSubCategory: "Point of Sale Software",
+  operatingSystem: "Web, Android, iOS",
+  description: "MyGenie POS is a hospitality operating system for restaurants, cafes, cloud kitchens and hotels. Billing, inventory, CRM, loyalty, and AI — all in one platform.",
+  url: `${SITE_URL}/pricing`,
+  offers: [
+    {
+      "@type": "Offer",
+      name: "Starter",
+      price: "799",
+      priceCurrency: "INR",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: "799",
+        priceCurrency: "INR",
+        unitText: "per outlet per month",
+      },
+      description: "POS & Billing, KOT, Owner Dashboard, Daily Reports",
+    },
+    {
+      "@type": "Offer",
+      name: "Growth",
+      price: "1499",
+      priceCurrency: "INR",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: "1499",
+        priceCurrency: "INR",
+        unitText: "per outlet per month",
+      },
+      description: "Everything in Starter + Captain App, KDS, Online Ordering, CRM",
+    },
+    {
+      "@type": "Offer",
+      name: "Pro",
+      price: "2499",
+      priceCurrency: "INR",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: "2499",
+        priceCurrency: "INR",
+        unitText: "per outlet per month",
+      },
+      description: "Everything in Growth + Loyalty, WhatsApp Automation, AI features, dedicated account manager",
+    },
+  ],
+};
+
 // Static per-route SEO. Keyword-rich titles modelled on the proven live-site titles.
 export const PAGE_SEO = {
   "/": {

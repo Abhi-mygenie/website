@@ -14,7 +14,7 @@ import PlanCompareModal from "@/components/pricing/PlanCompareModal";
 import Seo from "@/components/site/Seo";
 import { EditableText, EditableList } from "@/components/cms/Editable";
 import { useContent } from "@/lib/cms/CmsProvider";
-import { PAGE_SEO } from "@/lib/seo";
+import { PAGE_SEO, SOFTWARE_APP_JSONLD } from "@/lib/seo";
 import { PLANS, ADDONS, MONTHS_PER_YEAR, GST_RATE, alsoAdded } from "@/data/pricing";
 
 const inr = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
@@ -148,7 +148,7 @@ export default function Pricing() {
 
   return (
     <div className="bg-white" data-testid="pricing-page">
-      <Seo title={PAGE_SEO["/pricing"].title} description={PAGE_SEO["/pricing"].description} path="/pricing" />
+      <Seo title={PAGE_SEO["/pricing"].title} description={PAGE_SEO["/pricing"].description} path="/pricing" jsonLd={[SOFTWARE_APP_JSONLD]} />
       <Navbar />
       <CheckoutModal open={checkout.open} intent={checkout.intent} config={config} onClose={() => setCheckout({ ...checkout, open: false })} />
       <FeatureDemoModal plan={demoPlan} open={!!demoPlan} onClose={() => setDemoPlan(null)} />

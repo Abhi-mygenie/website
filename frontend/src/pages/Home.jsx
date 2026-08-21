@@ -13,7 +13,7 @@ import ProofSection from "@/components/home/ProofSection";
 import CtaDemo from "@/components/home/CtaDemo";
 import StickyMobileCta from "@/components/home/StickyMobileCta";
 import Seo from "@/components/site/Seo";
-import { PAGE_SEO, ORG_JSONLD } from "@/lib/seo";
+import { PAGE_SEO, ORG_JSONLD, SOFTWARE_APP_JSONLD } from "@/lib/seo";
 
 export default function Home() {
   const [sector, setSector] = useState("");
@@ -29,7 +29,7 @@ export default function Home() {
 
   return (
     <div className="bg-white" data-testid="home-page">
-      <Seo title={PAGE_SEO["/"].title} description={PAGE_SEO["/"].description} path="/" jsonLd={ORG_JSONLD} />
+      <Seo title={PAGE_SEO["/"].title} description={PAGE_SEO["/"].description} path="/" jsonLd={[ORG_JSONLD, SOFTWARE_APP_JSONLD]} />
       <Navbar onDemo={scrollToDemo} />
       <main>
         <Hero onDemo={scrollToDemo} />

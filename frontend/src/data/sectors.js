@@ -6,7 +6,7 @@ export const SECTOR_PAGES = {
   "restaurants": {
     name: "Restaurants", icon: "UtensilsCrossed", image: IMG(941861),
     eyebrow: "For Restaurants & Fine Dine",
-    h1: "Turn tables faster, kill order errors, and see profit per table.",
+    h1: "Restaurant POS software — faster tables, fewer errors, more profit per cover.",
     sub: "From the captain's tab to the kitchen screen to your owner dashboard, MyGenie runs your whole dining room — so you serve more covers, with fewer mistakes, and know exactly where your profit comes from.",
     pains: [
       { title: "Slow table service", desc: "Guests wait, orders pile up, and tables turn too slowly at peak hours." },
@@ -35,7 +35,7 @@ export const SECTOR_PAGES = {
   "cafes": {
     name: "Cafés", icon: "Coffee", image: IMG(302899),
     eyebrow: "For Cafés & Coffee Shops",
-    h1: "Protect every margin — and turn first-timers into regulars.",
+    h1: "Café POS system — protect every margin and turn first-timers into regulars.",
     sub: "Thin margins leave no room for waste or guesswork. MyGenie gives cafés fast mobile billing, ingredient-level control, and a built-in repeat-customer engine.",
     pains: [
       { title: "Thin margins, hidden waste", desc: "Ingredients spoil or over-portion before they ever become profit." },
@@ -64,7 +64,7 @@ export const SECTOR_PAGES = {
   "qsr": {
     name: "QSR / Fast Food", icon: "Sandwich", image: IMG(1639557),
     eyebrow: "For QSR & Fast Food",
-    h1: "More covers per hour — and every cash drawer locked down.",
+    h1: "QSR POS & billing — more covers per hour and every cash drawer locked down.",
     sub: "Queues kill QSR profit. MyGenie speeds up ordering with prepaid tokens and scan-&-order, syncs the kitchen with KDS, and puts every void on the record.",
     pains: [
       { title: "Peak-hour queues", desc: "Lines build, customers walk — and revenue walks with them." },
@@ -93,7 +93,7 @@ export const SECTOR_PAGES = {
   "cloud-kitchens": {
     name: "Cloud Kitchens", icon: "ChefHat", image: IMG(12821628),
     eyebrow: "For Cloud Kitchens",
-    h1: "Every brand and every aggregator — one screen, one inventory.",
+    h1: "Cloud kitchen POS — every brand and aggregator on one screen, one inventory.",
     sub: "Juggling Swiggy, Zomato and multiple brands shouldn't mean five tablets and a spreadsheet. MyGenie unifies it all into one backend.",
     pains: [
       { title: "Aggregator juggling", desc: "Swiggy and Zomato orders across multiple tablets and brands." },
@@ -122,7 +122,7 @@ export const SECTOR_PAGES = {
   "hotels-resorts": {
     name: "Hotels & Resorts", icon: "BedDouble", image: IMG(258154),
     eyebrow: "For Hotels & Resorts",
-    h1: "Run your entire property on one app — rooms, restaurant, spa, and bar. Even offline.",
+    h1: "Hotel POS system — rooms, restaurant, spa and bar on one app. Works even offline.",
     sub: "Stop running between counters. MyGenie unifies room billing and F&B into one consolidated checkout bill, works in low-internet properties, and lets staff serve guests right from their phones.",
     pains: [
       { title: "Complex room + F&B billing", desc: "Rooms, restaurant, spa and bar all live in separate systems." },
@@ -151,7 +151,7 @@ export const SECTOR_PAGES = {
   "food-courts": {
     name: "Food Courts", icon: "Store", image: IMG(1267320),
     eyebrow: "For Food Courts",
-    h1: "One wallet, many counters, zero reconciliation headaches.",
+    h1: "Food court POS — one shared wallet, many counters, zero reconciliation headaches.",
     sub: "Multiple vendors, shared seating, one messy settlement at day's end. MyGenie runs every counter on a shared wallet and reconciles automatically.",
     pains: [
       { title: "Multi-vendor settlement", desc: "Reconciling many counters by hand is slow and error-prone." },
@@ -180,7 +180,7 @@ export const SECTOR_PAGES = {
   "canteens": {
     name: "Canteens & Mess", icon: "Utensils", image: IMG(696218),
     eyebrow: "For Canteens & Mess",
-    h1: "Prepaid, subsidized, and fully accountable — zero leakage.",
+    h1: "Canteen management software — prepaid, subsidized and fully accountable. Zero leakage.",
     sub: "Corporate and institutional canteens run on prepaid balances, subsidies and headcounts. MyGenie tracks every meal and stops leakage cold.",
     pains: [
       { title: "Subsidy management", desc: "Employee and student subsidies are hard to apply and track." },
@@ -209,7 +209,7 @@ export const SECTOR_PAGES = {
   "chains": {
     name: "Chains & Franchises", icon: "Building2", image: IMG(1581384),
     eyebrow: "For Chains & Franchises",
-    h1: "Control every outlet from one dashboard — without flying to each one.",
+    h1: "Multi-outlet POS for chains & franchises — control every outlet from one dashboard.",
     sub: "As you scale, control slips. MyGenie centralizes menus, prices, inventory and audits so every outlet runs the same — with zero blind spots.",
     pains: [
       { title: "No central control", desc: "Each outlet ends up doing its own thing." },
@@ -238,7 +238,7 @@ export const SECTOR_PAGES = {
   "bars-pubs": {
     name: "Bars & Pubs", icon: "Wine", image: "",
     eyebrow: "For Bars & Pubs",
-    h1: "Pour perfect profits — every tab, every pour, every last call.",
+    h1: "Bar POS system — every tab, every pour and every last call perfectly accounted.",
     sub: "From happy-hour rush to last call, MyGenie keeps your bar running smoothly. Open and manage tabs, track pour costs, control liquor inventory, and lock down every drawer.",
     pains: [
       { title: "Tab chaos & walkouts", desc: "Open tabs get lost, split wrong, or walk out the door unpaid." },
@@ -267,7 +267,7 @@ export const SECTOR_PAGES = {
   "bakeries": {
     name: "Bakeries", icon: "Croissant", image: "",
     eyebrow: "For Bakeries",
-    h1: "From morning bread to custom cakes — run your bakery with precision.",
+    h1: "Bakery POS & management — from morning bread to custom cakes, run with precision.",
     sub: "Handle advance orders, plan daily production, track fresh-ingredient shelf life, and delight customers on their special days — all from one app.",
     pains: [
       { title: "Advance & bulk orders", desc: "Custom cakes, pickups and wholesale orders are hard to track manually." },
@@ -296,7 +296,7 @@ export const SECTOR_PAGES = {
   "ice-cream-desserts": {
     name: "Ice Cream & Desserts", icon: "IceCreamCone", image: "",
     eyebrow: "For Ice Cream & Dessert Parlours",
-    h1: "Serve sweet moments fast — and keep every scoop profitable.",
+    h1: "Ice cream shop POS — serve sweet moments fast and keep every scoop profitable.",
     sub: "Quick counters, seasonal menus and tight margins. MyGenie keeps billing fast, controls ingredient costs, and brings dessert lovers back for more.",
     pains: [
       { title: "Peak-hour queues", desc: "Evening and weekend rushes build lines and lose walk-ins." },

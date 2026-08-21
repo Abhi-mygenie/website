@@ -5,7 +5,7 @@ export const PRODUCT_PAGES = {
   "sell-serve": {
     title: "Sell & Serve Faster", icon: "ShoppingBag", image: "/brand/feature1.png", videoUrl: null,
     eyebrow: "Sell & Serve",
-    h1: "Bill in seconds. Serve more covers. Lose zero orders.",
+    h1: "Restaurant POS & billing software — bill in seconds, serve more covers, lose zero orders.",
     sub: "From the counter to the captain's tab to the kitchen screen, MyGenie keeps service fast and flawless at every rush.",
     modules: [
       { icon: "ReceiptText", name: "POS / Billing", outcome: "Bill in seconds, even at peak rush.", caps: ["Lightning-fast billing on any device", "Split, merge & hold bills", "GST / VAT-ready invoices"] },
@@ -30,7 +30,7 @@ export const PRODUCT_PAGES = {
   "run-property": {
     title: "Run the Whole Property", icon: "Building", image: "/brand/feature2.png", videoUrl: null,
     eyebrow: "Run the Property",
-    h1: "One app for rooms, restaurant, food court, and beyond.",
+    h1: "Hotel & property management POS — rooms, restaurant and food court on one app.",
     sub: "Hospitality is more than a till. MyGenie runs whole properties — rooms, F&B, multiple counters — even where the internet drops.",
     modules: [
       { icon: "BedDouble", name: "Hotel / Room Billing", outcome: "Rooms + F&B + spa on one consolidated checkout bill.", caps: ["Folio & room posting", "One checkout bill", "Department-wise tracking"] },
@@ -53,7 +53,7 @@ export const PRODUCT_PAGES = {
   "customers": {
     title: "Bring Customers Back", icon: "HeartHandshake", image: "/brand/feature3.png", videoUrl: null,
     eyebrow: "Bring Customers Back",
-    h1: "Turn every bill into a customer who comes back.",
+    h1: "Restaurant CRM & loyalty software — turn every bill into a customer who comes back.",
     sub: "It costs far less to bring a guest back than to find a new one. MyGenie turns transactions into relationships.",
     modules: [
       { icon: "Users", name: "CRM", outcome: "Every bill becomes customer data you can use.", caps: ["Auto customer profiles", "Visit & spend history", "Smart segmentation"] },
@@ -78,7 +78,7 @@ export const PRODUCT_PAGES = {
   "protect-profit": {
     title: "Protect Your Profit", icon: "ShieldCheck", image: "/brand/feature4.png", videoUrl: null,
     eyebrow: "Protect Your Profit",
-    h1: "Catch leakage, theft, and waste — before they eat your margin.",
+    h1: "Restaurant inventory management — catch leakage, theft and waste before they hurt your margin.",
     sub: "Most profit isn't lost on sales — it leaks out the back. MyGenie puts every void, cancel, and gram of stock on the record.",
     modules: [
       { icon: "Boxes", name: "Inventory", outcome: "Reduce wastage and control stock before it becomes loss.", caps: ["Recipe-level tracking", "Low-stock alerts", "Wastage reports"] },
@@ -101,7 +101,7 @@ export const PRODUCT_PAGES = {
   "see-everything": {
     title: "See Everything", icon: "LayoutDashboard", image: "/brand/feature5.png", videoUrl: null,
     eyebrow: "See Everything",
-    h1: "Total visibility — every outlet, live, from your phone.",
+    h1: "Restaurant management software — total visibility from every outlet, live on your phone.",
     sub: "Stop guessing how the business is doing. MyGenie gives owners real-time control and reports that build themselves.",
     modules: [
       { icon: "LayoutDashboard", name: "Owner Dashboard", outcome: "Know how every outlet is doing — live, from anywhere.", caps: ["Real-time sales", "Multi-outlet view", "KPIs at a glance"] },
@@ -125,7 +125,7 @@ export const PRODUCT_PAGES = {
   "central-inventory": {
     title: "Central Inventory", icon: "Warehouse", image: "", videoUrl: null, poster: null,
     eyebrow: "Central Inventory",
-    h1: "One stock brain for every outlet — built for franchises & chains.",
+    h1: "Central inventory management for chains — one stock source of truth across all your outlets.",
     sub: "Stop managing each outlet's stock in silos. MyGenie gives multi-outlet businesses one central source of truth — central procurement, inter-outlet transfers, recipe costing, and AI-driven reordering across every location.",
     modules: [
       { icon: "Network", name: "Multi-Outlet Stock Visibility", outcome: "See live stock across every outlet from one dashboard.", caps: ["Real-time stock per outlet", "Consolidated stock view", "Low-stock alerts by location"] },

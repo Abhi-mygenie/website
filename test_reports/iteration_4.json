@@ -1,0 +1,57 @@
+{
+  "summary": "Tested all 3 batches (A+D, C, B) on MyGenie POS site at 1440px desktop. All 21 feature checks passed.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_4.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "DemoForm.jsx: footer email is 'support@placeholder.com' — likely a placeholder that needs updating to a real email before production launch."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A (frontend only)", "frontend": "100% (21/21 checks passed)" },
+  "test_credentials": "N/A — no auth required",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 4 verified: Batch A+D (9 H1 keyword changes on sector/product pages) all PASS. Batch C (SoftwareApplication JSON-LD on /pricing with prices 799/1499/2499, and homepage with both ORG+SoftwareApp schemas, no AggregateRating) all PASS. Batch B (/demo page: H1, 48hr stat card, 5 walkthrough bullets, 4-field form, 5 trust logo images, footer phone/email/privacy, 'switched to MyGenie' tag line) all PASS. Isolation: DemoForm trust line change correctly isolated to sector=meta-demo conditional; homepage non-meta-demo path unchanged.",
+  "detailed_results": {
+    "batch_AD_h1": {
+      "/solutions/restaurants": "PASS — 'Restaurant POS software — faster tables...'",
+      "/solutions/qsr": "PASS — 'QSR POS & billing — more covers per hour...'",
+      "/solutions/cloud-kitchens": "PASS — 'Cloud kitchen POS — every brand and aggregator...'",
+      "/solutions/cafes": "PASS — 'Café POS system — protect every margin...'",
+      "/solutions/hotels-resorts": "PASS — 'Hotel POS system — rooms, restaurant, spa...'",
+      "/product/sell-serve": "PASS — 'Restaurant POS & billing software — bill in seconds...'",
+      "/product/see-everything": "PASS — 'Restaurant management software — total visibility...'",
+      "/product/protect-profit": "PASS — 'Restaurant inventory management — catch leakage...'",
+      "/product/customers": "PASS — 'Restaurant CRM & loyalty software — turn every bill...'"
+    },
+    "batch_C_jsonld": {
+      "pricing_SoftwareApplication": "PASS — SoftwareApplication schema present in /pricing head",
+      "pricing_price_799": "PASS",
+      "pricing_price_1499": "PASS",
+      "pricing_price_2499": "PASS",
+      "pricing_no_AggregateRating": "PASS — no AggregateRating found",
+      "homepage_Organization": "PASS — Organization schema present",
+      "homepage_SoftwareApplication": "PASS — SoftwareApplication schema also present (2 JSON-LD scripts)"
+    },
+    "batch_B_demo": {
+      "H1": "PASS — 'Compare MyGenie With Your Current POS'",
+      "48hr_stat": "PASS — '48hr / to switch from your current POS'",
+      "4th_bullet_Your_pricing": "PASS",
+      "5th_bullet_Side_by_side": "PASS",
+      "4_form_fields": "PASS — name, phone, email, business_name (+ 1 hidden honeypot)",
+      "no_years_city_fields": "PASS",
+      "trust_5_logos": "PASS — trust section has 5 img elements under 'RUNNING ON MYGENIE'",
+      "footer_phone": "PASS — data-testid=demo-footer-phone: tel:+919104743156",
+      "footer_email": "PASS — data-testid=demo-footer-email: mailto:support@placeholder.com",
+      "footer_privacy": "PASS — data-testid=demo-footer-privacy: 'Privacy Policy'",
+      "switched_to_mygenie": "PASS — '100s of restaurants switched to MyGenie across 75 cities' in /demo form",
+      "isolation_homepage": "PASS — confirmed via git diff: 'already on MyGenie' was only in sector=meta-demo conditional; homepage (non-meta-demo) always had 'No spam...' — isolation correct and unchanged"
+    }
+  }
+}

@@ -3,7 +3,7 @@
 **Type:** Schema / Structured Data  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** INTAKE COMPLETE — DESIGN APPROVED 2026-08-21  
+**Status:** IMPLEMENTED — 2026-08-21 (SoftwareApplication + Offer ×3 on /pricing and homepage. AggregateRating deferred.)
 **Design preview:** `/app/frontend/public/CR-80-Schema-Design.html`  
 **AggregateRating:** DEFERRED — no verified review source exists. Schema will include SoftwareApplication + Offer ×3 only. Add AggregateRating when Google My Business or Trustpilot reviews are established.  
 **Scope confirmed:** `/pricing` (SoftwareApplication + Offer ×3, no AggregateRating) + `/` homepage (SoftwareApplication entity only, no Offer, no AggregateRating).  

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Logo from "@/components/site/Logo";
 import DemoForm from "@/components/site/DemoForm";
 import Seo from "@/components/site/Seo";
@@ -5,6 +6,7 @@ import Reveal from "@/components/site/Reveal";
 import { EditableText } from "@/components/cms/Editable";
 import { useContentDoc } from "@/lib/cms/CmsProvider";
 import { PAGE_SEO } from "@/lib/seo";
+import { COMPANY } from "@/data/company";
 import { Clock3 } from "lucide-react";
 
 // ─── Shared minimal Navbar ────────────────────────────────────────────────────
@@ -22,9 +24,14 @@ function LandingNavbar() {
 function LandingFooter() {
   return (
     <footer className="bg-brand-deep border-t border-[#1e4a2e]" data-testid="demo-landing-footer">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <Logo light />
-        <span className="text-xs text-[#5B7A68]">© {new Date().getFullYear()} MyGenie Technologies Pvt. Ltd. All rights reserved.</span>
+        <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#5B7A68]">
+          <a href={`tel:${COMPANY.phoneIntl}`} className="hover:text-brand-yellow transition-colors" data-testid="demo-footer-phone">{COMPANY.phone}</a>
+          <a href={`mailto:${COMPANY.supportEmail}`} className="hover:text-brand-yellow transition-colors" data-testid="demo-footer-email">{COMPANY.supportEmail}</a>
+          <Link to="/privacy" className="hover:text-brand-yellow transition-colors" data-testid="demo-footer-privacy">Privacy Policy</Link>
+        </div>
+        <span className="text-xs text-[#5B7A68]">© {new Date().getFullYear()} MyGenie Technologies Pvt. Ltd.</span>
       </div>
     </footer>
   );
@@ -41,12 +48,18 @@ function ProofCard({ value, label, accent = false }) {
 }
 
 // ─── Trust logo strip ────────────────────────────────────────────────────────
-const TRUST_NAMES = ["Hyatt Centric", "Palm Forest Resort", "Love Bites", "The Mill Bakery", "Aanya's Kitchen"];
+const DEMO_TRUST_LOGOS = [
+  { name: "Hyatt Centric",      img: "/brand/hyatt-centric.png" },
+  { name: "Palm Forest Resort", img: "/brand/palm-forest.png"   },
+  { name: "Love Bites",         img: "/brand/love-bites.png"    },
+  { name: "The Mill Bakery",    img: "/brand/mill-bakery.png"   },
+  { name: "Bamboo Yoga",        img: "/brand/bamboo-yoga.png"   },
+];
 
 // ─── Fallback CMS content ────────────────────────────────────────────────────
 const DEMO_DEFAULTS = {
   eyebrow: "Free · 45 min · No commitment",
-  headline: "See MyGenie live — built for your restaurant",
+  headline: "Compare MyGenie With Your Current POS",
   subline: "A specialist walks you through exactly how it works for your outlet type. No slides, no sales pitch.",
 };
 
@@ -91,7 +104,7 @@ export default function DemoLanding() {
             <Reveal>
               <div className="flex gap-3 mb-4">
                 <ProofCard value="₹1L+" label="leakage caught in 2 weeks" />
-                <ProofCard value="48hr" label="from sign-up to first bill" />
+                <ProofCard value="48hr" label="to switch from your current POS" />
                 <ProofCard value="+18%" label="avg bill via AI upsell" accent />
               </div>
             </Reveal>
@@ -111,6 +124,7 @@ export default function DemoLanding() {
                   ["Your leakage report", "We show you exactly where money is leaving your current setup.", true],
                   ["AI features live", "Smart upsell, audit assistant, and customer win-back — in action.", false],
                   ["Your pricing", "Transparent quote built for your outlet count and city. No surprises.", false],
+                  ["Side-by-side comparison", "We show you exactly how MyGenie stacks up against your current setup, feature by feature.", false],
                 ].map(([title, desc, highlight]) => (
                   <div key={title} className="flex gap-3 items-start">
                     <span className="mt-1 w-5 h-5 rounded-full bg-brand-green/15 flex items-center justify-center shrink-0">
@@ -128,7 +142,7 @@ export default function DemoLanding() {
 
           {/* Right: form — visible above fold on mobile, no entrance delay */}
           <div className="bg-white rounded-3xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] p-6 sm:p-8" data-testid="demo-form-card">
-            <DemoForm sector="meta-demo" />
+            <DemoForm sector="meta-demo" shortForm />
           </div>
         </section>
 
@@ -137,15 +151,20 @@ export default function DemoLanding() {
           <section className="bg-brand-deep mt-4" data-testid="demo-trust-strip">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
               <p className="text-xs font-bold uppercase tracking-widest text-[#5B7A68] mb-4">Running on MyGenie</p>
-              <div className="flex flex-wrap gap-2">
-                {TRUST_NAMES.map((name) => (
-                  <span key={name} className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-[#9DB1A4] font-medium">
-                    {name}
-                  </span>
+              <div className="flex flex-wrap gap-3 items-center">
+                {DEMO_TRUST_LOGOS.map((logo) => (
+                  <img
+                    key={logo.name}
+                    src={logo.img}
+                    alt={logo.name}
+                    title={logo.name}
+                    className="h-7 w-auto object-contain opacity-50 hover:opacity-90 transition-opacity"
+                    loading="lazy"
+                    width={100}
+                    height={28}
+                  />
                 ))}
-                <span className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-[#9DB1A4] font-medium">
-                  +500 outlets across 75 cities
-                </span>
+                <span className="text-xs text-[#5B7A68] font-medium">100s of restaurants switched to MyGenie across 75 cities</span>
               </div>
             </div>
           </section>
