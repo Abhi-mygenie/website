@@ -81,7 +81,7 @@ export default function Hero({ onDemo }) {
               fallback="/brand/banner.png"
               alt="MyGenie POS hospitality operating system"
               className="w-full h-[420px] object-contain"
-              fetchpriority="high"
+              fetchPriority="high"
               loading="eager"
             />
           </div>
