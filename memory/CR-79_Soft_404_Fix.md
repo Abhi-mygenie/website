@@ -3,7 +3,7 @@
 **Type:** Technical SEO Fix  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** OPEN  
+**Status:** IMPLEMENTED (React side) — 2026-08-21. Awaiting backend Nginx change for HTTP 404 status.
 **Priority:** CRITICAL  
 **Plan ID:** C10  
 **Effort:** 45 min  

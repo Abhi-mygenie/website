@@ -21,6 +21,7 @@ const LeadsView           = lazy(() => import("@/pages/LeadsView"));
 const PetpoojaAlternative = lazy(() => import("@/pages/PetpoojaAlternative"));
 const DemoLanding         = lazy(() => import("@/pages/DemoLanding"));
 const PaymentSuccess      = lazy(() => import("@/pages/PaymentSuccess"));
+const NotFound            = lazy(() => import("@/pages/NotFound"));
 import CmsAdminLayer from "@/components/cms/CmsAdminLayer";
 import ConsentBanner from "@/components/site/ConsentBanner";
 import WhatsAppFab from "@/components/site/WhatsAppFab";
@@ -91,8 +92,8 @@ function App() {
               <Route key={from} path={from} element={<Navigate to={to} replace />} />
             ))}
 
-            {/* Unknown -> home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {/* Unknown -> NotFound (CR-79) */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </BrowserRouter>
