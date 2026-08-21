@@ -49,11 +49,11 @@ function ProofCard({ value, label, accent = false }) {
 
 // ─── Trust logo strip ────────────────────────────────────────────────────────
 const DEMO_TRUST_LOGOS = [
-  { name: "Hyatt Centric",      img: "/brand/hyatt-centric.png" },
-  { name: "Palm Forest Resort", img: "/brand/palm-forest.png"   },
-  { name: "Love Bites",         img: "/brand/love-bites.png"    },
-  { name: "The Mill Bakery",    img: "/brand/mill-bakery.png"   },
-  { name: "Bamboo Yoga",        img: "/brand/bamboo-yoga.png"   },
+  { name: "Hyatt Centric",      img: "/brand/hyatt-centric.webp" },
+  { name: "Palm Forest Resort", img: "/brand/palm-forest.webp"   },
+  { name: "Love Bites",         img: "/brand/love-bites.webp"    },
+  { name: "The Mill Bakery",    img: "/brand/mill-bakery.webp"   },
+  { name: "Bamboo Yoga",        img: "/brand/bamboo-yoga.webp"   },
 ];
 
 // ─── Fallback CMS content ────────────────────────────────────────────────────

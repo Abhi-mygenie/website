@@ -130,14 +130,14 @@ export const VSP_COMP_FULL = [
 ];
 
 export const VSP_TRUST_LOGOS = [
-  { name: "Hyatt Centric",      img: "/brand/hyatt-centric.png" },
-  { name: "Palm Forest Resort", img: "/brand/palm-forest.png"   },
-  { name: "Love Bites",         img: "/brand/love-bites.png"    },
-  { name: "The Mill Bakery",    img: "/brand/mill-bakery.png"   },
-  { name: "Bamboo Yoga",        img: "/brand/bamboo-yoga.png"   },
-  { name: "Ubuntu Café",        img: "/brand/ubuntu.png"        },
-  { name: "Terraria Café",      img: "/brand/terra.png"         },
-  { name: "La Fetta Pizzeria",  img: "/brand/lafetta.png"       },
+  { name: "Hyatt Centric",      img: "/brand/hyatt-centric.webp" },
+  { name: "Palm Forest Resort", img: "/brand/palm-forest.webp"   },
+  { name: "Love Bites",         img: "/brand/love-bites.webp"    },
+  { name: "The Mill Bakery",    img: "/brand/mill-bakery.webp"   },
+  { name: "Bamboo Yoga",        img: "/brand/bamboo-yoga.webp"   },
+  { name: "Ubuntu Café",        img: "/brand/ubuntu.webp"        },
+  { name: "Terraria Café",      img: "/brand/terra.webp"         },
+  { name: "La Fetta Pizzeria",  img: "/brand/lafetta.webp"       },
 ];
 
 export const VSP_SWITCH_BADGES = [

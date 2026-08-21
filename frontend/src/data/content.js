@@ -8,14 +8,14 @@ export const METRICS = [
 ];
 
 export const TRUST_LOGOS = [
-  { name: "Hyatt Centric", img: "/brand/hyatt-centric.png" },
-  { name: "Palm Forest", img: "/brand/palm-forest.png" },
-  { name: "Bamboo Yoga", img: "/brand/bamboo-yoga.png" },
-  { name: "Baba's Italy", img: "/brand/baba-italy.png" },
-  { name: "Love Bites", img: "/brand/love-bites.png" },
-  { name: "The Mill Bakery", img: "/brand/mill-bakery.png" },
-  { name: "Wild Berry", img: "/brand/wild-berry.png" },
-  { name: "Drishti Yoga", img: "/brand/drishti-yoga.png" },
+  { name: "Hyatt Centric", img: "/brand/hyatt-centric.webp" },
+  { name: "Palm Forest", img: "/brand/palm-forest.webp" },
+  { name: "Bamboo Yoga", img: "/brand/bamboo-yoga.webp" },
+  { name: "Baba's Italy", img: "/brand/baba-italy.webp" },
+  { name: "Love Bites", img: "/brand/love-bites.webp" },
+  { name: "The Mill Bakery", img: "/brand/mill-bakery.webp" },
+  { name: "Wild Berry", img: "/brand/wild-berry.webp" },
+  { name: "Drishti Yoga", img: "/brand/drishti-yoga.webp" },
 ];
 
 export const PAINS = [

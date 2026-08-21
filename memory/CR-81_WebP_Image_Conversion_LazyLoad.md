@@ -3,7 +3,7 @@
 **Type:** Performance Fix / Image Optimization  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** IMPACT ANALYSIS COMPLETE — SCOPE REVISED 2026-08-21  
+**Status:** IMPLEMENTED — 2026-08-21
 **Impact analysis:** Session 2026-08-21 — full dependency audit  
 
 **Decisions locked (2026-08-21):**

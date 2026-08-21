@@ -78,7 +78,7 @@ export default function Hero({ onDemo }) {
             <EditableImage
               block
               id="home.hero.banner_image"
-              fallback="/brand/banner.png"
+              fallback="/brand/banner.webp"
               alt="MyGenie POS hospitality operating system"
               className="w-full h-[420px] object-contain"
               fetchPriority="high"
