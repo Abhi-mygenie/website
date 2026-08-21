@@ -4,6 +4,7 @@ import { ArrowRight, Check, X, Quote } from "lucide-react";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
 import DemoForm from "@/components/site/DemoForm";
+import StickyMobileCta from "@/components/home/StickyMobileCta";
 import Reveal from "@/components/site/Reveal";
 import FaqItem from "@/components/site/FaqItem";
 import Seo from "@/components/site/Seo";
@@ -256,6 +257,7 @@ export default function SectorPage() {
         </section>
       </main>
       <Footer />
+      <StickyMobileCta onDemo={() => document.getElementById("sector-demo")?.scrollIntoView({ behavior: "smooth", block: "center" })} />
     </div>
   );
 }

@@ -1,0 +1,32 @@
+{
+  "summary": "CR-84 testing: StickyMobileCta on SectorPage + ProductPage. All 11 test cases passed. Tested at 390px mobile and 1440px desktop.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_5.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A (frontend only)", "frontend": "100% (11/11 checks passed)" },
+  "test_credentials": "N/A — no auth required",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-84 fully verified. StickyMobileCta works on all sector/product pages. Imports at line 7 and usage at lines 260/253 confirmed. Hero selectors (sector-hero, product-hero) confirmed in StickyMobileCta.jsx lines 37-41.",
+  "detailed_results": {
+    "/solutions/restaurants mobile 390px": "PASS — sticky bar appears after scrolling past sector-hero (translate-y-0)",
+    "/solutions/restaurants CTA click": "PASS — scrolls to #sector-demo (demo rect top ~334px in viewport)",
+    "/solutions/restaurants dismiss": "PASS — bar removed from DOM after X click",
+    "/solutions/cloud-kitchens mobile 390px": "PASS — sticky bar visible after hero scroll",
+    "/product/sell-serve mobile 390px": "PASS — sticky bar appears after scrolling past product-hero",
+    "/product/sell-serve CTA click": "PASS — scrolls to #product-demo",
+    "/product/see-everything mobile 390px": "PASS — sticky bar visible after hero scroll",
+    "/solutions/restaurants desktop 1440px": "PASS — bar not visible (display: none via lg:hidden)",
+    "/product/sell-serve desktop 1440px": "PASS — bar not visible (display: none via lg:hidden)",
+    "/ (homepage) mobile regression": "PASS — bar appears after scrolling past hero (height ~1331px)",
+    "/petpooja-alternative": "PASS — no sticky bar in DOM"
+  }
+}

@@ -4,6 +4,7 @@ import { ArrowRight, Check, Quote } from "lucide-react";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
 import DemoForm from "@/components/site/DemoForm";
+import StickyMobileCta from "@/components/home/StickyMobileCta";
 import Reveal from "@/components/site/Reveal";
 import FaqItem from "@/components/site/FaqItem";
 import FeatureVideo from "@/components/site/FeatureVideo";
@@ -249,6 +250,7 @@ export default function ProductPage() {
         </section>
       </main>
       <Footer />
+      <StickyMobileCta onDemo={() => document.getElementById("product-demo")?.scrollIntoView({ behavior: "smooth", block: "center" })} />
     </div>
   );
 }
