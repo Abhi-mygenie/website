@@ -50,9 +50,40 @@ That's **99% unnecessary code** on the most important page load.
 **Webpack's own warning in the build output:**
 > "The bundle size is significantly larger than recommended. Consider reducing it with code splitting."
 
----
+## AFTER — Measured 2026-08-20 (Post-Implementation)
 
-## PROJECTED AFTER — Code Splitting Applied
+### Production Build Output
+```
+File sizes after gzip:
+  394.48 kB  build/static/js/main.js        ← was 582 kB (-32%)
+  92.45 kB   build/static/js/238.chunk.js   ← largest lazy chunk
+  50.74 kB   build/static/js/763.chunk.js
+  50.65 kB   build/static/js/273.chunk.js
+  48.25 kB   build/static/js/370.chunk.js
+  46.47 kB   build/static/js/983.chunk.js
+  44.88 kB   build/static/js/502.chunk.js
+  38.26 kB   build/static/js/777.chunk.js
+  ... (15 more chunks, 1–38 kB each)
+  16.44 kB   build/static/css/main.css      ← unchanged
+```
+22 total JS files (was 1). Each lazy chunk loads only when the user visits that route.
+
+### What a homepage visitor now downloads
+| File | Size | Contains |
+|---|---|---|
+| `main.js` | 394 kB | Home + React + all shared libs + CmsAdminLayer + ConsentBanner + WhatsAppFab + ScrollDepthTracker + GTM/attribution |
+| `chunk` files | NOT downloaded | Only loaded on first navigation to each route |
+
+### Benchmark comparison
+| Metric | Before | After | Change |
+|---|---|---|---|
+| Initial JS bundle (gzip) | 582 kB | 394 kB | **-32% (-188 kB)** |
+| Number of JS files | 1 | 22 | Code split ✅ |
+| Webpack bundle size warning | ❌ Present | ✅ Gone | Fixed |
+
+**Note on main bundle size:** The main bundle is 394 kB (not the projected ~200 kB) because the shared vendor libraries (React, framer-motion, recharts, etc.) that are used by multiple pages are kept in the main bundle by webpack's chunk optimization. This is correct webpack behaviour — it avoids downloading shared code multiple times. The key win is that page-specific code is now split out into lazy chunks.
+
+**Real-world impact for a homepage visitor:** They no longer download the PetpoojaAlternative page (48 KB source, the largest page after CR-113), the LeadsView dashboard, the Blog, the ROI Calculator, or any other non-home page code.
 
 ### How it works
 - `Home` stays eager (always needed, entry point)

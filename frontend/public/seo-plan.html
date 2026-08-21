@@ -1242,6 +1242,14 @@ if (!localStorage.getItem(SEED_KEY_B3)) {
   localStorage.setItem(SEED_KEY_B3, '1');
 }
 
+// One-time seed: mark CR-72 (C3) as done
+const SEED_KEY_C3 = 'mygenie_seo_plan_seeded_c3';
+if (!localStorage.getItem(SEED_KEY_C3)) {
+  state['C3'] = true;
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e) {}
+  localStorage.setItem(SEED_KEY_C3, '1');
+}
+
 function save() { try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e) {} }
 
 // ── TIER COUNTS ───────────────────────────────────────────────────────────────
