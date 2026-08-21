@@ -87,10 +87,23 @@ This is a 4-tweak copy adaptation + 3 code fixes. Same template, same form, refr
 
 | | |
 |---|---|
-| **Current** | `TRUST_NAMES` array rendered as `<span>` text chips |
-| **New** | Real logo images (same grayscale → colour on hover treatment as /petpooja-alternative) |
-| **Note** | "Aanya's Kitchen" — check if logo exists in `/brand/`. Others (Hyatt Centric, Palm Forest, Love Bites, Mill Bakery) confirmed ✅ |
-| **File** | `DemoLanding.jsx` lines 44 + 140–148 |
+| **Current** | `TRUST_NAMES = ["Hyatt Centric", "Palm Forest Resort", "Love Bites", "The Mill Bakery", "Aanya's Kitchen"]` rendered as `<span>` text chips |
+| **New** | 5 logo images — all confirmed present in `/brand/` |
+| **Decision (2026-08-21)** | Replace "Aanya's Kitchen" with "Bamboo Yoga" — all 5 now have logo files |
+
+**Final trust logo set:**
+```js
+const DEMO_TRUST_LOGOS = [
+  { name: "Hyatt Centric",      img: "/brand/hyatt-centric.png" },
+  { name: "Palm Forest Resort", img: "/brand/palm-forest.png"   },
+  { name: "Love Bites",         img: "/brand/love-bites.png"    },
+  { name: "The Mill Bakery",    img: "/brand/mill-bakery.png"   },
+  { name: "Bamboo Yoga",        img: "/brand/bamboo-yoga.png"   },
+];
+```
+| File | Change |
+|---|---|
+| `frontend/src/pages/DemoLanding.jsx` | Replace `TRUST_NAMES` string array with `DEMO_TRUST_LOGOS` object array + render as `<img>` tags |
 
 ---
 

@@ -5,8 +5,9 @@
 **Raised By:** SEO & Ads Audit  
 **Status:** INTAKE COMPLETE — DESIGN APPROVED 2026-08-21  
 **Design preview:** `/app/frontend/public/CR-80-Schema-Design.html`  
-**Owner confirmation needed:** Verify `reviewCount` value before implementation (currently "500" — confirm this is accurate).  
-**Scope confirmed:** `/pricing` (SoftwareApplication + Offer ×3 + AggregateRating) + `/` homepage (SoftwareApplication entity only).
+**AggregateRating:** DEFERRED — no verified review source exists. Schema will include SoftwareApplication + Offer ×3 only. Add AggregateRating when Google My Business or Trustpilot reviews are established.  
+**Scope confirmed:** `/pricing` (SoftwareApplication + Offer ×3, no AggregateRating) + `/` homepage (SoftwareApplication entity only, no Offer, no AggregateRating).  
+**Growth plan price confirmed:** ₹1,499 (not ₹1,299 as shown in mockup — corrected).
 **Priority:** HIGH  
 **Plan ID:** H1  
 **Effort:** 1 hr  
