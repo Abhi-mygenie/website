@@ -13,7 +13,7 @@ import { useContentDoc, useCms } from "@/lib/cms/CmsProvider";
 import { pushLead, newEventId, pushEvent } from "@/lib/gtm";
 import { getAttribution } from "@/lib/attribution";
 import { useAntiBot, Honeypot, leadQuality } from "@/lib/antiBot";
-import { ensureCalendlyCss } from "@/lib/calendlyCss";
+import { loadCalendly } from "@/lib/calendly";
 import { CALENDLY_URL } from "@/data/content";
 import {
   VSP_HERO, VSP_STATS, VSP_QUOTES, VSP_AI,
@@ -47,19 +47,6 @@ function qdsBrandedUrl(url) {
       .forEach(([k, v]) => u.searchParams.set(k, v));
     return u.toString();
   } catch { return url; }
-}
-
-function loadCalendlyForSheet() {
-  ensureCalendlyCss();
-  const SRC = "https://assets.calendly.com/assets/external/widget.js";
-  return new Promise((resolve) => {
-    if (window.Calendly) return resolve();
-    const ex = document.querySelector(`script[src="${SRC}"]`);
-    if (ex) { ex.addEventListener("load", () => resolve()); return; }
-    const s = document.createElement("script");
-    s.src = SRC; s.async = true; s.onload = () => resolve();
-    document.body.appendChild(s);
-  });
 }
 
 // ─── QuickDemoSheet — bottom sheet quick-book form (CR-113) ──────────────────
@@ -162,7 +149,7 @@ function QuickDemoSheet({ open, onClose }) {
   const openCalendly = async () => {
     setPopupLoading(true);
     try {
-      await loadCalendlyForSheet();
+      await loadCalendly();
       if (!window.Calendly) { toast.error("Could not load booking widget. Please try again."); return; }
       window.Calendly.initPopupWidget({
         url: qdsBrandedUrl(CALENDLY_URL),

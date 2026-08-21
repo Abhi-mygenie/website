@@ -8,7 +8,7 @@ import OtpVerifyBlock from "@/components/site/OtpVerifyBlock";
 import { useAntiBot, Honeypot, leadQuality } from "@/lib/antiBot";
 import { getAttribution } from "@/lib/attribution";
 import { pushLead, newEventId } from "@/lib/gtm";
-import { ensureCalendlyCss } from "@/lib/calendlyCss";
+import { loadCalendly } from "@/lib/calendly";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const EMPTY = { name: "", phone: "", email: "", outlet_type: "", business_name: "", city: "", years_in_business: "" };
@@ -19,22 +19,6 @@ const BRAND_PARAMS = {
   text_color: "14201A", hide_gdpr_banner: "1",
   hide_landing_page_details: "1", hide_event_type_details: "1",
 };
-
-function loadCalendlyScript() {
-  // CR-50: ensure our overlay/popup CSS is present in the parent document.
-  // Calendly's widget.js no longer self-injects it (as of 2026-07-05), which
-  // was making the popup invisible (position:static at page bottom).
-  ensureCalendlyCss();
-  const SRC = "https://assets.calendly.com/assets/external/widget.js";
-  return new Promise((resolve) => {
-    if (window.Calendly) return resolve();
-    const ex = document.querySelector(`script[src="${SRC}"]`);
-    if (ex) { ex.addEventListener("load", () => resolve()); return; }
-    const s = document.createElement("script");
-    s.src = SRC; s.async = true; s.onload = () => resolve();
-    document.body.appendChild(s);
-  });
-}
 
 function brandedUrl(url) {
   try {
@@ -182,7 +166,7 @@ export default function DemoForm({ sector, shortForm = false }) {
   const openPopup = async () => {
     setPopupLoading(true);
     try {
-      await loadCalendlyScript();
+      await loadCalendly();
       const url = brandedUrl(CALENDLY_URL);
       if (!window.Calendly) {
         toast.error("Could not load booking widget. Please try again.");

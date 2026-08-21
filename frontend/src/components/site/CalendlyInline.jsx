@@ -1,27 +1,6 @@
 import { useEffect, useRef } from "react";
 import { pushLead, newEventId } from "@/lib/gtm";
-import { ensureCalendlyCss } from "@/lib/calendlyCss";
-
-const SCRIPT_SRC = "https://assets.calendly.com/assets/external/widget.js";
-
-function loadCalendly() {
-  // CR-50: defensive parity with DemoForm — the same CSS must be present even
-  // if a page mounts CalendlyInline without going through DemoForm.
-  ensureCalendlyCss();
-  return new Promise((resolve) => {
-    if (window.Calendly) return resolve();
-    const existing = document.querySelector(`script[src="${SCRIPT_SRC}"]`);
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      return;
-    }
-    const s = document.createElement("script");
-    s.src = SCRIPT_SRC;
-    s.async = true;
-    s.onload = () => resolve();
-    document.body.appendChild(s);
-  });
-}
+import { loadCalendly } from "@/lib/calendly";
 
 /**
  * Inline Calendly scheduler. Works on every Calendly plan (uses the in-browser
