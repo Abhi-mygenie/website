@@ -3,7 +3,10 @@
 **Type:** On-Page SEO / Keyword Relevance  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** OPEN  
+**Status:** INTAKE COMPLETE — DESIGN APPROVED 2026-08-21  
+**Scope expanded:** Original CR covered 3 pages. Full audit (2026-08-21) found all 24 pages have zero keywords in H1. Scope now covers all pages in 3 phases.  
+**Excel audit file:** `/app/frontend/public/CR-83-H1-Audit.csv`  
+**Audit doc:** `/app/memory/AUDIT_CR83_CR80_CR87_2026-08-21.md`
 **Priority:** HIGH  
 **Plan ID:** H4  
 **Effort:** 20 min  

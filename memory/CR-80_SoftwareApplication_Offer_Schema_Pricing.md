@@ -3,7 +3,10 @@
 **Type:** Schema / Structured Data  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** OPEN  
+**Status:** INTAKE COMPLETE — DESIGN APPROVED 2026-08-21  
+**Design preview:** `/app/frontend/public/CR-80-Schema-Design.html`  
+**Owner confirmation needed:** Verify `reviewCount` value before implementation (currently "500" — confirm this is accurate).  
+**Scope confirmed:** `/pricing` (SoftwareApplication + Offer ×3 + AggregateRating) + `/` homepage (SoftwareApplication entity only).
 **Priority:** HIGH  
 **Plan ID:** H1  
 **Effort:** 1 hr  
