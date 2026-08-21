@@ -3,7 +3,7 @@
 **Type:** Conversion Optimisation / Mobile UX  
 **Date Raised:** 2026-08-20  
 **Raised By:** SEO & Ads Audit  
-**Status:** OPEN  
+**Status:** IMPLEMENTED — 2026-08-21
 **Priority:** HIGH  
 **Plan ID:** H5 + H6  
 **Effort:** 30 min  
