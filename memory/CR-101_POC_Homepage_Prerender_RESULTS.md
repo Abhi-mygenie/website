@@ -43,3 +43,13 @@ Local lab LCP/FCP values are **not GTmetrix-comparable**: (a) no network throttl
 - NEW: `frontend/scripts/prerender.js`
 - MOD: `frontend/package.json`, `frontend/yarn.lock`, `frontend/src/components/home/Hero.jsx`, `frontend/public/index.html`
 - Artifact: `frontend/build/index.html` (prerendered `/`)
+
+## 2026-08-22 — Serving the prerendered build on the preview URL (so it's testable)
+- The preview URL was serving `craco start` (dev/CSR) — that's why Lighthouse on the preview looked unchanged.
+- Switched supervisor `[program:frontend]` command from `yarn start` → `/usr/bin/node /app/frontend/scripts/static-server.js` (NEW tiny static server with SPA fallback serving `build/`). `serve` package was unusable (broken `path-to-regexp` in `serve-handler`).
+- Verified on `https://app-instant-launch.preview.emergentagent.com/`: hero text + H1 + JSON-LD present in raw HTML; page renders fully incl. hero image (loads after hydration via CMS content). Screenshot confirmed.
+- **Preview-specific caveats vs production:** the demo static server does not gzip (production/CDN would → real FCP/LCP better than preview); hero image raw path 404s on curl but resolves in-browser.
+- **Remaining levers for a green mobile score:** (1) preload hero image + serve WebP → LCP on Slow-4G; (2) reserve hero image width/height → the mobile CLS 0.156 (CR-82).
+
+## Rollback (serving change)
+Edit `/etc/supervisor/conf.d/supervisord.conf` `[program:frontend]` command back to `yarn start`, then `supervisorctl reread && update && restart frontend`. Remove `scripts/static-server.js`.
