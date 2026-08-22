@@ -99,14 +99,19 @@
                     }),
                     (e.__SV = 1));
             })(document, window.posthog || []);
-            posthog.init("phc_xAvL2Iq4tFmANRE7kzbKwaSqp1HJjN7x48s3vr0CMjs", {
-                api_host: "https://us.i.posthog.com",
-                person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well,
-                session_recording: {
-                    recordCrossOriginIframes: true,
-                    capturePerformance: false,
-                },
-            });
+            function __initPosthog() {
+                posthog.init("phc_xAvL2Iq4tFmANRE7kzbKwaSqp1HJjN7x48s3vr0CMjs", {
+                    api_host: "https://us.i.posthog.com",
+                    person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well,
+                    session_recording: {
+                        recordCrossOriginIframes: true,
+                        capturePerformance: false,
+                    },
+                });
+            }
+            var __idle = window.requestIdleCallback || function (cb) { setTimeout(cb, 2000); };
+            if (document.readyState === "complete") __idle(__initPosthog);
+            else window.addEventListener("load", function () { __idle(__initPosthog); });
         </script>
     </body>
 </html>
