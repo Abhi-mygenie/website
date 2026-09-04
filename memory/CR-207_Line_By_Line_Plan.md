@@ -1,130 +1,433 @@
-# CR-207 — Line-by-Line Implementation Plan: Remove Wildcard lucide-react Import
+# CR-207 — Updated Line-by-Line Plan: Replace `import * as Icons` Across All 15 Files
 
 **CR:** CR-207
-**Date:** 2026-09-04
+**Date Updated:** 2026-09-04
 **Status:** Ready to implement
-**File:** `src/components/site/Navbar.jsx`
-**Effort:** 1 file · ~4 edits · 1 rebuild
+**Scope:** 16 files total (1 new + 15 edits)
 **Risk:** Low
+
+---
+
+## Summary of Approach
+
+**Pattern used in all 15 files:**
+```javascript
+import * as Icons from "lucide-react";
+const Icon = Icons[someStringFromData] || Icons.Fallback;
+```
+
+**Problem:** `import *` forces webpack to bundle all 3,624 icons.
+
+**Fix strategy — Shared iconMap.js:**
+Create one `src/lib/iconMap.js` exporting an `ICONS` object with all ~68
+icons used across all data files. Each of the 15 components imports `ICONS`
+from there instead of using the wildcard.
+
+**Why shared map, not per-file inventories:**
+- Data files (sectors.js, products.js, pricing.js, ai.js) contain icon strings
+- One shared map = one place to maintain; adding a new icon = 1 edit in 1 file
+- 15 simple import swaps vs 60+ per-file icon inventory edits
 
 ---
 
 ## Pre-flight Checks
 
 ```bash
-# Confirm current bundle hash
-ls /app/frontend/build/static/js/main.*.js | grep -o 'main\.[a-f0-9]*\.js'
-# Expected: main.dde43c90.js  (CR-206 build — note this as baseline)
-
-# Confirm current main bundle size (CR-206 baseline)
-ls -lh /app/frontend/build/static/js/main.dde43c90.js
-# Expected: 937 KB
-
-# Confirm Navbar.jsx has the wildcard import
-grep -n "import \* as Icons" /app/frontend/src/components/site/Navbar.jsx
-# Expected: line 3: import * as Icons from "lucide-react";
+grep -rn "import \* as Icons from" /app/frontend/src/ | wc -l   # Expected: 15
+ls /app/frontend/build/static/js/main.*.js | grep -o 'main\.[a-f0-9]*\.js'  # Note hash
+ls -lh /app/frontend/build/static/js/main.dde43c90.js            # Note 937 KB baseline
 ```
 
 ---
 
-## The Change — Navbar.jsx Only
+## Step 1 — Create `src/lib/iconMap.js` (NEW FILE)
 
-### Current lines 1–3 (BEFORE)
+**File:** `/app/frontend/src/lib/iconMap.js`
 
-```javascript
-import { useState, useEffect, useRef } from "react";
-import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
-import * as Icons from "lucide-react";
-```
-
-### After (lines 1–20 approx)
+Complete content:
 
 ```javascript
-import { useState, useEffect, useRef } from "react";
+// iconMap.js — all lucide-react icons used in data files (sectors.js,
+// products.js, pricing.js, content.js, ai.js).
+// Import { ICONS } from here instead of "import * as Icons from lucide-react"
+// — wildcard import bundles all 3,624 icons; this map bundles only ~68.
+// CR-207 2026-09-04: when adding a new icon string to any data file, add
+// the matching import + map entry here.
 import {
-  Menu, X, ChevronDown, ChevronRight,
-  // Solutions dropdown (SECTORS)
+  AlertCircle, Box, Check, Circle, Store,
   UtensilsCrossed, Coffee, Sandwich, ChefHat, BedDouble,
-  Store, Utensils, Building2, Wine, Croissant, IceCreamCone,
-  // Product dropdown (MODULE_BUCKETS)
+  Utensils, Building2, Wine, Croissant, IceCreamCone,
   ShoppingBag, Building, HeartHandshake, ShieldCheck,
-  LayoutDashboard, Warehouse,
-  // Resources dropdown
-  BookOpen, Calculator, HelpCircle,
-  // Direct use + fallback
-  Phone, Box,
+  LayoutDashboard, Warehouse, BookOpen, Calculator,
+  HelpCircle, Phone, Layers, LayoutGrid,
+  EyeOff, Flame, ReceiptText, Timer, TrendingDown, Trash2, UserX, Users,
+  TrendingUp, Zap, Repeat, Smartphone,
+  Sparkles, FileUp, ScanSearch, Lightbulb,
+  BarChart3, BellRing, Bike, Boxes, Cake,
+  CalendarClock, ClipboardList, Gift, QrCode, RefreshCw,
+  SlidersHorizontal, Ticket, Wallet, WifiOff,
+  ArrowLeftRight, FileText, MessageCircle, Network, ShoppingCart,
+  CreditCard, Globe, Headset, Megaphone, Monitor,
+  Rocket, Settings2, SprayCan, Wifi,
 } from "lucide-react";
 
-const NAV_ICONS = {
+export const ICONS = {
+  AlertCircle, Box, Check, Circle, Store,
   UtensilsCrossed, Coffee, Sandwich, ChefHat, BedDouble,
-  Store, Utensils, Building2, Wine, Croissant, IceCreamCone,
+  Utensils, Building2, Wine, Croissant, IceCreamCone,
   ShoppingBag, Building, HeartHandshake, ShieldCheck,
-  LayoutDashboard, Warehouse,
-  BookOpen, Calculator, HelpCircle,
-  Phone, Box,
+  LayoutDashboard, Warehouse, BookOpen, Calculator,
+  HelpCircle, Phone, Layers, LayoutGrid,
+  EyeOff, Flame, ReceiptText, Timer, TrendingDown, Trash2, UserX, Users,
+  TrendingUp, Zap, Repeat, Smartphone,
+  Sparkles, FileUp, ScanSearch, Lightbulb,
+  BarChart3, BellRing, Bike, Boxes, Cake,
+  CalendarClock, ClipboardList, Gift, QrCode, RefreshCw,
+  SlidersHorizontal, Ticket, Wallet, WifiOff,
+  ArrowLeftRight, FileText, MessageCircle, Network, ShoppingCart,
+  CreditCard, Globe, Headset, Megaphone, Monitor,
+  Rocket, Settings2, SprayCan, Wifi,
 };
 ```
 
 ---
 
-## Edit 1 — Replace the import block (lines 2–3)
+## Steps 2–16: Edit Each File
 
-**Tool:** `search_replace` on `/app/frontend/src/components/site/Navbar.jsx`
+**Pattern for each file — always 2 parts:**
+1. Replace `import * as Icons from "lucide-react"` → `import { ICONS } from "@/lib/iconMap"`
+2. Replace `Icons[` → `ICONS[` and `Icons.X` → `ICONS.X` in that file
 
-**old_str:**
+---
+
+### Step 2 — Navbar.jsx
+
+**File:** `src/components/site/Navbar.jsx`
+
+Edit A (lines 2–3):
 ```
-import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
-import * as Icons from "lucide-react";
+old: import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
+     import * as Icons from "lucide-react";
+new: import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
+     import { ICONS } from "@/lib/iconMap";
 ```
 
-**new_str:**
+Edit B (line 73):
 ```
-import {
-  Menu, X, ChevronDown, ChevronRight,
-  UtensilsCrossed, Coffee, Sandwich, ChefHat, BedDouble,
-  Store, Utensils, Building2, Wine, Croissant, IceCreamCone,
-  ShoppingBag, Building, HeartHandshake, ShieldCheck,
-  LayoutDashboard, Warehouse,
-  BookOpen, Calculator, HelpCircle,
-  Phone, Box,
-} from "lucide-react";
+old: const Icon = Icons[it.icon] || Icons.Box;
+new: const Icon = ICONS[it.icon] || ICONS.Box;
+```
 
-const NAV_ICONS = {
-  UtensilsCrossed, Coffee, Sandwich, ChefHat, BedDouble,
-  Store, Utensils, Building2, Wine, Croissant, IceCreamCone,
-  ShoppingBag, Building, HeartHandshake, ShieldCheck,
-  LayoutDashboard, Warehouse,
-  BookOpen, Calculator, HelpCircle,
-  Phone, Box,
-};
+Edit C (line 156):
+```
+old: <Icons.Phone className="w-3.5 h-3.5" />
+new: <ICONS.Phone className="w-3.5 h-3.5" />
 ```
 
 ---
 
-## Edit 2 — Replace `Icons[it.icon]` with `NAV_ICONS[it.icon]` (line 73)
+### Step 3 — ProblemGrid.jsx
 
-**old_str:**
+**File:** `src/components/home/ProblemGrid.jsx`
+
+Edit A (line 1):
 ```
-              const Icon = Icons[it.icon] || Icons.Box;
+old: import * as Icons from "lucide-react";
+new: import { ICONS } from "@/lib/iconMap";
 ```
 
-**new_str:**
+Edit B (line 23):
 ```
-              const Icon = NAV_ICONS[it.icon] || Box;
+old: const Icon = Icons[p.icon] || Icons.AlertCircle;
+new: const Icon = ICONS[p.icon] || ICONS.AlertCircle;
 ```
 
 ---
 
-## Edit 3 — Replace `Icons.Phone` with `Phone` (line 156)
+### Step 4 — OutcomePillars.jsx
 
-**old_str:**
+**File:** `src/components/home/OutcomePillars.jsx`
+
+Edit A (line 1):
 ```
-            <Icons.Phone className="w-3.5 h-3.5" />
+old: import * as Icons from "lucide-react";
+new: import { ICONS } from "@/lib/iconMap";
 ```
 
-**new_str:**
+Edit B (line 20):
 ```
-            <Phone className="w-3.5 h-3.5" />
+old: const Icon = Icons[p.icon] || Icons.Circle;
+new: const Icon = ICONS[p.icon] || ICONS.Circle;
+```
+
+---
+
+### Step 5 — SectorSelector.jsx
+
+**File:** `src/components/home/SectorSelector.jsx`
+
+Edit A (line 2):
+```
+old: import * as Icons from "lucide-react";
+new: import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 11):
+```
+old: const ActiveIcon = Icons[s.icon] || Icons.Store;
+new: const ActiveIcon = ICONS[s.icon] || ICONS.Store;
+```
+
+Edit C (line 30):
+```
+old: const Icon = Icons[sec.icon] || Icons.Store;
+new: const Icon = ICONS[sec.icon] || ICONS.Store;
+```
+
+---
+
+### Step 6 — AIBand.jsx
+
+**File:** `src/components/home/AIBand.jsx`
+
+Edit A (lines 1–2):
+```
+old: import * as Icons from "lucide-react";
+     import { Sparkles, ArrowRight } from "lucide-react";
+new: import { Sparkles, ArrowRight } from "lucide-react";
+     import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 28):
+```
+old: const Icon = Icons[u.icon] || Icons.Sparkles;
+new: const Icon = ICONS[u.icon] || Sparkles;
+```
+
+---
+
+### Step 7 — ModuleOverview.jsx
+
+**File:** `src/components/home/ModuleOverview.jsx`
+
+Edit A (lines 1–2):
+```
+old: import * as Icons from "lucide-react";
+     import { Check, ArrowRight } from "lucide-react";
+new: import { Check, ArrowRight } from "lucide-react";
+     import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 23):
+```
+old: const Icon = Icons[b.icon] || Icons.Box;
+new: const Icon = ICONS[b.icon] || ICONS.Box;
+```
+
+---
+
+### Step 8 — SectorPage.jsx
+
+**File:** `src/pages/SectorPage.jsx`
+
+Edit A (line 2):
+```
+old: import * as Icons from "lucide-react";
+new: import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 56):
+```
+old: const HeroIcon = Icons[s.icon] || Icons.Store;
+new: const HeroIcon = ICONS[s.icon] || ICONS.Store;
+```
+
+Edit C (line 177):
+```
+old: const Icon = Icons[sol.icon] || Icons.Check;
+new: const Icon = ICONS[sol.icon] || ICONS.Check;
+```
+
+---
+
+### Step 9 — ProductPage.jsx
+
+**File:** `src/pages/ProductPage.jsx`
+
+Edit A (line 2):
+```
+old: import * as Icons from "lucide-react";
+new: import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 51):
+```
+old: const HeroIcon = Icons[p.icon] || Icons.Box;
+new: const HeroIcon = ICONS[p.icon] || ICONS.Box;
+```
+
+Edit C (line 166):
+```
+old: const Icon = Icons[m.icon] || Icons.Check;
+new: const Icon = ICONS[m.icon] || ICONS.Check;
+```
+
+---
+
+### Step 10 — ProductIndex.jsx
+
+**File:** `src/pages/ProductIndex.jsx`
+
+Edit A (lines 1–2):
+```
+old: import * as Icons from "lucide-react";
+     import { ArrowRight, Check } from "lucide-react";
+new: import { ArrowRight, Check } from "lucide-react";
+     import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 34):
+```
+old: <Icons.LayoutGrid className="w-4 h-4" />
+new: <ICONS.LayoutGrid className="w-4 h-4" />
+```
+
+Edit C (line 53):
+```
+old: <Icons.Smartphone className="w-10 h-10 text-brand-green" />
+new: <ICONS.Smartphone className="w-10 h-10 text-brand-green" />
+```
+
+Edit D (line 78):
+```
+old: const Icon = Icons[b.icon] || Icons.Box;
+new: const Icon = ICONS[b.icon] || ICONS.Box;
+```
+
+---
+
+### Step 11 — SolutionsIndex.jsx
+
+**File:** `src/pages/SolutionsIndex.jsx`
+
+Edit A (lines 1–2):
+```
+old: import * as Icons from "lucide-react";
+     import { ArrowRight } from "lucide-react";
+new: import { ArrowRight } from "lucide-react";
+     import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 40):
+```
+old: <Icons.Layers className="w-4 h-4" />
+new: <ICONS.Layers className="w-4 h-4" />
+```
+
+Edit C (line 59):
+```
+old: <Icons.Store className="w-10 h-10 text-brand-green" />
+new: <ICONS.Store className="w-10 h-10 text-brand-green" />
+```
+
+Edit D (line 88):
+```
+old: const Icon = Icons[s.icon] || Icons.Store;
+new: const Icon = ICONS[s.icon] || ICONS.Store;
+```
+
+---
+
+### Step 12 — AiPage.jsx
+
+**File:** `src/pages/AiPage.jsx`
+
+Edit A (lines 1–2):
+```
+old: import * as Icons from "lucide-react";
+     import { ArrowRight, Sparkles, Check, Warehouse } from "lucide-react";
+new: import { ArrowRight, Sparkles, Check, Warehouse } from "lucide-react";
+     import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 151):
+```
+old: const Icon = Icons[f.icon] || Sparkles;
+new: const Icon = ICONS[f.icon] || Sparkles;
+```
+
+---
+
+### Step 13 — AddonCard.jsx
+
+**File:** `src/components/pricing/AddonCard.jsx`
+
+Edit A (lines 1–2):
+```
+old: import * as Icons from "lucide-react";
+     import { Check, Plus } from "lucide-react";
+new: import { Check, Plus } from "lucide-react";
+     import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 8):
+```
+old: const Icon = Icons[addon.icon] || Icons.Box;
+new: const Icon = ICONS[addon.icon] || ICONS.Box;
+```
+
+---
+
+### Step 14 — PlanCard.jsx
+
+**File:** `src/components/pricing/PlanCard.jsx`
+
+Edit A (line 2):
+```
+old: import * as Icons from "lucide-react";
+new: import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 9):
+```
+old: const Icon = Icons[plan.icon] || Box;
+new: const Icon = ICONS[plan.icon] || Box;
+```
+
+---
+
+### Step 15 — PlanShowcase.jsx
+
+**File:** `src/components/pricing/PlanShowcase.jsx`
+
+Edit A (line 1):
+```
+old: import * as Icons from "lucide-react";
+new: import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 10):
+```
+old: const Icon = Icons[plan.icon] || Box;
+new: const Icon = ICONS[plan.icon] || Box;
+```
+
+---
+
+### Step 16 — ComparisonTable.jsx
+
+**File:** `src/components/pricing/ComparisonTable.jsx`
+
+Edit A (line 2):
+```
+old: import * as Icons from "lucide-react";
+new: import { ICONS } from "@/lib/iconMap";
+```
+
+Edit B (line 63):
+```
+old: const Icon = Icons[p.icon] || Icons.Box;
+new: const Icon = ICONS[p.icon] || ICONS.Box;
 ```
 
 ---
@@ -132,21 +435,17 @@ const NAV_ICONS = {
 ## Verify Before Rebuild
 
 ```bash
-# Confirm wildcard import is gone
-grep -n "import \* as Icons" /app/frontend/src/components/site/Navbar.jsx
+# Zero wildcard imports remain
+grep -rn "import \* as Icons from" /app/frontend/src/
 # Expected: no output
 
-# Confirm NAV_ICONS map is present
-grep -n "NAV_ICONS" /app/frontend/src/components/site/Navbar.jsx
-# Expected: 2 lines (definition + usage)
+# iconMap imported in all 15 files
+grep -rn "from \"@/lib/iconMap\"" /app/frontend/src/ | wc -l
+# Expected: 15
 
-# Confirm Icons.Phone is replaced
-grep -n "Icons\." /app/frontend/src/components/site/Navbar.jsx
+# No bare Icons. references (except ICONS.)
+grep -rn "Icons\." /app/frontend/src/ | grep -v "ICONS\." | grep -v "import" | grep -v "//"
 # Expected: no output
-
-# Confirm all 26 named icons present in import
-grep -A20 "import {" /app/frontend/src/components/site/Navbar.jsx | head -20
-# Expected: multi-line import with all icons listed
 ```
 
 ---
@@ -156,172 +455,64 @@ grep -A20 "import {" /app/frontend/src/components/site/Navbar.jsx | head -20
 ```bash
 cd /app/frontend
 REACT_APP_BACKEND_URL=https://beta.mygenie.online yarn build > /app/memory/build-cr207.log 2>&1 &
-echo "Build started — PID=$!"
-```
-
-Monitor:
-```bash
+echo "Build started PID=$!"
 tail -f /app/memory/build-cr207.log
-# Wait for: "Done in Xs."
-grep "prerendered /404" /app/memory/build-cr207.log
-# Expected: "prerendered /404 -> ..."
 ```
 
----
-
-## Restart Frontend
+## Restart
 
 ```bash
 sudo supervisorctl restart frontend
-sleep 3
-sudo supervisorctl status frontend
-# Expected: RUNNING
 ```
 
 ---
 
-## Validation Checks
-
-### Check A: Main bundle reduced by ~400–450 KB
+## Validation
 
 ```bash
+# A: Main bundle < 550 KB (was 937 KB)
 ls -lh /app/frontend/build/static/js/main.*.js | grep -v ".map"
-# Expected: new main.*.js significantly smaller than 937 KB
-# Target: < 550 KB (if >700 KB the wildcard may still be present)
 
+# B: lucide in main bundle ~68 sources (was 3,624)
 python3 -c "
-import os, glob
-files = glob.glob('/app/frontend/build/static/js/main.*.js')
-files = [f for f in files if not f.endswith('.map')]
-for f in files:
-    size = os.path.getsize(f) // 1024
-    print(f'{f}: {size} KB')
-    if size > 700:
-        print('WARNING: bundle still large — check if wildcard removed correctly')
-    elif size < 400:
-        print('PASS: bundle significantly reduced')
-    else:
-        print('OK: meaningful reduction')
+import json,glob
+m=glob.glob('/app/frontend/build/static/js/main.*.js.map')
+s=json.load(open(m[0]))
+l=[x for x in s.get('sources',[]) if 'lucide' in x]
+print(f'lucide sources in main: {len(l)} (target ~68, was 3624)')
 "
-```
 
-### Check B: lucide-react NOT in main bundle source map (wildcard gone)
-
-```bash
-python3 -c "
-import json, glob
-maps = glob.glob('/app/frontend/build/static/js/main.*.js.map')
-if not maps: exit(1)
-smap = json.load(open(maps[0]))
-lucide_sources = [s for s in smap.get('sources', []) if 'lucide' in s]
-print(f'lucide sources in main bundle: {len(lucide_sources)}')
-if len(lucide_sources) > 30:
-    print('FAIL — wildcard import still pulling in full library')
-elif len(lucide_sources) > 0:
-    print('OK — only named icons present (expected ~26)')
-else:
-    print('PASS — no lucide sources in main bundle (tree-shaken to chunks)')
-"
-```
-
-### Check C: All 63 routes still prerendered
-
-```bash
+# C: 63 routes prerendered
 find /app/frontend/build -name "index.html" | wc -l
-# Expected: 63
-```
 
-### Check D: T1 — new hash not in known-bad list
-
-```bash
-NEW_HASH=$(ls /app/frontend/build/static/js/main.*.js | grep -v ".map" | grep -o '[a-f0-9]\{8\}' | head -1)
-echo "New hash: $NEW_HASH"
-KNOWN_BAD="107ff3e9 04593470 8fe91636 ea6df739 b8f96c28 a65c8c10 f330ce78 af722274 a5f22153"
-echo "$KNOWN_BAD" | grep -q "$NEW_HASH" && echo "FAIL — in known-bad list" || echo "PASS — hash clean"
-```
-
-### Check E: Nav icons functional (visual spot-check)
-
-```bash
-# Verify the icons used in SOLUTIONS/PRODUCTS are all in named imports
-grep -c "UtensilsCrossed\|ChefHat\|HeartHandshake\|Warehouse" /app/frontend/src/components/site/Navbar.jsx
-# Expected: 4 (all present in NAV_ICONS definition)
+# D: T1 hash clean
+NEW=$(ls /app/frontend/build/static/js/main.*.js|grep -v .map|grep -o '[a-f0-9]\{8\}')
+BAD="107ff3e9 04593470 8fe91636 ea6df739 b8f96c28 a65c8c10 f330ce78 af722274 a5f22153"
+echo "$BAD"|grep -q "$NEW" && echo "FAIL" || echo "PASS $NEW"
 ```
 
 ---
 
-## Full T1–T8 Regression
+## Edit Count Summary
 
-This change touches Navbar.jsx which renders on ALL pages. Run the full regression after build:
+| Step | File | Edits |
+|---|---|---|
+| 1 | iconMap.js (NEW) | 1 create |
+| 2 | Navbar.jsx | 3 |
+| 3 | ProblemGrid.jsx | 2 |
+| 4 | OutcomePillars.jsx | 2 |
+| 5 | SectorSelector.jsx | 3 |
+| 6 | AIBand.jsx | 2 |
+| 7 | ModuleOverview.jsx | 2 |
+| 8 | SectorPage.jsx | 3 |
+| 9 | ProductPage.jsx | 3 |
+| 10 | ProductIndex.jsx | 4 |
+| 11 | SolutionsIndex.jsx | 4 |
+| 12 | AiPage.jsx | 2 |
+| 13 | AddonCard.jsx | 2 |
+| 14 | PlanCard.jsx | 2 |
+| 15 | PlanShowcase.jsx | 2 |
+| 16 | ComparisonTable.jsx | 2 |
+| **Total** | | **39 edits** |
 
-```
-T1  Bundle hash         → verify new hash clean
-T2  React #418          → zero errors (createRoot fix unaffected)
-T3  H1 keywords         → unchanged (Navbar has no H1)
-T4  Meta desc lengths   → unchanged
-T5  SEO landing pages   → HTTP 200 + correct titles (nav renders fine)
-T6  Dead routes         → redirects unaffected
-T7  Canonical tags      → unchanged
-T8  Title uniqueness    → unchanged
-```
-
----
-
-## Rollback Plan
-
-If validation fails (bundle not reduced, nav icons broken):
-
-```bash
-# Revert Navbar.jsx to original state:
-# Edit 1 (search_replace):
-#   old_str: the multi-line import + NAV_ICONS block
-#   new_str: original 2 lines (named import + wildcard import)
-#
-# Edit 2 (search_replace):
-#   old_str: const Icon = NAV_ICONS[it.icon] || Box;
-#   new_str: const Icon = Icons[it.icon] || Icons.Box;
-#
-# Edit 3 (search_replace):
-#   old_str: <Phone className="w-3.5 h-3.5" />
-#   new_str: <Icons.Phone className="w-3.5 h-3.5" />
-
-# Rebuild
-cd /app/frontend && REACT_APP_BACKEND_URL=https://beta.mygenie.online yarn build
-sudo supervisorctl restart frontend
-```
-
----
-
-## Post-Implementation: Maintenance Note
-
-**IMPORTANT for future development:** If a new sector or product is added to `content.js` or `products.js` with a new icon string (e.g., `icon: "Leaf"`), that icon MUST be added to both:
-1. The named import block in `Navbar.jsx`
-2. The `NAV_ICONS` object in `Navbar.jsx`
-
-The `Box` fallback means the nav won't crash, but the icon will show a box placeholder until added.
-
-Add this note to `Navbar.jsx` as a comment above `NAV_ICONS`:
-
-```javascript
-// NAV_ICONS: explicit map of icon strings used by SECTORS + MODULE_BUCKETS + RESOURCES.
-// When adding a new sector/product with a new icon, add it here too.
-// Using explicit map (not import *) to keep lucide-react tree-shakeable — see CR-207.
-```
-
----
-
-## Summary
-
-| Step | Action | File | Time |
-|---|---|---|---|
-| Pre-flight | 3 checks | — | <1 min |
-| Edit 1 | Replace import + add NAV_ICONS | `Navbar.jsx` | 2 min |
-| Edit 2 | `Icons[it.icon]` → `NAV_ICONS[it.icon]` | `Navbar.jsx` | 30s |
-| Edit 3 | `Icons.Phone` → `Phone` | `Navbar.jsx` | 30s |
-| Verify | 5 grep checks | — | 1 min |
-| Rebuild | `yarn build` | — | ~3 min |
-| Validate | 5 checks + T1 | — | 2 min |
-| **Total** | | | **~10 min** |
-
-*Line-by-line plan complete — 2026-09-04.*
-*Ready to implement on agent instruction — no code edit in this session.*
+*Plan updated 2026-09-04. Ready to implement on instruction.*
