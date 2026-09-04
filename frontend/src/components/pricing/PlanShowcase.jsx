@@ -1,4 +1,4 @@
-import * as Icons from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { Check, Box } from "lucide-react";
 import { EditableImage, EditableText } from "@/components/cms/Editable";
 
@@ -7,7 +7,7 @@ const inr = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 // Dynamic showcase: shows the SELECTED plan's feature GIF + the features this
 // tier ADDS over the previous one — so customers see why higher plans matter.
 export default function PlanShowcase({ plan }) {
-  const Icon = Icons[plan.icon] || Box;
+  const Icon = ICONS[plan.icon] || Box;
   const includes = plan.includes || [];
   const prevLine = includes.find((f) => /^everything in/i.test(f));
   const deltaFeatures = includes.filter((f) => !/^everything in/i.test(f));

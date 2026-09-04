@@ -1,5 +1,5 @@
 import { useParams, Navigate, Link } from "react-router-dom";
-import * as Icons from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { ArrowRight, Check, Quote } from "lucide-react";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
@@ -48,7 +48,7 @@ export default function ProductPage() {
 
   if (!p) return <Navigate to="/" replace />;
 
-  const HeroIcon = Icons[p.icon] || Icons.Box;
+  const HeroIcon = ICONS[p.icon] || ICONS.Box;
   const others = PRODUCT_ORDER.filter((x) => x !== bucket);
   const MODULES_M = mergeByIndex(p.modules, modulesRaw, ["icon"]);
   const PROOF_M = mergeByIndex(p.proof, proofRaw);
@@ -163,7 +163,7 @@ export default function ProductPage() {
               render={() => (
                 <div className="mt-10 grid md:grid-cols-2 gap-5">
                   {MODULES_M.map((m, i) => {
-                    const Icon = Icons[m.icon] || Icons.Check;
+                    const Icon = ICONS[m.icon] || ICONS.Check;
                     const orange = i % 2 === 1;
                     return (
                       <Reveal key={i} delay={i * 0.04}>

@@ -1,5 +1,5 @@
 import { useParams, Navigate, Link } from "react-router-dom";
-import * as Icons from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { ArrowRight, Check, X, Quote } from "lucide-react";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
@@ -53,7 +53,7 @@ export default function SectorPage() {
 
   if (!s) return <Navigate to="/" replace />;
 
-  const HeroIcon = Icons[s.icon] || Icons.Store;
+  const HeroIcon = ICONS[s.icon] || ICONS.Store;
   const others = SECTOR_ORDER.filter((x) => x !== slug).slice(0, 4);
   const PAINS_M = mergeByIndex(s.pains, painsRaw);
   const SOLS_M = mergeByIndex(s.solutions, solsRaw, ["icon"]);
@@ -174,7 +174,7 @@ export default function SectorPage() {
               render={() => (
                 <div className="mt-10 grid sm:grid-cols-2 gap-5">
                   {SOLS_M.map((sol, i) => {
-                    const Icon = Icons[sol.icon] || Icons.Check;
+                    const Icon = ICONS[sol.icon] || ICONS.Check;
                     const orange = i % 2 === 1;
                     return (
                       <Reveal key={i} delay={i * 0.05}>

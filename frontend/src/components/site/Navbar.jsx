@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
-import * as Icons from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import { SECTORS, MODULE_BUCKETS } from "@/data/content";
@@ -70,7 +70,7 @@ function NavDropdown({ label, items, cols = 2, to }) {
         >
           <div className={`bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.12)] border border-brand-line p-3 grid gap-1 w-[${cols === 2 ? "640px" : "340px"}]`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0,1fr))`, width: cols === 2 ? 640 : 340 }}>
             {items.map((it, i) => {
-              const Icon = Icons[it.icon] || Icons.Box;
+              const Icon = ICONS[it.icon] || ICONS.Box;
               const orange = i % 2 === 1;
               return (
                 <Link key={it.to} to={it.to} onClick={() => setOpen(false)} className="flex gap-3 rounded-xl p-3 hover:bg-brand-sand transition-colors" data-testid={`nav-dd-item-${it.to.replace(/\//g, "-")}`}>
@@ -153,7 +153,7 @@ export default function Navbar({ onDemo }) {
             data-testid="nav-phone-link"
             className="flex items-center gap-1.5 text-sm font-medium text-brand-muted hover:text-brand-green transition-colors"
           >
-            <Icons.Phone className="w-3.5 h-3.5" />
+            <ICONS.Phone className="w-3.5 h-3.5" />
             {COMPANY.phone}
           </a>
           {onDemo ? (

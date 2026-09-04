@@ -1,5 +1,5 @@
 import { useState } from "react";
-import * as Icons from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SECTORS } from "@/data/content";
@@ -8,7 +8,7 @@ import Reveal from "@/components/site/Reveal";
 export default function SectorSelector({ onSectorDemo }) {
   const [active, setActive] = useState(0);
   const s = SECTORS[active];
-  const ActiveIcon = Icons[s.icon] || Icons.Store;
+  const ActiveIcon = ICONS[s.icon] || ICONS.Store;
 
   return (
     <section id="sectors" className="bg-brand-sand py-24 sm:py-28" data-testid="sector-selector">
@@ -27,7 +27,7 @@ export default function SectorSelector({ onSectorDemo }) {
           {/* sector pills */}
           <div className="lg:col-span-5 grid grid-cols-2 gap-3" data-testid="sector-list">
             {SECTORS.map((sec, i) => {
-              const Icon = Icons[sec.icon] || Icons.Store;
+              const Icon = ICONS[sec.icon] || ICONS.Store;
               const on = i === active;
               return (
                 <button

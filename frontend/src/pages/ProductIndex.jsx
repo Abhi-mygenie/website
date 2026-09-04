@@ -1,5 +1,5 @@
-import * as Icons from "lucide-react";
 import { ArrowRight, Check } from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
@@ -31,7 +31,7 @@ export default function ProductIndex() {
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-brand-green/10 text-brand-greenDark px-4 py-1.5 text-sm font-semibold">
-                <Icons.LayoutGrid className="w-4 h-4" />
+                <ICONS.LayoutGrid className="w-4 h-4" />
                 <EditableText id="product.index.hero.eyebrow" fallback="Restaurant POS features" />
               </span>
               <h1 className="font-display mt-5 text-4xl sm:text-5xl font-bold leading-[1.08] tracking-tight text-brand-ink">
@@ -50,7 +50,7 @@ export default function ProductIndex() {
                 <div className="absolute -bottom-16 -left-10 w-56 h-56 rounded-full bg-brand-orange/15 blur-3xl" />
                 <div className="relative">
                   <div className="w-20 h-20 rounded-3xl bg-brand-green/20 flex items-center justify-center">
-                    <Icons.Smartphone className="w-10 h-10 text-brand-green" />
+                    <ICONS.Smartphone className="w-10 h-10 text-brand-green" />
                   </div>
                   <p className="font-display text-2xl font-bold text-white mt-6 max-w-xs leading-snug">
                     Billing, kitchen, inventory, customers — one login.
@@ -75,7 +75,7 @@ export default function ProductIndex() {
             </Reveal>
             <div className="mt-10 grid md:grid-cols-2 gap-5">
               {MODULE_BUCKETS.map((b, i) => {
-                const Icon = Icons[b.icon] || Icons.Box;
+                const Icon = ICONS[b.icon] || ICONS.Box;
                 const orange = i % 2 === 1;
                 return (
                   <Reveal key={b.slug} delay={(i % 2) * 0.05}>

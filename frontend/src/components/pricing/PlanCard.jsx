@@ -1,12 +1,12 @@
 import { Check, Star, Box } from "lucide-react";
-import * as Icons from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { EditableText } from "@/components/cms/Editable";
 import { FeatureDemoButton } from "@/components/pricing/FeatureDemoModal";
 
 const inr = (n) => "₹" + n.toLocaleString("en-IN");
 
 export default function PlanCard({ plan, selected, recommended, onSelect, onFeatureDemo }) {
-  const Icon = Icons[plan.icon] || Box;
+  const Icon = ICONS[plan.icon] || Box;
   const isCustom = plan.contactOnly;
   return (
     <button

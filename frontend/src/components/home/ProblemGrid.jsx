@@ -1,4 +1,4 @@
-import * as Icons from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { PAINS } from "@/data/content";
 import Reveal from "@/components/site/Reveal";
 
@@ -20,7 +20,7 @@ export default function ProblemGrid() {
 
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {PAINS.map((p, i) => {
-            const Icon = Icons[p.icon] || Icons.AlertCircle;
+            const Icon = ICONS[p.icon] || ICONS.AlertCircle;
             return (
               <Reveal key={p.title} delay={i * 0.05}>
                 <div

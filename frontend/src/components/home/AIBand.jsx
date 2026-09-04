@@ -1,5 +1,5 @@
-import * as Icons from "lucide-react";
 import { Sparkles, ArrowRight } from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { AI_USECASES } from "@/data/content";
 import { Link } from "react-router-dom";
 import Reveal from "@/components/site/Reveal";
@@ -25,7 +25,7 @@ export default function AIBand() {
 
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {AI_USECASES.map((u, i) => {
-            const Icon = Icons[u.icon] || Icons.Sparkles;
+            const Icon = ICONS[u.icon] || Sparkles;
             const orange = i % 2 === 1;
             return (
               <Reveal key={u.title} delay={i * 0.05}>

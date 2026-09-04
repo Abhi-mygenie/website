@@ -1,5 +1,5 @@
-import * as Icons from "lucide-react";
 import { Check, ArrowRight } from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { Link } from "react-router-dom";
 import { MODULE_BUCKETS } from "@/data/content";
 import Reveal from "@/components/site/Reveal";
@@ -20,7 +20,7 @@ export default function ModuleOverview() {
 
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-5 gap-5">
           {MODULE_BUCKETS.map((b, i) => {
-            const Icon = Icons[b.icon] || Icons.Box;
+            const Icon = ICONS[b.icon] || ICONS.Box;
             const orange = i % 2 === 1;
             const accent = orange ? "text-brand-orange" : "text-brand-green";
             const accentBg = orange ? "bg-brand-orange/10" : "bg-brand-green/10";

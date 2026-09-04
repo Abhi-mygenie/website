@@ -1,11 +1,11 @@
-import * as Icons from "lucide-react";
 import { Check, Plus } from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { FeatureDemoButton } from "@/components/pricing/FeatureDemoModal";
 
 const inr = (n) => "₹" + n.toLocaleString("en-IN");
 
 export default function AddonCard({ addon, state, onToggle, onDemo }) {
-  const Icon = Icons[addon.icon] || Icons.Box;
+  const Icon = ICONS[addon.icon] || ICONS.Box;
   const included = state === "included";
   const on = state === "on";
 

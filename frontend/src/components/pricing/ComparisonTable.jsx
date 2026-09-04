@@ -1,5 +1,5 @@
 import { Check, X } from "lucide-react";
-import * as Icons from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { PLANS, ADDONS } from "@/data/pricing";
 
 // Collect all unique features + add-ons across plans for comparison rows.
@@ -60,7 +60,7 @@ export default function ComparisonTable({ hideHeading = false }) {
             <tr className="bg-brand-sand/80">
               <th className="text-left py-4 px-5 font-semibold text-brand-muted sticky left-0 z-20 bg-[#F6F8F5] border-r border-brand-line min-w-[130px] w-[35%]">Features</th>
               {pricedPlans.map((p) => {
-                const Icon = Icons[p.icon] || Icons.Box;
+                const Icon = ICONS[p.icon] || ICONS.Box;
                 return (
                   <th key={p.id} className="py-4 px-3 text-center" data-testid={`compare-header-${p.id}`}>
                     <div className="flex flex-col items-center gap-1.5">

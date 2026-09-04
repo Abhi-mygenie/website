@@ -1,5 +1,5 @@
-import * as Icons from "lucide-react";
 import { ArrowRight } from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
@@ -37,7 +37,7 @@ export default function SolutionsIndex() {
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-brand-orange/10 text-brand-orange px-4 py-1.5 text-sm font-semibold">
-                <Icons.Layers className="w-4 h-4" />
+                <ICONS.Layers className="w-4 h-4" />
                 <EditableText id="solutions.index.hero.eyebrow" fallback="The Hospitality Operating System" />
               </span>
               <h1 className="font-display mt-5 text-4xl sm:text-5xl font-bold leading-[1.08] tracking-tight text-brand-ink">
@@ -56,7 +56,7 @@ export default function SolutionsIndex() {
                 <div className="absolute -bottom-16 -left-10 w-56 h-56 rounded-full bg-brand-orange/15 blur-3xl" />
                 <div className="relative">
                   <div className="w-20 h-20 rounded-3xl bg-brand-green/20 flex items-center justify-center">
-                    <Icons.Store className="w-10 h-10 text-brand-green" />
+                    <ICONS.Store className="w-10 h-10 text-brand-green" />
                   </div>
                   <p className="font-display text-2xl font-bold text-white mt-6 max-w-xs leading-snug">
                     {SECTORS.length}+ formats. One platform.
@@ -85,7 +85,7 @@ export default function SolutionsIndex() {
             </Reveal>
             <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {SECTORS.map((s, i) => {
-                const Icon = Icons[s.icon] || Icons.Store;
+                const Icon = ICONS[s.icon] || ICONS.Store;
                 const orange = i % 2 === 1;
                 return (
                   <Reveal key={s.slug} delay={(i % 3) * 0.05}>

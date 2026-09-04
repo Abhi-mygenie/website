@@ -1,5 +1,5 @@
-import * as Icons from "lucide-react";
 import { ArrowRight, Sparkles, Check, Warehouse } from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
@@ -148,7 +148,7 @@ export default function AiPage() {
               render={() => (
                 <div className="space-y-20 lg:space-y-28">
                   {FEATURES_M.map((f, i) => {
-                    const Icon = Icons[f.icon] || Sparkles;
+                    const Icon = ICONS[f.icon] || Sparkles;
                     const flip = i % 2 === 1;
                     return (
                       <Reveal key={f.id}>

@@ -1,4 +1,4 @@
-import * as Icons from "lucide-react";
+import { ICONS } from "@/lib/iconMap";
 import { PILLARS } from "@/data/content";
 import Reveal from "@/components/site/Reveal";
 
@@ -17,7 +17,7 @@ export default function OutcomePillars() {
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {PILLARS.map((p, i) => {
-            const Icon = Icons[p.icon] || Icons.Circle;
+            const Icon = ICONS[p.icon] || ICONS.Circle;
             const wide = i === 0 ? "lg:col-span-2" : "";
             const dark = i === 0;
             const orange = !dark && i % 2 === 1;
