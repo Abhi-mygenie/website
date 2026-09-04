@@ -9,7 +9,7 @@ Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/website
 - **Supervisor**: manages both processes
 
 ## Current Build
-**main.3e4ae81a.js** — 2026-09-04 — CLEAN (rebuilt after fresh repo sync, REACT_APP_BACKEND_URL=https://beta.mygenie.online baked in)
+**main.1273e3d6.js** — 2026-09-04 — CLEAN (CR-207 iconMap build, 402 KB main bundle)
 
 ## Session History
 
@@ -24,6 +24,13 @@ Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/website
 - Implemented CR-198 (GTM ID in .env), CR-199 (GTM in <head>)
 - Ran regression T1–T8 → found T2 #418, T3 bakeries, T6 dead routes
 - Registered CR-201 to CR-204 (Batch AC)
+
+### Session 6 (2026-09-04) — Batch AD Performance Fixes
+- Production audit: LCP 5.1s / TBT 2.9s / Score 51 on www. Explained gap vs preview (GTM, CF beacon, TTFB)
+- CR-206 (browserslist) → Score 76→84 (+8), TBT 852ms→80ms, bundle 958→937KB
+- CR-207 (iconMap): Found `import * as Icons` in 15 files bundled all 3,624 icons. Created `src/lib/iconMap.js`, fixed all 15 files → bundle 937→402KB (−535KB, −57%)
+- Registered CR-208 (Suspense split). Revised impact to +0–1pt after CR-207 shrunk chunks to 34KB total
+- Wrote full handover at /app/memory/HANDOVER_2026-09-04_Session6.md
 
 ### Session 5 (2026-09-04) — Fresh Re-sync
 - Pulled latest main from GitHub (origin/main, 34 commits)
