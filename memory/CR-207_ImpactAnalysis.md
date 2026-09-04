@@ -1,175 +1,142 @@
-# CR-207 — Impact Analysis: Main Bundle 937 KB — Root Cause & Fix
+# CR-207 — Impact Analysis: iconMap — `import * as Icons` Removal
 
 **CR:** CR-207
 **Date:** 2026-09-04
-**Status:** Pre-implementation analysis — ROOT CAUSE IDENTIFIED
-**Author:** E1 Agent
+**Status:** IMPLEMENTED — Impact measured from build data
+**Build:** main.1273e3d6.js (T1: clean ✅)
 
 ---
 
-## 1. Bundle Analysis Results
+## 1. What Changed
 
-### 1a. Main Bundle Composition (source-map analysis)
-
-```
-File: main.dde43c90.js
-Minified size: 937 KB
-Uncompressed source: 3,537 KB
-
-Package                    Source Size    % of total    Est. minified
-─────────────────────────────────────────────────────────────────────
-lucide-react               2,381,983      65.8%         ~450 KB
-react-dom                    518,375      14.3%         ~150 KB
-react-router                 369,738      10.2%         ~100 KB
-APP_CODE (actual logic)      123,016       3.4%          ~50 KB
-@tanstack/query-core          83,604       2.3%          ~30 KB
-sonner                        65,408       1.8%          ~25 KB
-react-helmet-async            33,030       0.9%          ~15 KB
-react                         18,228       0.5%          ~10 KB
-webpack runtime                9,065       0.3%           ~5 KB
-others                        ~4,000       0.1%           ~2 KB
-─────────────────────────────────────────────────────────────────────
-TOTAL                       3,537,KB     100%           ~937 KB
-```
-
-**The actual app logic (3.4%) is tiny. 65.8% of the bundle is a single icon library.**
-
-### 1b. Large Chunks — Already Fine
+### Root cause removed
 
 ```
-238.de9ccead.chunk.js  276 KB → 100% xlsx library     (lazy: LeadsView page)
-516.00b16d5a.chunk.js  155 KB → markdown stack         (lazy: BlogPost page)
-965.9027a958.chunk.js  153 KB → page component(s)      (lazy: loaded on demand)
+BEFORE (15 files):
+  import * as Icons from "lucide-react"  →  bundled ALL 3,624 icons
+
+AFTER (15 files):
+  import { ICONS } from "@/lib/iconMap"  →  bundles only 68 icons
 ```
 
-These large chunks are already lazy-loaded. They only download when a user visits those specific pages. No action needed on them.
+### New file created
+`src/lib/iconMap.js` — 68 named imports, single `ICONS` export object.
 
 ---
 
-## 2. Root Cause — Single Line in Navbar.jsx
+## 2. Confirmed Bundle Results
 
-**File:** `src/components/site/Navbar.jsx`
-**Line 3:**
-```javascript
-import * as Icons from "lucide-react";
-```
+### Main bundle
 
-### Why this destroys tree-shaking
-
-lucide-react has **3,624 icon files**. Webpack's tree-shaking works by static analysis — it looks at what's imported and only bundles those. Named imports work:
-```javascript
-import { ArrowRight, Menu } from "lucide-react";  // ✅ only 2 icons bundled
-```
-
-Wildcard imports break it completely:
-```javascript
-import * as Icons from "lucide-react";  // ❌ all 3,624 icons bundled
-```
-
-webpack cannot know at build time which properties of `Icons` will be accessed at runtime (since `Icons[it.icon]` is a dynamic string lookup). So it includes everything.
-
-### Where the wildcard is used (2 places in Navbar.jsx)
-
-```javascript
-// Line 73 — dynamic icon lookup for dropdown items
-const Icon = Icons[it.icon] || Icons.Box;
-
-// Line 156 — direct icon use in desktop nav phone link
-<Icons.Phone className="w-3.5 h-3.5" />
-```
-
-The dynamic lookup at line 73 is needed because nav items specify icons as strings:
-```javascript
-{ slug: "restaurants", icon: "UtensilsCrossed", ... }
-{ slug: "cafes", icon: "Coffee", ... }
-```
-
----
-
-## 3. The Fix — Replace Wildcard with Static NAV_ICONS Map
-
-### What changes
-
-**Only one file: `Navbar.jsx`**
-
-Remove `import * as Icons` and replace with:
-1. Add all nav-specific icons to the existing named import on line 2
-2. Create a static `NAV_ICONS` object that maps string → component
-3. Use `NAV_ICONS[it.icon]` instead of `Icons[it.icon]`
-4. Use `<Phone>` directly instead of `<Icons.Phone>`
-
-### Complete icon inventory for nav
-
-Icons currently required by nav items (all verified present in lucide-react 0.516.0):
-
-| Source | Icons |
-|---|---|
-| Solutions dropdown (SECTORS) | UtensilsCrossed, Coffee, Sandwich, ChefHat, BedDouble, Store, Utensils, Building2, Wine, Croissant, IceCreamCone |
-| Product dropdown (MODULE_BUCKETS) | ShoppingBag, Building, HeartHandshake, ShieldCheck, LayoutDashboard, Warehouse |
-| Resources dropdown (hardcoded) | BookOpen, Calculator, HelpCircle |
-| Direct use on line 156 | Phone |
-| Fallback (unknown icons) | Box |
-| Already on line 2 | Menu, X, ChevronDown, ChevronRight |
-
-**Total: 26 icons** instead of 3,624.
-
----
-
-## 4. Expected Impact
-
-### Bundle size
-
-```
-Current main bundle:    937 KB
-  lucide wildcard:     ~450 KB  ← removed
-  + 26 named icons:    ~  5 KB  ← added back (only used ones)
-Expected new bundle:   ~492 KB  (~47% smaller)
-```
-
-### Performance metrics (preview URL, Lighthouse mobile)
-
-| Metric | After CR-206 | After CR-207 | Change |
+| | Before (CR-206) | After (CR-207) | Change |
 |---|---|---|---|
-| Main bundle | 937 KB | ~492 KB | −445 KB |
-| JS execution | 2.0s | ~1.1s | −0.9s |
-| TBT | ~300–500ms* | ~150–250ms | −150ms |
-| LCP | ~2–3s | ~1.8–2.5s | −0.2–0.5s |
-| Performance score | 84 | ~88–92 | +4 to +8 |
+| **Size** | 937 KB | **402 KB** | **−535 KB (−57%)** |
+| **lucide sources** | 3,624 | 85 | −3,539 (−97.7%) |
+| **Total source mapped** | 3,537 KB | 1,335 KB | −2,202 KB |
 
-*TBT varies significantly between Lighthouse runs (±300ms). Using 300–500ms as the realistic baseline rather than the anomalous 80ms from the last run.
+### Main bundle composition (after)
 
-### What does NOT change
+```
+react-dom:          506 KB  37.9%   (unchanged — browser core)
+react-router:       361 KB  27.0%   (unchanged — routing)
+OTHER (app code):   129 KB   9.7%   (actual homepage logic)
+lucide-react:       122 KB   9.2%   (was 2,381 KB / 65.8%)
+@tanstack:           81 KB   6.1%   (unchanged)
+sonner:              63 KB   4.8%   (unchanged)
+react-helmet-async:  32 KB   2.4%   (unchanged)
+react:               17 KB   1.3%   (unchanged)
+iconMap.js:           1 KB   0.1%   (new, replaces wildcard)
+───────────────────────────────────────────────────
+TOTAL:            1,335 KB         (was 3,537 KB)
+```
 
-- No visual change — same icons, same nav behaviour
-- All 63 prerendered routes — unaffected
-- Nav dropdown behaviour — identical (same `NAV_ICONS[it.icon] || Box` fallback)
-- SEO, schemas, canonical tags — unaffected
-- All lazy-loaded page chunks — unaffected (each page's icon imports remain independent)
-
----
-
-## 5. Risk Assessment
-
-**Risk: Low**
-
-| Risk | Likelihood | Mitigation |
-|---|---|---|
-| Missing icon → nav item shows Box fallback | Medium (if a future sector is added with a new icon string) | Box fallback already handles this; add new icons to NAV_ICONS as sectors are added |
-| Build breaks | Very low | Named imports are simpler than wildcards; webpack handles this reliably |
-| Nav behaviour changes | Near zero | Only the import mechanism changes, not the render logic |
-| T1–T8 regression | Near zero | No HTML/routing/SEO change |
-
-**One important maintenance note:** If a new sector or product is added to `content.js` or `products.js` with a new icon string, that icon must also be added to `NAV_ICONS` in Navbar.jsx. The Box fallback ensures graceful degradation (shows a box icon rather than crashing).
+**Before:** lucide-react = 65.8% of main bundle.
+**After:** lucide-react = 9.2% — only the 85 icons actually used on load.
 
 ---
 
-## 6. Dependency on Original CR-207 Spec (splitChunks)
+## 3. Download & Parse Time Saved
 
-The original CR-207 spec proposed a `craco.config.js` splitChunks change. After bundle analysis, **that approach is now superseded.** The wildcard import fix is:
-- Simpler (1 file vs webpack config)
-- More effective (removes the root cause vs moving the problem to a vendor chunk)
-- Zero webpack config risk
+Lighthouse test conditions: Emulated Moto G Power, Slow 4G (1.6 Mbps effective)
 
-The splitChunks approach would have split lucide-react into a cacheable vendor chunk — this would improve repeat-visit load time but NOT first-visit parse time. The wildcard fix eliminates the bloat entirely.
+```
+Download time (535 KB at 1.6 Mbps):  535×8/1600 = 2.68 s saved
+Parse/compile (mobile at 1.3 ms/KB):  535×1.3ms = 0.70 s saved
+Total theoretical:                                 ~3.4 s saved
+```
 
-*Impact analysis complete — 2026-09-04.*
+Download and parse overlap with other resources, so real-world LCP gain = ~1.5–2.0s depending on network contention.
+
+---
+
+## 4. Projected Lighthouse Impact
+
+Google PageSpeed servers were throttled during measurement. Projections use Lighthouse scoring model (v10 weights).
+
+| Scenario | FCP | LCP | TBT | TTI | **Score** |
+|---|---|---|---|---|---|
+| Pessimistic | 1.9s | 3.0s | 350ms | 5.0s | **~88** |
+| Typical | 1.7s | 2.2s | 200ms | 4.0s | **~95–100** |
+| Optimistic | 1.5s | 1.8s | 100ms | 3.2s | **~100** |
+| CR-206 baseline (measured) | 1.7s | 3.9s | 80ms | — | **84** |
+
+### What the bundle reduction directly attacks
+
+| Metric | Before CR-207 | After | Mechanism |
+|---|---|---|---|
+| JS execution | 2.0s | ~0.85s | 57% less code to parse |
+| TBT | ~300–500ms | ~130–215ms | Smaller main-thread blocking task |
+| LCP | ~2–4s | ~1.5–2.5s | Less blocking → faster first paint |
+| TTI | ~5.0s | ~3.0–4.0s | Faster JS execution path |
+
+---
+
+## 5. Chunk Changes
+
+The 450 KB that left the main bundle was redistributed — lazy page chunks now each carry the small icon subset they need. Chunk numbers changed as webpack recalculated boundaries.
+
+```
+593.baaac891 (279 KB) — xlsx (LeadsView) + 16 KB lucide (lazy pages)
+516.00b16d5a (155 KB) — markdown (BlogPost)           ← unchanged
+965.9027a958 (153 KB) — page component                ← unchanged
+```
+
+This is correct: lazy pages carry their own icon subset rather than relying on the main bundle.
+
+---
+
+## 6. Site Correctness Checks
+
+| Check | Result |
+|---|---|
+| 63 routes prerendered | ✅ |
+| T1 hash clean | ✅ main.1273e3d6 |
+| lucide in main: 85 sources (target ~68) | ✅ (+17 direct named imports in Navbar/Hero/Footer) |
+| Zero wildcard imports | ✅ |
+| Frontend RUNNING | ✅ |
+
+---
+
+## 7. Running Score Tracker
+
+| Build | CR | Bundle | Score | Notes |
+|---|---|---|---|---|
+| main.b6403ff7 | Baseline | 958 KB | 76 | Starting point |
+| main.dde43c90 | CR-206 browserslist | 937 KB | 84 | +8 |
+| **main.1273e3d6** | **CR-207 iconMap** | **402 KB** | **TBD** | **−535 KB** |
+
+---
+
+## 8. Next: Measure Live Score
+
+When Google PSI recovers:
+```
+https://pagespeed.web.dev/report?url=https://react-frontend-live.preview.emergentagent.com/
+```
+
+Expected diagnostics to confirm:
+- "Reduce JavaScript execution time": 2.0s → ~0.85s
+- "Minimize main-thread work": 3.8s → ~2.0s
+- "Reduce unused JavaScript": 53 KiB → ~5 KiB
+
+*Impact analysis complete — 2026-09-04. Live score pending Google PSI recovery.*
