@@ -1,0 +1,57 @@
+{
+  "summary": "CR-205 Diagnostic run — captured [HYDRATION MISMATCH] console output from all 3 pages (/, /pricing, /demo). The onRecoverableError callback IS firing correctly. CRITICAL FINDING: identical mismatch fires on ALL three pages including /demo (no hero image, different components), proving the mismatch is in a SHARED/LAYOUT component, not any page-specific component.",
+
+  "hydration_mismatch_verbatim": {
+    "homepage_/": "[HYDRATION MISMATCH] Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings. \n    at Suspense (<anonymous>)\n    at We (https://frontend-as-is-run.preview.emergentagent.com/static/js/main.a013f5c4.js:2:868832)\n    at St (https://frontend-as-is-run.preview.emergentagent.com/static/js/main.a013f5c4.js:2:884371)\n    at div (<anonymous>)\n    at Rt (<anonymous>)\n    at k (https://frontend-as-is-run.preview.emergentagent.com/static/js/main.a013f5c4.js:2:48888)\n    at Le (https://frontend-as-is-run.preview.emergentagent.com/static/js/main.a013f5c4.js:2:959835)\n    at e (https://frontend-as-is-run.preview.emergentagent.com/static/js/main.a013f5c4.js:2:821505)",
+    "pricing_/pricing": "[HYDRATION MISMATCH] Minified React error #418; (IDENTICAL stack to homepage)",
+    "demo_/demo": "[HYDRATION MISMATCH] Minified React error #418; (IDENTICAL stack to homepage)",
+    "note": "All three pages produce byte-for-byte identical componentStack output. This conclusively proves the mismatch is in a shared/layout component loaded on every route, NOT in any page-specific component."
+  },
+
+  "key_diagnostic_findings": [
+    "1. SITE-WIDE: Mismatch fires on /, /pricing, AND /demo — identical componentStack on all three pages",
+    "2. MINIFIED BUILD LIMITATION: The componentStack only shows minified function names (We, St, Rt, k, Le, e) + generic 'Suspense' — no readable component names. This is a production minified bundle.",
+    "3. TOP OF STACK IS Suspense: The innermost element is 'Suspense (<anonymous>)' — the mismatch occurs INSIDE a Suspense boundary",
+    "4. The Suspense wrapper is rendered by 'We' at offset 868832 inside the minified main.a013f5c4.js bundle",
+    "5. The stack sequence: e -> Le -> k -> Rt -> div -> St -> We -> Suspense — this is the App-level component tree, not page content",
+    "6. Since /demo has completely different page-level components and still triggers the same mismatch, ALL page-specific suspects (StickyMobileCta, TrustBand, HomeFaq, DemoForm, hero image) are CLEARED"
+  ],
+
+  "root_cause_analysis": {
+    "conclusion": "The hydration mismatch is in a shared layout/wrapper component rendered by App.js on every route — likely the Router, a persistent layout wrapper, or a lazy-loaded component wrapped in Suspense that is present across all pages.",
+    "top_suspect": "A Suspense boundary in App.js wrapping a lazily-loaded component that renders differently on server vs client. Since the stack shows 'div > Rt > k > Le > e' above the Suspense, investigate the Router provider chain and any persistent layout components in App.js.",
+    "why_minified_names_dont_help": "The deployed build is minified. onRecoverableError fires correctly but componentStack only contains mangled names. To get real component names, a SOURCE-MAP-enabled build or running in development mode (yarn start) is needed."
+  },
+
+  "recommendation_for_main_agent": [
+    "ACTION REQUIRED: The mismatch is SITE-WIDE and in a shared component. All 14 page-specific components previously cleared remain cleared.",
+    "NEXT STEP: Inspect App.js for any Suspense boundaries or components that could render differently server vs client. Specifically look for: (a) lazy() imported components wrapped in Suspense, (b) any component using window/document/localStorage without useEffect guard, (c) CmsProvider or HelmetProvider doing SSR-incompatible work.",
+    "ALTERNATIVE: Run the diagnostic against a DEV build (yarn start / non-minified) to get real component names in the componentStack — this would immediately identify the exact component.",
+    "The onRecoverableError hook is working perfectly — the limitation is the minified bundle obscuring component names."
+  ],
+
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "React hydration — all pages",
+        "issue": "React #418 hydration mismatch fires on EVERY page (/, /pricing, /demo) with identical componentStack. Root is in shared layout/App component, not page content. Minified build prevents exact component identification from stack trace.",
+        "affected_selectors": ["entire app"]
+      }
+    ],
+    "design_issues": []
+  },
+
+  "test_report_links": ["/app/test_reports/iteration_5.json"],
+  "action_items": [
+    "Investigate App.js Suspense boundaries and shared layout components for SSR/client mismatch",
+    "Run diagnostic against development build (non-minified) to get readable componentStack with real component names",
+    "Check CmsProvider, HelmetProvider, and any lazy() components in App.js for hydration-unsafe code"
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "diagnostic complete" },
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-205 diagnostic confirmed: [HYDRATION MISMATCH] fires site-wide on all pages with identical componentStack. Minified build prevents readable names. The mismatch is inside a Suspense boundary in a shared/layout component in App.js. Page-specific components are all cleared. Next step: run dev build diagnostic OR inspect App.js Suspense/lazy boundaries."
+}

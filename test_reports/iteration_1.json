@@ -1,0 +1,34 @@
+{
+  "summary": "Tested /api/demo-request endpoint and Freshsales CRM integration after applying the FRESHSALES_API_KEY + FRESHSALES_BASE_URL fix. All 4 tests pass: endpoint reachable (200), lead saved, freshsales_contact_id returned (non-null), and no 'skipping CRM' messages in recent backend logs.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "/api/demo-request",
+        "issue": "Rate limiter (429) triggers if same phone is used within a short window — test used unique phones per run to avoid this"
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_demo_freshsales.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_demo_freshsales.py"
+  ],
+  "success_rate": {
+    "backend": "100% (4/4 tests passed)",
+    "frontend": "not tested"
+  },
+  "seed_data_creation": "Test leads created with phones: 9111111111, 9888888881, 9666666661, 9777777771",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Freshsales CRM integration is working. /api/demo-request returns 200 with a valid freshsales_contact_id. Backend logs (post-fix) show HTTP 200 calls to mygenie-org.myfreshworks.com. Old 'skipping CRM' log entries exist at 14:01 and 14:23 (before the env fix) — these are expected and harmless. Rate limiter enforces unique phone per submission window."
+}

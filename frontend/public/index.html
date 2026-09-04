@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#18A84A" />
+        <meta name="description" content="MyGenie POS — the hospitality operating system that boosts profit up to 25%, stops revenue leakage, and gives owners total control across every outlet." />
+        <meta name="facebook-domain-verification" content="52wnu6dg7xaa18lrghxek38u535rtw" />
+        <!-- CR-199: Google Consent Mode v2 defaults.
+             MUST appear before the GTM snippet. Sets EEA-safe denied defaults for all
+             ad/analytics storage. Stored visitor choice is restored on every route change
+             by setDefaultConsent() in App.js (reads localStorage key "mg_consent").
+             Hardcoded here (not process.env) because public/index.html is a static file. -->
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('consent', 'default', {
+                'analytics_storage': 'denied',
+                'ad_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+                'functionality_storage': 'granted',
+                'security_storage': 'granted',
+                'wait_for_update': 500
+            });
+        </script>
+        <!-- CR-199: Google Tag Manager container — loads async at HTML parse time.
+             Host-gated: only fires on www.mygenie.online and mygenie.online.
+             preview/beta/localhost → hostname check fails → function returns → no GTM load.
+             Fixes 8-13s GA delay that was caused by initGtm() inside App.js useEffect.
+             Prerender safety: on localhost (Puppeteer) hostname guard triggers → no googletagmanager.com request. -->
+        <script>
+            (function(w,d,s,l,i){
+                if(['www.mygenie.online','mygenie.online'].indexOf(w.location.hostname) < 0) return;
+                w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+                var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+                j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+                f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-K5D84Z3L');
+        </script>
+        <link rel="icon" href="/brand/logo.svg" />
+        <!-- Fonts: all self-hosted woff2 — Clash Display (headings) + Poppins (body) -->
+        <!-- Preload self-hosted Clash Display: weight 700 first (LCP heading), then 600 -->
+        <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/clash-display-700.woff2" />
+        <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/clash-display-600.woff2" />
+        <!-- Preload Poppins 400 (body text — most frequent weight, critical for text rendering) -->
+        <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/poppins-400.woff2" />
+        <!-- Preload Poppins 500 + 600: above-fold nav links (font-medium) and CTAs (font-semibold) — CR-183 -->
+        <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/poppins-500.woff2" />
+        <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/poppins-600.woff2" />
+        <!-- Preload Poppins 700: /demo H1 uses font-bold (weight 700) — CR-196 -->
+        <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/poppins-700.woff2" />
+        <!-- @font-face inline: CRA css-loader intercepts /fonts/ paths in .css files;
+             declaring here keeps paths as browser root-relative, matching the preload hrefs above -->
+        <style>
+          @font-face {
+            font-family: 'Clash Display';
+            src: url('/fonts/clash-display-600.woff2') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+            font-display: optional;
+          }
+          @font-face {
+            font-family: 'Clash Display';
+            src: url('/fonts/clash-display-700.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+            font-display: optional;
+          }
+          /* Metric-matched fallback (fonttools-measured 2026-08-23): Poppins resized to
+             Clash Display dimensions — no layout shift when CD misses the optional window */
+          @font-face {
+            font-family: 'Clash Display Fallback';
+            src: local('Poppins Bold'), local('Poppins-Bold');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+            ascent-override: 89%;
+            descent-override: 25%;
+            line-gap-override: 9%;
+            size-adjust: 70.68%;
+          }
+          @font-face {
+            font-family: 'Clash Display Fallback';
+            src: local('Poppins SemiBold'), local('Poppins-SemiBold');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+            ascent-override: 89%;
+            descent-override: 25%;
+            line-gap-override: 9%;
+            size-adjust: 68.82%;
+          }
+          /* ── Poppins: self-hosted woff2, font-display:optional ────────────────────── */
+          @font-face {
+            font-family: 'Poppins';
+            src: url('/fonts/poppins-400.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: optional;
+          }
+          @font-face {
+            font-family: 'Poppins';
+            src: url('/fonts/poppins-500.woff2') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+            font-display: optional;
+          }
+          @font-face {
+            font-family: 'Poppins';
+            src: url('/fonts/poppins-600.woff2') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+            font-display: optional;
+          }
+          @font-face {
+            font-family: 'Poppins';
+            src: url('/fonts/poppins-700.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+            font-display: optional;
+          }
+          /* ── Poppins Fallback: system sans-serif metric-matched to Poppins ──────────── */
+          /* fonttools: Poppins asc=1050 dsc=350 gap=100 UPM=1000 / Arial xAvgCharWidth=934 */
+          @font-face {
+            font-family: 'Poppins Fallback';
+            src: local('Arial'), local('Helvetica Neue'), local('Roboto');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+            ascent-override: 105%;
+            descent-override: 35%;
+            line-gap-override: 10%;
+            size-adjust: 91.11%;
+          }
+          @font-face {
+            font-family: 'Poppins Fallback';
+            src: local('Arial'), local('Helvetica Neue'), local('Roboto');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+            ascent-override: 105%;
+            descent-override: 35%;
+            line-gap-override: 10%;
+            size-adjust: 91.97%;
+          }
+          @font-face {
+            font-family: 'Poppins Fallback';
+            src: local('Arial'), local('Helvetica Neue'), local('Roboto');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+            ascent-override: 105%;
+            descent-override: 35%;
+            line-gap-override: 10%;
+            size-adjust: 92.72%;
+          }
+          @font-face {
+            font-family: 'Poppins Fallback';
+            src: local('Arial'), local('Helvetica Neue'), local('Roboto');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+            ascent-override: 105%;
+            descent-override: 35%;
+            line-gap-override: 10%;
+            size-adjust: 93.47%;
+          }
+        </style>
+        <!--
+        manifest.json provides metadata used when your web app is installed on a
+        user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+        -->
+        <!--
+        Notice the use of %PUBLIC_URL% in the tags above.
+        It will be replaced with the URL of the `public` folder during the build.
+        Only files inside the `public` folder can be referenced from the HTML.
+
+        Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+        work correctly both with client-side routing and a non-root public URL.
+        Learn how to configure a non-root public URL by running `npm run build`.
+        -->
+        <title>Restaurant POS &amp; Billing Software | MyGenie</title>
+        <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <noscript>
+          <style>
+            /* When JS is disabled, ensure all Reveal-wrapped content is visible */
+            [style*="opacity: 0"] { opacity: 1 !important; }
+            [style*="translateY"] { transform: none !important; }
+          </style>
+        </noscript>
+        <!-- CR-199: GTM noscript fallback (for browsers with JS disabled).
+             Removed from prerendered HTML pages by prerender.js via selector: iframe[src*="googletagmanager"] -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K5D84Z3L"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <div id="root"></div>
+        <script>
+            !(function (t, e) {
+                var o, n, p, r;
+                e.__SV ||
+                    ((window.posthog = e),
+                    (e._i = []),
+                    (e.init = function (i, s, a) {
+                        function g(t, e) {
+                            var o = e.split(".");
+                            2 == o.length && ((t = t[o[0]]), (e = o[1])),
+                                (t[e] = function () {
+                                    t.push(
+                                        [e].concat(
+                                            Array.prototype.slice.call(
+                                                arguments,
+                                                0,
+                                            ),
+                                        ),
+                                    );
+                                });
+                        }
+                        ((p = t.createElement("script")).type =
+                            "text/javascript"),
+                            (p.crossOrigin = "anonymous"),
+                            (p.async = !0),
+                            (p.src =
+                                s.api_host.replace(
+                                    ".i.posthog.com",
+                                    "-assets.i.posthog.com",
+                                ) + "/static/array.js"),
+                            (r =
+                                t.getElementsByTagName(
+                                    "script",
+                                )[0]).parentNode.insertBefore(p, r);
+                        var u = e;
+                        for (
+                            void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
+                                u.people = u.people || [],
+                                u.toString = function (t) {
+                                    var e = "posthog";
+                                    return (
+                                        "posthog" !== a && (e += "." + a),
+                                        t || (e += " (stub)"),
+                                        e
+                                    );
+                                },
+                                u.people.toString = function () {
+                                    return u.toString(1) + ".people (stub)";
+                                },
+                                o =
+                                    "init me ws ys ps bs capture je Di ks register register_once register_for_session unregister unregister_for_session Ps getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Es $s createPersonProfile Is opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ss debug xs getPageViewId captureTraceFeedback captureTraceMetric".split(
+                                        " ",
+                                    ),
+                                n = 0;
+                            n < o.length;
+                            n++
+                        )
+                            g(u, o[n]);
+                        e._i.push([i, s, a]);
+                    }),
+                    (e.__SV = 1));
+            })(document, window.posthog || []);
+            function __initPosthog() {
+                posthog.init("phc_xAvL2Iq4tFmANRE7kzbKwaSqp1HJjN7x48s3vr0CMjs", {
+                    api_host: "https://us.i.posthog.com",
+                    person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well,
+                    session_recording: {
+                        recordCrossOriginIframes: true,
+                        capturePerformance: false,
+                    },
+                });
+            }
+            var __phLoaded = false;
+            function __loadPosthogOnce() {
+                if (__phLoaded) return; __phLoaded = true; __initPosthog();
+            }
+            window.addEventListener("load", function () { setTimeout(__loadPosthogOnce, 6000); });
+            ["click", "keydown", "touchstart", "scroll"].forEach(function (ev) {
+                document.addEventListener(ev, __loadPosthogOnce, { once: true, passive: true });
+            });
+        </script>
+    </body>
+</html>

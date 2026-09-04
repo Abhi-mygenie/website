@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MOCKUP — /restaurant-pos-comparison | MyGenie</title>
+<style>
+@font-face { font-family:'Clash Display'; src:url('/fonts/clash-display-600.woff2') format('woff2'); font-weight:600; }
+@font-face { font-family:'Clash Display'; src:url('/fonts/clash-display-700.woff2') format('woff2'); font-weight:700; }
+@font-face { font-family:'Poppins'; src:url('/fonts/poppins-400.woff2') format('woff2'); font-weight:400; }
+@font-face { font-family:'Poppins'; src:url('/fonts/poppins-500.woff2') format('woff2'); font-weight:500; }
+@font-face { font-family:'Poppins'; src:url('/fonts/poppins-600.woff2') format('woff2'); font-weight:600; }
+@font-face { font-family:'Poppins'; src:url('/fonts/poppins-700.woff2') format('woff2'); font-weight:700; }
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#10B981; --green-dark:#059669; --deep:#10402A; --deep-surface:#18512F;
+  --orange:#f26b33; --sand:#F6F8F5; --ink:#14201A; --muted:#5B6B61;
+  --line:#E6EAE6; --yellow:#FFE100; --white:#fff;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',sans-serif;color:var(--ink);background:#fff;font-size:16px;line-height:1.6}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;line-height:1.1;letter-spacing:-0.02em}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+
+/* ── LAYOUT ── */
+.max-w{max-width:1200px;margin:0 auto;padding:0 24px}
+@media(max-width:768px){.max-w{padding:0 16px}}
+
+/* ── MOCKUP BANNER ── */
+.mockup-banner{background:#1e293b;color:#94a3b8;text-align:center;font-size:11px;letter-spacing:.08em;padding:8px;font-family:monospace;position:sticky;top:0;z-index:200}
+.mockup-banner b{color:#f59e0b}
+
+/* ── NAVBAR ── */
+nav{position:sticky;top:30px;z-index:100;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);box-shadow:0 2px 20px rgba(0,0,0,.05)}
+.nav-inner{height:72px;display:flex;align-items:center;justify-content:space-between}
+.logo{height:32px;width:auto}
+.nav-cta{background:var(--green);color:#fff;font-weight:600;font-size:14px;border-radius:999px;padding:10px 22px;transition:background .2s;border:none;cursor:pointer}
+.nav-cta:hover{background:var(--green-dark)}
+
+/* ── BUTTONS ── */
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;font-weight:600;border-radius:999px;padding:16px 28px;font-size:16px;transition:all .2s;border:none;cursor:pointer;font-family:'Poppins',sans-serif}
+.btn-primary:hover{background:var(--green-dark);transform:translateY(-1px)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--ink);font-weight:600;border-radius:999px;padding:16px 28px;font-size:16px;border:2px solid var(--line);transition:all .2s;cursor:pointer;font-family:'Poppins',sans-serif}
+.btn-secondary:hover{border-color:var(--green);color:var(--green)}
+.btn-outline-green{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--green);font-weight:600;border-radius:999px;padding:14px 26px;font-size:15px;border:2px solid rgba(16,185,129,.3);transition:all .2s;cursor:pointer;font-family:'Poppins',sans-serif}
+.btn-outline-green:hover{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* ── SECTION LABELS ── */
+.eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green);display:block;margin-bottom:12px;font-family:'Poppins',sans-serif}
+.eyebrow-orange{color:var(--orange)}
+.eyebrow-muted{color:var(--muted)}
+.eyebrow-yellow{color:var(--yellow)}
+
+/* ── HERO ── */
+.hero{background:var(--sand);padding:120px 0 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;right:-100px;width:500px;height:500px;border-radius:50%;background:rgba(16,185,129,.08);filter:blur(60px)}
+.hero::after{content:'';position:absolute;bottom:-60px;left:-80px;width:400px;height:400px;border-radius:50%;background:rgba(242,107,51,.06);filter:blur(60px)}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;position:relative}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.vs-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(242,107,51,.1);color:var(--orange);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;margin-bottom:20px;font-family:'Poppins',sans-serif}
+.hero h1{font-size:clamp(34px,5vw,56px);font-weight:700;margin-bottom:20px;color:var(--ink)}
+.hero h1 span{color:var(--green)}
+.hero-sub{font-size:18px;color:var(--muted);line-height:1.7;max-width:520px;margin-bottom:32px}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px}
+.trust-strip{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--muted)}
+.trust-dot{width:16px;height:16px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:24px}
+.stat-val{font-family:'Clash Display',sans-serif;font-size:40px;font-weight:700;line-height:1;margin-bottom:6px}
+.stat-val.green{color:var(--green)}
+.stat-val.orange{color:var(--orange)}
+.stat-label{font-size:13px;color:var(--muted);line-height:1.4}
+
+/* ── SECTION BASE ── */
+section{padding:80px 0}
+.section-dark{background:var(--deep)}
+.section-sand{background:var(--sand)}
+.section-white{background:#fff}
+
+/* ── COMPARISON TABLE ── */
+.table-wrap{background:#0c2a1a;border:1px solid #1e4a2e;border-radius:24px;overflow:hidden;margin-top:32px}
+.comp-table{width:100%;border-collapse:collapse}
+.comp-table th{padding:14px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.comp-table th:first-child{text-align:left;color:#5B7A68;background:#0c2a1a;width:40%}
+.comp-table th.mg-col{text-align:center;color:var(--green);background:#0d3318}
+.comp-table th.comp-col{text-align:center;color:#5B7A68;background:#111f17}
+.comp-table td{padding:14px 20px;font-size:14px;border-bottom:1px solid #0e2518}
+.comp-table tr:last-child td{border-bottom:none}
+.comp-table td:first-child{background:#0c2a1a;font-weight:600;color:#d4e8dc}
+.comp-table td:first-child .sub{display:block;font-size:12px;color:#5B7A68;font-weight:400;margin-top:2px}
+.comp-table td.mg-val{background:#0a2210;text-align:center;color:#86efac;font-weight:600}
+.comp-table td.comp-val{background:#0e1e14;text-align:center;color:#5B7A68;font-weight:500}
+.comp-table td.comp-bad{background:#0e1e14;text-align:center;color:#f87171;font-weight:600}
+.comp-table td.comp-addon{background:#0e1e14;text-align:center}
+.addon-badge{background:#1a1000;border:1px solid rgba(242,107,51,.3);color:var(--orange);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.06em}
+.verify-note{font-size:12px;color:#5B7A68;margin-top:12px;font-style:italic}
+
+/* ── SECTION AFTER TABLE CTA ── */
+.after-table-cta{text-align:center;padding:16px 20px;border-top:1px solid #1e4a2e;background:#0c2a1a}
+
+/* ── PROOF SECTION ── */
+.stat-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:48px}
+@media(max-width:700px){.stat-bar{grid-template-columns:1fr 1fr}}
+.stat-bar-item{background:#fff;padding:20px;text-align:center}
+.stat-bar-val{font-family:'Clash Display',sans-serif;font-size:28px;font-weight:700;color:var(--green)}
+.stat-bar-label{font-size:12px;color:var(--muted);margin-top:4px}
+.proof-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:900px){.proof-cards{grid-template-columns:1fr}}
+.proof-card{border:1px solid var(--line);border-left:4px solid var(--green);border-radius:20px;padding:28px}
+.switch-badge{display:inline-block;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#059669;font-size:10px;font-weight:700;padding:3px 10px;border-radius:8px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px}
+.proof-quote{font-size:14px;color:var(--muted);line-height:1.7;font-style:italic;margin-bottom:20px}
+.proof-author{display:flex;align-items:center;gap:10px}
+.author-avatar{width:36px;height:36px;border-radius:50%;background:var(--sand);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--green-dark);flex-shrink:0}
+.author-name{font-size:13px;font-weight:700;color:var(--ink)}
+.author-outlet{font-size:12px;color:var(--muted)}
+
+/* ── MIGRATION ── */
+.migration-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin:40px 0}
+@media(max-width:900px){.migration-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.migration-steps{grid-template-columns:1fr}}
+.step-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px;position:relative}
+.step-num{font-family:'Clash Display',sans-serif;font-size:48px;font-weight:700;color:rgba(16,185,129,.3);line-height:1;margin-bottom:12px}
+.step-title{font-size:16px;font-weight:600;color:#fff;margin-bottom:8px;font-family:'Clash Display',sans-serif}
+.step-body{font-size:13px;color:#a3b8ac;line-height:1.6}
+.migration-proofs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px}
+@media(max-width:700px){.migration-proofs{grid-template-columns:1fr}}
+.migration-proof{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px}
+.migration-proof-icon{font-size:24px;margin-bottom:10px}
+.migration-proof-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px}
+.migration-proof-body{font-size:13px;color:#a3b8ac;line-height:1.5}
+
+/* ── FEATURES ── */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+@media(max-width:900px){.features-grid{grid-template-columns:1fr}}
+.feature-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:32px;position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.feature-card.fc-green::before{background:var(--green)}
+.feature-card.fc-orange::before{background:var(--orange)}
+.feature-metric{font-family:'Clash Display',sans-serif;font-size:48px;font-weight:700;line-height:1;margin-bottom:12px}
+.feature-metric.green{color:var(--green)}
+.feature-metric.orange{color:var(--orange)}
+.feature-title{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:8px;font-family:'Clash Display',sans-serif}
+.feature-body{font-size:14px;color:var(--muted);line-height:1.7}
+
+/* ── FORM SECTION ── */
+.form-section{background:var(--deep);padding:80px 0;position:relative;overflow:hidden}
+.form-section::before{content:'';position:absolute;top:-100px;right:-100px;width:500px;height:500px;border-radius:50%;background:rgba(16,185,129,.08);filter:blur(60px)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;position:relative}
+@media(max-width:900px){.form-grid{grid-template-columns:1fr}}
+.form-left h2{font-size:clamp(32px,4vw,44px);font-weight:700;color:#fff;margin-bottom:16px}
+.form-left p{font-size:16px;color:#a3b8ac;line-height:1.7;margin-bottom:32px}
+.switch-badges{display:flex;flex-direction:column;gap:12px}
+.switch-badge-card{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px}
+.badge-icon{width:40px;height:40px;background:rgba(16,185,129,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.badge-title{font-size:14px;font-weight:700;color:#fff}
+.badge-sub{font-size:12px;color:#a3b8ac;margin-top:2px}
+.form-box{background:#fff;border-radius:24px;padding:36px}
+.form-box h3{font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.form-box .form-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.form-field{margin-bottom:14px}
+.form-field label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.form-field input,.form-field select{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 16px;font-size:15px;font-family:'Poppins',sans-serif;color:var(--ink);background:rgba(246,248,245,.6);outline:none;transition:border-color .2s}
+.form-field input:focus,.form-field select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.12)}
+.form-submit{width:100%;background:var(--green);color:#fff;font-weight:700;font-size:16px;border-radius:999px;padding:14px;border:none;cursor:pointer;font-family:'Poppins',sans-serif;margin-top:20px;transition:background .2s}
+.form-submit:hover{background:var(--green-dark)}
+.form-trust{display:flex;flex-direction:column;gap:6px;margin-top:16px}
+.form-trust-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.form-trust-dot{color:var(--green);font-weight:700}
+
+/* ── RISK REVERSAL ── */
+.risk-band{background:var(--sand);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:40px 0}
+.risk-inner{display:flex;flex-direction:column;align-items:center;text-align:center}
+.risk-headline{font-family:'Clash Display',sans-serif;font-size:28px;font-weight:700;color:var(--ink);margin-bottom:24px}
+.risk-items{display:flex;flex-wrap:wrap;justify-content:center;gap:16px}
+.risk-item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 24px;min-width:220px;flex:1;max-width:280px}
+.risk-item-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.risk-item-body{font-size:13px;color:var(--muted)}
+
+/* ── FAQ ── */
+.faq-list{margin-top:32px;display:flex;flex-direction:column;gap:12px}
+.faq-item{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.faq-q{padding:18px 24px;font-weight:600;font-size:15px;color:var(--ink);display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.faq-q .arrow{color:var(--green);font-size:18px;font-weight:700}
+.faq-a{padding:0 24px 18px;font-size:14px;color:var(--muted);line-height:1.7;border-top:1px solid var(--line);padding-top:14px}
+
+/* ── FOOTER ── */
+footer{background:var(--deep);border-top:1px solid #1e4a2e}
+.footer-inner{height:56px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap}
+.footer-links a{font-size:12px;color:#5B7A68;transition:color .2s}
+.footer-links a:hover{color:var(--yellow)}
+.footer-copy{font-size:12px;color:#5B7A68}
+
+/* ── SECTION HEADER UTIL ── */
+.section-header{margin-bottom:40px}
+.section-header h2{font-size:clamp(28px,4vw,44px);font-weight:700;margin-top:8px}
+.section-header p{font-size:17px;color:var(--muted);margin-top:10px;max-width:600px;line-height:1.7}
+
+/* ── DIVIDER ── */
+.divider-cta{background:rgba(16,185,129,.06);border-top:1px solid rgba(16,185,129,.15);border-bottom:1px solid rgba(16,185,129,.15);padding:24px;text-align:center}
+</style>
+</head>
+<body>
+
+<!-- MOCKUP BANNER -->
+<div class="mockup-banner">
+  DESIGN MOCKUP — <b>/restaurant-pos-comparison</b> — CR-150 — Content + Structure review only. Not production code.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════════════════ -->
+<nav>
+  <div class="max-w">
+    <div class="nav-inner">
+      <img src="/brand/logo.svg" alt="MyGenie" class="logo" />
+      <a href="#demo-form" class="nav-cta">Book Free Demo</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 1 — HERO
+════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="max-w">
+    <div class="hero-grid">
+      <!-- LEFT -->
+      <div>
+        <div class="vs-badge">⚡ POS Comparison — India</div>
+        <h1>
+          Compare Restaurant POS Systems —
+          <span>Switch Without the Downtime</span>
+        </h1>
+        <p class="hero-sub">
+          Outgrown your current POS? MyGenie gives you AI insights, inventory, CRM, and billing —
+          starting at ₹799/month per outlet. Switch in under 48 hours with free data migration.
+        </p>
+        <div class="hero-ctas">
+          <a href="#demo-form" class="btn-primary">Book a Free Demo →</a>
+          <a href="#comparison-table" class="btn-secondary">Compare Features</a>
+        </div>
+        <div class="trust-strip">
+          <div class="trust-item"><div class="trust-dot">✓</div> No contracts, no lock-in</div>
+          <div class="trust-item"><div class="trust-dot">✓</div> Free migration support</div>
+          <div class="trust-item"><div class="trust-dot">✓</div> 100+ cities across India</div>
+          <div class="trust-item"><div class="trust-dot">✓</div> GST compliant</div>
+        </div>
+      </div>
+      <!-- RIGHT — stat cards -->
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-val green">48 hrs</div>
+          <div class="stat-label">from sign-up to first bill</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val orange">₹1 Lakh</div>
+          <div class="stat-label">leakage caught in 2 weeks (avg)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val green">100+</div>
+          <div class="stat-label">cities across India</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val orange">₹799</div>
+          <div class="stat-label">starting price per outlet/month</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 2 — COMPARISON TABLE
+════════════════════════════════════════════════════════ -->
+<section class="section-dark" id="comparison-table">
+  <div class="max-w">
+    <div class="section-header">
+      <span class="eyebrow eyebrow-yellow">Side-by-Side</span>
+      <h2 style="color:#fff">Compare Before You Decide</h2>
+      <p style="color:#a3b8ac">MyGenie vs the most-searched restaurant POS systems in India. Based on publicly available information.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="mg-col">MyGenie</th>
+            <th class="comp-col">Posist / Restroworks</th>
+            <th class="comp-col">GoFrugal</th>
+            <th class="comp-col">Billberry</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Starting Price <span class="sub">per outlet / month</span></td>
+            <td class="mg-val">₹799/mo</td>
+            <td class="comp-val">[VERIFY] ₹1,500+</td>
+            <td class="comp-val">[VERIFY] ₹900+</td>
+            <td class="comp-val">[VERIFY] ₹600+</td>
+          </tr>
+          <tr>
+            <td>AI Insights</td>
+            <td class="mg-val">✓ Built-in (Pro)</td>
+            <td class="comp-addon"><span class="addon-badge">Add-on</span></td>
+            <td class="comp-bad">✗</td>
+            <td class="comp-bad">✗</td>
+          </tr>
+          <tr>
+            <td>Recipe-Level P&L</td>
+            <td class="mg-val">✓</td>
+            <td class="comp-bad">✗</td>
+            <td class="comp-val">Limited</td>
+            <td class="comp-bad">✗</td>
+          </tr>
+          <tr>
+            <td>CRM Built-in</td>
+            <td class="mg-val">✓ Included</td>
+            <td class="comp-addon"><span class="addon-badge">Add-on</span></td>
+            <td class="comp-bad">✗</td>
+            <td class="comp-bad">✗</td>
+          </tr>
+          <tr>
+            <td>Multi-Location</td>
+            <td class="mg-val">✓</td>
+            <td class="comp-val">✓</td>
+            <td class="comp-val">✓</td>
+            <td class="comp-bad">✗</td>
+          </tr>
+          <tr>
+            <td>Migration Support</td>
+            <td class="mg-val">✓ Free</td>
+            <td class="comp-val">Paid</td>
+            <td class="comp-val">Paid</td>
+            <td class="comp-bad">✗</td>
+          </tr>
+          <tr>
+            <td>Switch Timeline</td>
+            <td class="mg-val">48 hours</td>
+            <td class="comp-val">[VERIFY] 2–4 weeks</td>
+            <td class="comp-val">[VERIFY] 2–3 weeks</td>
+            <td class="comp-val">[VERIFY] 1 week</td>
+          </tr>
+          <tr>
+            <td>Indian 24/7 Support</td>
+            <td class="mg-val">✓</td>
+            <td class="comp-val">✓</td>
+            <td class="comp-val">✓</td>
+            <td class="comp-val">Limited</td>
+          </tr>
+          <tr>
+            <td>No Lock-in / No Contracts</td>
+            <td class="mg-val">✓</td>
+            <td class="comp-bad">✗</td>
+            <td class="comp-bad">✗</td>
+            <td class="comp-val">✓</td>
+          </tr>
+          <tr>
+            <td>Offline Mode</td>
+            <td class="mg-val">✓</td>
+            <td class="comp-val">✓</td>
+            <td class="comp-val">✓</td>
+            <td class="comp-val">✓</td>
+          </tr>
+          <tr>
+            <td>GST Compliant</td>
+            <td class="mg-val">✓</td>
+            <td class="comp-val">✓</td>
+            <td class="comp-val">✓</td>
+            <td class="comp-val">✓</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="after-table-cta">
+        <a href="#demo-form" class="btn-outline-green">See MyGenie in Action — Book a Free Demo →</a>
+      </div>
+    </div>
+    <p class="verify-note">⚠️ [VERIFY] cells = competitor data to be confirmed with product team before publish. Disclaimer: Based on publicly available information as of August 2026.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 3 — SOCIAL PROOF
+════════════════════════════════════════════════════════ -->
+<section class="section-white">
+  <div class="max-w">
+    <div class="section-header">
+      <span class="eyebrow">Verified Results</span>
+      <h2>Why Restaurants Are Switching to MyGenie</h2>
+    </div>
+
+    <!-- Stat bar -->
+    <div class="stat-bar">
+      <div class="stat-bar-item">
+        <div class="stat-bar-val">100+</div>
+        <div class="stat-bar-label">Cities</div>
+      </div>
+      <div class="stat-bar-item">
+        <div class="stat-bar-val">48 hrs</div>
+        <div class="stat-bar-label">Migration</div>
+      </div>
+      <div class="stat-bar-item">
+        <div class="stat-bar-val">+25%</div>
+        <div class="stat-bar-label">Profit Boost</div>
+      </div>
+      <div class="stat-bar-item">
+        <div class="stat-bar-val">₹799</div>
+        <div class="stat-bar-label">Starting Price / mo</div>
+      </div>
+    </div>
+
+    <!-- Proof cards -->
+    <div class="proof-cards">
+      <!-- Card 1 -->
+      <div class="proof-card">
+        <div class="switch-badge">Switched from Posist</div>
+        <p class="proof-quote">"We were on Posist for 2 years. The migration took one day — they moved our entire menu, customer data, and integrations. We went live on a Tuesday and didn't lose a single order."</p>
+        <div class="proof-author">
+          <div class="author-avatar">R</div>
+          <div>
+            <div class="author-name">[CS Team to fill — restaurant owner]</div>
+            <div class="author-outlet">Restaurant Name, City</div>
+          </div>
+        </div>
+      </div>
+      <!-- Card 2 — using stories.js fallback -->
+      <div class="proof-card">
+        <div class="switch-badge">MyGenie Customer</div>
+        <p class="proof-quote">"Recipe-level control gave us full P&L visibility. Wastage down 12%, order profitability up 18%."</p>
+        <div class="proof-author">
+          <div class="author-avatar">U</div>
+          <div>
+            <div class="author-name">Ubuntu Café</div>
+            <div class="author-outlet">Café, India</div>
+          </div>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="proof-card">
+        <div class="switch-badge">Switched from GoFrugal</div>
+        <p class="proof-quote">"GoFrugal worked, but every feature we needed was a separate module with a separate cost. MyGenie has everything — CRM, loyalty, WhatsApp, AI — in one plan at ₹1,499 a month. The math was obvious."</p>
+        <div class="proof-author">
+          <div class="author-avatar">M</div>
+          <div>
+            <div class="author-name">[CS Team to fill — restaurant owner]</div>
+            <div class="author-outlet">Restaurant Name, City</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 4 — MIGRATION
+════════════════════════════════════════════════════════ -->
+<section class="section-dark">
+  <div class="max-w">
+    <div class="section-header">
+      <span class="eyebrow eyebrow-yellow">Zero Downtime</span>
+      <h2 style="color:#fff">Switch in Under 48 Hours — We Handle Everything</h2>
+      <p style="color:#a3b8ac">The #1 reason restaurants don't switch POS is fear of downtime and data loss. Here's exactly how the migration works.</p>
+    </div>
+
+    <div class="migration-steps">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-title">Book a free demo</div>
+        <div class="step-body">We assess your current setup, outlet count, and integrations in a 20-min call. No commitment.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-title">We migrate your data</div>
+        <div class="step-body">Menu, inventory, customer records, and supplier data — migrated by our onboarding team. Zero manual re-entry.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-title">Staff training included</div>
+        <div class="step-body">Your team is trained on billing, KDS, and reporting before go-live. Takes 2–3 hours, not days.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <div class="step-title">Go live. We stay.</div>
+        <div class="step-body">24/7 support for the first 30 days. Your dedicated account manager handles any issues same day.</div>
+      </div>
+    </div>
+
+    <div class="migration-proofs">
+      <div class="migration-proof">
+        <div class="migration-proof-icon">🛡️</div>
+        <div class="migration-proof-title">Your data is fully portable</div>
+        <div class="migration-proof-body">Export everything, anytime. No exit fees, no data hostage.</div>
+      </div>
+      <div class="migration-proof">
+        <div class="migration-proof-icon">⏱️</div>
+        <div class="migration-proof-title">Zero downtime</div>
+        <div class="migration-proof-body">Migration happens before you flip the switch. Your current POS keeps running until you're ready.</div>
+      </div>
+      <div class="migration-proof">
+        <div class="migration-proof-icon">⭐</div>
+        <div class="migration-proof-title">Free for all plans</div>
+        <div class="migration-proof-body">Migration support is included in every MyGenie plan — Starter, Growth, and Pro.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 5 — FEATURE DEEP-DIVE
+════════════════════════════════════════════════════════ -->
+<section class="section-sand">
+  <div class="max-w">
+    <div class="section-header">
+      <span class="eyebrow eyebrow-orange">What Makes It Different</span>
+      <h2>POS + CRM + AI in One System — Not Three Separate Tools</h2>
+      <p>Most restaurant POS systems record what happened. MyGenie prevents what shouldn't — before it costs you.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fc-green">
+        <div class="feature-metric green">+18%</div>
+        <div class="feature-title">AI that audits every rupee</div>
+        <div class="feature-body">Recipe-level P&L, waste tracking, demand forecasting, and fraud detection — built in, not bolted on. No separate AI license. Available in the Pro plan.</div>
+      </div>
+      <div class="feature-card fc-orange">
+        <div class="feature-metric orange">+15%</div>
+        <div class="feature-title">Know your regulars. Keep them coming back.</div>
+        <div class="feature-body">Built-in CRM tracks every customer — spend, visit frequency, preferences. Automated WhatsApp and loyalty rewards, included. No third-party tool required.</div>
+      </div>
+      <div class="feature-card fc-green">
+        <div class="feature-metric green">−12%</div>
+        <div class="feature-title">Recipe-level inventory — auto-depleted</div>
+        <div class="feature-body">Every dish sold auto-depletes ingredients by recipe. Low-stock alerts, supplier management, and waste reports tell you exactly where margin is leaking.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 6 — DEMO FORM
+════════════════════════════════════════════════════════ -->
+<section class="form-section" id="demo-form">
+  <div class="max-w">
+    <div class="form-grid">
+      <!-- LEFT -->
+      <div class="form-left">
+        <span class="eyebrow eyebrow-yellow">The switch is easier than you think</span>
+        <h2>Compare MyGenie With Your Current POS — Free Demo</h2>
+        <p>A specialist walks you through your outlet type — live, not a slide deck. Response within 2 hours.</p>
+
+        <div class="switch-badges">
+          <div class="switch-badge-card">
+            <div class="badge-icon">🚀</div>
+            <div>
+              <div class="badge-title">Go live in 48 hours</div>
+              <div class="badge-sub">Full migration included for all plans</div>
+            </div>
+          </div>
+          <div class="switch-badge-card">
+            <div class="badge-icon">📊</div>
+            <div>
+              <div class="badge-title">Live comparison walkthrough</div>
+              <div class="badge-sub">We show you MyGenie vs your current POS side by side</div>
+            </div>
+          </div>
+          <div class="switch-badge-card">
+            <div class="badge-icon">🔒</div>
+            <div>
+              <div class="badge-title">No contracts, no pressure</div>
+              <div class="badge-sub">Cancel anytime. Your data is always yours.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT — Form -->
+      <div>
+        <div class="form-box" id="lp-demo">
+          <h3>Book a Free Demo</h3>
+          <p class="form-sub">A specialist will show you exactly how MyGenie works for your outlet.</p>
+
+          <!-- FIELD 1 — same as all LP pages -->
+          <div class="form-field">
+            <input type="text" placeholder="Your name *" />
+          </div>
+          <!-- FIELD 2 -->
+          <div class="form-field">
+            <input type="tel" placeholder="Phone number *" />
+          </div>
+          <!-- FIELD 3 -->
+          <div class="form-field">
+            <input type="email" placeholder="Email address *" />
+          </div>
+          <!-- FIELD 4 -->
+          <div class="form-field">
+            <input type="text" placeholder="Business name (optional)" style="border-style:dashed" />
+          </div>
+          <!-- NOTE: uses standard <DemoForm sector="pos-comparison" shortForm /> — no custom form -->
+
+          <button class="form-submit">Book My Free Demo →</button>
+
+          <div class="form-trust">
+            <div class="form-trust-item"><span class="form-trust-dot">✓</span> No credit card required</div>
+            <div class="form-trust-item"><span class="form-trust-dot">✓</span> Response within 2 hours</div>
+            <div class="form-trust-item"><span class="form-trust-dot">✓</span> We'll walk you through a live comparison with your current POS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 7 — FAQ
+════════════════════════════════════════════════════════ -->
+<section class="section-sand">
+  <div class="max-w">
+    <div class="section-header" style="text-align:center">
+      <span class="eyebrow" style="display:block;text-align:center">Frequently Asked</span>
+      <h2 style="text-align:center">Your questions, answered.</h2>
+    </div>
+    <div style="max-width:720px;margin:0 auto">
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q">What is the difference between MyGenie and Posist? <span class="arrow">+</span></div>
+          <div class="faq-a">MyGenie is a hospitality operating system that includes billing, inventory, CRM, AI insights, and loyalty in a single plan starting at ₹799/outlet/month. Posist (now Restroworks) is an enterprise POS targeted at large chains, with pricing typically starting above ₹1,500/outlet/month and most advanced features available as paid add-ons.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How long does switching restaurant POS systems take? <span class="arrow">+</span></div>
+          <div class="faq-a">With MyGenie's migration support, most restaurants are fully live within 48 hours. The MyGenie onboarding team migrates your menu, inventory, and customer data — no manual re-entry required. Staff training is included and typically takes 2–3 hours.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Will I lose data when I switch from my current POS to MyGenie? <span class="arrow">+</span></div>
+          <div class="faq-a">No. MyGenie migrates your full data set — menu items, recipes, inventory levels, customer records, and supplier contacts — before you go live. Your current POS continues running until the moment you switch, with zero downtime.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Does MyGenie work offline? <span class="arrow">+</span></div>
+          <div class="faq-a">Yes. Billing, KOT, and order management all work without an internet connection. Data syncs automatically when connectivity is restored.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Is there a contract or lock-in period with MyGenie? <span class="arrow">+</span></div>
+          <div class="faq-a">No. MyGenie operates on a monthly or annual subscription with no lock-in contracts. You can cancel anytime. Your data is fully exportable at no charge.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 8 — RISK REVERSAL BAND
+════════════════════════════════════════════════════════ -->
+<div class="risk-band">
+  <div class="max-w">
+    <div class="risk-inner">
+      <h3 class="risk-headline">No Contracts. No Hidden Costs. No Lock-In.</h3>
+      <div class="risk-items">
+        <div class="risk-item">
+          <div class="risk-item-title">No annual contracts</div>
+          <div class="risk-item-body">Cancel anytime. No questions, no exit fees.</div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-item-title">Transparent pricing</div>
+          <div class="risk-item-body">₹799/outlet/month, all inclusive. No add-on surprises.</div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-item-title">Your data is yours</div>
+          <div class="risk-item-body">Export everything at any time. We don't hold your data hostage.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="max-w">
+    <div class="footer-inner">
+      <img src="/brand/logo-light.svg" alt="MyGenie" style="height:28px" />
+      <div class="footer-links">
+        <a href="tel:+919104743156">+91 91047 43156</a>
+        <a href="mailto:support@mygenie.online">support@mygenie.online</a>
+        <a href="/privacy">Privacy Policy</a>
+      </div>
+      <span class="footer-copy">© 2026 MyGenie Technologies Pvt. Ltd.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

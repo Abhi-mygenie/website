@@ -1,0 +1,39 @@
+{
+  "summary": "FINAL REGRESSION — Build main.bfda52c2.js. All 8 T-gates PASS. All functional tests PASS. bars-pubs h1+meta fixes confirmed. T6 redirect fixes confirmed.",
+  "build": "main.bfda52c2.js",
+  "env": "https://frontend-as-is-run.preview.emergentagent.com",
+  "date": "2026-09-03",
+
+  "regression_table": {
+    "T1_bundle_hash": "PASS — main.bfda52c2.js confirmed, NOT in known-bad list",
+    "T2_react_418": "PASS — Zero #418/HYDRATION errors after 4s wait on fresh localStorage-cleared context",
+    "T3_h1_keywords": "PASS 7/7 — All 6 core solution pages + bars-pubs bonus all contain 'pos system' AND 'billing software' in h1. bars-pubs h1='Bar POS system & billing software — every tab, every pour and every last call perfectly accounted.'",
+    "T4_meta_desc_lengths": "PASS 18/18 — All 17 required pages + bars-pubs bonus all ≤160 chars. bars-pubs=120c. All others 114–160c.",
+    "T5_seo_landing_pages": "PASS 6/6 — /restaurant-billing-software (contains 'restaurant billing software'), /restaurant-management-software (contains 'restaurant management software'), /restaurant-pos-comparison (contains 'compare'), /qsr-pos-system (contains 'qsr'), /cloud-kitchen-pos (contains 'cloud kitchen'), /petpooja-alternative (contains 'petpooja'). All HTTP 200.",
+    "T6_dead_routes": "PASS 2/2 — /solutions/bars-and-pubs → /solutions/bars-pubs (h1='Bar POS system & billing software...', NOT homepage). /solutions/hotels → /solutions/hotels-resorts (h1='Hotel POS system & billing software...', NOT homepage). Both redirect correctly.",
+    "T7_canonical_tags": "PASS — /, /pricing, /solutions/restaurants, /qsr-pos-system, /solutions/bars-pubs all canonical to https://www.mygenie.online/...",
+    "T8_title_uniqueness": "PASS — All 16 tested page titles are unique. No duplicates."
+  },
+
+  "functional_tests": {
+    "spa_pricing_nav": "PASS — Click Pricing nav → /pricing with h1='Restaurant POS pricing — build your exact plan.'",
+    "spa_solutions_dropdown": "PASS — Click Solutions → Restaurants → /solutions/restaurants with correct h1",
+    "consent_banner": "PASS — Banner appears on fresh /, Accept button visible, mg_consent='granted' after Accept",
+    "gtm_datalayer": "PASS — window.dataLayer exists with entries"
+  },
+
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+
+  "test_report_links": ["/app/test_reports/iteration_12.json"],
+  "action_items": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100% — all 8 T-gates + all functional tests PASS"},
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Build main.bfda52c2.js. Full regression complete. All T1-T8 gates PASS. bars-pubs h1 now contains 'POS system & billing software' (T3 bonus PASS). bars-pubs meta=120c (T4 bonus PASS). T6 redirects (bars-and-pubs→bars-pubs, hotels→hotels-resorts) working. Consent banner, GTM, SPA navigation all working. No outstanding issues."
+}

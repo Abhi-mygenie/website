@@ -1,0 +1,47 @@
+{
+  "summary": "MyGenie POS Regression Suite T1–T8. ENV: Dev | BUILD: main.8fe91636.js | URL: https://frontend-as-is-run.preview.emergentagent.com | DATE: 2026-02-03",
+  "regression_table": [
+    {"test": "T1", "result": "FLAG", "note": "Bundle hash main.8fe91636.js matches known-bad list (#418 present). Known-good: main.74f504ee.js. Current build produced by Batch AB (CR-198+CR-199 GTM changes)."},
+    {"test": "T2", "result": "FAIL (P0)", "note": "document.body.className='consent-banner-open' confirmed on fresh page load. Root cause: ConsentBanner.jsx lines 18-25 add 'consent-banner-open' to body in a useEffect triggered before React hydration completes. Prerendered HTML has no body class; React initial render sets the class → hydration mismatch → React error #418. Static source analysis confirms the mutation. This is a P0 release blocker for Dev→Beta."},
+    {"test": "T3", "result": "FAIL", "note": "5/6 PASS. bakeries FAIL — h1 is 'Bakery POS & management — from morning bread to custom cakes, run with precision.' Missing both 'pos system' and 'billing software' keywords as per CR-187 spec."},
+    {"test": "T4", "result": "PASS", "note": "All 17 pages checked. All meta descriptions ≤160 chars. Shortest: solutions/food-courts (61 chars). Longest: solutions/cafes (157 chars). No violations."},
+    {"test": "T5", "result": "PASS", "note": "All 6 SEO landing pages exist with correct h1 and title substrings. restaurant-billing-software, restaurant-management-software, restaurant-pos-comparison, qsr-pos-system, cloud-kitchen-pos, petpooja-alternative — all PASS."},
+    {"test": "T6", "result": "FAIL", "note": "UNACCEPTABLE: /solutions/bars-and-pubs and /solutions/hotels both silently redirect to homepage (final URL = '/', h1 = homepage h1). HTTP status 404 but served homepage content via SPA /* fallback. Google would index these as duplicate homepage content. Build dirs exist as bars-pubs/ and hotels-resorts/ (different slugs) but are not mapped. _redirects has no mapping for bars-and-pubs or hotels slugs."},
+    {"test": "T7", "result": "PASS", "note": "All 12 pages checked. All canonicals point to https://www.mygenie.online/. No preview.emergentagent.com canonical found."},
+    {"test": "T8", "result": "PASS", "note": "All 15 page titles unique across T5+T7+homepage. No exact duplicates found."}
+  ],
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "ConsentBanner.jsx", "issue": "P0 — React #418 hydration mismatch. document.body.classList.add('consent-banner-open') called in useEffect on first render. Prerendered HTML has no body class. Hydration mismatch causes React error #418. Fix: use a CSS class applied only after mount (not during SSR), or move body class mutation to a post-hydration callback.", "selector": "[data-testid='consent-banner']", "priority": "P0 CRITICAL"},
+      {"component": "solutions/bakeries/index.html", "issue": "CR-187 FAIL — h1 missing 'pos system' and 'billing software'. Current h1: 'Bakery POS & management — from morning bread to custom cakes, run with precision.'", "selector": "h1", "priority": "HIGH"},
+      {"component": "URL routing — /solutions/bars-and-pubs, /solutions/hotels", "issue": "Silent redirect to homepage. Build dirs are bars-pubs/ and hotels-resorts/ but URL slugs bars-and-pubs and hotels are not served. SPA fallback serves homepage. Per brief this is UNACCEPTABLE (Google duplicate content). Either add explicit 301 in _redirects to correct slugs or serve a proper 404 page.", "selector": "N/A", "priority": "HIGH SEO"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "open_items": [
+    "[P0] T2 — React #418: ConsentBanner body class mutation causes hydration mismatch on every cold page load. Must fix before Dev→Beta promotion.",
+    "[HIGH] T3 — bakeries h1 missing CR-187 required keywords 'pos system' + 'billing software'.",
+    "[HIGH SEO] T6 — /solutions/bars-and-pubs and /solutions/hotels silently rewrite to homepage. Add 301 redirects in _redirects to bars-pubs/ and hotels-resorts/ respectively.",
+    "[FLAG] T1 — Bundle hash main.8fe91636.js is in known-bad list. Confirmed #418 present."
+  ],
+  "test_report_links": ["/app/test_reports/regression_test.py"],
+  "action_items": [
+    "Fix ConsentBanner.jsx — do not mutate document.body class during hydration phase (move to post-hydration or use CSS-only approach)",
+    "Update bakeries h1 to include 'POS system' and 'billing software' per CR-187",
+    "Add _redirects entries: /solutions/bars-and-pubs -> /solutions/bars-pubs 301 and /solutions/hotels -> /solutions/hotels-resorts 301",
+    "Rebuild bundle after ConsentBanner fix — verify new hash does not match known-bad list"
+  ],
+  "success_rate": {"backend": "N/A", "frontend": "50% (4 PASS, 1 FLAG, 3 FAIL/WARN of 8 tests)"},
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Regression suite T1-T8 run. T2 P0 ConsentBanner #418 confirmed via body class check and source code review. T6 FAIL: bars-and-pubs and hotels silently redirect to homepage (not a proper 404). T3 bakeries h1 missing keywords. After fixes, rerun same regression_test.py + browser T2/T6 tests.",
+  "rca_of_issues": {
+    "T2_react_418": "ConsentBanner.jsx uses useEffect to add 'consent-banner-open' class to document.body when consent has not been chosen. On cold load, hasConsentChoice() returns false → show=true → body class added immediately on first React render cycle. The prerendered HTML (from static build) has no body class. When React hydrates and checks the DOM, the body className differs → hydration mismatch → React error #418. Fix: suppress class during SSR by using a useIsomorphicLayoutEffect or delaying body mutation until after hydration (e.g., useEffect with a setTimeout(0) or checking typeof window). CR-93 added this feature without accounting for SSR/hydration.",
+    "T6_dead_routes": "Build dirs for bars-pubs and hotels-resorts exist but the URL slugs used in navigation (/solutions/bars-and-pubs, /solutions/hotels) have no corresponding build dirs or _redirects entries. The SPA fallback rule (/* /index.html 200) catches these and serves the React app at the homepage route, causing the browser to display homepage content at a different URL — duplicate content for SEO crawlers."
+  }
+}

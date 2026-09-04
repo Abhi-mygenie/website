@@ -1,0 +1,78 @@
+{
+  "summary": "Full regression (Batch AB + AC + CR-205) on main.af722274.js. T1-T8 mostly pass. T5 partial fail (qsr-pos-system h1 missing 'qsr' keyword). T6 FAIL (bars-and-pubs silently redirects to homepage). All SEO checks pass. All FUNCTIONAL tests pass except FUNCTIONAL-2 note (city field absent). Overall strong build with 2 issues to address.",
+  "build": "main.af722274.js",
+  "env": "https://frontend-as-is-run.preview.emergentagent.com",
+  "date": "2026-02-03",
+
+  "regression_table": {
+    "T1_bundle_hash": "PASS — main.af722274.js confirmed",
+    "T2_react_418": "PASS — Zero #418/HYDRATION errors after localStorage clear, 4s wait. createRoot working.",
+    "T3_h1_keywords": "PASS — All 6 solution pages have both 'pos system' AND 'billing software' in h1",
+    "T4_meta_desc_lengths": "PASS — All 17 pages ≤160 chars. Note: cloud-kitchens=69, food-courts=61 (short but valid)",
+    "T5_seo_landing_pages": "PARTIAL FAIL — 5/6 pass. FAIL: /qsr-pos-system h1='POS system built for quick service restaurants' does NOT contain 'qsr' (contains 'quick service' but not the literal string 'qsr'). All other 5 pages PASS.",
+    "T6_dead_routes": "FAIL — /solutions/bars-and-pubs navigates to / (homepage URL, homepage h1 shown). This is silent homepage fallback — NOT acceptable per spec. Root cause: REDIRECTS data only has '/bar-and-pubs' not '/solutions/bars-and-pubs', so SectorPage renders with slug=bars-and-pubs, finds no sector data, and redirects to /. _redirects Netlify rule exists but not effective in preview/SPA mode.",
+    "T7_canonical_tags": "PASS — All 6 checked pages have canonical pointing to www.mygenie.online",
+    "T8_title_uniqueness": "PASS — All 17 page titles unique, no duplicates"
+  },
+
+  "functional_tests": {
+    "FUNCTIONAL-1_spa_navigation": "PASS — Pricing nav loads /pricing with correct h1 ('Restaurant POS pricing — build your exact plan.'). Solutions nav loads /solutions. LP() lazy loading works after createRoot.",
+    "FUNCTIONAL-2_demo_form": "PARTIAL — Form loads at /demo with name and phone fields, both interactive (typing works). NOTE: 'city' field not present — form shows: name, phone, email, business name. City field may have been removed in a prior CR.",
+    "FUNCTIONAL-3_consent_banner": "PASS — Banner appears after React mount (not immediately). Click Accept: banner disappears, localStorage mg_consent='granted'.",
+    "FUNCTIONAL-4_blog": "PASS — Blog loads with 21 post links visible. LP() lazy Blog component works.",
+    "FUNCTIONAL-5_sector_page": "PASS — /solutions/restaurants renders h1 'Restaurant POS system & billing software...' correctly via lazy SectorPage LP().",
+    "FUNCTIONAL-6_gtm_datalayer": "PASS — window.dataLayer exists with 3 entries. First entry: consent defaults {analytics_storage:'denied', ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', functionality_storage:'granted', security_storage:'granted'}. Head inline script fired correctly.",
+    "FUNCTIONAL-7_404_page": "PASS — /this-page-does-not-exist shows 'Page not found' h1. NotFound LP() works."
+  },
+
+  "seo_checks": {
+    "SEO-1_prerendered_homepage_h1": "PASS — build/index.html h1='Restaurant POS & Billing Software — Run Your Business From Your Phone'",
+    "SEO-2_schema": "PASS — Organization schema and SoftwareApplication schema JSON-LD present in build/index.html",
+    "SEO-3_bakeries_h1": "PASS — bakeries h1='Bakery POS system & billing software — from morning bread...' contains both 'POS system' and 'billing software' (CR-204 fix confirmed)",
+    "SEO-4_sitemap_link": "PASS — <link rel='sitemap' href='/sitemap.xml'> present in index.html, solutions/restaurants, blog"
+  },
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "T6 Dead route — /solutions/bars-and-pubs",
+        "issue": "SPA navigates to /solutions/bars-and-pubs → SectorPage renders with unknown slug 'bars-and-pubs' → silently redirects to / (homepage). User sees homepage content, not 404. _redirects Netlify rule (→ /solutions/bars-pubs) only works in Netlify/Cloudflare, not in SPA client routing.",
+        "root_cause": "src/data/redirects.js only has '/bar-and-pubs' → '/solutions/bars-pubs'. Missing entry for '/solutions/bars-and-pubs'. SectorPage unknown-slug fallback goes to / instead of NotFound.",
+        "fix": "Add '/solutions/bars-and-pubs' to REDIRECTS data (→ /solutions/bars-pubs or /solutions) OR fix SectorPage unknown slug to render <NotFound /> instead of redirecting to /",
+        "priority": "HIGH"
+      },
+      {
+        "flow": "T5 — /qsr-pos-system h1 keyword",
+        "issue": "h1='POS system built for quick service restaurants...' — does not contain 'qsr' (case-insensitive). T5 gate requires 'qsr' in h1.",
+        "fix": "Update QsrPosSystem page h1 to include 'QSR' e.g. 'QSR POS system...' or 'POS system for QSR...'",
+        "priority": "MEDIUM"
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_10.json"],
+  "action_items": [
+    "FIX T6: Add '/solutions/bars-and-pubs' to src/data/redirects.js pointing to '/solutions/bars-pubs' or '/solutions'. Currently bars-and-pubs silently shows homepage.",
+    "FIX T6: Also check /solutions/hotels — if same issue exists (SectorPage unknown slug → homepage redirect).",
+    "FIX T5: Add 'QSR' to /qsr-pos-system page h1 (currently 'POS system built for quick service restaurants' — no 'qsr' literal).",
+    "VERIFY FUNCTIONAL-2: Confirm if city field was intentionally removed from demo form or if it's a regression."
+  ],
+  "critical_code_review_comments": [
+    "src/data/redirects.js is missing '/solutions/bars-and-pubs' redirect entry (only '/bar-and-pubs' present). This causes T6 failure.",
+    "SectorPage should render <NotFound /> for unknown slugs rather than redirecting to / — more robust fallback.",
+    "QsrPosSystem h1 should contain 'QSR' literal for SEO keyword targeting as specified in T5 gate."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "T-tests: 6/8 PASS (T5 partial fail, T6 fail). FUNCTIONAL: 7/7 PASS (FUNCTIONAL-2 minor note). SEO: 4/4 PASS. Overall ~85%"
+  },
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "main.af722274.js build. Two outstanding issues: (1) T6: /solutions/bars-and-pubs redirects to homepage silently — fix redirects.js and/or SectorPage unknown-slug handling. (2) T5: /qsr-pos-system h1 missing 'qsr' keyword. All other T1-T8, all FUNCTIONAL tests (T2 #418, GTM dataLayer, consent banner, lazy loading, 404), all SEO checks PASS. createRoot working perfectly."
+}

@@ -1,0 +1,36 @@
+{
+  "summary": "Regression recheck after T5+T6 fixes on build main.a5f22153.js. T5 PASS (qsr h1 now contains 'QSR'). T6 PASS (bars-and-pubs → bars-pubs and hotels → hotels-resorts both redirect correctly, NOT homepage). T1/T2/T7 re-confirmed passing. Pre-existing issues noted: bars-pubs h1 missing 'billing software' (T3 partial, pre-existing) and bars-pubs meta desc=169 chars (T4 pre-existing).",
+  "build": "main.a5f22153.js",
+  "env": "https://frontend-as-is-run.preview.emergentagent.com",
+  "date": "2026-03-09",
+
+  "regression_table": {
+    "T1_bundle_hash": "PASS — main.a5f22153.js confirmed (not in known-bad list)",
+    "T2_react_418": "PASS — Zero #418/HYDRATION errors after 4s wait",
+    "T3_h1_keywords": "5/6 PASS (pre-existing) — /solutions/bars-pubs h1='Bar POS system — every tab...' missing 'billing software'. All others pass. This was NOT in scope of current fixes.",
+    "T4_meta_desc_lengths": "MOSTLY PASS — bars-pubs desc=169c > 160 (pre-existing). All others <=160.",
+    "T5_seo_qsr_h1": "PASS — /qsr-pos-system h1='QSR POS system built for quick service restaurants — fast, accurate, no hardware needed.' contains 'qsr'. FIX CONFIRMED.",
+    "T6_dead_routes": "PASS — /solutions/bars-and-pubs → redirects to /solutions/bars-pubs (h1='Bar POS system...' not homepage). /solutions/hotels → redirects to /solutions/hotels-resorts (h1='Hotel POS system...' not homepage). BOTH FIXES CONFIRMED.",
+    "T7_canonical_tags": "PASS — homepage, /solutions/restaurants, /qsr-pos-system all point to www.mygenie.online",
+    "T8_title_uniqueness": "PASS — All checked titles unique"
+  },
+
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "/solutions/bars-pubs", "issues": ["h1 missing 'billing software' keyword (pre-existing, not in scope of current fixes)", "meta desc 169 chars > 160 limit (pre-existing)"]}
+    ]
+  },
+  "test_report_links": ["/app/test_reports/iteration_11.json"],
+  "action_items": [
+    "PRE-EXISTING: /solutions/bars-pubs h1 missing 'billing software' — if T3 must be 6/6 PASS, update bars-pubs h1.",
+    "PRE-EXISTING: /solutions/bars-pubs meta desc=169 chars — trim to <=160 for T4 full pass."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "T5 FIX CONFIRMED, T6 FIX CONFIRMED. T1/T2/T7/T8 all PASS. Pre-existing bars-pubs h1+desc issues remain."},
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Build main.a5f22153.js. T5+T6 fixes both confirmed working. Outstanding pre-existing issues: /solutions/bars-pubs h1 missing 'billing software' (T3 6th page fail) and bars-pubs meta desc=169c (T4 fail). All functional tests, consent banner, GTM, 404, blog, SPA navigation confirmed passing in iteration_10 (no regressions introduced)."
+}

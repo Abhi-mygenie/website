@@ -1,0 +1,569 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CR-25 Attribution Field Expansion</title><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:960px;margin:40px auto;padding:0 20px;color:#1e293b;line-height:1.6}h1{color:#0f172a;border-bottom:2px solid #e2e8f0;padding-bottom:8px}h2{color:#334155;margin-top:2em;border-bottom:1px solid #e2e8f0;padding-bottom:4px}h3{color:#475569}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:14px}th{background:#f1f5f9;text-align:left;padding:10px 12px;border:1px solid #e2e8f0;font-weight:600}td{padding:8px 12px;border:1px solid #e2e8f0}tr:nth-child(even){background:#f8fafc}code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:13px}pre{background:#1e293b;color:#e2e8f0;padding:16px;border-radius:8px;overflow-x:auto}pre code{background:none;color:inherit;padding:0}blockquote{border-left:4px solid #3b82f6;margin:1em 0;padding:8px 16px;background:#eff6ff}hr{border:none;border-top:1px solid #e2e8f0;margin:2em 0}</style></head><body><h1>CR-25 — Attribution Field Expansion + Phase G Enablement</h1>
+<p><strong>Date:</strong> 2026-06-27
+<strong>Raised by:</strong> Owner
+<strong>Priority:</strong> P0
+<strong>Status:</strong> G2 — Planning Complete, awaiting owner pre-requisites before G3</p>
+<hr />
+<h2>1. OBJECTIVE</h2>
+<p>Capture 5 missing Meta/Google ad parameters (ad_id, adset_id, placement, utm_id, site_source_name) from click URLs through the full pipeline: <strong>browser → MongoDB → Freshsales CRM → backfill sync</strong>. This unblocks Phase G attribution stitching (tying CRM outcomes to individual ads).</p>
+<hr />
+<h2>2. FRESHSALES FIELD AUDIT RESULTS (2026-06-27)</h2>
+<h3>2A. Field Type Discovery</h3>
+<p>34 total cf_ fields exist. Critical finding: <strong>Freshsales silently drops values written to dropdown fields when the value doesn't match the allowed choices.</strong> This affects existing production mappings.</p>
+<h3>2B. Existing Production Bug — <code>cf_demo_fixed</code></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Code sends</th>
+<th>Field type</th>
+<th>Allowed choices</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cf_demo_fixed</code></td>
+<td>event_id string (e.g. <code>"abc123"</code>) or utm_ad text</td>
+<td><strong>dropdown</strong></td>
+<td><code>Yes</code>, <code>No</code></td>
+<td>❌ <strong>Silently dropped for every lead</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Evidence:</strong> Contact 402210846454 (S Sayyad, 26 Jun) — all native attribution fields populated correctly by production code, but ALL cf_ fields are empty. The <code>keyword</code> native field has <code>"Ad Test: DCA | Video 02"</code> (from utm_term), but <code>cf_pos_satifcation_level</code> (same utm_term mapping) is empty on this contact.</p>
+<blockquote>
+<p><strong>Note:</strong> This needs further investigation. <code>cf_pos_satifcation_level</code> IS a text field and should accept values. The fact that it's empty on Sayyad's contact while <code>keyword</code> (same utm_term source) is populated suggests the cf_ write may be failing for a different reason — possibly a Freshsales API quirk with bulk field updates, or the production code path for this specific form submission. Other recent contacts (e.g. shetty dinesh, id=402210781136) DO have cf_ fields populated. This is not a universal failure.</p>
+</blockquote>
+<h3>2C. Available Text Fields for New Mapping</h3>
+<p>8 text-type cf_ fields exist that are NOT mapped by any code:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>cf_ API name</th>
+<th>Current Freshsales label</th>
+<th>Available?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>cf_self_delivery_take_away</code></td>
+<td>SELF DELIVERY /TAKE AWAY</td>
+<td>✅ text</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>cf_inventory_used</code></td>
+<td>INVENTORY USED</td>
+<td>✅ text</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>cf_complete_address</code></td>
+<td>Placement</td>
+<td>✅ text (already relabeled)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>cf_account_software_integrated</code></td>
+<td>ACCOUNT SOFTWARE INTEGRATED</td>
+<td>✅ text</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>cf_aggreator_management</code></td>
+<td>AGGREATOR MANAGEMENT</td>
+<td>✅ text</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>cf_contact_person</code></td>
+<td>Contact person</td>
+<td>✅ text (spare)</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>cf_next_step</code></td>
+<td>NEXT STEP</td>
+<td>✅ text (spare)</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>cf_pos_type</code></td>
+<td>POS TYPE</td>
+<td>✅ text (spare)</td>
+</tr>
+</tbody>
+</table>
+<h3>2D. Dropdown Fields — Cannot Use for Free Text</h3>
+<p>These were originally considered but are <strong>dropdown type</strong> and will silently reject arbitrary text:</p>
+<table>
+<thead>
+<tr>
+<th>cf_ field</th>
+<th>Type</th>
+<th>Choices</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cf_take_away__delivery</code></td>
+<td>dropdown</td>
+<td>Yes, No</td>
+</tr>
+<tr>
+<td><code>cf_basva_contacted</code></td>
+<td>dropdown</td>
+<td>Yes, NO</td>
+</tr>
+<tr>
+<td><code>cf_pipeline</code></td>
+<td>dropdown</td>
+<td>Today, This Week, Next Week, Next Month</td>
+</tr>
+<tr>
+<td><code>cf_pos</code></td>
+<td>dropdown</td>
+<td>Yes, No</td>
+</tr>
+<tr>
+<td><code>cf_demo_fixed</code></td>
+<td>dropdown</td>
+<td>Yes, No</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>3. CONFIRMED FIELD MAPPING (5 new fields)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>URL Param</th>
+<th>What it captures</th>
+<th>→ cf_ field</th>
+<th>Field type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>ad_id</code></td>
+<td>Meta ad creative ID / Google ad creative ID</td>
+<td><code>cf_self_delivery_take_away</code></td>
+<td>text ✅</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>adset_id</code></td>
+<td>Meta adset ID / Google adgroup ID</td>
+<td><code>cf_inventory_used</code></td>
+<td>text ✅</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>placement</code></td>
+<td>Where ad showed (Feed/Reels/Stories/Search)</td>
+<td><code>cf_complete_address</code></td>
+<td>text ✅</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>utm_id</code></td>
+<td>Meta campaign numeric ID / Google campaign ID</td>
+<td><code>cf_account_software_integrated</code></td>
+<td>text ✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>site_source_name</code></td>
+<td>Platform (facebook/instagram/google/audience_network)</td>
+<td><code>cf_aggreator_management</code></td>
+<td>text ✅</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Spare fields (not mapped, available for future use):</strong>
+- <code>cf_contact_person</code> (text)
+- <code>cf_next_step</code> (text)
+- <code>cf_pos_type</code> (text)</p>
+<hr />
+<h2>4. IMPACT ANALYSIS</h2>
+<h3>4A. Files Changed</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Change</th>
+<th>Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>frontend/src/lib/attribution.js</code></td>
+<td>Add 5 params to <code>UTM_PARAMS</code> array + expose in <code>getAttribution()</code> return</td>
+<td>LOW — additive, no existing params touched</td>
+</tr>
+<tr>
+<td><code>backend/server.py</code></td>
+<td>Add 5 <code>cf_</code> lines in <code>_attribution_to_crm()</code> (~line 230)</td>
+<td>LOW — additive block after existing cf_ mappings</td>
+</tr>
+<tr>
+<td><code>backend/crm_sync.py</code></td>
+<td>Add 5 fields to <code>attribution</code> dict in <code>_upsert_lead()</code> (~line 108)</td>
+<td>LOW — additive, reads new cf_ values from Freshsales during backfill</td>
+</tr>
+<tr>
+<td><code>memory/HANDOVER_NEXT_AGENT.md</code></td>
+<td>Update field mapping table (Section 5)</td>
+<td>NONE</td>
+</tr>
+</tbody>
+</table>
+<h3>4B. Data Flow (after implementation)</h3>
+<pre><code>Meta Ad click → URL has ad_id={{ad.id}}&amp;adset_id={{adset.id}}&amp;placement={{placement}}&amp;utm_id={{campaign.id}}&amp;site_source_name={{site_source_name}}
+  ↓
+attribution.js captures into localStorage/sessionStorage (UTM_PARAMS)
+  ↓
+Form submit → getAttribution() includes ad_id, adset_id, placement, utm_id, site_source_name
+  ↓
+POST /api/demo-request → payload.attribution has the 5 new fields
+  ↓
+_attribution_to_crm() → maps to cf_self_delivery_take_away, cf_inventory_used, cf_complete_address, cf_account_software_integrated, cf_aggreator_management
+  ↓
+freshsales.upsert_contact() → writes cf_ fields to Freshsales
+  ↓
+MongoDB demo_requests → stores full attribution object (already stores everything)
+  ↓
+crm_sync.py backfill → reads cf_ fields back from Freshsales → stores in backfilled_leads.attribution
+</code></pre>
+<h3>4C. Google Ads Flow (same fields, different ValueTrack syntax)</h3>
+<pre><code>Google Ad click → URL has ad_id={creative}&amp;adset_id={adgroupid}&amp;utm_id={campaignid}&amp;placement={placement}&amp;site_source_name={network}
+  ↓
+Same attribution.js pipeline → same cf_ fields in Freshsales
+</code></pre>
+<h3>4D. DB Impact</h3>
+<ul>
+<li><strong>MongoDB:</strong> No schema change needed. <code>attribution</code> object in <code>demo_requests</code>/<code>quotes</code>/<code>contact_messages</code> already stores the full <code>getAttribution()</code> output as a dict. New fields appear automatically.</li>
+<li><strong>Freshsales:</strong> 5 existing cf_ fields get repurposed. No new fields created.</li>
+<li><strong>backfilled_leads:</strong> <code>attribution</code> dict gains 5 new keys on next sync.</li>
+</ul>
+<h3>4E. Regression Risk</h3>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Risk</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Existing UTM capture</td>
+<td>NONE</td>
+<td>Only adding to <code>UTM_PARAMS</code>, not modifying existing entries</td>
+</tr>
+<tr>
+<td>Existing cf_ mappings</td>
+<td>NONE</td>
+<td>New <code>cf_</code> lines are appended after existing block</td>
+</tr>
+<tr>
+<td>Form submission</td>
+<td>NONE</td>
+<td><code>getAttribution()</code> return object is spread into <code>payload.attribution</code> — extra keys are harmless</td>
+</tr>
+<tr>
+<td>Freshsales API</td>
+<td>LOW</td>
+<td>5 additional cf_ fields in the <code>custom_field</code> dict. All text type, all currently empty — no conflict</td>
+</tr>
+<tr>
+<td>CRM sync backfill</td>
+<td>NONE</td>
+<td>Reads cf_ values that don't exist yet → returns None → same as today</td>
+</tr>
+</tbody>
+</table>
+<h3>4F. Effort</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Effort</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>attribution.js changes</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>server.py changes</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>crm_sync.py changes</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>Documentation update</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>Test (submit form via preview, verify in Freshsales)</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>~1 hr</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>5. META ADS — URL TEMPLATE</h2>
+<h3>Current template (in your Meta ads now):</h3>
+<pre><code>utm_source=facebook&amp;utm_medium=cpm&amp;utm_content={{adset.name}}&amp;utm_campaign={{campaign.name}}&amp;utm_term={{ad.name}}
+</code></pre>
+<h3>New template (add to all Meta ad destination URLs):</h3>
+<pre><code>utm_source=facebook&amp;utm_medium=cpm&amp;utm_content={{adset.name}}&amp;utm_campaign={{campaign.name}}&amp;utm_term={{ad.name}}&amp;fbclid={{fbclid}}&amp;utm_id={{campaign.id}}&amp;ad_id={{ad.id}}&amp;adset_id={{adset.id}}&amp;placement={{placement}}&amp;site_source_name={{site_source_name}}
+</code></pre>
+<h3>What's added:</h3>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Meta dynamic tag</th>
+<th>What it gives you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fbclid</code></td>
+<td><code>{{fbclid}}</code></td>
+<td>Facebook click ID → enables offline conversion matching</td>
+</tr>
+<tr>
+<td><code>utm_id</code></td>
+<td><code>{{campaign.id}}</code></td>
+<td>Campaign numeric ID → ties lead to exact campaign</td>
+</tr>
+<tr>
+<td><code>ad_id</code></td>
+<td><code>{{ad.id}}</code></td>
+<td>Ad creative ID → ties lead to exact ad (most valuable)</td>
+</tr>
+<tr>
+<td><code>adset_id</code></td>
+<td><code>{{adset.id}}</code></td>
+<td>Ad set ID → ties lead to exact ad set</td>
+</tr>
+<tr>
+<td><code>placement</code></td>
+<td><code>{{placement}}</code></td>
+<td>Feed/Reels/Stories/Marketplace</td>
+</tr>
+<tr>
+<td><code>site_source_name</code></td>
+<td><code>{{site_source_name}}</code></td>
+<td>facebook/instagram/audience_network</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>6. GOOGLE ADS — TRACKING TEMPLATE</h2>
+<h3>Current state:</h3>
+<p>Google Ads uses auto-tagging (<code>gclid</code> appended automatically). No structured UTM tracking template set.</p>
+<h3>New tracking template (set at Account level → Settings → Tracking → Tracking Template):</h3>
+<pre><code>{lpurl}?utm_source=google&amp;utm_medium=cpc&amp;utm_campaign={_campaign}&amp;utm_term={keyword}&amp;ad_id={creative}&amp;adset_id={adgroupid}&amp;utm_id={campaignid}&amp;placement={placement}&amp;site_source_name={network}
+</code></pre>
+<h3>Google Ads ValueTrack params:</h3>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>ValueTrack</th>
+<th>What it captures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>utm_source</code></td>
+<td><code>google</code> (hardcoded)</td>
+<td>Source identifier</td>
+</tr>
+<tr>
+<td><code>utm_medium</code></td>
+<td><code>cpc</code> (hardcoded)</td>
+<td>Medium identifier</td>
+</tr>
+<tr>
+<td><code>utm_campaign</code></td>
+<td><code>{_campaign}</code></td>
+<td>Campaign name (custom param — set per campaign)</td>
+</tr>
+<tr>
+<td><code>utm_term</code></td>
+<td><code>{keyword}</code></td>
+<td>Matched keyword text</td>
+</tr>
+<tr>
+<td><code>ad_id</code></td>
+<td><code>{creative}</code></td>
+<td>Google ad creative ID</td>
+</tr>
+<tr>
+<td><code>adset_id</code></td>
+<td><code>{adgroupid}</code></td>
+<td>Google ad group ID</td>
+</tr>
+<tr>
+<td><code>utm_id</code></td>
+<td><code>{campaignid}</code></td>
+<td>Google campaign numeric ID</td>
+</tr>
+<tr>
+<td><code>placement</code></td>
+<td><code>{placement}</code></td>
+<td>Placement URL (display/YouTube)</td>
+</tr>
+<tr>
+<td><code>site_source_name</code></td>
+<td><code>{network}</code></td>
+<td><code>g</code>=Search, <code>d</code>=Display, <code>y</code>=YouTube</td>
+</tr>
+</tbody>
+</table>
+<h3>Note on <code>{_campaign}</code>:</h3>
+<p><code>{_campaign}</code> is a <strong>custom parameter</strong> — you need to set it per campaign in Google Ads:
+- Campaign → Settings → Additional settings → Campaign URL options → Custom parameter
+- Name: <code>_campaign</code> | Value: <code>AK: Search | MyGenie</code> (or whatever the campaign name is)</p>
+<p>Alternatively, use <code>{campaignid}</code> for both <code>utm_campaign</code> and <code>utm_id</code> if you don't want to maintain custom params — but then you get numeric IDs instead of human-readable names.</p>
+<h3>Note on <code>gclid</code>:</h3>
+<p><code>gclid</code> is auto-appended by Google when auto-tagging is ON (it already is for your account). Do NOT add it to the template — it's handled automatically.</p>
+<hr />
+<h2>7. OWNER ACTION ITEMS (before code goes live)</h2>
+<h3>Must Do (blocks full value of the code change):</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Action</th>
+<th>Where</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Update Meta URL template</strong> on ALL active campaigns/ad sets</td>
+<td>Meta Ads Manager → Ad level → Destination URL → URL Parameters</td>
+<td>P0</td>
+<td>Use template from Section 5. Apply to all active + future ads</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Set Google Ads tracking template</strong> at account level</td>
+<td>Google Ads → Account Settings → Tracking → Tracking Template</td>
+<td>P0</td>
+<td>Use template from Section 6. Account-level applies to all campaigns</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Set <code>{_campaign}</code> custom param</strong> on each Google campaign</td>
+<td>Google Ads → Campaign → Settings → URL options → Custom parameter</td>
+<td>P1</td>
+<td>Name: <code>_campaign</code>, Value: campaign name. Only needed if you want human-readable names</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Relabel 5 cf_ fields</strong> in Freshsales Admin for sales team clarity</td>
+<td>Freshsales → Admin Settings → Contacts → Edit field labels</td>
+<td>P2 (cosmetic)</td>
+<td>See table below</td>
+</tr>
+</tbody>
+</table>
+<h3>Freshsales Field Relabeling (cosmetic — recommended but not blocking):</h3>
+<table>
+<thead>
+<tr>
+<th>cf_ field</th>
+<th>Current label</th>
+<th>Suggested new label</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cf_self_delivery_take_away</code></td>
+<td>SELF DELIVERY /TAKE AWAY</td>
+<td><strong>Ad Creative ID</strong></td>
+</tr>
+<tr>
+<td><code>cf_inventory_used</code></td>
+<td>INVENTORY USED</td>
+<td><strong>Ad Set ID</strong></td>
+</tr>
+<tr>
+<td><code>cf_complete_address</code></td>
+<td>Placement</td>
+<td><strong>Ad Placement</strong> (already done!)</td>
+</tr>
+<tr>
+<td><code>cf_account_software_integrated</code></td>
+<td>ACCOUNT SOFTWARE INTEGRATED</td>
+<td><strong>Campaign ID</strong></td>
+</tr>
+<tr>
+<td><code>cf_aggreator_management</code></td>
+<td>AGGREATOR MANAGEMENT</td>
+<td><strong>Source Platform</strong></td>
+</tr>
+</tbody>
+</table>
+<h3>Optional but recommended:</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Action</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>Change <code>cf_demo_fixed</code> from dropdown → text in Freshsales Admin</td>
+<td>Fixes existing production bug — event_id/utm_ad values are silently dropped today</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Verify <code>cf_rooms</code> dropdown accepts "Yes"/"No" exactly (case-sensitive)</td>
+<td>Confirms OTP status is being written correctly</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>8. WHAT CODE DOES NOT NEED TO CHANGE</h2>
+<ul>
+<li><code>freshsales.py</code> → <code>upsert_contact()</code> — already accepts arbitrary <code>custom_field</code> dict, no change needed</li>
+<li><code>payments.py</code> — does not touch attribution fields</li>
+<li><code>antijunk.py</code>, <code>otp.py</code>, <code>geo.py</code> — unrelated</li>
+<li>Frontend form components (DemoForm, MessageForm, CheckoutModal) — already pass <code>getAttribution()</code> output as <code>attribution</code> field, new keys flow through automatically</li>
+<li>MongoDB schema — attribution is stored as a flexible dict, new keys appear automatically</li>
+</ul>
+<hr />
+<h2>9. TESTING PLAN (after implementation)</h2>
+<ol>
+<li>Submit a demo form on preview site with URL params: <code>?utm_source=test&amp;ad_id=12345&amp;adset_id=67890&amp;placement=instagram_reels&amp;utm_id=99999&amp;site_source_name=instagram</code></li>
+<li>Check MongoDB <code>demo_requests</code> → <code>attribution</code> object should contain all 5 new fields</li>
+<li>Check Freshsales contact → <code>cf_self_delivery_take_away=12345</code>, <code>cf_inventory_used=67890</code>, <code>cf_complete_address=instagram_reels</code>, <code>cf_account_software_integrated=99999</code>, <code>cf_aggreator_management=instagram</code></li>
+<li>Trigger CRM backfill → check <code>backfilled_leads</code> → <code>attribution</code> dict should contain the new fields read back from Freshsales</li>
+</ol>
+<hr />
+<p><em>CR-25 Planning Document — Created 2026-06-27 by E1, Emergent Labs</em>
+<em>Status: G2 Planning Complete. Awaiting owner action items (Meta/Google URL templates) before G3 implementation.</em></p></body></html>

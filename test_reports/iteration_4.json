@@ -1,0 +1,92 @@
+{
+  "summary": "MyGenie POS Regression Suite T1–T8 (2nd run after Batch AC fixes). ENV: Dev | BUILD: main.ea6df739.js | URL: https://frontend-as-is-run.preview.emergentagent.com | DATE: 2026-02-03",
+  "test_results": [
+    {
+      "id": "T1",
+      "name": "Bundle Hash Fingerprint",
+      "result": "PASS",
+      "detail": "main.ea6df739.js — new hash, NOT in known-bad list (107ff3e9, 04593470, 8fe91636). Asset-manifest.json on live site confirms ea6df739 is served."
+    },
+    {
+      "id": "T2",
+      "name": "React #418 (P0)",
+      "result": "FAIL",
+      "detail": "Error still present: 'Minified React error #418; visit https://react.dev/errors/418'. body.className='consent-banner-open' at 4s post-load. CR-201 mountedRef fix is correctly committed in source (ConsentBanner.jsx L12/L15/L22) but the #418 persists in the live build. Root cause: the hydration mismatch is NOT caused by the consent banner body class (which is applied post-hydration) — it is caused by a different component rendering server/client differences. The body has class='' in pre-rendered HTML, but #418 fires after JS hydration begins."
+    },
+    {
+      "id": "T3",
+      "name": "CR-187 h1 Keywords",
+      "result": "PASS",
+      "detail": "All 6 pages now PASS including bakeries (CR-204 fix applied). bakeries h1: 'Bakery POS system & billing software — from morning bread to custom cakes, run with precision.' Both 'pos system' and 'billing software' present in all 6 solution pages."
+    },
+    {
+      "id": "T4",
+      "name": "Meta Description Length",
+      "result": "PASS",
+      "detail": "All 17 pages ≤160 chars. Max observed: /solutions/cloud-kitchens = 160 chars exactly. All others below."
+    },
+    {
+      "id": "T5",
+      "name": "6 SEO Landing Pages",
+      "result": "PASS",
+      "detail": "All 6 pages serve HTTP 200 with correct h1 and title substrings. /restaurant-billing-software, /restaurant-management-software, /restaurant-pos-comparison, /qsr-pos-system, /cloud-kitchen-pos, /petpooja-alternative all PASS."
+    },
+    {
+      "id": "T6",
+      "name": "Dead Routes (CR-202 + CR-203)",
+      "result": "FAIL (expected on dev static server)",
+      "detail": "/solutions/bars-and-pubs and /solutions/hotels directories do NOT exist in /app/frontend/build/solutions/. The static-server.js falls back to index.html (SPA), which serves homepage content. _redirects file (Netlify/Cloudflare format) is present and correctly configured with lines for /solutions/bars-and-pubs → /solutions/bars-pubs (301) and /solutions/hotels → /solutions/hotels-resorts (301). These redirects will work on Netlify/Cloudflare deployment but NOT on the dev static server. EXPECTED BEHAVIOR on dev preview — not a code bug."
+    },
+    {
+      "id": "T7",
+      "name": "Canonical Tags",
+      "result": "PASS",
+      "detail": "All 12 tested pages have canonical href pointing to https://www.mygenie.online/... domain. No deviations found."
+    },
+    {
+      "id": "T8",
+      "name": "Title Uniqueness",
+      "result": "PASS",
+      "detail": "All 15 collected page titles are unique. No exact duplicates found across T5+T7+homepage pages."
+    }
+  ],
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "T2 - React Hydration",
+        "issue": "React #418 hydration error persists after CR-201 fix. The mountedRef guard in ConsentBanner.jsx prevents body class mutation during hydration but does NOT fix the actual hydration mismatch causing #418. A different component is the root cause.",
+        "priority": "CRITICAL P0"
+      }
+    ],
+    "design_issues": []
+  },
+  "action_items": [
+    "P0 - T2 STILL FAILING: #418 hydration error persists in live build main.ea6df739.js. ConsentBanner CR-201 fix is correctly coded but the #418 is caused by something else. Need to: (1) identify which component causes client/server HTML mismatch by adding React 18 hydrateRoot with onRecoverableError callback to log the specific mismatch location, (2) check for any component using window/document/Date/Math.random() in render (not in useEffect). Common suspects: animated counters, date-dependent rendering, browser-only APIs used at render time.",
+    "T6 - Dead routes: Working as expected on dev static server. No code change needed. Confirm _redirects deploys correctly to Netlify/Cloudflare for production validation."
+  ],
+  "critical_code_review_comments": [
+    "CR-201 fix (mountedRef) is correctly scoped to prevent body class mutation during hydration, but the #418 error likely comes from a different component. Need to audit all components for window/document/localStorage access in render (outside useEffect). React 18 strict mode double-invokes renders — any side effect at render time causes hydration mismatch."
+  ],
+  "test_report_links": ["/app/test_reports/iteration_4.json"],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "75% (6/8 tests PASS; T2 FAIL=real bug, T6 FAIL=expected on dev)"
+  },
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "T3 (bakeries), T4, T5, T7, T8 all PASS. T1 confirmed new clean hash. T2 (#418) is STILL FAILING — the CR-201 fix in ConsentBanner.jsx is present but did not resolve the underlying hydration mismatch. The #418 is a different root cause (not consent banner). T6 fails on dev static server as expected — _redirects is correct for Netlify/Cloudflare.",
+  "rca_of_issues": {
+    "T2_418": {
+      "bug": "React error #418 (hydration mismatch) persists after CR-201",
+      "reproduction": "Navigate fresh to https://frontend-as-is-run.preview.emergentagent.com/ in clean browser. Check console for 418 error.",
+      "cr201_analysis": "mountedRef in ConsentBanner.jsx prevents body.classList mutation during hydration. This is correctly implemented. BUT the #418 error fires for a different reason — some other component renders different HTML on server vs client.",
+      "mitigation": "Add React 18 hydrateRoot onRecoverableError to identify the mismatch component. Audit all components for: (1) window/document access in render, (2) localStorage reads at render, (3) Date.now() / Math.random() in render, (4) animated counters that start from 0 vs pre-rendered value."
+    }
+  }
+}

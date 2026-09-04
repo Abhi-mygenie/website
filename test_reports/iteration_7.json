@@ -1,0 +1,48 @@
+{
+  "summary": "CR-205 Final verification run. T2 FAILS — React #418 hydration mismatch still fires on new bundle a65c8c10. Root cause identified: the fix moved CmsAdminLayer's Suspense outside the hydrated gate (line 138), but the PRIMARY Suspense wrapper on line 73 wraps the entire <Routes> tree unconditionally and is ALWAYS present during hydration. T1 PASS (new hash). T3 PASS (bakeries h1 correct). T7 PASS (all 3 canonicals correct). T5 PARTIAL (3/6 SEO pages 200, 3 return 404).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "T2 — React #418 Hydration check",
+        "issue": "FAIL: [HYDRATION MISMATCH] Minified React error #418 still fires on bundle main.a65c8c10.js. Component stack: at Suspense → at We → at St → at div → at Rt → at k → at Le → at e. This Suspense is the ROOT Suspense on App.js line 73 wrapping the entire <Routes> tree, NOT the CmsAdminLayer Suspense.",
+        "affected_selectors": ["console log: [HYDRATION MISMATCH]"]
+      },
+      {
+        "flow": "T5 — SEO landing pages",
+        "issue": "3 of 6 pages return 404: /solutions/quick-service, /solutions/fine-dining, /solutions/food-trucks",
+        "affected_selectors": []
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_7.json"],
+  "action_items": [
+    "CRITICAL: App.js line 73 — `<Suspense fallback={<div...>}><Routes>...</Routes></Suspense>` is the actual source of #418. This root Suspense wraps ALL lazy routes and is ALWAYS in the tree during hydration (not gated by hydrated). Puppeteer prerender doesn't emit <!--$?--> markers, so React fires #418 on every page load. The CmsAdminLayer fix (line 138) was correct but missed this primary Suspense. Fix: either (a) remove the root Suspense wrapper (make Home non-lazy so the initial route renders synchronously without Suspense), or (b) gate the entire Suspense+Routes inside the hydrated condition and provide a prerender-compatible fallback, or (c) use ReactDOM.renderToString/renderToPipeableStream in Puppeteer prerender to emit proper Suspense markers.",
+    "T5: Add routes for /solutions/quick-service, /solutions/fine-dining, /solutions/food-trucks (currently returning 404)"
+  ],
+  "critical_code_review_comments": [
+    "App.js L73: `<Suspense fallback={...}><Routes>...</Routes></Suspense>` — this unconditional Suspense boundary is always present in the React virtual DOM during hydrateRoot(), and since Puppeteer SSR doesn't emit <!--$?--> markers, React throws #418 mismatch. The CmsAdminLayer fix at L138 only addressed the second Suspense. The main fix must address this root Suspense."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "50% (T1, T3, T7 pass; T2, T5 fail)"},
+  "seed_data_creation": "",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "T2 is still FAILING with bundle a65c8c10. The root Suspense on App.js L73 (wrapping all Routes) is the primary source of #418, not the CmsAdminLayer Suspense on L138. All 3 pages tested have correct canonicals. Bakeries h1 contains both 'pos system' and 'billing software'. 3 SEO solution pages return 404.",
+  "rca_of_the_issue": {
+    "bug": "React #418 hydration mismatch",
+    "root_cause": "App.js line 73: `<Suspense fallback={<div...>}><Routes>...</Routes></Suspense>` is unconditionally in the React tree during hydrateRoot(). Puppeteer prerender does not emit <!--$?--> Suspense markers in the HTML. When React 18 hydrateRoot() encounters a Suspense boundary in the virtual DOM without the corresponding <!--$?-->...<!--/$--> markers in the server HTML, it fires error #418.",
+    "why_cmsadminlayer_fix_insufficient": "The CmsAdminLayer Suspense (L138) was correctly moved outside the hydrated gate, eliminating ONE Suspense source. But the primary Suspense at L73 was never gated and still triggers #418.",
+    "fix_options": [
+      "Option A (simplest): Remove the root Suspense wrapper. Make all routes rendered via lazy() degrade to showing a loading state client-side without Suspense during hydration — can be done by wrapping Routes in the hydrated gate: `{!hydrated ? <RoutesSync /> : <Suspense><Routes /></Suspense>}`",
+      "Option B: Import Home (and possibly other above-fold routes) as regular imports (not lazy), so the prerendered content is never behind a Suspense boundary. Suspense can still wrap remaining lazy routes.",
+      "Option C: Fix Puppeteer prerender to use ReactDOM.renderToPipeableStream which properly emits <!--$?--> markers."
+    ],
+    "reproduction": "Fresh browser load of / with localStorage cleared → immediately check console → [HYDRATION MISMATCH] appears with stack pointing to Suspense at main.a65c8c10.js:2:868832"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "summary": "CR-205 fix verification run. New hash main.b8f96c28.js confirmed (T1 PASS). T2 STILL FAILS on all three pages (/, /pricing, /demo). Root cause: the fix gates CmsAdminLayer inside Suspense, but the Suspense WRAPPER itself at App.js:138 is still present during hydration — this still triggers React #418 because Puppeteer prerender (after effects run) emits the Suspense boundary in HTML, but React hydrateRoot can't find the required <!--$?--> markers. Additionally the primary Routes Suspense (App.js:73) also lacks these markers. CR-205 fix is INCOMPLETE.",
+
+  "regression_table": {
+    "T1": "PASS — hash=main.b8f96c28.js, not in known-bad list [107ff3e9, 04593470, 8fe91636, ea6df739]",
+    "T2_homepage": "FAIL — [HYDRATION MISMATCH] Minified React error #418 still fires on /",
+    "T2_pricing": "FAIL — React #418 fires on /pricing (2 occurrences)",
+    "T2_demo": "FAIL — React #418 fires on /demo",
+    "T3": "PASS — /solutions/bakeries H1 contains 'pos system' and 'billing software'",
+    "T4": "PARTIAL FAIL — /pricing (165ch), /solutions (183ch), /about (164ch), /contact (163ch) exceed 160ch limit. Only / and /blog pass.",
+    "T5": "PASS — all 6 SEO landing pages return HTTP 200 with correct H1 and titles",
+    "T6_CmsAdminLayer": "PASS — No CMS UI visible for non-admin user. Ctrl+Shift+E not tested (no admin credentials).",
+    "T7": "PASS — all tested canonicals (/, /pricing, /solutions/bakeries, /restaurant-pos-system) point to www.mygenie.online",
+    "T8": "PASS — no duplicate titles across /, /pricing, /solutions"
+  },
+
+  "hydration_errors": {
+    "homepage": "[HYDRATION MISMATCH] Minified React error #418 — at Suspense",
+    "pricing": "[HYDRATION MISMATCH] x2",
+    "demo": "[HYDRATION MISMATCH] x1"
+  },
+
+  "root_cause_analysis": {
+    "fix_applied": "App.js L138: <Suspense fallback={null}>{hydrated && <CmsAdminLayer />}</Suspense>",
+    "why_fix_incomplete": "The <Suspense> wrapper at L138 is still present in the React tree during hydration even when hydrated=false. Puppeteer prerender runs the full React lifecycle (incl. useEffect), so by capture time hydrated=true and the Suspense IS in the prerendered HTML. But React hydrateRoot requires <!--$?--> Suspense markers emitted by ReactDOM.renderToString — which Puppeteer doesn't produce. This causes #418 regardless of what is inside the Suspense.",
+    "correct_fix": "Move the Suspense boundary INSIDE the hydration gate: {hydrated && <Suspense fallback={null}><CmsAdminLayer /></Suspense>}. This removes the Suspense element entirely from the initial hydration pass. However, if Puppeteer captures AFTER effects (hydrated=true), prerendered HTML will have Suspense but client won't — still a mismatch. The ONLY complete fix is to NOT use hydrateRoot with Puppeteer-prerendered HTML, OR use suppressHydrationWarning on the wrapping element, OR move to ReactDOM.renderToString for prerendering.",
+    "additional_note": "The main Routes Suspense at App.js:73 also lacks Suspense markers (same root cause). If CmsAdminLayer fix is made correctly but this Suspense remains, #418 will still fire from the Routes Suspense."
+  },
+
+  "consent_banner": {
+    "result": "FAIL — After clicking Accept, body class is empty string, expected 'consent-banner-open'",
+    "note": "The ConsentBanner CR-201 mountedRef fix from previous iteration may not be functioning correctly in this build"
+  },
+
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "React hydration — all pages",
+        "issue": "React #418 still fires on /, /pricing, /demo. CR-205 fix incomplete — Suspense wrapper at App.js:138 still present during hydration. See RCA above.",
+        "priority": "CRITICAL"
+      },
+      {
+        "flow": "Consent banner",
+        "issue": "After clicking Accept, body class 'consent-banner-open' does NOT appear (body class is empty). CR-201 fix may be regressed.",
+        "priority": "MEDIUM"
+      }
+    ],
+    "design_issues": [
+      {
+        "screen": "Meta descriptions",
+        "issues": ["/pricing 165ch (>160)", "/solutions 183ch (>160)", "/about 164ch (>160)", "/contact 163ch (>160)"]
+      }
+    ]
+  },
+
+  "test_report_links": ["/app/test_reports/iteration_6.json"],
+  "action_items": [
+    "CRITICAL: CR-205 fix is incomplete. The Suspense wrapper itself at App.js:138 must also be inside the hydrated gate: {hydrated && <Suspense fallback={null}><CmsAdminLayer /></Suspense>}. But note: if Puppeteer captures after useEffect fires, prerendered HTML will still include Suspense, causing mismatch. Consider: (a) use suppressHydrationWarning on the app div, (b) use ReactDOM.renderToString for prerendering instead of Puppeteer, or (c) remove ALL Suspense+lazy from the shared app shell and only use them inside page-level components that are inside the Routes Suspense.",
+    "CRITICAL: The main Routes Suspense (App.js:73) also lacks Puppeteer-emitted Suspense markers — may also be contributing to #418.",
+    "MEDIUM: Consent banner body class 'consent-banner-open' not appearing after Accept click — investigate CR-201 mountedRef fix regression.",
+    "LOW: Fix meta descriptions for /pricing, /solutions, /about, /contact to be ≤160ch (T4 regression)."
+  ],
+
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "T1:PASS, T2:FAIL(all 3 pages), T3:PASS, T4:PARTIAL, T5:PASS, T6:PASS, T7:PASS, T8:PASS" },
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-205 fix deployed (hash b8f96c28) but T2 still FAILS with React #418 on all pages. Root cause: Suspense boundary at App.js:138 is still present during hydration — only the CmsAdminLayer inside it is gated. The Suspense wrapper itself remains in the tree, and Puppeteer prerender (which runs useEffect) captures a different tree than what hydrateRoot sees. The fix needs to be at a deeper level — either move entire <Suspense> inside the hydrated gate, or suppress hydration warnings, or change prerender approach. T3,T5,T7,T8 all pass. T4 has minor meta desc length violations. Consent banner Accept click does not add body class consent-banner-open.",
+  "rca_of_issue": {
+    "problem": "React #418 hydration mismatch on all pages despite CR-205 fix",
+    "root_cause": "hydrateRoot requires Suspense HTML markers (<!--$?-->) from ReactDOM.renderToString. Puppeteer headless browser prerender does NOT emit these markers. Any Suspense boundary in the app will cause #418 when hydrateRoot runs against Puppeteer-generated HTML. The CR-205 fix moved CmsAdminLayer inside a hydrated gate but kept the <Suspense> wrapper present — the Suspense element itself is the mismatch trigger.",
+    "reproduction": "Load any page fresh. Check console for [HYDRATION MISMATCH]. Error fires consistently on /, /pricing, /demo.",
+    "mitigation_options": [
+      "Option A (safest): {hydrated && <Suspense fallback={null}><CmsAdminLayer /></Suspense>} AND ensure Puppeteer captures HTML before useEffect fires (configurable in prerender script via waitUntil: 'domcontentloaded' instead of 'networkidle')",
+      "Option B: Add suppressHydrationWarning to the <div className='App'> wrapper",
+      "Option C: Switch prerender to use ReactDOM.renderToString instead of Puppeteer DOM capture",
+      "Option D: Remove hydrateRoot entirely — use createRoot for all cases (loses prerender SEO benefit)"
+    ]
+  }
+}
