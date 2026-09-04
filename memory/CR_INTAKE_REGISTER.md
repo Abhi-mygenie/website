@@ -814,7 +814,7 @@ T8  Title uniqueness     PASS   15 titles all unique
 | CR | Summary | Status | Priority | File(s) |
 |---|---|---|---|---|
 | **CR-206** | `browserslist` targets `>0.2%` → ships ES5 polyfills for IE11/Safari12 to India-mobile users — Est savings 10 KiB, legacy JS warning in Lighthouse | ✅ Done 2026-09-04 — build main.dde43c90.js. Score 76→84 (+8), TBT 852ms→80ms (−772ms), Best Practices 82→100, bundle 958KB→937KB (−21KB) | P2 | `package.json` — 1 line |
-| **CR-207** | Main bundle 958 KB — vendor libs (Radix UI, shadcn, lucide, etc.) bundled into main chunk instead of split vendor chunks → 2.0s JS execution, 3.8s main-thread work | 🔲 Open — **bundle analyser run required first** | P1 | `craco.config.js` + webpack splitChunks |
+| **CR-207** | Main bundle 958 KB — vendor libs (Radix UI, shadcn, lucide, etc.) bundled into main chunk instead of split vendor chunks → 2.0s JS execution, 3.8s main-thread work | 🔲 Open — **ROOT CAUSE IDENTIFIED: `import * as Icons from "lucide-react"` in Navbar.jsx line 3. Fix = replace wildcard with 26 named imports + NAV_ICONS map. Expected: 937KB → ~492KB main bundle (−47%).** | P1 | `src/components/site/Navbar.jsx` lines 2–3, 73, 156 |
 | **CR-208** | 9 below-fold homepage sections in single `<Suspense>` → all 9 chunks download immediately on page load, competing with LCP hero image for bandwidth → LCP 2.2s | 🔲 Open | P1 | `src/pages/Home.jsx` |
 
 ### Impact Estimates (Preview URL, India Mobile)
