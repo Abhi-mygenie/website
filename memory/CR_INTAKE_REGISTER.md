@@ -815,7 +815,7 @@ T8  Title uniqueness     PASS   15 titles all unique
 |---|---|---|---|---|
 | **CR-206** | `browserslist` targets `>0.2%` → ships ES5 polyfills for IE11/Safari12 to India-mobile users — Est savings 10 KiB, legacy JS warning in Lighthouse | ✅ Done 2026-09-04 — build main.dde43c90.js. Score 76→84 (+8), TBT 852ms→80ms (−772ms), Best Practices 82→100, bundle 958KB→937KB (−21KB) | P2 | `package.json` — 1 line |
 | **CR-207** | Main bundle 958 KB — vendor libs (Radix UI, shadcn, lucide, etc.) bundled into main chunk instead of split vendor chunks → 2.0s JS execution, 3.8s main-thread work | ✅ Done 2026-09-04 — build main.1273e3d6.js. Root cause: `import * as Icons from "lucide-react"` in 15 files bundled all 3,624 icons. Fix: created `src/lib/iconMap.js` (68 icons) + replaced wildcard in all 15 files. Bundle: 937KB→402KB (−535KB, −57%). lucide sources in main: 3,624→85. Lighthouse unavailable (Google throttled) — run separately. | P1 | `src/lib/iconMap.js` (new) + 15 file edits |
-| **CR-208** | 9 below-fold homepage sections in single `<Suspense>` → all 9 chunks download immediately on page load, competing with LCP hero image for bandwidth → LCP 2.2s | 🔲 Open | P1 | `src/pages/Home.jsx` |
+| **CR-208** | 9 below-fold homepage sections in single `<Suspense>` → all 9 chunks download immediately on page load, competing with LCP hero image for bandwidth → LCP 2.2s | 🔲 Open — **REVISED: chunks are 34KB total (2–8KB each) after CR-207 removed lucide wildcard. Original +3–4 pt estimate revised to +0–1 pt. Plan: Option A (split Suspense into 2 groups), 1 edit only.** | P2 *(was P1 — downgraded after CR-207)* | `src/pages/Home.jsx` |
 
 ### Impact Estimates (Preview URL, India Mobile)
 
