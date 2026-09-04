@@ -1,7 +1,7 @@
 # CR Intake Register — Grouped by Batch
 
 **Last validated:** 2026-09-02 (new build audit + code-level validation — all findings verified against source and prerendered build)
-**Updated:** 2026-09-03 — Full regression complete (iteration_12). Build main.bfda52c2.js. All T1–T8 PASS. T5/T6/bars-pubs fixes applied.
+**Updated:** 2026-09-04 — CR-206/207/208 registered (Batch AD — Lighthouse code-level gaps from preview + production audit).
 **Legend:** ✅ Implemented · 🔲 Open · ⏸️ Backlog/Deferred · 👤 Owner action (no code) · 📋 Awaiting owner approval
 
 ---
@@ -801,3 +801,39 @@ T8  Title uniqueness     PASS   15 titles all unique
 | 4 | — | Validate | Re-run full T1–T8 regression suite; all must PASS before Dev→Beta promotion |
 
 *Registered 2026-09-02 Session 5. Source: Regression suite T1–T8.*
+
+---
+
+## BATCH AD — Lighthouse Code-Level Gaps (CR-206 → CR-208)
+
+*Source: Lighthouse mobile audit on preview URL + production URL — 2026-09-04.*
+*Scores compared: Preview (76), Beta (62), Production (51). Code-level issues isolated by removing infrastructure/third-party variables.*
+
+### CR Table
+
+| CR | Summary | Status | Priority | File(s) |
+|---|---|---|---|---|
+| **CR-206** | `browserslist` targets `>0.2%` → ships ES5 polyfills for IE11/Safari12 to India-mobile users — Est savings 10 KiB, legacy JS warning in Lighthouse | 🔲 Open | P2 | `package.json` — 1 line |
+| **CR-207** | Main bundle 958 KB — vendor libs (Radix UI, shadcn, lucide, etc.) bundled into main chunk instead of split vendor chunks → 2.0s JS execution, 3.8s main-thread work | 🔲 Open — **bundle analyser run required first** | P1 | `craco.config.js` + webpack splitChunks |
+| **CR-208** | 9 below-fold homepage sections in single `<Suspense>` → all 9 chunks download immediately on page load, competing with LCP hero image for bandwidth → LCP 2.2s | 🔲 Open | P1 | `src/pages/Home.jsx` |
+
+### Impact Estimates (Preview URL, India Mobile)
+
+| Stage | Score | LCP | TBT |
+|---|---|---|---|
+| Current | 76 | 2.2s | 852ms |
+| + CR-206 (browserslist) | 77 | 2.2s | 800ms |
+| + CR-207 (bundle split) | 86 | 1.9s | 550ms |
+| + CR-208 (defer chunks) | ~90 | ~1.6s | ~450ms |
+
+### Implementation Order
+
+| Step | CR | Prerequisite |
+|---|---|---|
+| 1 | CR-206 | None — 1-line change, rebuild |
+| 2 | CR-207 | Run bundle analyser first to confirm split strategy |
+| 3 | CR-208 | After CR-207 — smaller chunks + deferred load compounds |
+
+*Detail files: `/app/memory/CR-206_Browserslist_Modern_Targets.md`, `/app/memory/CR-207_Main_Bundle_958KB_Vendor_Split.md`, `/app/memory/CR-208_Homepage_Below_Fold_Defer.md`*
+
+*Registered 2026-09-04. Source: Lighthouse mobile audit comparison across preview/beta/production.*
