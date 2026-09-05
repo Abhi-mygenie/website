@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyGenie — Visual Brand Guidelines for Advertising Creatives</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Poppins', sans-serif; background: #f8fafb; color: #14201a; line-height: 1.7; }
+
+  /* ─── COVER ─── */
+  .cover {
+    background: #10402A;
+    color: #fff;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  .cover h1 {
+    font-family: 'Clash Display', 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .cover .sub { color: #9db1a4; font-size: 1rem; margin-bottom: 2rem; }
+  .cover .meta { display: flex; justify-content: center; gap: 2rem; font-size: 0.8rem; color: #5b7a68; flex-wrap: wrap; }
+  .cover .green-accent { color: #10b981; }
+
+  /* ─── CONTAINER ─── */
+  .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* ─── SECTION ─── */
+  .section { margin-bottom: 3rem; }
+  .section-title {
+    font-family: 'Clash Display', 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #10402A;
+    margin-bottom: 0.25rem;
+  }
+  .section-sub { font-size: 0.85rem; color: #5b6b61; margin-bottom: 1.5rem; }
+  .divider { width: 48px; height: 3px; background: #10b981; border-radius: 2px; margin-bottom: 1.5rem; }
+
+  /* ─── COLOR SWATCHES ─── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .swatch {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #e6eae6;
+    background: #fff;
+  }
+  .swatch-color {
+    height: 90px;
+    display: flex;
+    align-items: flex-end;
+    padding: 0.5rem 0.75rem;
+  }
+  .swatch-hex {
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    backdrop-filter: blur(8px);
+  }
+  .swatch-info { padding: 0.75rem; }
+  .swatch-name { font-weight: 600; font-size: 0.85rem; }
+  .swatch-use { font-size: 0.75rem; color: #5b6b61; margin-top: 0.15rem; }
+
+  /* ─── FONT SPECIMENS ─── */
+  .font-specimen {
+    background: #fff;
+    border: 1px solid #e6eae6;
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .font-specimen .name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #10b981;
+    margin-bottom: 0.5rem;
+  }
+  .font-specimen .sample-display {
+    font-family: 'Clash Display', 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #10402A;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    word-spacing: 0.12em;
+  }
+  .font-specimen .sample-body {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: #14201a;
+    line-height: 1.7;
+  }
+  .font-specimen .weights {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .font-specimen .weight-item {
+    font-size: 0.8rem;
+    color: #5b6b61;
+  }
+  .font-specimen .weight-item span { color: #14201a; font-weight: 600; }
+
+  /* ─── TABLE ─── */
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.75rem 0; }
+  th { text-align: left; background: #f6f8f5; padding: 0.65rem 1rem; font-weight: 600; border-bottom: 2px solid #e6eae6; }
+  td { padding: 0.65rem 1rem; border-bottom: 1px solid #e6eae6; }
+  tr:last-child td { border-bottom: none; }
+  code { background: #f1f5f9; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.8rem; font-family: monospace; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: #fff;
+    border: 1px solid #e6eae6;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.35rem; }
+  .card p { font-size: 0.82rem; color: #5b6b61; }
+
+  /* ─── DO/DONT ─── */
+  .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .do-box, .dont-box {
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    font-size: 0.82rem;
+  }
+  .do-box { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .do-box h5 { color: #166534; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; }
+  .dont-box { background: #fef2f2; border: 1px solid #fecaca; }
+  .dont-box h5 { color: #991b1b; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; }
+
+  /* ─── BUTTON SAMPLES ─── */
+  .btn-samples { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; align-items: center; }
+  .btn-primary {
+    background: #10B981;
+    color: #fff;
+    padding: 0.75rem 1.75rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 22px rgba(16, 185, 129, 0.3);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: #14201a;
+    padding: 0.75rem 1.75rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+    border: 2px solid #e6eae6;
+    cursor: pointer;
+  }
+  .btn-accent {
+    background: #f26b33;
+    color: #fff;
+    padding: 0.75rem 1.75rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 22px rgba(242, 107, 51, 0.3);
+  }
+
+  /* ─── SPACING ─── */
+  .alert {
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 0.82rem;
+    margin: 1rem 0;
+  }
+  .alert.green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+  .alert.amber { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+
+  ul.clean { list-style: none; padding: 0; }
+  ul.clean li { padding: 0.3rem 0; padding-left: 1.25rem; position: relative; font-size: 0.85rem; }
+  ul.clean li::before { content: ''; position: absolute; left: 0; top: 0.65rem; width: 6px; height: 6px; background: #10b981; border-radius: 50%; }
+
+  .number-highlight {
+    font-family: 'Clash Display', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    color: #f26b33;
+  }
+
+  @media (max-width: 640px) {
+    .color-grid { grid-template-columns: 1fr 1fr; }
+    .do-dont { grid-template-columns: 1fr; }
+    .cover h1 { font-size: 1.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── COVER ─── -->
+<div class="cover">
+  <div style="margin-bottom: 1.5rem;">
+    <img src="/brand/logo-light.svg" alt="MyGenie" height="40" onerror="this.style.display='none'">
+  </div>
+  <h1>Visual Brand Guidelines</h1>
+  <div class="sub">For Advertising Creatives &amp; Design Teams</div>
+  <div class="meta">
+    <span>Version 2.4</span>
+    <span>July 2026</span>
+    <span>Status: <span class="green-accent">Locked &amp; Confirmed</span></span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- 1. BRAND IDENTITY -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="divider"></div>
+  <div class="section-title">1. Brand Identity</div>
+  <div class="section-sub">Who we are and how we position ourselves</div>
+
+  <table>
+    <tr><th style="width:30%;">Element</th><th>Value</th></tr>
+    <tr><td><strong>Brand Name</strong></td><td>MyGenie POS</td></tr>
+    <tr><td><strong>Descriptor</strong></td><td>The Hospitality Operating System</td></tr>
+    <tr><td><strong>Tagline</strong></td><td>Streamlined Hospitality. Exceptional Experience.</td></tr>
+    <tr><td><strong>Hero Line</strong></td><td>"Run a more profitable hospitality business — from your phone."</td></tr>
+    <tr><td><strong>Core Promise</strong></td><td>More profit. Less chaos. Total control.</td></tr>
+    <tr><td><strong>AI Positioning</strong></td><td>"Practical AI by MyGenie" — outcomes, never hype</td></tr>
+    <tr><td><strong>Website</strong></td><td>www.mygenie.online</td></tr>
+    <tr><td><strong>Support Email</strong></td><td>support@mygenie.online</td></tr>
+    <tr><td><strong>WhatsApp</strong></td><td>+91 9104743156</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- 2. COLOR PALETTE -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="divider"></div>
+  <div class="section-title">2. Color Palette</div>
+  <div class="section-sub">Official colors — owner-confirmed, locked June 2026</div>
+
+  <h4 style="font-size:0.85rem; color:#5b6b61; margin-bottom:0.75rem; text-transform:uppercase; letter-spacing:1px;">Primary Colors</h4>
+  <div class="color-grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#10B981;">
+        <span class="swatch-hex" style="background:rgba(255,255,255,0.25); color:#fff;">#10B981</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Brand Green</div>
+        <div class="swatch-use">Primary CTA, success states, selection highlight</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#059669;">
+        <span class="swatch-hex" style="background:rgba(255,255,255,0.25); color:#fff;">#059669</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Brand Green Dark</div>
+        <div class="swatch-use">Hover states, emphasis</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#10402A;">
+        <span class="swatch-hex" style="background:rgba(255,255,255,0.2); color:#fff;">#10402A</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Deep Green</div>
+        <div class="swatch-use">Dark sections, footer, trust band backgrounds</div>
+      </div>
+    </div>
+  </div>
+
+  <h4 style="font-size:0.85rem; color:#5b6b61; margin:1.5rem 0 0.75rem; text-transform:uppercase; letter-spacing:1px;">Accent Colors</h4>
+  <div class="color-grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#f26b33;">
+        <span class="swatch-hex" style="background:rgba(255,255,255,0.25); color:#fff;">#F26B33</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Accent Orange</div>
+        <div class="swatch-use">Profit numbers, secondary CTA, urgency, highlight stats</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#FFE100;">
+        <span class="swatch-hex" style="background:rgba(0,0,0,0.15); color:#14201a;">#FFE100</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Accent Yellow</div>
+        <div class="swatch-use">Sparingly — badges, star ratings, special callouts</div>
+      </div>
+    </div>
+  </div>
+
+  <h4 style="font-size:0.85rem; color:#5b6b61; margin:1.5rem 0 0.75rem; text-transform:uppercase; letter-spacing:1px;">Neutral Colors</h4>
+  <div class="color-grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#14201A;">
+        <span class="swatch-hex" style="background:rgba(255,255,255,0.2); color:#fff;">#14201A</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Ink</div>
+        <div class="swatch-use">Primary text, headings</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#5B6B61;">
+        <span class="swatch-hex" style="background:rgba(255,255,255,0.25); color:#fff;">#5B6B61</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Muted</div>
+        <div class="swatch-use">Body text, descriptions, secondary info</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#F6F8F5; border-bottom: 1px solid #e6eae6;">
+        <span class="swatch-hex" style="background:rgba(0,0,0,0.08); color:#14201a;">#F6F8F5</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Sand</div>
+        <div class="swatch-use">Page background, card fills, soft sections</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#E6EAE6; border-bottom: 1px solid #ccc;">
+        <span class="swatch-hex" style="background:rgba(0,0,0,0.08); color:#14201a;">#E6EAE6</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Line</div>
+        <div class="swatch-use">Borders, dividers, input outlines</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#FFFFFF; border-bottom: 1px solid #e6eae6;">
+        <span class="swatch-hex" style="background:rgba(0,0,0,0.06); color:#14201a;">#FFFFFF</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">White</div>
+        <div class="swatch-use">Cards, forms, content backgrounds</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert amber" style="margin-top:1.25rem;">
+    <strong>Color Rule for Ads:</strong> Numbers that represent money/profit (25%, ₹1L, 40%) should ALWAYS be in <strong style="color:#f26b33;">Accent Orange #F26B33</strong> — they are the brand's visual signature. CTAs use <strong style="color:#10b981;">Brand Green #10B981</strong>.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- 3. TYPOGRAPHY -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="divider"></div>
+  <div class="section-title">3. Typography</div>
+  <div class="section-sub">Two fonts. One system. No substitutions.</div>
+
+  <div class="font-specimen">
+    <div class="name">Display Font — Headlines &amp; Hero Text</div>
+    <div class="sample-display">Clash Display</div>
+    <div class="sample-display" style="font-size:1.5rem; margin-top:0.5rem;">Run a more profitable hospitality business — from your phone.</div>
+    <div class="weights">
+      <div class="weight-item"><span>SemiBold 600</span> — subheadings</div>
+      <div class="weight-item"><span>Bold 700</span> — hero headlines</div>
+    </div>
+    <div style="font-size:0.78rem; color:#5b6b61; margin-top:0.5rem;">
+      Source: <code>https://api.fontshare.com/v2/css?f[]=clash-display@600,700</code><br>
+      CSS: <code>font-family: 'Clash Display', 'Poppins', sans-serif;</code> &nbsp;|&nbsp; <code>word-spacing: 0.12em;</code>
+    </div>
+  </div>
+
+  <div class="font-specimen">
+    <div class="name">Body Font — Everything Else</div>
+    <div class="sample-body">Poppins — The quick brown fox jumps over the lazy dog. MyGenie POS boosts profit by up to 25%.* Stops revenue leakage, speeds up service, and gives owners total control.</div>
+    <div class="weights">
+      <div class="weight-item"><span>Regular 400</span> — body text</div>
+      <div class="weight-item"><span>Medium 500</span> — labels, captions</div>
+      <div class="weight-item"><span>SemiBold 600</span> — emphasis</div>
+      <div class="weight-item"><span>Bold 700</span> — stats, badges</div>
+      <div class="weight-item"><span>ExtraBold 800</span> — big numbers</div>
+    </div>
+    <div style="font-size:0.78rem; color:#5b6b61; margin-top:0.5rem;">
+      Source: Google Fonts <code>Poppins:wght@400;500;600;700;800</code><br>
+      CSS: <code>font-family: 'Poppins', sans-serif;</code>
+    </div>
+  </div>
+
+  <h4 style="margin-top:1.5rem; margin-bottom:0.75rem; font-size:0.92rem;">Type Scale</h4>
+  <table>
+    <tr><th>Element</th><th>Font</th><th>Size</th><th>Weight</th></tr>
+    <tr><td>Hero H1</td><td>Clash Display</td><td>48–60px (3rem–3.75rem)</td><td>700</td></tr>
+    <tr><td>Section H2</td><td>Clash Display</td><td>30–40px (1.875rem–2.5rem)</td><td>700</td></tr>
+    <tr><td>Card H3</td><td>Clash Display</td><td>24px (1.5rem)</td><td>700</td></tr>
+    <tr><td>Body text</td><td>Poppins</td><td>15–16px (0.9375rem–1rem)</td><td>400</td></tr>
+    <tr><td>Small / caption</td><td>Poppins</td><td>13–14px (0.8125rem)</td><td>500</td></tr>
+    <tr><td>Stat numbers</td><td>Clash Display or Poppins 800</td><td>32–48px</td><td>700–800</td></tr>
+    <tr><td>CTA buttons</td><td>Poppins</td><td>15–16px</td><td>600</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- 4. LOGO -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="divider"></div>
+  <div class="section-title">4. Logo Usage</div>
+  <div class="section-sub">Two variants. Minimum clear space = logo height.</div>
+
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+    <div class="card" style="text-align:center; padding:2rem;">
+      <img src="/brand/logo.svg" alt="MyGenie Logo" height="50" style="margin-bottom:1rem;" onerror="this.outerHTML='<div style=\'font-family:Clash Display,sans-serif;font-size:1.5rem;font-weight:700;color:#10402A;\'>my<span style=color:#10b981>Genie</span></div>'">
+      <p style="font-size:0.78rem; color:#5b6b61;">Standard — on light backgrounds</p>
+      <p style="font-size:0.72rem; color:#5b6b61; margin-top:0.25rem;"><code>/brand/logo.svg</code></p>
+    </div>
+    <div class="card" style="text-align:center; padding:2rem; background:#10402A;">
+      <img src="/brand/logo-light.svg" alt="MyGenie Logo Light" height="50" style="margin-bottom:1rem;" onerror="this.outerHTML='<div style=\'font-family:Clash Display,sans-serif;font-size:1.5rem;font-weight:700;color:#fff;\'>my<span style=color:#10b981>Genie</span></div>'">
+      <p style="font-size:0.78rem; color:#9db1a4;">Light — on dark/deep green backgrounds</p>
+      <p style="font-size:0.72rem; color:#5b7a68; margin-top:0.25rem;"><code>/brand/logo-light.svg</code></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- 5. BUTTONS & CTA STYLE -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="divider"></div>
+  <div class="section-title">5. Buttons &amp; CTA Style</div>
+  <div class="section-sub">Pill-shaped, bold, with shadow lift</div>
+
+  <div class="btn-samples">
+    <button class="btn-primary">Book a Free Demo &rarr;</button>
+    <button class="btn-secondary">See Pricing</button>
+    <button class="btn-accent">Build Your Plan &rarr;</button>
+  </div>
+
+  <table style="margin-top:1rem;">
+    <tr><th>Button Type</th><th>Background</th><th>Text</th><th>Use</th></tr>
+    <tr><td><strong>Primary</strong></td><td>#10B981 (Green)</td><td>White, Poppins 600</td><td>Main CTA — "Book a Free Demo"</td></tr>
+    <tr><td><strong>Secondary</strong></td><td>Transparent</td><td>Ink #14201A, bordered</td><td>"See Pricing", "Learn More"</td></tr>
+    <tr><td><strong>Accent</strong></td><td>#F26B33 (Orange)</td><td>White, Poppins 600</td><td>"Build Your Plan", urgency CTAs</td></tr>
+  </table>
+
+  <div style="font-size:0.82rem; color:#5b6b61; margin-top:0.75rem;">
+    Shape: <code>border-radius: 999px</code> (full pill) &nbsp;|&nbsp;
+    Shadow: <code>0 8px 22px rgba(color, 0.3)</code> &nbsp;|&nbsp;
+    Hover: <code>-translate-y-0.5</code> (slight lift)
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- 6. NUMBER TREATMENT -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="divider"></div>
+  <div class="section-title">6. Number Treatment</div>
+  <div class="section-sub">Numbers ARE the brand. Make them the biggest thing on any creative.</div>
+
+  <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem; text-align:center; margin:1rem 0;">
+    <div class="card" style="padding:1.5rem;">
+      <div class="number-highlight">25%</div>
+      <div style="font-size:0.82rem; color:#5b6b61;">more profit</div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="number-highlight">₹1 Lakh</div>
+      <div style="font-size:0.82rem; color:#5b6b61;">leakage caught</div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="number-highlight">40%</div>
+      <div style="font-size:0.82rem; color:#5b6b61;">cost reduction</div>
+    </div>
+  </div>
+
+  <div class="alert green">
+    <strong>Rule:</strong> Profit/money numbers use <strong>Accent Orange #F26B33</strong>, Clash Display 700 or Poppins 800, at 2&ndash;3x body text size. They should be the visual anchor of every ad creative.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- 7. IMAGERY -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="divider"></div>
+  <div class="section-title">7. Imagery Guidelines</div>
+  <div class="section-sub">Real hospitality. Real product. No generic stock.</div>
+
+  <div class="do-dont">
+    <div class="do-box">
+      <h5>DO USE</h5>
+      <ul class="clean">
+        <li>Real restaurant/hotel/cafe interiors</li>
+        <li>Product screenshots on phones (owner dashboard, KDS, captain app)</li>
+        <li>Before/After split comparisons</li>
+        <li>Indian hospitality settings</li>
+        <li>Owners looking at their phone (control narrative)</li>
+        <li>Busy kitchen / service scenes</li>
+      </ul>
+    </div>
+    <div class="dont-box">
+      <h5>DON'T USE</h5>
+      <ul class="clean">
+        <li>Generic stock laptop photos</li>
+        <li>Western restaurant imagery (not relatable)</li>
+        <li>Abstract tech/AI visuals (circuits, robots)</li>
+        <li>Clip art or cartoon illustrations</li>
+        <li>Emojis as icons</li>
+        <li>Generic "happy team" corporate photos</li>
+      </ul>
+    </div>
+  </div>
+
+  <p style="font-size:0.82rem; color:#5b6b61;"><strong>Signature visual motif:</strong> The "Before MyGenie / After MyGenie" split — a recurring, ownable device for ads and landing pages.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- 8. TONE & COPY -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="divider"></div>
+  <div class="section-title">8. Ad Copy Tone</div>
+  <div class="section-sub">Confident, warm, proof-driven — like a successful owner sharing what works</div>
+
+  <h4 style="margin-bottom:0.75rem; font-size:0.92rem;">Voice Principles</h4>
+  <div class="do-dont">
+    <div class="do-box">
+      <h5>WRITE LIKE THIS</h5>
+      <p>"Bill in seconds, even at peak rush."</p>
+      <p>"Catch theft before it eats your profit."</p>
+      <p>"Owners using MyGenie save up to 25% — here's the proof."</p>
+      <p>"Running hospitality shouldn't feel like firefighting."</p>
+    </div>
+    <div class="dont-box">
+      <h5>NEVER WRITE THIS</h5>
+      <p>"Experience next-generation transaction velocity."</p>
+      <p>"Comprehensive audit-logging functionality."</p>
+      <p>"The most revolutionary, game-changing POS ever built!"</p>
+      <p>"We deliver enterprise-grade operational excellence solutions."</p>
+    </div>
+  </div>
+
+  <h4 style="margin:1.25rem 0 0.75rem; font-size:0.92rem;">Power Words</h4>
+  <div style="font-size:0.88rem; color:#14201a; line-height:2;">
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">profit</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">margin</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">leakage</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">theft</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">control</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">visibility</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">faster</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">repeat</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">save</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">protect</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">proof</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">from your phone</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">every outlet</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">one app</span>
+    <span style="background:#f0fdf4; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem;">peak rush</span>
+  </div>
+
+  <h4 style="margin:1.25rem 0 0.75rem; font-size:0.92rem;">Banned Words</h4>
+  <div style="font-size:0.88rem; color:#991b1b; line-height:2;">
+    <span style="background:#fef2f2; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem; text-decoration:line-through;">revolutionary</span>
+    <span style="background:#fef2f2; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem; text-decoration:line-through;">game-changing</span>
+    <span style="background:#fef2f2; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem; text-decoration:line-through;">next-gen</span>
+    <span style="background:#fef2f2; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem; text-decoration:line-through;">seamless</span>
+    <span style="background:#fef2f2; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem; text-decoration:line-through;">leverage</span>
+    <span style="background:#fef2f2; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem; text-decoration:line-through;">synergy</span>
+    <span style="background:#fef2f2; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem; text-decoration:line-through;">robust</span>
+    <span style="background:#fef2f2; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem; text-decoration:line-through;">empower</span>
+    <span style="background:#fef2f2; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem; text-decoration:line-through;">world-class</span>
+    <span style="background:#fef2f2; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem; text-decoration:line-through;">cutting-edge</span>
+    <span style="background:#fef2f2; padding:0.2rem 0.6rem; border-radius:6px; margin:0.15rem; text-decoration:line-through;">AI-powered (alone)</span>
+  </div>
+
+  <h4 style="margin:1.25rem 0 0.75rem; font-size:0.92rem;">4-Beat Ad Formula</h4>
+  <div class="card">
+    <p><strong>1. Pain</strong> (name the owner's real problem) &rarr; <strong>2. Solution</strong> (the MyGenie module) &rarr; <strong>3. Outcome</strong> (the business result, ideally a number) &rarr; <strong>4. CTA</strong> (book a demo / see pricing)</p>
+    <p style="margin-top:0.5rem; font-style:italic; color:#5b6b61;">"Cashiers cancelling items after payment? MyGenie's audit logs record every void. One owner caught ₹1 lakh in theft in two weeks. See it on your own data — book a demo."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- 9. PROOF POINTS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="divider"></div>
+  <div class="section-title">9. Proof Points for Ads</div>
+  <div class="section-sub">Real results from real clients — use these in creatives</div>
+
+  <table>
+    <tr><th>Client</th><th>Result</th><th>Best for</th></tr>
+    <tr><td>Rhino</td><td>₹1 Lakh leakage caught in 2 weeks</td><td>Theft/leakage ads</td></tr>
+    <tr><td>Love Bites</td><td>40% cost reduction</td><td>Cost savings ads</td></tr>
+    <tr><td>Mill Bakery</td><td>₹25,000/mo saved</td><td>ROI ads</td></tr>
+    <tr><td>Taste of Tamil</td><td>₹20,000/mo saved</td><td>ROI ads</td></tr>
+    <tr><td>Terraria</td><td>+22% covers per shift</td><td>Speed/service ads</td></tr>
+    <tr><td>La Fetta</td><td>40% fewer delays</td><td>Speed/service ads</td></tr>
+    <tr><td>Bean Me Up</td><td>28% faster ticket time</td><td>Speed/service ads</td></tr>
+    <tr><td>Ubuntu</td><td>+18% order profitability</td><td>AI upsell ads</td></tr>
+    <tr><td>Kates</td><td>+15% revenue</td><td>Revenue growth ads</td></tr>
+    <tr><td>Pavan Pages</td><td>Revenue doubled, cost flat</td><td>Multi-outlet ads</td></tr>
+    <tr><td>Palm Forest, Luxevista, Bamboo Yoga</td><td>Hotels on MyGenie</td><td>Hotel/resort ads</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- 10. QUICK REFERENCE -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="divider"></div>
+  <div class="section-title">10. Quick Reference Card</div>
+
+  <div style="background:#10402A; border-radius:14px; padding:1.5rem; color:#fff; font-size:0.82rem; line-height:2;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+      <div>
+        <strong style="color:#10b981;">Colors</strong><br>
+        Green: #10B981 &nbsp; Dark: #059669<br>
+        Deep: #10402A &nbsp; Orange: #F26B33<br>
+        Yellow: #FFE100 &nbsp; Ink: #14201A<br>
+        Muted: #5B6B61 &nbsp; Sand: #F6F8F5
+      </div>
+      <div>
+        <strong style="color:#10b981;">Fonts</strong><br>
+        Headlines: Clash Display 600/700<br>
+        Body: Poppins 400/500/600/700/800<br>
+        Numbers: Clash Display 700 or Poppins 800<br>
+        Buttons: Poppins 600
+      </div>
+      <div>
+        <strong style="color:#10b981;">Assets</strong><br>
+        Logo (dark bg): /brand/logo-light.svg<br>
+        Logo (light bg): /brand/logo.svg<br>
+        Banner: /brand/banner.png<br>
+        Features: /brand/feature1–5.png
+      </div>
+      <div>
+        <strong style="color:#10b981;">Rules</strong><br>
+        Profit numbers = Orange, large<br>
+        CTAs = Green pill buttons<br>
+        Icons = Lucide line icons, never emoji<br>
+        Imagery = Real hospitality, no stock
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div style="background:#10402A; padding:2rem; text-align:center; color:#5b7a68; font-size:0.75rem; margin-top:2rem;">
+  MyGenie POS &mdash; Visual Brand Guidelines v2.4 &mdash; July 2026 &mdash; Confidential
+</div>
+
+</body>
+</html>

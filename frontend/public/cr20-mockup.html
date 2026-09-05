@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR-20 Mockups — MyGenie vs Petpooja</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0f172a; }
+
+  /* NAV */
+  .nav { background: #0f172a; color: white; padding: 14px 32px; display: flex; align-items: center; gap: 24px; position: sticky; top: 0; z-index: 100; }
+  .nav h1 { font-size: 14px; font-weight: 700; color: #22c55e; }
+  .nav-tabs { display: flex; gap: 4px; margin-left: auto; }
+  .nav-tab { padding: 6px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid transparent; color: #94a3b8; transition: all .2s; }
+  .nav-tab.active, .nav-tab:hover { background: #1e293b; color: white; border-color: #334155; }
+  .nav-tab.active { color: #22c55e; border-color: #22c55e; }
+
+  /* LABEL */
+  .section-label { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; margin-bottom: 16px; }
+  .label-blue { background: #dbeafe; color: #1d4ed8; }
+  .label-green { background: #dcfce7; color: #15803d; }
+  .label-orange { background: #ffedd5; color: #c2410c; }
+  .label-purple { background: #ede9fe; color: #7c3aed; }
+
+  /* WRAPPER */
+  .page { max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px; }
+  .section-title { font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
+  .section-sub { font-size: 15px; color: #64748b; margin-bottom: 32px; }
+  .divider { height: 1px; background: #e2e8f0; margin: 56px 0; }
+  .option-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
+  .option-card { background: white; border-radius: 12px; overflow: hidden; border: 2px solid #e2e8f0; transition: border-color .2s; }
+  .option-card:hover { border-color: #22c55e; }
+  .option-card.recommended { border-color: #22c55e; }
+  .option-header { padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; }
+  .option-header h3 { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .badge-rec { font-size: 10px; font-weight: 700; background: #22c55e; color: white; padding: 2px 8px; border-radius: 4px; }
+  .option-body { padding: 24px; }
+  .full-width { grid-template-columns: 1fr; }
+
+  /* MYGENIE BRAND COLORS */
+  --mg-green: #22c55e;
+  .btn-green { background: #22c55e; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-outline { background: white; color: #0f172a; border: 2px solid #e2e8f0; padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+  /* PREVIEW FRAMES */
+  .preview-frame { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+  .preview-frame .pf-bar { background: #f1f5f9; padding: 8px 14px; display: flex; gap: 6px; }
+  .pf-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .pf-dot.red { background: #ef4444; }
+  .pf-dot.yellow { background: #f59e0b; }
+  .pf-dot.green { background: #22c55e; }
+  .preview-content { padding: 28px 24px; }
+
+  /* HERO MOCKUP */
+  .hero-mock { background: linear-gradient(135deg, #fefce8 0%, #f0fdf4 50%, #ecfdf5 100%); padding: 40px 32px; text-align: left; }
+  .hero-mock .hero-eyebrow { display: inline-flex; align-items: center; gap: 6px; background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 16px; }
+  .hero-mock .hero-eyebrow span { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+  .hero-mock h2 { font-size: 28px; font-weight: 900; line-height: 1.2; color: #0f172a; margin-bottom: 12px; }
+  .hero-mock h2 em { font-style: normal; color: #22c55e; }
+  .hero-mock p { font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 20px; max-width: 480px; }
+  .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .hero-trust { margin-top: 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .hero-trust-text { font-size: 11px; color: #94a3b8; font-weight: 500; }
+  .trust-logo { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; color: #475569; }
+
+  /* COMPARISON TABLE */
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .comp-table th { padding: 12px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; border-bottom: 2px solid #e2e8f0; }
+  .comp-table th.mg-col { background: #f0fdf4; color: #15803d; border-radius: 8px 8px 0 0; }
+  .comp-table th.pp-col { background: #fafafa; color: #64748b; }
+  .comp-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  .comp-table td.mg-col { background: #fafffe; }
+  .comp-table td.pp-col { background: #fafafa; }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table .feature-col { font-weight: 600; color: #1e293b; }
+  .comp-table .feature-col .sub { font-size: 11px; font-weight: 400; color: #94a3b8; display: block; }
+  .check { color: #22c55e; font-weight: 700; font-size: 15px; }
+  .cross { color: #ef4444; font-weight: 700; font-size: 15px; }
+  .addon { color: #f59e0b; font-weight: 600; font-size: 12px; }
+  .addon-badge { background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; }
+
+  /* TONE COMPARISON */
+  .tone-row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .tone-item { border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; }
+  .tone-item .tone-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; margin-bottom: 8px; }
+  .tone-item .tone-text { font-size: 14px; color: #1e293b; font-weight: 500; line-height: 1.5; }
+  .tone-item.fair-style { border-left: 3px solid #3b82f6; }
+  .tone-item.pointed-style { border-left: 3px solid #f59e0b; }
+
+  /* PRICING BLOCK */
+  .pricing-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .plan-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; }
+  .plan-card.popular { border-color: #22c55e; position: relative; }
+  .plan-card.popular::before { content: 'MOST POPULAR'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #22c55e; color: white; font-size: 9px; font-weight: 800; padding: 2px 10px; border-radius: 4px; letter-spacing: .06em; }
+  .plan-name { font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 4px; }
+  .plan-price { font-size: 24px; font-weight: 900; color: #0f172a; }
+  .plan-price span { font-size: 13px; font-weight: 500; color: #94a3b8; }
+  .plan-tag { font-size: 11px; color: #94a3b8; margin-bottom: 14px; }
+  .plan-features { list-style: none; }
+  .plan-features li { font-size: 12px; color: #475569; padding: 4px 0; display: flex; align-items: flex-start; gap: 6px; }
+  .plan-features li::before { content: '✓'; color: #22c55e; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  /* TAB CONTENT */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* NOTES */
+  .note-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 14px 16px; font-size: 13px; color: #92400e; margin-top: 20px; }
+  .note-box strong { color: #78350f; }
+
+  /* SECTION HEADING */
+  .section-group { margin-bottom: 56px; }
+  .section-group-title { font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 4px; padding-bottom: 12px; border-bottom: 2px solid #e2e8f0; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+  .section-num { width: 28px; height: 28px; background: #22c55e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; }
+
+  /* HERO VARIANTS SIDE BY SIDE */
+  .variants-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  @media (max-width: 768px) {
+    .option-row, .variants-grid { grid-template-columns: 1fr; }
+    .pricing-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav">
+  <h1>CR-20 — Visual Mockups</h1>
+  <span style="font-size:12px;color:#64748b;">MyGenie vs Petpooja Landing Page</span>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showTab('comparison')">Comparison Table</div>
+    <div class="nav-tab" onclick="showTab('tone')">Tone Options</div>
+    <div class="nav-tab" onclick="showTab('hero')">Hero Variants (A/B)</div>
+    <div class="nav-tab" onclick="showTab('fullpage')">Full Page Flow</div>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ============================================================ -->
+<!-- TAB 1: COMPARISON TABLE OPTIONS -->
+<!-- ============================================================ -->
+<div id="tab-comparison" class="tab-content active">
+
+  <div class="section-group">
+    <div class="section-group-title">
+      <div class="section-num">1</div>
+      Comparison Table — 2 Options
+    </div>
+    <p class="section-sub">Same data. Different density. Choose what feels right for your visitor.</p>
+
+    <div class="option-row">
+
+      <!-- OPTION A: LEAN -->
+      <div class="option-card">
+        <div class="option-header">
+          <h3>Option A — Lean Table (6 sharp rows)</h3>
+          <span style="font-size:11px;color:#64748b;">Fast read · High conversion focus</span>
+        </div>
+        <div class="option-body">
+          <div class="preview-frame">
+            <div class="pf-bar"><div class="pf-dot red"></div><div class="pf-dot yellow"></div><div class="pf-dot green"></div></div>
+            <div class="preview-content" style="padding:20px;">
+              <div style="margin-bottom:16px;">
+                <span class="section-label label-blue">Side by side</span>
+                <h3 style="font-size:18px;font-weight:800;color:#0f172a;">Where they're different — the 6 that matter.</h3>
+              </div>
+              <table class="comp-table">
+                <thead>
+                  <tr>
+                    <th style="width:36%;">Feature</th>
+                    <th class="mg-col" style="width:32%;">MyGenie</th>
+                    <th class="pp-col" style="width:32%;">Petpooja</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="feature-col">Transparent INR pricing<span class="sub">Can you see the price before calling?</span></td>
+                    <td class="mg-col"><span class="check">✓</span> <span style="font-size:12px;color:#15803d;font-weight:600;">₹799–₹2,499/mo</span></td>
+                    <td class="pp-col"><span class="cross">✗</span> <span style="font-size:12px;color:#ef4444;font-weight:500;">Contact us</span></td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">AI features built-in<span class="sub">Upsell, audit, insights, CRM segmentation</span></td>
+                    <td class="mg-col"><span class="check">✓</span> <span style="font-size:12px;color:#15803d;font-weight:600;">7 features in Pro</span></td>
+                    <td class="pp-col"><span class="cross">✗</span> <span style="font-size:12px;color:#94a3b8;">Not available</span></td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">Runs on your existing phone<span class="sub">No terminal purchase needed</span></td>
+                    <td class="mg-col"><span class="check">✓</span> <span style="font-size:12px;color:#15803d;font-weight:600;">Any device</span></td>
+                    <td class="pp-col"><span class="addon">⚠</span> <span style="font-size:12px;color:#c2410c;font-weight:500;">Terminal req. (₹15–30k)</span></td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">WhatsApp automation<span class="sub">Daily reports + customer follow-ups</span></td>
+                    <td class="mg-col"><span class="check">✓</span> <span style="font-size:12px;color:#15803d;font-weight:600;">Included in Pro</span></td>
+                    <td class="pp-col"><span class="addon">⚠</span> <span class="addon-badge">ADD-ON</span> <span style="font-size:12px;color:#c2410c;font-weight:500;">Extra charge</span></td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">Audit logs / theft detection<span class="sub">Every void, cancel & discount flagged</span></td>
+                    <td class="mg-col"><span class="check">✓</span> <span style="font-size:12px;color:#15803d;font-weight:600;">Auto-flagged, AI-reviewed</span></td>
+                    <td class="pp-col"><span class="cross">✗</span> <span style="font-size:12px;color:#94a3b8;">Not available</span></td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">Go-live time<span class="sub">From sign-up to first bill</span></td>
+                    <td class="mg-col"><span class="check">✓</span> <span style="font-size:12px;color:#15803d;font-weight:600;">48 hours</span></td>
+                    <td class="pp-col"><span class="addon">⚠</span> <span style="font-size:12px;color:#c2410c;font-weight:500;">Multi-day setup</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="note-box" style="margin-top:16px;font-size:12px;">
+                <strong>Why Lean?</strong> A restaurant owner scanning this page makes a snap judgment in 8 seconds. 6 rows, sharp contrast — done. No scrolling past the key message.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTION B: FULL GRID -->
+      <div class="option-card recommended">
+        <div class="option-header">
+          <h3>Option B — Full Grid (12 rows)</h3>
+          <span class="badge-rec">My rec for research-mode visitors</span>
+        </div>
+        <div class="option-body">
+          <div class="preview-frame">
+            <div class="pf-bar"><div class="pf-dot red"></div><div class="pf-dot yellow"></div><div class="pf-dot green"></div></div>
+            <div class="preview-content" style="padding:20px;">
+              <div style="margin-bottom:16px;">
+                <span class="section-label label-green">Full comparison</span>
+                <h3 style="font-size:18px;font-weight:800;color:#0f172a;">MyGenie vs Petpooja — every feature.</h3>
+              </div>
+              <table class="comp-table">
+                <thead>
+                  <tr>
+                    <th style="width:36%;">Feature</th>
+                    <th class="mg-col" style="width:32%;">MyGenie</th>
+                    <th class="pp-col" style="width:32%;">Petpooja</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td colspan="3" style="background:#f8fafc;padding:8px 14px;font-size:10px;font-weight:800;letter-spacing:.08em;color:#94a3b8;text-transform:uppercase;">CORE BILLING</td></tr>
+                  <tr>
+                    <td class="feature-col">POS / Billing</td>
+                    <td class="mg-col"><span class="check">✓</span> All plans</td>
+                    <td class="pp-col"><span class="check">✓</span> All plans</td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">KOT / KDS</td>
+                    <td class="mg-col"><span class="check">✓</span> Growth+</td>
+                    <td class="pp-col"><span class="addon-badge">ADD-ON</span></td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">Captain / Waiter App</td>
+                    <td class="mg-col"><span class="check">✓</span> Growth+</td>
+                    <td class="pp-col"><span class="addon-badge">ADD-ON</span></td>
+                  </tr>
+                  <tr><td colspan="3" style="background:#f8fafc;padding:8px 14px;font-size:10px;font-weight:800;letter-spacing:.08em;color:#94a3b8;text-transform:uppercase;">CUSTOMER RETENTION</td></tr>
+                  <tr>
+                    <td class="feature-col">CRM</td>
+                    <td class="mg-col"><span class="check">✓</span> Growth+</td>
+                    <td class="pp-col"><span class="addon-badge">ADD-ON</span></td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">Loyalty + Wallet</td>
+                    <td class="mg-col"><span class="check">✓</span> Pro — included</td>
+                    <td class="pp-col"><span class="addon-badge">ADD-ON</span></td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">WhatsApp Automation</td>
+                    <td class="mg-col"><span class="check">✓</span> Pro — included</td>
+                    <td class="pp-col"><span class="addon-badge">ADD-ON</span></td>
+                  </tr>
+                  <tr><td colspan="3" style="background:#f8fafc;padding:8px 14px;font-size:10px;font-weight:800;letter-spacing:.08em;color:#94a3b8;text-transform:uppercase;">PROFIT & INTELLIGENCE</td></tr>
+                  <tr>
+                    <td class="feature-col">AI Features (7)</td>
+                    <td class="mg-col"><span class="check">✓</span> Pro — included</td>
+                    <td class="pp-col"><span class="cross">✗</span> Not available</td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">Recipe-level P&L</td>
+                    <td class="mg-col"><span class="check">✓</span> Pro</td>
+                    <td class="pp-col"><span class="cross">✗</span> Not available</td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">Audit logs / theft detection</td>
+                    <td class="mg-col"><span class="check">✓</span> Included</td>
+                    <td class="pp-col"><span class="cross">✗</span> Not available</td>
+                  </tr>
+                  <tr><td colspan="3" style="background:#f8fafc;padding:8px 14px;font-size:10px;font-weight:800;letter-spacing:.08em;color:#94a3b8;text-transform:uppercase;">SETUP & PRICING</td></tr>
+                  <tr>
+                    <td class="feature-col">Transparent INR pricing</td>
+                    <td class="mg-col"><span class="check">✓</span> ₹799–₹2,499/mo</td>
+                    <td class="pp-col"><span class="cross">✗</span> Contact us</td>
+                  </tr>
+                  <tr>
+                    <td class="feature-col">Hardware required</td>
+                    <td class="mg-col"><span class="check">✓</span> Any phone / tablet</td>
+                    <td class="pp-col"><span class="addon">⚠</span> Terminal (₹15–30k)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="note-box" style="margin-top:16px;font-size:12px;">
+                <strong>Why Full Grid?</strong> Research-mode visitors want to feel they've done due diligence. Category headers (Core, Retention, Profit, Setup) break the visual weight. The "add-on" badges do the heavy lifting — no need to say anything negative.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /option-row -->
+
+    <!-- HYBRID OPTION -->
+    <div class="option-card" style="border: 2px dashed #22c55e; margin-top: 8px;">
+      <div class="option-header" style="background:#f0fdf4;">
+        <h3 style="color:#15803d;">Option C — Hybrid (Best of both)</h3>
+        <span class="badge-rec" style="background:#15803d;">Recommended for conversion</span>
+      </div>
+      <div class="option-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+          <div>
+            <p style="font-size:14px;color:#475569;line-height:1.6;margin-bottom:16px;">
+              <strong style="color:#0f172a;">Lean table first</strong> — 6 sharpest rows, visible above the fold. Grabs the casual scroller.<br><br>
+              <strong style="color:#0f172a;">"See full comparison ↓"</strong> accordion below — expands to 12+ rows for the researcher who wants to verify every detail.<br><br>
+              Best of both: fast scanners convert on the lean table, deep researchers convert on the full grid. Same page, no compromise.
+            </p>
+            <div style="font-size:12px;color:#64748b;background:#f8fafc;border-radius:8px;padding:12px;">
+              ✓ No extra scroll for casual visitors<br>
+              ✓ Full transparency for researchers<br>
+              ✓ "Expand" interaction = engagement signal in GA4
+            </div>
+          </div>
+          <div>
+            <div class="preview-frame">
+              <div class="pf-bar"><div class="pf-dot red"></div><div class="pf-dot yellow"></div><div class="pf-dot green"></div></div>
+              <div style="padding:20px;">
+                <table class="comp-table" style="margin-bottom:12px;">
+                  <thead><tr><th style="width:40%;">Feature</th><th class="mg-col">MyGenie</th><th class="pp-col">Petpooja</th></tr></thead>
+                  <tbody>
+                    <tr><td class="feature-col" style="font-size:12px;">Transparent pricing</td><td class="mg-col"><span class="check">✓</span></td><td class="pp-col"><span class="cross">✗</span></td></tr>
+                    <tr><td class="feature-col" style="font-size:12px;">AI built-in</td><td class="mg-col"><span class="check">✓</span></td><td class="pp-col"><span class="cross">✗</span></td></tr>
+                    <tr><td class="feature-col" style="font-size:12px;">Mobile-first</td><td class="mg-col"><span class="check">✓</span></td><td class="pp-col"><span class="addon">⚠</span></td></tr>
+                    <tr><td class="feature-col" style="font-size:12px;">WhatsApp included</td><td class="mg-col"><span class="check">✓</span></td><td class="pp-col"><span class="addon-badge">ADD-ON</span></td></tr>
+                    <tr><td class="feature-col" style="font-size:12px;">Audit / theft detection</td><td class="mg-col"><span class="check">✓</span></td><td class="pp-col"><span class="cross">✗</span></td></tr>
+                    <tr><td class="feature-col" style="font-size:12px;">Go-live in 48 hrs</td><td class="mg-col"><span class="check">✓</span></td><td class="pp-col"><span class="addon">⚠</span></td></tr>
+                  </tbody>
+                </table>
+                <div style="border: 1px dashed #22c55e; border-radius:6px; padding:10px 14px; text-align:center; cursor:pointer; font-size:12px; font-weight:700; color:#15803d;">
+                  + See full comparison (12 features) ↓
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- TAB 2: TONE OPTIONS -->
+<!-- ============================================================ -->
+<div id="tab-tone" class="tab-content">
+
+  <div class="section-group">
+    <div class="section-group-title">
+      <div class="section-num">2</div>
+      Tone on Petpooja — 2 Styles Applied to Real Copy
+    </div>
+    <p class="section-sub">Same facts, different delivery. I've applied both tones to 4 real sections of the page so you can feel the difference.</p>
+
+    <div class="option-row" style="margin-bottom:32px;">
+
+      <!-- FAIR STYLE -->
+      <div class="option-card">
+        <div class="option-header">
+          <h3>Style A — Fair & Factual</h3>
+          <span style="font-size:11px;color:#64748b;">No edge · Builds trust · Credibility-first</span>
+        </div>
+        <div class="option-body">
+          <div class="tone-row">
+            <div class="tone-item fair-style">
+              <div class="tone-label">Petpooja intro</div>
+              <div class="tone-text">"Petpooja built India's most popular restaurant POS over 14 years and 1.5 lakh outlets. That's a real track record. Here's what's changed in the market since then."</div>
+            </div>
+            <div class="tone-item fair-style">
+              <div class="tone-label">KDS comparison</div>
+              <div class="tone-text">"KDS is available on Petpooja as a marketplace add-on. On MyGenie, it's included from the Growth plan."</div>
+            </div>
+            <div class="tone-item fair-style">
+              <div class="tone-label">AI section intro</div>
+              <div class="tone-text">"Petpooja focuses on core billing and operations. MyGenie adds a layer of practical AI — upsell suggestions, automatic report audits, customer segmentation — built directly into the Pro plan."</div>
+            </div>
+            <div class="tone-item fair-style">
+              <div class="tone-label">Pricing section</div>
+              <div class="tone-text">"Petpooja's India pricing isn't listed on their website — you'll need to call for a quote. MyGenie's plans are ₹799, ₹1,499 and ₹2,499 per outlet per month, billed annually. No surprises."</div>
+            </div>
+          </div>
+          <div class="note-box" style="margin-top:16px;">
+            <strong>When Fair works best:</strong> If your audience is mid-journey (still evaluating, not yet frustrated with Petpooja). Honesty = credibility. They'll trust the positive claims more because you didn't bash the competitor.
+          </div>
+        </div>
+      </div>
+
+      <!-- POINTED STYLE -->
+      <div class="option-card">
+        <div class="option-header">
+          <h3>Style B — Direct & Pointed</h3>
+          <span style="font-size:11px;color:#64748b;">More edge · Speaks to frustration · Switcher-friendly</span>
+        </div>
+        <div class="option-body">
+          <div class="tone-row">
+            <div class="tone-item pointed-style">
+              <div class="tone-label">Petpooja intro</div>
+              <div class="tone-text">"Petpooja built a solid product. But it was built in a different era — before AI, before mobile-first, before restaurant owners expected to see their profit per table in real time."</div>
+            </div>
+            <div class="tone-item pointed-style">
+              <div class="tone-label">KDS comparison</div>
+              <div class="tone-text">"Petpooja charges extra for KDS. So does it for the Captain App and Loyalty. On MyGenie, these aren't extras — they're in the plan."</div>
+            </div>
+            <div class="tone-item pointed-style">
+              <div class="tone-label">AI section intro</div>
+              <div class="tone-text">"Petpooja gives you reports. MyGenie gives you answers. The AI reads every report, flags every anomaly, and tells you what to fix — automatically."</div>
+            </div>
+            <div class="tone-item pointed-style">
+              <div class="tone-label">Pricing section</div>
+              <div class="tone-text">"Petpooja doesn't publish its India pricing. You have to call. We publish ours: ₹799 / ₹1,499 / ₹2,499 per outlet per month. If a company won't show you the price upfront, ask yourself why."</div>
+            </div>
+          </div>
+          <div class="note-box" style="margin-top:16px;border-color:#fed7aa;background:#fff7ed;color:#92400e;">
+            <strong>When Pointed works best:</strong> If your audience is already frustrated with Petpooja (support issues, add-on pricing surprises). Speaks directly to their pain. Risk: can feel aggressive to a casual browser. Recommend using pointed copy only in sections 3–6, after you've built credibility in sections 1–2.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HYBRID RECOMMENDATION -->
+    <div class="option-card" style="border: 2px dashed #22c55e;">
+      <div class="option-header" style="background:#f0fdf4;">
+        <h3 style="color:#15803d;">Recommended: Hybrid approach — Fair opening, Pointed middle</h3>
+        <span class="badge-rec">Best of both</span>
+      </div>
+      <div class="option-body">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+          <div style="background:#f8fafc;border-radius:8px;padding:14px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:6px;">SECTIONS 1–2</div>
+            <div style="font-size:13px;font-weight:700;color:#3b82f6;">Fair & Factual</div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Hero + Petpooja<br>honest review</div>
+          </div>
+          <div style="background:#f8fafc;border-radius:8px;padding:14px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:6px;">SECTIONS 3–5</div>
+            <div style="font-size:13px;font-weight:700;color:#f59e0b;">Pointed</div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Comparison +<br>AI + Pricing</div>
+          </div>
+          <div style="background:#f8fafc;border-radius:8px;padding:14px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:6px;">SECTIONS 6–8</div>
+            <div style="font-size:13px;font-weight:700;color:#3b82f6;">Fair & Factual</div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Client results +<br>Switching guide</div>
+          </div>
+          <div style="background:#f0fdf4;border-radius:8px;padding:14px;text-align:center;border:1px solid #86efac;">
+            <div style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:6px;">SECTION 10</div>
+            <div style="font-size:13px;font-weight:700;color:#22c55e;">Warm CTA</div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Demo form —<br>no pressure</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- TAB 3: HERO VARIANTS A/B -->
+<!-- ============================================================ -->
+<div id="tab-hero" class="tab-content">
+
+  <div class="section-group">
+    <div class="section-group-title">
+      <div class="section-num">3</div>
+      Hero A/B Variants — What the visitor sees first
+    </div>
+    <p class="section-sub">50/50 random split on page load. Only the headline + subtext changes. CTA, trust bar, and everything else stays identical. GTM pushes variant to GA4 automatically.</p>
+
+    <div class="variants-grid">
+
+      <!-- VARIANT A -->
+      <div class="option-card" style="border-color:#3b82f6;">
+        <div class="option-header" style="background:#eff6ff;">
+          <h3 style="color:#1d4ed8;">Variant A — Locked ✓</h3>
+          <span style="font-size:11px;color:#3b82f6;">Option 3 — your choice</span>
+        </div>
+        <div class="option-body">
+          <div class="preview-frame">
+            <div class="pf-bar"><div class="pf-dot red"></div><div class="pf-dot yellow"></div><div class="pf-dot green"></div></div>
+            <div class="hero-mock">
+              <div class="hero-eyebrow"><span></span> MyGenie vs Petpooja</div>
+              <h2>"We get compared to Petpooja every week.<br><em>Here's the honest answer.</em>"</h2>
+              <p>Petpooja runs 1.5 lakh restaurants. It's earned that. But if you want AI-driven profit visibility, mobile-first setup, and pricing you can see before you call — there's a conversation worth having.</p>
+              <div class="hero-btns">
+                <button class="btn-green">Book a Free Demo →</button>
+                <button class="btn-outline">See the comparison ↓</button>
+              </div>
+              <div class="hero-trust">
+                <span class="hero-trust-text">Trusted by</span>
+                <span class="trust-logo">Hyatt Centric</span>
+                <span class="trust-logo">Palm Forest</span>
+                <span class="trust-logo">Love Bites</span>
+                <span class="trust-logo">The Mill Bakery</span>
+                <span style="font-size:11px;color:#94a3b8;">+ 10,000 outlets</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;background:#eff6ff;border-radius:8px;padding:12px;font-size:12px;color:#1d4ed8;">
+            <strong>Why this works:</strong> "Honest answer" disarms the sales-page feeling. Visitor expects spin, gets fairness — instant trust. Works for all intent levels.
+          </div>
+        </div>
+      </div>
+
+      <!-- VARIANT B -->
+      <div class="option-card" style="border-color:#22c55e;">
+        <div class="option-header" style="background:#f0fdf4;">
+          <h3 style="color:#15803d;">Variant B — Proposed for A/B</h3>
+          <span style="font-size:11px;color:#15803d;">Option 1 — curiosity-first</span>
+        </div>
+        <div class="option-body">
+          <div class="preview-frame">
+            <div class="pf-bar"><div class="pf-dot red"></div><div class="pf-dot yellow"></div><div class="pf-dot green"></div></div>
+            <div class="hero-mock" style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);">
+              <div class="hero-eyebrow"><span></span> MyGenie vs Petpooja</div>
+              <h2>"Most Indian restaurants run on Petpooja.<br><em>Some of them switch to us.</em>"</h2>
+              <p>We don't say Petpooja is bad. We say there's a version of your restaurant that runs leaner, profits more, and gives you AI-level visibility — from your phone. That's what they switched for.</p>
+              <div class="hero-btns">
+                <button class="btn-green">See why they switched →</button>
+                <button class="btn-outline">Compare side by side ↓</button>
+              </div>
+              <div class="hero-trust">
+                <span class="hero-trust-text">Trusted by</span>
+                <span class="trust-logo">Hyatt Centric</span>
+                <span class="trust-logo">Palm Forest</span>
+                <span class="trust-logo">Love Bites</span>
+                <span class="trust-logo">The Mill Bakery</span>
+                <span style="font-size:11px;color:#94a3b8;">+ 10,000 outlets</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;background:#f0fdf4;border-radius:8px;padding:12px;font-size:12px;color:#15803d;">
+            <strong>Why this works:</strong> "Some of them switch to us" — curiosity gap. The brain immediately asks: *why?* CTA becomes "See why they switched" which has narrative pull.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A/B TRACKING EXPLANATION -->
+    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-top:24px;">
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;">How the A/B tracking works (zero extra tools)</h3>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+        <div style="text-align:center;padding:12px;">
+          <div style="font-size:28px;font-weight:900;color:#22c55e;">1</div>
+          <div style="font-size:12px;color:#475569;margin-top:6px;">Page loads → randomly picks A or B (50/50). Stored in <code style="background:#f1f5f9;padding:2px 4px;border-radius:3px;font-size:11px;">localStorage</code></div>
+        </div>
+        <div style="text-align:center;padding:12px;">
+          <div style="font-size:28px;font-weight:900;color:#22c55e;">2</div>
+          <div style="font-size:12px;color:#475569;margin-top:6px;">Same visitor always sees same variant. Consistent experience across sessions.</div>
+        </div>
+        <div style="text-align:center;padding:12px;">
+          <div style="font-size:28px;font-weight:900;color:#22c55e;">3</div>
+          <div style="font-size:12px;color:#475569;margin-top:6px;">GTM receives <code style="background:#f1f5f9;padding:2px 4px;border-radius:3px;font-size:11px;">ab_variant: "hero_a"</code> in dataLayer on page view.</div>
+        </div>
+        <div style="text-align:center;padding:12px;">
+          <div style="font-size:28px;font-weight:900;color:#22c55e;">4</div>
+          <div style="font-size:12px;color:#475569;margin-top:6px;">GA4 custom dimension shows demo bookings split by variant. Winner in 2–3 weeks.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- TAB 4: FULL PAGE FLOW -->
+<!-- ============================================================ -->
+<div id="tab-fullpage" class="tab-content">
+
+  <div class="section-group">
+    <div class="section-group-title">
+      <div class="section-num">4</div>
+      Full Page Section Flow — Visual Wireframe
+    </div>
+    <p class="section-sub">Top to bottom. How a visitor moves through the page. Each block shows section purpose + key message.</p>
+
+    <div style="max-width:600px;margin:0 auto;">
+
+      <!-- S1 HERO -->
+      <div style="background:linear-gradient(135deg,#fefce8,#f0fdf4);border-radius:12px;padding:24px;margin-bottom:8px;border:2px solid #22c55e;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="background:#22c55e;color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">S1</div>
+          <div style="font-size:13px;font-weight:700;">HERO — Variant A/B headline</div>
+        </div>
+        <div style="font-size:12px;color:#475569;">Headline + sub + CTA button + trust logos. Establishes: we know why you're here, we're going to be honest.</div>
+      </div>
+      <div style="text-align:center;color:#94a3b8;font-size:18px;margin:4px 0;">↓</div>
+
+      <!-- S2 HONEST PETPOOJA -->
+      <div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:8px;border:1px solid #e2e8f0;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="background:#3b82f6;color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">S2</div>
+          <div style="font-size:13px;font-weight:700;">THE HONEST PETPOOJA REVIEW — Fair tone</div>
+        </div>
+        <div style="font-size:12px;color:#475569;">Two columns: what Petpooja genuinely does well (14 yrs, 150k outlets, widest integrations) vs what it doesn't cover. Credibility builder. No attack.</div>
+      </div>
+      <div style="text-align:center;color:#94a3b8;font-size:18px;margin:4px 0;">↓</div>
+
+      <!-- S3 COMPARISON -->
+      <div style="background:#0f172a;border-radius:12px;padding:20px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="background:#22c55e;color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">S3</div>
+          <div style="font-size:13px;font-weight:700;color:white;">COMPARISON TABLE — Dark bg, high contrast</div>
+        </div>
+        <div style="font-size:12px;color:#94a3b8;">Lean 6-row table visible + "See full comparison" accordion below. Green ✓ / Red ✗ / Amber "ADD-ON" badges. This is where decisions happen.</div>
+      </div>
+      <div style="text-align:center;color:#94a3b8;font-size:18px;margin:4px 0;">↓</div>
+
+      <!-- S4 RESULTS -->
+      <div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:8px;border:1px solid #e2e8f0;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="background:#22c55e;color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">S4</div>
+          <div style="font-size:13px;font-weight:700;">REAL RESULTS — 6 cards with specific numbers</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;">
+          <div style="background:#f0fdf4;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:18px;font-weight:900;color:#22c55e;">₹1L</div>
+            <div style="font-size:10px;color:#475569;">fraud caught<br>Rhino</div>
+          </div>
+          <div style="background:#f0fdf4;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:18px;font-weight:900;color:#22c55e;">40%</div>
+            <div style="font-size:10px;color:#475569;">lower costs<br>Love Bites</div>
+          </div>
+          <div style="background:#f0fdf4;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:18px;font-weight:900;color:#22c55e;">48hrs</div>
+            <div style="font-size:10px;color:#475569;">to go live<br>Matryyoshka</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;color:#94a3b8;font-size:18px;margin:4px 0;">↓</div>
+
+      <!-- S5 AI -->
+      <div style="background:#fafffe;border:1px solid #bbf7d0;border-radius:12px;padding:20px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="background:#22c55e;color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">S5</div>
+          <div style="font-size:13px;font-weight:700;">AI — The section Petpooja doesn't have</div>
+        </div>
+        <div style="font-size:12px;color:#475569;">7 AI features, each with a real outcome number. Pointed tone. "Petpooja gives you reports. MyGenie gives you answers."</div>
+      </div>
+      <div style="text-align:center;color:#94a3b8;font-size:18px;margin:4px 0;">↓</div>
+
+      <!-- S6 PRICING -->
+      <div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:8px;border:1px solid #e2e8f0;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="background:#22c55e;color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">S6</div>
+          <div style="font-size:13px;font-weight:700;">PRICING — Nothing to hide</div>
+        </div>
+        <div style="font-size:12px;color:#475569;margin-bottom:10px;">"Petpooja doesn't publish India pricing. We do." — Then show the 3 plans clearly.</div>
+        <div class="pricing-row">
+          <div class="plan-card">
+            <div class="plan-name">Starter</div>
+            <div class="plan-price">₹799<span>/mo</span></div>
+            <div class="plan-tag">Billed annually · per outlet</div>
+          </div>
+          <div class="plan-card popular">
+            <div class="plan-name">Growth</div>
+            <div class="plan-price">₹1,499<span>/mo</span></div>
+            <div class="plan-tag">Billed annually · per outlet</div>
+          </div>
+          <div class="plan-card">
+            <div class="plan-name">Pro</div>
+            <div class="plan-price">₹2,499<span>/mo</span></div>
+            <div class="plan-tag">Billed annually · per outlet</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;color:#94a3b8;font-size:18px;margin:4px 0;">↓</div>
+
+      <!-- S7 OUTLETS -->
+      <div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:8px;border:1px solid #e2e8f0;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="background:#22c55e;color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">S7</div>
+          <div style="font-size:13px;font-weight:700;">OUTLETS — We cover every type you need</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+          <span style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:#475569;">Restaurants</span>
+          <span style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:#475569;">Cafés</span>
+          <span style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:#475569;">QSR</span>
+          <span style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:#475569;">Hotels & Resorts</span>
+          <span style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:#475569;">Chains</span>
+          <span style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:#475569;">Cloud Kitchens</span>
+          <span style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:#475569;">Bakeries</span>
+          <span style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:#475569;">Bars & Pubs</span>
+          <span style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:#475569;">Food Courts</span>
+        </div>
+      </div>
+      <div style="text-align:center;color:#94a3b8;font-size:18px;margin:4px 0;">↓</div>
+
+      <!-- S8 SWITCHING -->
+      <div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:8px;border:1px solid #e2e8f0;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="background:#22c55e;color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">S8</div>
+          <div style="font-size:13px;font-weight:700;">SWITCHING — Easier than you think</div>
+        </div>
+        <div style="font-size:12px;color:#475569;">Data migration · 48-hr go-live · Dedicated account manager from day 1 · Train staff in hours. Removes the "switching cost" objection.</div>
+      </div>
+      <div style="text-align:center;color:#94a3b8;font-size:18px;margin:4px 0;">↓</div>
+
+      <!-- S9 SOCIAL PROOF -->
+      <div style="background:#0f172a;border-radius:12px;padding:20px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="background:#22c55e;color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">S9</div>
+          <div style="font-size:13px;font-weight:700;color:white;">SOCIAL PROOF — Client logos + one strong quote</div>
+        </div>
+        <div style="font-size:12px;color:#94a3b8;">Logo strip: Hyatt Centric, Palm Forest, Bamboo Yoga, Love Bites, The Mill Bakery etc. One featured quote with real numbers — Palm Forest (30% faster, 2x tips) or Love Bites (40% lower costs).</div>
+      </div>
+      <div style="text-align:center;color:#94a3b8;font-size:18px;margin:4px 0;">↓</div>
+
+      <!-- S10 CTA -->
+      <div style="background:linear-gradient(135deg,#15803d,#22c55e);border-radius:12px;padding:24px;text-align:center;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;justify-content:center;">
+          <div style="background:rgba(255,255,255,.2);color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">S10</div>
+          <div style="font-size:13px;font-weight:700;color:white;">FINAL CTA — Embedded demo form</div>
+        </div>
+        <p style="font-size:12px;color:rgba(255,255,255,.8);">Headline: "See if MyGenie is the right switch for your restaurant." OTP demo form embedded. Outlet type selector. No redirect needed.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>
