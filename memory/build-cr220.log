@@ -1,0 +1,147 @@
+yarn run v1.22.22
+$ craco build && node scripts/prerender.js
+◇ injected env (2) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Creating an optimized production build...
+Compiled with warnings.
+
+[eslint] 
+src/components/funnel/AdSpendUpload.jsx
+  Line 35:6:  React Hook useCallback has a missing dependency: 'headers'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+src/lib/cms/CmsProvider.jsx
+  Line 110:6:  React Hook useEffect has a missing dependency: 'loadMeta'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+src/pages/LeadsView.jsx
+  Line 241:50:  React Hook useEffect has a missing dependency: 'loadFunnel'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+File sizes after gzip:
+
+  128.46 kB (+32 B)  build/static/js/main.5ded3b5e.js
+  93.37 kB           build/static/js/593.dc13cd1d.chunk.js
+  46.37 kB           build/static/js/365.6c40baa4.chunk.js
+  38.45 kB           build/static/js/206.a5e33504.chunk.js
+  36.13 kB           build/static/js/46.f6de2f79.chunk.js
+  29.4 kB            build/static/js/965.bd80be12.chunk.js
+  17.1 kB            build/static/js/488.bd7a0d91.chunk.js
+  14.18 kB           build/static/js/759.8ed90cbc.chunk.js
+  12.93 kB           build/static/js/22.309810f3.chunk.js
+  12.01 kB           build/static/css/main.00c6ebe8.css
+  11.41 kB           build/static/js/273.c63b912c.chunk.js
+  9.32 kB            build/static/js/896.70e128fb.chunk.js
+  8.86 kB            build/static/js/370.297e6d28.chunk.js
+  6.75 kB            build/static/js/397.27303064.chunk.js
+  6.68 kB            build/static/js/682.969f96a4.chunk.js
+  6.66 kB            build/static/js/296.6216f6d1.chunk.js
+  6.56 kB            build/static/js/58.bc776f8e.chunk.js
+  6.28 kB            build/static/js/44.f7f3781d.chunk.js
+  5.86 kB            build/static/js/198.2acc1f88.chunk.js
+  4.88 kB            build/static/js/442.0597b4f4.chunk.js
+  4.87 kB            build/static/js/552.89c9f1aa.chunk.js
+  4.83 kB            build/static/js/502.07e80530.chunk.js
+  4.57 kB            build/static/js/800.224f4fe4.chunk.js
+  4.35 kB            build/static/js/471.fe7f147b.chunk.js
+  4.23 kB            build/static/js/422.7e3ebca3.chunk.js
+  3.61 kB            build/static/js/544.250477e9.chunk.js
+  3.47 kB            build/static/js/745.f81dae32.chunk.js
+  3.19 kB            build/static/js/412.26f3a2fa.chunk.js
+  3.18 kB            build/static/js/535.7beaece4.chunk.js
+  2.94 kB            build/static/js/427.40590d02.chunk.js
+  2.91 kB            build/static/js/192.54ac42d1.chunk.js
+  2.82 kB            build/static/js/160.f441d93e.chunk.js
+  2.68 kB            build/static/js/580.993e4d52.chunk.js
+  2.3 kB             build/static/js/437.4861e29b.chunk.js
+  2.01 kB            build/static/js/100.c62e43f3.chunk.js
+  1.88 kB            build/static/js/214.07d15fea.chunk.js
+  1.7 kB             build/static/js/942.bee406f9.chunk.js
+  1.66 kB            build/static/js/464.b5b6545d.chunk.js
+  1.52 kB            build/static/js/698.9d76af6f.chunk.js
+  1.48 kB            build/static/js/663.15fd2a0d.chunk.js
+  1.31 kB            build/static/js/292.b3656cc2.chunk.js
+  1.27 kB            build/static/js/778.1f6d89c8.chunk.js
+  1.26 kB            build/static/js/41.a7eb4065.chunk.js
+  1.12 kB            build/static/js/340.357a2102.chunk.js
+  735 B              build/static/js/282.72d67c50.chunk.js
+
+The project was built assuming it is hosted at /.
+You can control this with the homepage field in your package.json.
+
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  yarn global add serve
+  serve -s build
+
+Find out more about deployment here:
+
+  https://cra.link/deployment
+
+prerendered / -> /app/frontend/build/index.html
+prerendered /petpooja-alternative -> /app/frontend/build/petpooja-alternative/index.html
+prerendered /pricing -> /app/frontend/build/pricing/index.html
+prerendered /customers -> /app/frontend/build/customers/index.html
+prerendered /roi -> /app/frontend/build/roi/index.html
+prerendered /resources -> /app/frontend/build/resources/index.html
+prerendered /blog -> /app/frontend/build/blog/index.html
+prerendered /ai -> /app/frontend/build/ai/index.html
+prerendered /about -> /app/frontend/build/about/index.html
+prerendered /contact -> /app/frontend/build/contact/index.html
+prerendered /terms -> /app/frontend/build/terms/index.html
+prerendered /privacy -> /app/frontend/build/privacy/index.html
+prerendered /refund -> /app/frontend/build/refund/index.html
+prerendered /solutions -> /app/frontend/build/solutions/index.html
+prerendered /product -> /app/frontend/build/product/index.html
+prerendered /solutions/restaurants -> /app/frontend/build/solutions/restaurants/index.html
+prerendered /solutions/cafes -> /app/frontend/build/solutions/cafes/index.html
+prerendered /solutions/qsr -> /app/frontend/build/solutions/qsr/index.html
+prerendered /solutions/cloud-kitchens -> /app/frontend/build/solutions/cloud-kitchens/index.html
+prerendered /solutions/hotels-resorts -> /app/frontend/build/solutions/hotels-resorts/index.html
+prerendered /solutions/food-courts -> /app/frontend/build/solutions/food-courts/index.html
+prerendered /solutions/canteens -> /app/frontend/build/solutions/canteens/index.html
+prerendered /solutions/chains -> /app/frontend/build/solutions/chains/index.html
+prerendered /solutions/bars-pubs -> /app/frontend/build/solutions/bars-pubs/index.html
+prerendered /solutions/bakeries -> /app/frontend/build/solutions/bakeries/index.html
+prerendered /solutions/ice-cream-desserts -> /app/frontend/build/solutions/ice-cream-desserts/index.html
+prerendered /product/sell-serve -> /app/frontend/build/product/sell-serve/index.html
+prerendered /product/run-property -> /app/frontend/build/product/run-property/index.html
+prerendered /product/customers -> /app/frontend/build/product/customers/index.html
+prerendered /product/protect-profit -> /app/frontend/build/product/protect-profit/index.html
+prerendered /product/see-everything -> /app/frontend/build/product/see-everything/index.html
+prerendered /product/central-inventory -> /app/frontend/build/product/central-inventory/index.html
+prerendered /blog/How-Small-Changes-in-Restaurant-Inventory-Management-Can-Give-Big-Rewards-For-Owners -> /app/frontend/build/blog/How-Small-Changes-in-Restaurant-Inventory-Management-Can-Give-Big-Rewards-For-Owners/index.html
+prerendered /blog/5-ways-MyGenie-can-streamline-your-restaurant-business -> /app/frontend/build/blog/5-ways-MyGenie-can-streamline-your-restaurant-business/index.html
+prerendered /blog/How-Indian-restaurants-can-spice-up-their-social-media-game! -> /app/frontend/build/blog/How-Indian-restaurants-can-spice-up-their-social-media-game!/index.html
+prerendered /blog/How-to-make-restaurant-successful -> /app/frontend/build/blog/How-to-make-restaurant-successful/index.html
+prerendered /blog/Restaurant-Success-Mantra-Customer-Satisfaction -> /app/frontend/build/blog/Restaurant-Success-Mantra-Customer-Satisfaction/index.html
+prerendered /blog/Top_10_perks_of_a_cloud_based_POS_for_cafes -> /app/frontend/build/blog/Top_10_perks_of_a_cloud_based_POS_for_cafes/index.html
+prerendered /blog/The-ultimate-guide-to-choosing-the-best-POS-system-for-restaurants -> /app/frontend/build/blog/The-ultimate-guide-to-choosing-the-best-POS-system-for-restaurants/index.html
+prerendered /blog/mobile_pos_for_restaurants -> /app/frontend/build/blog/mobile_pos_for_restaurants/index.html
+prerendered /blog/POS-system-must-have-features -> /app/frontend/build/blog/POS-system-must-have-features/index.html
+prerendered /blog/How_modern_POS_turns_multi-location_chaos_into_symphony -> /app/frontend/build/blog/How_modern_POS_turns_multi-location_chaos_into_symphony/index.html
+prerendered /blog/How-to-use-POS-data-to-grow-your-small-business -> /app/frontend/build/blog/How-to-use-POS-data-to-grow-your-small-business/index.html
+prerendered /blog/Cloud-vs-traditional-POS-systems -> /app/frontend/build/blog/Cloud-vs-traditional-POS-systems/index.html
+prerendered /blog/10-Must-Have-Features-in-Restaurant-POS-Software -> /app/frontend/build/blog/10-Must-Have-Features-in-Restaurant-POS-Software/index.html
+prerendered /blog/POS-System-For-Food-Truck -> /app/frontend/build/blog/POS-System-For-Food-Truck/index.html
+prerendered /blog/5-POS-Technology-Trends-to-Watch-in-2025 -> /app/frontend/build/blog/5-POS-Technology-Trends-to-Watch-in-2025/index.html
+prerendered /blog/How-a-POS-system-can-help-you-slash-food-waste-and-boost-profits -> /app/frontend/build/blog/How-a-POS-system-can-help-you-slash-food-waste-and-boost-profits/index.html
+prerendered /blog/What-the-rise-of-contactless-payments-means-for-your-business -> /app/frontend/build/blog/What-the-rise-of-contactless-payments-means-for-your-business/index.html
+prerendered /blog/How-POS-systems-help-deliver-tailored-hospitality-experiences -> /app/frontend/build/blog/How-POS-systems-help-deliver-tailored-hospitality-experiences/index.html
+prerendered /blog/How-a-smart-POS-system-can-boost-your-restaurant-profit-margins -> /app/frontend/build/blog/How-a-smart-POS-system-can-boost-your-restaurant-profit-margins/index.html
+prerendered /blog/how-pos-systems-cut-food-waste-cafes-restaurants -> /app/frontend/build/blog/how-pos-systems-cut-food-waste-cafes-restaurants/index.html
+prerendered /blog/improve-table-turnover-pos-order-management -> /app/frontend/build/blog/improve-table-turnover-pos-order-management/index.html
+prerendered /restaurant-billing-software -> /app/frontend/build/restaurant-billing-software/index.html
+prerendered /restaurant-pos-system -> /app/frontend/build/restaurant-pos-system/index.html
+prerendered /restaurant-management-software -> /app/frontend/build/restaurant-management-software/index.html
+prerendered /qsr-pos-system -> /app/frontend/build/qsr-pos-system/index.html
+prerendered /cloud-kitchen-pos -> /app/frontend/build/cloud-kitchen-pos/index.html
+prerendered /restaurant-pos-comparison -> /app/frontend/build/restaurant-pos-comparison/index.html
+prerendered /demo -> /app/frontend/build/demo/index.html
+prerendered /payment-success -> /app/frontend/build/payment-success/index.html
+prerendered /404 -> /app/frontend/build/404/index.html
+prerendered /thank-you -> /app/frontend/build/thank-you/index.html
+prerendered /solutions/bars-and-pubs -> /app/frontend/build/solutions/bars-and-pubs/index.html
+prerendered /solutions/hotels -> /app/frontend/build/solutions/hotels/index.html
+Done in 147.97s.

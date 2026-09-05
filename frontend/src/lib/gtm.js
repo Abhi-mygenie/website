@@ -184,8 +184,10 @@ function splitName(v) {
 /**
  * Single source of truth for the lead conversion payload (mirrors the live-site contract).
  * Best-effort form fields; missing keys -> null (never omitted). Pulls click ids from CR-2.
- * Includes Enhanced Conversions / Advanced Matching fields (email/phone normalized, name split,
- * external_id) so GTM can hash + map them. Hashing happens in GTM — raw values never leave hashed.
+ * Emits identity data in TWO formats (CR-220):
+ *   1. Flat keys (email/phone/first_name/last_name) — Meta Advanced Matching + Path A client GAds tag.
+ *   2. user_data object — Google Enhanced Conversions server-side path (GA4 → sGTM → sgtmadsct).
+ * All identity values normalized before return. Hashing happens in GTM — raw values never leave hashed.
  */
 export function buildLeadPayload(form = {}, sector, eventId, extra = {}) {
   const attr = getAttribution();
@@ -200,6 +202,17 @@ export function buildLeadPayload(form = {}, sector, eventId, extra = {}) {
     email,
     phone,
     external_id: phone || email || null,
+    // CR-220: Structured user_data for Google Enhanced Conversions (server-side GA4 → sGTM path).
+    // Flat keys above stay unchanged — Meta Advanced Matching + Path A client-side GAds tag read them.
+    // Key names follow Google's EC spec exactly. Values already normalized (normEmail / normPhone).
+    user_data: {
+      email_address: email,
+      phone_number: phone,
+      address: {
+        first_name: first_name || null,
+        last_name: last_name || null,
+      },
+    },
     // lead context
     outlet_type: sector || form.outlet_type || null,
     outlet_name: form.business_name || null,
