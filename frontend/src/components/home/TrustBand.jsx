@@ -43,7 +43,7 @@ export default function TrustBand() {
             const loop = [...items, ...items];
             return (
               <div className="relative overflow-hidden">
-                <div className="flex gap-12 w-max animate-marquee items-center">
+                <div className="flex gap-12 w-max animate-marquee items-center" style={{willChange:"transform",contain:"layout style"}}>
                   {loop.map((logo, i) => (
                     <img
                       key={i}
