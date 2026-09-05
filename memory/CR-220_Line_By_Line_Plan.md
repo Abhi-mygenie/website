@@ -1,39 +1,63 @@
-# CR-220 — Line-by-Line Implementation Plan: Enhanced Conversions user_data Fix
+# CR-220 — Line-by-Line Implementation Plan (Revised)
+# Enhanced Conversions: Three-Part Fix
 
 **CR:** CR-220
-**Date:** 2026-09-05
+**Date revised:** 2026-09-05
 **Status:** Ready to implement
-**Risk:** Zero — additive only, no existing keys removed, no visual change
-**Scope:** 1 file, 2 search_replace calls, 1 rebuild
+**Risk:** Zero — Fix B is additive only (no keys removed, no visual change). Fix A + C are GTM config only.
+**Scope:**
+  - **Fix B (code):** 1 file · 2 search_replace calls · 1 rebuild
+  - **Fix A (GTM):** 1 new GTM variable · 1 tag edit
+  - **Fix C (GTM):** 1 tag edit (reuses variable from Fix A)
 
 ---
 
-## Pre-flight Checks
+## Context — Why Three Fixes
+
+| Fix | What it solves | Who does it | Rebuild? |
+|---|---|---|---|
+| **Fix B** | `user_data` container absent from dataLayer — Path B sGTM has nothing to read | Dev | Yes |
+| **Fix A** | GA4 tag in web GTM not forwarding user_data to server container | GTM editor | No |
+| **Fix C** | "Automatic" EC mode scans empty DOM (React unmounts inputs before conversion fires) | GTM editor | No |
+
+All three must be done. Order: Fix B first (deploys user_data into dataLayer), then Fix A + Fix C
+in the same GTM session (they share the same variable).
+
+---
+
+## Part 1 — Pre-flight Checks
 
 ```bash
-# 1. Confirm user_data is absent (expected: no output / exit 1)
+# 1. Confirm user_data, email_address, phone_number are currently absent (expected: exit code 1, no output)
 grep -n "user_data\|email_address\|phone_number" /app/frontend/src/lib/gtm.js
+echo "Exit: $?"   # Expected: 1 (not found)
 
-# 2. Confirm exact location of the identity block
+# 2. Confirm current identity block location
 grep -n "identity.*Enhanced\|external_id\|lead context" /app/frontend/src/lib/gtm.js
 # Expected:
-# 196:    // identity (Enhanced Conversions / Advanced Matching) — #1
-# 202:    external_id: phone || email || null,
-# 203:    // lead context
+#   196:    // identity (Enhanced Conversions / Advanced Matching) — #1
+#   202:    external_id: phone || email || null,
+#   203:    // lead context
 
-# 3. Confirm normEmail and normPhone are called before the return (values already available)
+# 3. Confirm normEmail/normPhone/splitName run BEFORE the return block (values available)
 grep -n "normEmail\|normPhone\|splitName" /app/frontend/src/lib/gtm.js
-# Expected: lines 192-194 — all three run before the return {} block
+# Expected: lines 192, 193, 194 — all three before line 195 (return {)
+
+# 4. Confirm JSDoc is the exact string to be replaced
+sed -n '184,189p' /app/frontend/src/lib/gtm.js
+# Expected: 6-line JSDoc block starting with /**
 ```
 
 ---
 
-## Edit 1 — Update JSDoc comment on `buildLeadPayload` (lines 184–189)
+## Part 2 — Fix B: Code Edits (`src/lib/gtm.js`)
 
-**Purpose:** Document that the function now emits both flat keys AND a `user_data` block,
-so the next maintainer understands why both exist.
+### Edit 1 — Update JSDoc on `buildLeadPayload` (lines 184–189)
 
-**old_str:**
+**Purpose:** Document the dual-format intent so no future maintainer removes one of the
+two formats thinking it's redundant.
+
+**old_str** (exact — 6 lines):
 ```
 /**
  * Single source of truth for the lead conversion payload (mirrors the live-site contract).
@@ -48,23 +72,34 @@ so the next maintainer understands why both exist.
 /**
  * Single source of truth for the lead conversion payload (mirrors the live-site contract).
  * Best-effort form fields; missing keys -> null (never omitted). Pulls click ids from CR-2.
- * Emits identity data in TWO formats:
- *   1. Flat keys (email/phone/first_name/last_name) — for Meta Advanced Matching + Path A GAds tag.
- *   2. user_data object (CR-220) — for server-side GA4 → sGTM Enhanced Conversions (Path B).
- * All identity values are normalized before the return. Hashing happens in GTM — raw values
- * never leave hashed.
+ * Emits identity data in TWO formats (CR-220):
+ *   1. Flat keys (email/phone/first_name/last_name) — Meta Advanced Matching + Path A client GAds tag.
+ *   2. user_data object — Google Enhanced Conversions server-side path (GA4 → sGTM → sgtmadsct).
+ * All identity values normalized before return. Hashing happens in GTM — raw values never leave hashed.
  */
+```
+
+**Verification:**
+```bash
+sed -n '184,191p' /app/frontend/src/lib/gtm.js
+# Expected: new 7-line JSDoc with "TWO formats (CR-220)" on line 3
 ```
 
 ---
 
-## Edit 2 — Add `user_data` block inside `buildLeadPayload` return (lines 196–203)
+### Edit 2 — Add `user_data` block inside `buildLeadPayload` return (lines 196–203)
 
-This is the core fix. Insert the `user_data` block immediately after the existing flat identity
-fields and before `// lead context`. All required values (`email`, `phone`, `first_name`,
-`last_name`) are already computed on lines 192–194 — no new computation needed.
+**Purpose:** This is the core fix. Inserts the dedicated `user_data` container immediately
+after the flat identity fields. All four required values (`email`, `phone`, `first_name`,
+`last_name`) are already computed as local variables on lines 192–194 — no new logic needed.
 
-**old_str:**
+**Indentation rules (confirmed from source):**
+- Function body: 2-space indent
+- Return object top-level keys: 4-space indent
+- Nested object keys: 6-space indent
+- Doubly-nested keys: 8-space indent
+
+**old_str** (exact — 8 lines):
 ```
     // identity (Enhanced Conversions / Advanced Matching) — #1
     name: form.name || null,
@@ -85,10 +120,9 @@ fields and before `// lead context`. All required values (`email`, `phone`, `fir
     email,
     phone,
     external_id: phone || email || null,
-    // CR-220: Google Enhanced Conversions structured user_data — server-side GA4 → sGTM path.
-    // Flat keys above (email/phone/first_name/last_name) remain unchanged for Meta + Path A.
-    // Key names match Google's spec exactly: email_address, phone_number, address.first/last_name.
-    // Values already normalized: normEmail() → lowercase+trim; normPhone() → E.164 (+91XXXXXXXXXX).
+    // CR-220: Structured user_data for Google Enhanced Conversions (server-side GA4 → sGTM path).
+    // Flat keys above stay unchanged — Meta Advanced Matching + Path A client-side GAds tag read them.
+    // Key names follow Google's EC spec exactly. Values already normalized (normEmail / normPhone).
     user_data: {
       email_address: email,
       phone_number: phone,
@@ -100,51 +134,91 @@ fields and before `// lead context`. All required values (`email`, `phone`, `fir
     // lead context
 ```
 
+**Notes on the values:**
+| Field | Source variable | Normalization already applied |
+|---|---|---|
+| `email_address` | `email` (line 192) | `normEmail()` — lowercase + trim |
+| `phone_number` | `phone` (line 193) | `normPhone()` — E.164 format, e.g. `+919876543210` |
+| `address.first_name` | `first_name` (line 194) | `splitName()` — first word of name, null if empty |
+| `address.last_name` | `last_name` (line 194) | `splitName()` — remaining words, null if single name |
+
+All four are local variables in scope at the point of insertion. Google hashes these values
+inside GTM — the raw values never leave the browser hashed.
+
+**Verification:**
+```bash
+grep -n "user_data\|email_address\|phone_number\|address:" /app/frontend/src/lib/gtm.js
+# Expected output (exact lines may shift by a few):
+#   203:    user_data: {
+#   204:      email_address: email,
+#   205:      phone_number: phone,
+#   206:      address: {
+#   207:        first_name: first_name || null,
+#   208:        last_name: last_name || null,
+#   209:      },
+#   210:    },
+```
+
+**Flat keys unchanged (verify Meta + Path A are still intact):**
+```bash
+grep -n "^    email,$\|^    phone,$\|^    first_name,$\|^    last_name,$" /app/frontend/src/lib/gtm.js
+# Expected: 4 matches — all flat keys still in return block
+```
+
 ---
 
-## Post-Edit Verification (run before rebuild)
+## Part 3 — Full Post-Edit Structural Validation
+
+Run before rebuilding. All assertions must pass.
 
 ```bash
-# 1. user_data block is now present
-grep -n "user_data\|email_address\|phone_number" /app/frontend/src/lib/gtm.js
-# Expected:
-# <line>:    user_data: {
-# <line>:      email_address: email,
-# <line>:      phone_number: phone,
-
-# 2. Flat keys are still present (unchanged)
-grep -n "^    email,$\|^    phone,$\|^    first_name,$\|^    last_name," /app/frontend/src/lib/gtm.js
-# Expected: 4 matches — all flat keys still there
-
-# 3. Count total keys in return block — should be 37 (+5 for user_data + 3 address lines + comment lines)
-grep -c ":" /app/frontend/src/lib/gtm.js
-
-# 4. Structural check — user_data is between external_id and lead context comment
 python3 -c "
 content = open('/app/frontend/src/lib/gtm.js').read()
+
+# 1. user_data present
+assert 'user_data: {' in content, 'FAIL: user_data block missing'
+print('user_data block:     PRESENT ✅')
+
+# 2. Correct field names (Google spec)
+assert 'email_address: email,' in content, 'FAIL: email_address missing'
+assert 'phone_number: phone,' in content, 'FAIL: phone_number missing'
+assert 'first_name: first_name || null,' in content, 'FAIL: address.first_name missing'
+assert 'last_name: last_name || null,' in content, 'FAIL: address.last_name missing'
+print('email_address field: PRESENT ✅')
+print('phone_number field:  PRESENT ✅')
+print('address.first_name:  PRESENT ✅')
+print('address.last_name:   PRESENT ✅')
+
+# 3. Flat keys still present (Meta + Path A not broken)
+assert '    email,\n' in content, 'FAIL: flat email key removed'
+assert '    phone,\n' in content, 'FAIL: flat phone key removed'
+assert '    first_name,\n' in content, 'FAIL: flat first_name key removed'
+assert '    last_name,\n' in content, 'FAIL: flat last_name key removed'
+print('Flat keys intact:    ✅ (Meta + Path A unaffected)')
+
+# 4. Correct order: external_id → user_data → lead context
 idx_ext = content.find('external_id: phone || email || null,')
 idx_ud  = content.find('user_data: {')
 idx_lc  = content.find('// lead context')
-assert idx_ext < idx_ud < idx_lc, f'Order wrong: ext={idx_ext} ud={idx_ud} lc={idx_lc}'
-print('Order check: PASS ✅')
-has_email_address = 'email_address: email,' in content
-has_phone_number  = 'phone_number: phone,' in content
-has_address_fn    = 'first_name: first_name || null,' in content
-has_address_ln    = 'last_name: last_name || null,' in content
-print(f'email_address: {has_email_address}  (expected True)')
-print(f'phone_number : {has_phone_number}   (expected True)')
-print(f'address.fn   : {has_address_fn}     (expected True)')
-print(f'address.ln   : {has_address_ln}     (expected True)')
-print('PASS ✅' if all([has_email_address, has_phone_number, has_address_fn, has_address_ln]) else 'FAIL ❌')
+assert idx_ext < idx_ud < idx_lc, f'FAIL: wrong order ext={idx_ext} ud={idx_ud} lc={idx_lc}'
+print('Insertion order:     CORRECT ✅  (external_id → user_data → lead context)')
+
+# 5. Updated JSDoc
+assert 'TWO formats (CR-220)' in content, 'FAIL: JSDoc not updated'
+print('JSDoc updated:       ✅')
+
+print()
+print('ALL CHECKS PASSED ✅ — ready to rebuild')
 "
 ```
 
 ---
 
-## Rebuild
+## Part 4 — Rebuild Sequence
+
+### Step 1: Beta build (preview pod — confirms fix works, used for audit)
 
 ```bash
-# Step 1: Beta build (preview pod — for testing)
 cd /app/frontend
 REACT_APP_BACKEND_URL=https://beta.mygenie.online yarn build > /app/memory/build-cr220.log 2>&1 &
 echo "PID: $!"
@@ -152,16 +226,21 @@ echo "PID: $!"
 
 Monitor:
 ```bash
-tail -f /app/memory/build-cr220.log
+while ps aux | grep "craco build" | grep -v grep > /dev/null 2>&1; do
+  sleep 15; echo "$(date '+%H:%M:%S'): building..."
+done
+echo "DONE"
+tail -5 /app/memory/build-cr220.log
 ```
 
-Restart:
+Restart frontend:
 ```bash
 sudo supervisorctl restart frontend && sleep 4 && sudo supervisorctl status frontend
 ```
 
+### Step 2: Hash check + route count
+
 ```bash
-# Step 2: Hash check
 NEW=$(ls /app/frontend/build/static/js/main.*.js | grep -v .map | grep -o '[a-f0-9]\{8\}')
 BAD="107ff3e9 04593470 8fe91636 ea6df739 b8f96c28 a65c8c10 f330ce78 af722274 a5f22153"
 echo "Hash: $NEW"
@@ -169,123 +248,228 @@ echo "$BAD" | grep -q "$NEW" && echo "BAD HASH — abort" || echo "HASH CLEAN �
 find /app/frontend/build -name "index.html" | wc -l   # Expected: 65
 ```
 
-```bash
-# Step 3: Validate user_data is present in built JS bundle
-grep -c "email_address" /app/frontend/build/static/js/main.*.js
-# Expected: >= 1 (the key is in the bundle)
-grep -c "phone_number" /app/frontend/build/static/js/main.*.js
-# Expected: >= 1
-```
+### Step 3: Validate user_data in built JS bundle
 
 ```bash
-# Step 4: Production zip
-REACT_APP_BACKEND_URL=https://www.mygenie.online REACT_APP_GTM_ID=GTM-K5D84Z3L yarn build > /app/memory/build-cr220-prod.log 2>&1 &
-# After completion:
-zip -r /app/mygenie-prod-build.zip build/
+grep -c "email_address" /app/frontend/build/static/js/main.*.js   # Expected: >= 1
+grep -c "phone_number"  /app/frontend/build/static/js/main.*.js   # Expected: >= 1
+grep -c "user_data"     /app/frontend/build/static/js/main.*.js   # Expected: >= 1
+echo "Bundle validation PASS ✅"
+```
+
+### Step 4: Production build + zip
+
+```bash
+cd /app/frontend
+REACT_APP_BACKEND_URL=https://www.mygenie.online REACT_APP_GTM_ID=GTM-K5D84Z3L \
+  yarn build > /app/memory/build-cr220-prod.log 2>&1 &
+# (wait for completion)
+PROD=$(ls /app/frontend/build/static/js/main.*.js | grep -v .map | grep -o '[a-f0-9]\{8\}')
+echo "Prod hash: $PROD"
+echo "$BAD" | grep -q "$PROD" && echo "BAD HASH" || echo "HASH CLEAN ✅"
+cd /app && zip -r /app/mygenie-prod-build.zip frontend/build/
 ls -lh /app/mygenie-prod-build.zip
 ```
 
 ---
 
-## GTM Side (Fix A — owner action, no code)
+## Part 5 — Fix A: GTM — User-Provided Data Variable + GA4 Tag
 
-After the code deploy, the GTM "GA4 - Book demo" tag still needs the User Data section
-configured to actually forward user_data to the GA4 hit. The code-side fix ensures
-user_data is IN the dataLayer event; this GTM step ensures GA4 reads it and includes
-it in the event sent to the server container.
+**Container:** Web GTM — GTM-K5D84Z3L
+**Solves:** Problem 3 — GA4 tag not forwarding user_data to server container (Stape sGTM)
+**Prerequisite:** Fix B deployed (user_data is now in the dataLayer event)
 
-### Steps (web GTM container GTM-K5D84Z3L)
+### Step A-1: Create the User-Provided Data variable
 
-1. **Create variable** → New → Variable type: "User-Provided Data"
-   - Variable name: `dlv - User Provided Data`
-   - Data Layer Variable Name: `user_data`
-   - (GTM will read the entire `user_data` object from the dataLayer event)
+```
+GTM → Variables → New → Variable Configuration
+  Type:  User-Provided Data
+  Name:  dlv - user_data
 
-2. **Edit "GA4 - Book demo" tag**
-   - Scroll to "User-Provided Data" section (below Event Parameters)
-   - Set: `dlv - User Provided Data`
+  Configuration:
+    Data Layer Variable Name: user_data
 
-3. **Preview test**
-   - Submit a test Book Demo form
-   - In GTM Preview, find the "GA4 - Book demo" tag → expand User Data
-   - Confirm: Email, Phone, First Name, Last Name show as hashed values (not empty)
+  Save
+```
 
-4. **Publish**
+This tells GTM: "when the `user_data` key appears in a dataLayer event, read the whole object."
 
-5. **Monitor Google Ads** → "Book demo" conversion action → Enhanced Conversions status
-   - "Setup issues detected" should clear within 24-72 hours of receiving valid data
+### Step A-2: Edit "GA4 - Book demo" tag
+
+```
+GTM → Tags → "GA4 - Book demo"
+  Scroll to: "User-Provided Data" section
+    (this is a dedicated section, SEPARATE from the Event Parameters table)
+  Set: {{dlv - user_data}}
+  Save
+```
+
+**What this achieves:** The GA4 event sent to Google's collection endpoint will now include
+the `user_data` object with `email_address`, `phone_number`, and `address`. The Stape
+server-side GTM container intercepts this event and the `sgtmadsct` tag reads `user_data`
+automatically — Enhanced Conversions data forwarded to Google Ads on Path B.
 
 ---
 
-## What Changes in the dataLayer Event (before vs after)
+## Part 6 — Fix C: GTM — Switch "GAds - Book Demo" EC Mode Automatic → Code
 
-### Before (current)
+**Container:** Web GTM — GTM-K5D84Z3L
+**Solves:** Problem 1 — Automatic EC scans DOM at conversion time, finds no inputs (React
+unmounts form fields before conversion fires)
+**Can be done in the same GTM session as Fix A (same variable, different tag)**
+
+### Step C-1: Edit "GAds - Book Demo" tag
+
+```
+GTM → Tags → "GAds - Book Demo"  (client-side Google Ads conversion tag)
+  Scroll to: "Enhanced conversions" section
+    Current setting: Automatic
+    Change to:       Code  (also shown as "In-page code" in some GTM versions)
+
+  Set User-Provided Data:
+    {{dlv - user_data}}      ← same variable created in Fix A
+
+  Save
+```
+
+**What this achieves:** The Google Ads tag stops trying to scan the DOM for input fields
+(which are already unmounted at conversion time). Instead it reads `email_address`,
+`phone_number`, `first_name`, `last_name` directly from the `user_data` object in the
+dataLayer event — which was captured from the form before the stage machine changed views.
+EC data always present, regardless of what's visible on screen.
+
+---
+
+## Part 7 — GTM Preview Test (before publishing)
+
+Run this BEFORE hitting Publish. Uses GTM's built-in Preview/Debug mode.
+
+```
+GTM → Preview
+  → Enter: https://www.mygenie.online (or beta URL)
+  → Submit a real test Book Demo form (use real email/phone — needed for hash match)
+  → Complete OTP
+
+In GTM Debug panel after OTP verified:
+  1. Find event: "thankyou_conversion"
+  2. Click: "GA4 - Book demo" tag
+     → Expand "User Data" section
+     → Confirm: Email, Phone, First Name, Last Name show as HASHED values (not empty/null)
+     → PASS ✅ if hashed, FAIL ❌ if empty
+
+  3. Click: "GAds - Book Demo" tag
+     → Expand "Enhanced Conversions" section
+     → Confirm: shows hashed email/phone
+     → PASS ✅ if hashed, FAIL ❌ if empty
+
+If both PASS → Publish
+If either FAIL → check variable name spelling, confirm Fix B deployed, re-test
+```
+
+---
+
+## Part 8 — Post-Publish Monitoring
+
+### Immediate (same day)
+```
+Google Ads → Conversions → "Book demo"
+  → "Last ping date" should update to today's date within ~2 hours
+```
+
+### Within 24-72 hours
+```
+Google Ads → Conversions → "Book demo" → Enhanced conversions tab
+  → "Implement in-page code in addition to Automatic" warning should clear
+  → Status should change from "Needs attention" to normal/active
+  → "Enhanced conversions" coverage % should appear/increase
+```
+
+---
+
+## Part 9 — Rollback Procedure
+
+**Fix B rollback (if needed):**
+Remove the `user_data: { ... }` block from `buildLeadPayload()` (Edit 2 only).
+Revert JSDoc (Edit 1). Rebuild. Flat keys never touched — Meta and Path A unaffected.
+
+**Fix A rollback:**
+GTM → "GA4 - Book demo" tag → remove User-Provided Data variable → Save → Publish.
+
+**Fix C rollback:**
+GTM → "GAds - Book Demo" tag → Enhanced Conversions → switch back to Automatic → Save → Publish.
+
+---
+
+## Part 10 — Complete Edit Summary
+
+### Fix B — Code (this pod, this session)
+
+| # | File | Lines | Change |
+|---|---|---|---|
+| 1 | `src/lib/gtm.js` | 184–189 | Update JSDoc — document dual-format intent |
+| 2 | `src/lib/gtm.js` | 196–203 | Add `user_data` block after `external_id`, before `// lead context` |
+
+**2 search_replace calls · 1 file · 1 rebuild**
+
+### Fix A — GTM (owner/editor, after Fix B deployed)
+
+| # | Where | Action |
+|---|---|---|
+| 1 | GTM → Variables | Create "User-Provided Data" variable named `dlv - user_data`, reading `user_data` from dataLayer |
+| 2 | GTM → "GA4 - Book demo" tag | Set User-Provided Data section to `{{dlv - user_data}}` |
+
+### Fix C — GTM (owner/editor, same session as Fix A)
+
+| # | Where | Action |
+|---|---|---|
+| 1 | GTM → "GAds - Book Demo" tag | Switch Enhanced Conversions mode from Automatic to Code |
+| 2 | GTM → "GAds - Book Demo" tag | Set User-Provided Data to `{{dlv - user_data}}` (same variable) |
+
+**Total GTM: 1 new variable · 2 tag edits · 1 Preview test · 1 Publish**
+
+---
+
+## Part 11 — dataLayer Event Shape: Before vs After
+
+### Before
 ```javascript
 {
   event: "thankyou_conversion",
   name: "Rajesh Kumar",
-  first_name: "Rajesh",         // ← flat, at root
-  last_name: "Kumar",           // ← flat, at root
-  email: "rajesh@example.com",  // ← flat, at root
-  phone: "+919876543210",       // ← flat, at root
+  first_name: "Rajesh",              // flat, root level
+  last_name: "Kumar",                // flat, root level
+  email: "rajesh@example.com",       // flat, root level — key: "email"
+  phone: "+919876543210",            // flat, root level — key: "phone"
   external_id: "+919876543210",
-  outlet_type: "Restaurant",
-  // ... 30 more flat keys
+  // 30+ other flat keys (UTMs, click IDs, etc.)
+  // user_data: ABSENT
 }
 ```
 
-### After (with CR-220)
+### After Fix B
 ```javascript
 {
   event: "thankyou_conversion",
   name: "Rajesh Kumar",
-  first_name: "Rajesh",         // ← stays (Meta + Path A still read this)
-  last_name: "Kumar",           // ← stays (Meta + Path A still read this)
-  email: "rajesh@example.com",  // ← stays (Meta + Path A still read this)
-  phone: "+919876543210",       // ← stays (Meta + Path A still read this)
+  first_name: "Rajesh",              // STAYS — Meta + Path A still read this
+  last_name: "Kumar",                // STAYS — Meta + Path A still read this
+  email: "rajesh@example.com",       // STAYS — Meta + Path A still read this
+  phone: "+919876543210",            // STAYS — Meta + Path A still read this
   external_id: "+919876543210",
-  user_data: {                  // ← NEW: dedicated container for Path B / EC
-    email_address: "rajesh@example.com",
-    phone_number: "+919876543210",
+  user_data: {                       // NEW — server-side GA4 path reads this
+    email_address: "rajesh@example.com",   // Google's required key name
+    phone_number: "+919876543210",         // Google's required key name
     address: {
-      first_name: "Rajesh",
-      last_name: "Kumar",
+      first_name: "Rajesh",               // null-safe
+      last_name: "Kumar",                 // null-safe
     },
   },
-  outlet_type: "Restaurant",
-  // ... 30 more flat keys (all unchanged)
+  // 30+ other flat keys — ALL UNCHANGED
 }
 ```
 
 ---
 
-## Events Affected (all 5 entry points — automatic, no per-file changes)
-
-| Event name in GTM | Source file | Trigger |
-|---|---|---|
-| `thankyou_conversion` | `DemoForm.jsx:294` | OTP verified → book_demo |
-| `thankyou_conversion` | `PetpoojaAlternative.jsx:273` | OTP verified → book_demo |
-| `thankyou_conversion` | `MessageForm.jsx:124` | OTP verified → book_demo |
-| `thankyou_conversion` | `CheckoutModal.jsx:177` | OTP verified → book_demo |
-| `demo_booked` | `CalendlyInline.jsx:77` | Calendly event_scheduled webhook |
-| `form_submitted` | all forms | First form submit (no EC tag, harmless) |
-
----
-
-## Rollback
-
-Remove the `user_data: { ... }` block (lines added by Edit 2) and revert the JSDoc.
-Rebuild. The flat keys are untouched so Path A and Meta revert cleanly.
-
----
-
-## Edit Count Summary
-
-| # | File | What |
-|---|---|---|
-| 1 | `src/lib/gtm.js` | Update JSDoc on `buildLeadPayload` — document dual-format intent |
-| 2 | `src/lib/gtm.js` | Add `user_data` block after `external_id` line inside return object |
-
-**Total: 2 search_replace calls, 1 file, 1 rebuild.**
-
-*Plan written 2026-09-05. Ready to implement on instruction.*
+*Plan revised 2026-09-05. All strings verified against live source.*
+*Fix B: 2 search_replace, 1 file. Fix A + C: GTM config steps, no code.*
+*Ready to implement Fix B on instruction.*
