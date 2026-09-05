@@ -42,6 +42,8 @@ export default function Home() {
         <Suspense fallback={null}>
           <ProblemGrid />
           <BeforeAfter />
+        </Suspense>
+        <Suspense fallback={null}>
           <OutcomePillars />
           <SectorSelector onSectorDemo={handleSectorDemo} />
           <ModuleOverview />
