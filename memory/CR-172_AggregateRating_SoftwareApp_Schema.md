@@ -5,6 +5,7 @@
 **Status:** OPEN — ⚠️ Requires verified review source before implementing
 **Priority:** P1 (blocked on owner providing verified numbers)
 **Source:** SEO audit — no aggregateRating on SoftwareApplication schema
+**Re-confirmed:** 2026-09-05 — re-identified in investigation of open gaps. File location and fix unchanged.
 
 ---
 
