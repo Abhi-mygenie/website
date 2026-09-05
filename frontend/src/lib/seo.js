@@ -89,56 +89,70 @@ export const HOMEPAGE_QA_JSONLD = {
     {
       "@type": "Question",
       name: "Does the POS support dynamic UPI QR codes per bill?",
+      answerCount: 1,
       acceptedAnswer: {
         "@type": "Answer",
+        upvoteCount: 0,
         text: "Yes. MyGenie generates a dynamic UPI QR code for each bill natively — no payment gateway needed. The customer scans it with any UPI app and payment is confirmed at the POS instantly.",
       },
     },
     {
       "@type": "Question",
       name: "Can it track inventory down to ingredient level?",
+      answerCount: 1,
       acceptedAnswer: {
         "@type": "Answer",
+        upvoteCount: 0,
         text: "Yes. MyGenie tracks stock at recipe and ingredient level using Bill of Materials (BOM) costing. Every dish sold automatically deducts the right quantities from raw ingredient stock — so you always know what's left, what was wasted, and what the per-dish cost is.",
       },
     },
     {
       "@type": "Question",
       name: "Does it support multi-outlet management?",
+      answerCount: 1,
       acceptedAnswer: {
         "@type": "Answer",
+        upvoteCount: 0,
         text: "Yes. The owner dashboard shows live sales, inventory and KPIs across every outlet from one screen on your phone. You can manage stock transfers between outlets, set outlet-specific menus, and control staff access by location — all from a single login.",
       },
     },
     {
       "@type": "Question",
       name: "What kind of reports can be generated?",
+      answerCount: 1,
       acceptedAnswer: {
         "@type": "Answer",
+        upvoteCount: 0,
         text: "MyGenie generates daily sales, item-wise, payment-mode, staff performance, wastage, audit and GST/VAT reports — automatically. Reports arrive on WhatsApp at close of day without logging in. Owners also get recipe-level P&L showing the exact margin on every dish sold.",
       },
     },
     {
       "@type": "Question",
       name: "What are the differences between a legacy and a cloud-based POS system?",
+      answerCount: 1,
       acceptedAnswer: {
         "@type": "Answer",
+        upvoteCount: 0,
         text: "A legacy POS stores data on a local machine — if it crashes, data is lost, and you can only access reports on-site. A cloud POS like MyGenie stores everything securely online: you get live reports from your phone anywhere, automatic updates with no IT cost, and the system keeps working even if the internet drops (local-first billing). Cloud POS also integrates directly with Swiggy, Zomato and payment gateways — legacy systems typically cannot.",
       },
     },
     {
       "@type": "Question",
       name: "Can the POS integrate with delivery platforms?",
+      answerCount: 1,
       acceptedAnswer: {
         "@type": "Answer",
+        upvoteCount: 0,
         text: "Yes. MyGenie integrates directly with Swiggy and Zomato — orders from both platforms flow straight into the POS and kitchen screen without manual entry. You can also take direct commission-free delivery orders through your own ordering link.",
       },
     },
     {
       "@type": "Question",
       name: "Can the POS measure end-to-end P&L?",
+      answerCount: 1,
       acceptedAnswer: {
         "@type": "Answer",
+        upvoteCount: 0,
         text: "Yes. MyGenie tracks P&L at item level — every dish sold shows its revenue, ingredient cost and margin in real time. Combined with purchase costs, wastage data and inter-outlet transfers, owners get a complete picture of profitability across every outlet without assembling spreadsheets.",
       },
     },

@@ -65,7 +65,8 @@ export default function Resources() {
     mainEntity: FAQS.map((f) => ({
       "@type": "Question",
       name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
+      answerCount: 1,
+      acceptedAnswer: { "@type": "Answer", upvoteCount: 0, text: f.a },
     })),
   };
   return (

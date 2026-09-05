@@ -63,7 +63,7 @@ export default function SectorPage() {
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "QAPage",
-    mainEntity: s.faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    mainEntity: s.faqs.map((f) => ({ "@type": "Question", name: f.q, answerCount: 1, acceptedAnswer: { "@type": "Answer", upvoteCount: 0, text: f.a } })),
   };
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
