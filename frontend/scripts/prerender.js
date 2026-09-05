@@ -10,7 +10,12 @@ const ROUTES = (() => {
   const sitemapRoutes = [...xml.matchAll(/<loc>https:\/\/www\.mygenie\.online([^<]*)<\/loc>/g)]
     .map(m => m[1] || "/");
   // Not in sitemap (noindex/transactional) but prerendered for UX/ad-landing speed.
-  const extraRoutes = ["/demo", "/payment-success", "/404", "/thank-you"];
+  const extraRoutes = ["/demo", "/payment-success", "/404", "/thank-you",
+    // CR-212: prerender dead-slug redirect pages so static-server returns 200 (not 404).
+    // Puppeteer visits these → React Navigate fires → captures bars-pubs / hotels-resorts content.
+    // Saved to build/solutions/bars-and-pubs/ and build/solutions/hotels/ respectively.
+    // Canonical in both = correct destination URL. HTTP 200 + canonical replaces hard 404.
+    "/solutions/bars-and-pubs", "/solutions/hotels"];
   return [...sitemapRoutes, ...extraRoutes];
 })();
 const BUILD_DIR = path.resolve(__dirname, "..", "build");

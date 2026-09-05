@@ -59,7 +59,7 @@ export default function SectorPage() {
   const SOLS_M = mergeByIndex(s.solutions, solsRaw, ["icon"]);
   const PROOF_M = mergeByIndex(s.proof, proofRaw);
 
-  const seoTitle = `${s.name} POS System & Billing Software | MyGenie`;
+  const seoTitle = `${s.nameSingular || s.name} POS System & Billing Software | MyGenie`;
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "QAPage",

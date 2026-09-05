@@ -33,6 +33,13 @@
              dns-prefetch: fallback for older mobile Chromium builds that ignore preconnect. -->
         <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
         <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+        <!-- CR-211: preconnect for FB Pixel (connect.facebook.net) and Cloudflare Web Analytics
+             (static.cloudflareinsights.com). Both are injected by GTM tags — not in source.
+             crossorigin required: both scripts are fetched with CORS headers; without crossorigin
+             the browser opens a second connection at load time, wasting the pre-warmed connection.
+             CF preconnect is a no-op if Cloudflare RUM is disabled (CR-186 owner action). -->
+        <link rel="preconnect" href="https://connect.facebook.net" crossorigin>
+        <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
         <!-- CR-209: GTM interaction-first deferred load.
              Replaces CR-199 parse-time injection. GTM now fires on first user interaction
              (scroll / click / keydown / touchstart) OR after 3s unconditional fallback.
