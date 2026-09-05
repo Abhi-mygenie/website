@@ -24,19 +24,46 @@
                 'wait_for_update': 500
             });
         </script>
-        <!-- CR-199: Google Tag Manager container — loads async at HTML parse time.
-             Host-gated: only fires on www.mygenie.online and mygenie.online.
-             preview/beta/localhost → hostname check fails → function returns → no GTM load.
-             Fixes 8-13s GA delay that was caused by initGtm() inside App.js useEffect.
-             Prerender safety: on localhost (Puppeteer) hostname guard triggers → no googletagmanager.com request. -->
+        <!-- CR-209: preconnect + dns-prefetch for GTM.
+             Warms the TCP+TLS connection to googletagmanager.com during idle time so that
+             when GTM is eventually injected (on interaction / 3s fallback), the download
+             is near-instant (no DNS + handshake cost at fire time).
+             crossorigin: GTM script uses CORS headers — without crossorigin the browser
+             opens a second connection at load time, wasting the preconnect.
+             dns-prefetch: fallback for older mobile Chromium builds that ignore preconnect. -->
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+        <!-- CR-209: GTM interaction-first deferred load.
+             Replaces CR-199 parse-time injection. GTM now fires on first user interaction
+             (scroll / click / keydown / touchstart) OR after 3s unconditional fallback.
+             This moves GTM execution AFTER LCP, eliminating ~2,100ms of main-thread TBT.
+             Host guard unchanged: only fires on www.mygenie.online and mygenie.online.
+             Prerender safety unchanged: Puppeteer on localhost → hostname guard returns early.
+             dataLayer safety: window.dataLayer is initialised above (Consent Mode block).
+             All events pushed before GTM loads (page_view, consent updates) are queued in
+             dataLayer and replayed when GTM container executes — zero event loss for
+             users who interact (scroll / click / type) before submitting any form.
+             fired flag: prevents double-injection if both an interaction event AND the
+             3s setTimeout fire within the same tick. -->
         <script>
-            (function(w,d,s,l,i){
-                if(['www.mygenie.online','mygenie.online'].indexOf(w.location.hostname) < 0) return;
-                w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-                var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
-                j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-                f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-K5D84Z3L');
+            (function() {
+                if (['www.mygenie.online', 'mygenie.online'].indexOf(window.location.hostname) < 0) return;
+                var fired = false;
+                function loadGTM() {
+                    if (fired) return;
+                    fired = true;
+                    (function(w,d,s,l,i){
+                        w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+                        var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+                        j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+                        f.parentNode.insertBefore(j,f);
+                    })(window,document,'script','dataLayer','GTM-K5D84Z3L');
+                }
+                ['scroll','click','keydown','touchstart'].forEach(function(e) {
+                    window.addEventListener(e, loadGTM, { once: true, passive: true });
+                });
+                setTimeout(loadGTM, 3000);
+            })();
         </script>
         <link rel="icon" href="/brand/logo.svg" />
         <!-- Fonts: all self-hosted woff2 — Clash Display (headings) + Poppins (body) -->
