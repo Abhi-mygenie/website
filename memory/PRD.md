@@ -1,43 +1,48 @@
-# MyGenie Website — Deployment PRD
+# MyGenie Website — Platform PRD
 
-## Project
-Deploy the existing MyGenie React/FastAPI website repo as-is into the Emergent platform environment.
-
-## Source
-- Repo: https://github.com/Abhi-mygenie/website.git
-- Branch: 4sep
-- Deployed: 2026-09-05
+## Original Problem Statement
+Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/website.git, branch: main) directly into `/app` and run it as-is, with no code edits.
 
 ## Architecture
-- **Frontend**: React (CRACO), pre-rendered static build served via `scripts/static-server.js` on port 3000
-- **Backend**: FastAPI (uvicorn) with multiple modules on port 8001
-- **Database**: Remote MongoDB at 52.66.232.149:27017 (mygenie db)
-- **Supervisor**: manages both frontend and backend services
+- **Backend**: FastAPI (Python) — `/app/backend/server.py`, port 8001
+- **Frontend**: React + CRACO — `/app/frontend/`, static build served on port 3000 via `node scripts/static-server.js`
+- **Database**: Remote MongoDB at `52.66.232.149:27017/mygenie`
 
-## What Was Done
-1. Cloned repo (branch: 4sep) to /tmp/mygenie-repo
-2. Replaced /app/backend and /app/frontend with cloned contents
-3. Preserved supervisor configs (/etc/supervisor/conf.d/) and platform .env files
-4. Wrote backend .env with all provided env variables (MONGO_URL, SMS, Freshsales, CMS, Calendly, etc.)
-5. Frontend .env kept with platform REACT_APP_BACKEND_URL
-6. Installed Python deps via `pip install -r requirements.txt --use-deprecated=legacy-resolver`
-7. Installed Node deps via `yarn install --frozen-lockfile`
-8. Built frontend via `yarn build` (craco build + prerender)
-9. Restarted both services via supervisorctl
+## What Was Done (2026-09-05)
 
-## Preserved Platform Files
-- /app/frontend/.env (REACT_APP_BACKEND_URL, WDS_SOCKET_PORT, ENABLE_HEALTH_CHECK)
-- /app/backend/.env (fully rewritten with provided env vars)
-- /etc/supervisor/conf.d/ (all supervisor configs)
+### Deploy Session
+- Added git remote: `https://github.com/Abhi-mygenie/website.git`
+- Checked out `main` branch content into `/app` (backend, frontend, memory, tests)
+- Wrote all provided env vars to `/app/backend/.env`
+- Preserved platform env vars in `/app/frontend/.env` (REACT_APP_BACKEND_URL, WDS_SOCKET_PORT, ENABLE_HEALTH_CHECK)
+- Ran `pip install -r requirements.txt --use-deprecated=legacy-resolver`
+- Ran `yarn install` in `/app/frontend`
+- Built: `yarn build` (craco build + prerender) → 65+ routes prerendered
+- Restarted supervisor: backend + frontend both RUNNING
+- Site confirmed live: MyGenie Restaurant POS homepage serving correctly
 
-## Backend Modules
-server.py, leads.py, otp.py, payments.py, freshsales.py, crm_sync.py, funnel.py, geo.py, storage.py, cms_auth.py, recommendations.py, ad_spend.py, ads_mcp.py, antijunk.py
+## Core Requirements
+- No code edits — deploy as-is from repo
+- Platform files preserved (supervisor configs, platform .env vars)
+- Both backend (8001) and frontend (3000) must be running
 
-## Status
-- Backend: RUNNING (uvicorn on :8001) — responds to /api/
-- Frontend: RUNNING (static-server.js on :3000) — full site with pre-rendered pages
+## Known Non-Blocking Issues
+- Calendly webhook registration returns 400 (signing_key not configured) — non-blocking
+- Freshsales CRM sync skipped (API key not configured) — non-blocking
 
-## Notes
-- Calendly webhook registration returned 400 (signing_key not provided) — non-blocking
-- PRODUCTION AWS S3 and commented-out keys not written to .env (intentionally excluded)
-- emergentintegrations + litellm version conflict resolved via --use-deprecated=legacy-resolver
+## Env Vars Applied
+- `MONGO_URL` → remote MongoDB at 52.66.232.149
+- `DB_NAME=test_database`
+- `OTP_SMS_ENABLED=true`, SMS keys set
+- `CALENDLY_API_TOKEN` set
+- `EMERGENT_LLM_KEY` set
+- CMS credentials: admin/admin123, editor/editor123
+- All Freshsales lifecycle/status IDs set
+- `STORAGE_BACKEND=local`
+
+## Backlog / Next Steps
+- P0: Deploy to production (mygenie.online) when ready
+- P1: Add CALENDLY_WEBHOOK_SIGNING_KEY
+- P1: Enable AWS S3 (STORAGE_BACKEND=s3 + AWS keys)
+- P1: Add FRESHSALES_API_KEY + FRESHSALES_BASE_URL
+- P2: Enable Razorpay payment keys
