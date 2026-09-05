@@ -815,7 +815,8 @@ T8  Title uniqueness     PASS   15 titles all unique
 |---|---|---|---|---|
 | **CR-206** | `browserslist` targets `>0.2%` → ships ES5 polyfills for IE11/Safari12 to India-mobile users — Est savings 10 KiB, legacy JS warning in Lighthouse | ✅ Done 2026-09-04 — build main.dde43c90.js. Score 76→84 (+8), TBT 852ms→80ms (−772ms), Best Practices 82→100, bundle 958KB→937KB (−21KB) | P2 | `package.json` — 1 line |
 | **CR-207** | Main bundle 958 KB — vendor libs (Radix UI, shadcn, lucide, etc.) bundled into main chunk instead of split vendor chunks → 2.0s JS execution, 3.8s main-thread work | ✅ Done 2026-09-04 — build main.1273e3d6.js. Root cause: `import * as Icons from "lucide-react"` in 15 files bundled all 3,624 icons. Fix: created `src/lib/iconMap.js` (68 icons) + replaced wildcard in all 15 files. Bundle: 937KB→402KB (−535KB, −57%). lucide sources in main: 3,624→85. Lighthouse unavailable (Google throttled) — run separately. | P1 | `src/lib/iconMap.js` (new) + 15 file edits |
-| **CR-208** | 9 below-fold homepage sections in single `<Suspense>` → all 9 chunks download immediately on page load, competing with LCP hero image for bandwidth → LCP 2.2s | 🔲 Open — **REVISED: chunks are 34KB total (2–8KB each) after CR-207 removed lucide wildcard. Original +3–4 pt estimate revised to +0–1 pt. Plan: Option A (split Suspense into 2 groups), 1 edit only.** | P2 *(was P1 — downgraded after CR-207)* | `src/pages/Home.jsx` |
+| **CR-208** | 9 below-fold homepage sections in single `<Suspense>` → all 9 chunks download immediately on page load, competing with LCP hero image for bandwidth → LCP 2.2s | ✅ Done 2026-09-05 — build main.a67281e4.js. Split into 2 Suspense boundaries (ProblemGrid+BeforeAfter / remaining 7). +0–1 pt as predicted. All 63 routes prerendered, hash clean. | P2 *(was P1 — downgraded after CR-207)* | `src/pages/Home.jsx` |
+| **CR-209** | GTM fires at `<head>` parse time → all 3 tags (GA4 + Ads + Remarketing) execute on main thread during LCP render window → production TBT 2,900ms, Lighthouse 51 | 🔲 Open — **Interaction-first defer: GTM fires on first scroll/click/key/touch OR 3s fallback. Adds preconnect + dns-prefetch. Analytics loss: ~3–8% sessions (bots/zero-interaction bounces). Conversion loss: 0%. Expected: TBT −1,400–1,700ms, score +11–17 pts on production.** | P1 | `public/index.html` only |
 
 ### Impact Estimates (Preview URL, India Mobile)
 
@@ -824,7 +825,15 @@ T8  Title uniqueness     PASS   15 titles all unique
 | Current | 76 | 2.2s | 852ms |
 | + CR-206 (browserslist) | 77 | 2.2s | 800ms |
 | + CR-207 (bundle split) | 86 | 1.9s | 550ms |
-| + CR-208 (defer chunks) | ~90 | ~1.6s | ~450ms |
+| + CR-208 (Suspense split) | ~87 | ~1.9s | ~540ms |
+
+**Production baseline (www.mygenie.online):**
+
+| Stage | Score | TBT | Notes |
+|---|---|---|---|
+| Current production | 51 | 2,900ms | GTM fires at parse time |
+| + CR-209 (GTM interaction-first) | ~62–68 | ~1,200–1,500ms | GTM deferred to interaction / 3s |
+| + CR-186 (Cloudflare RUM off) | ~72–78 | ~800–1,000ms | Owner action — Cloudflare dashboard |
 
 ### Implementation Order
 
