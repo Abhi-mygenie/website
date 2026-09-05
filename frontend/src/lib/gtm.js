@@ -75,14 +75,19 @@ function gtag() {
 }
 
 /**
- * Consent Mode v2 (CR-3B #2). EEA-safe denied defaults set BEFORE the container loads;
- * a stored visitor choice is applied immediately as an update. `wait_for_update` gives
- * the banner a brief window to respond before tags evaluate.
+ * Consent Mode v2 (CR-219). EEA/GB visitors get denied defaults (GDPR-compliant).
+ * All other visitors (India, US, etc.) get granted by default — no legal obligation
+ * to deny analytics under Indian law, and the vast majority of MyGenie's audience
+ * is Indian. A stored visitor choice is applied immediately as an update, which
+ * always overrides the default (so explicit Decline is fully respected).
+ * `wait_for_update` only on the EEA call — non-EEA is already granted, no wait needed.
  */
 export function setDefaultConsent() {
   try {
     window.dataLayer = window.dataLayer || [];
+    // EEA/GB: denied by default — GDPR compliant
     gtag("consent", "default", {
+      region: ["EEA", "GB"],
       ad_storage: "denied",
       ad_user_data: "denied",
       ad_personalization: "denied",
@@ -90,6 +95,15 @@ export function setDefaultConsent() {
       functionality_storage: "granted",
       security_storage: "granted",
       wait_for_update: 500,
+    });
+    // Everyone else (India, US, etc.): granted by default
+    gtag("consent", "default", {
+      ad_storage: "granted",
+      ad_user_data: "granted",
+      ad_personalization: "granted",
+      analytics_storage: "granted",
+      functionality_storage: "granted",
+      security_storage: "granted",
     });
     let stored = null;
     try {

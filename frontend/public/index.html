@@ -6,15 +6,20 @@
         <meta name="theme-color" content="#18A84A" />
         <meta name="description" content="MyGenie POS — the hospitality operating system that boosts profit up to 25%, stops revenue leakage, and gives owners total control across every outlet." />
         <meta name="facebook-domain-verification" content="52wnu6dg7xaa18lrghxek38u535rtw" />
-        <!-- CR-199: Google Consent Mode v2 defaults.
-             MUST appear before the GTM snippet. Sets EEA-safe denied defaults for all
-             ad/analytics storage. Stored visitor choice is restored on every route change
-             by setDefaultConsent() in App.js (reads localStorage key "mg_consent").
+        <!-- CR-219: Google Consent Mode v2 defaults — region-aware.
+             EEA/GB visitors start denied (GDPR). All other visitors (India etc.) start
+             granted — no legal obligation to deny analytics under Indian law, and the
+             vast majority of MyGenie's audience is Indian.
+             Visitors who explicitly Decline via the banner get updateConsent(false)
+             which overrides the granted default. EEA compliance is fully unchanged.
+             Stored visitor choice is restored on every route change by setDefaultConsent()
+             in App.js (reads localStorage key "mg_consent").
              Hardcoded here (not process.env) because public/index.html is a static file. -->
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('consent', 'default', {
+                'region': ['EEA', 'GB'],
                 'analytics_storage': 'denied',
                 'ad_storage': 'denied',
                 'ad_user_data': 'denied',
@@ -22,6 +27,14 @@
                 'functionality_storage': 'granted',
                 'security_storage': 'granted',
                 'wait_for_update': 500
+            });
+            gtag('consent', 'default', {
+                'analytics_storage': 'granted',
+                'ad_storage': 'granted',
+                'ad_user_data': 'granted',
+                'ad_personalization': 'granted',
+                'functionality_storage': 'granted',
+                'security_storage': 'granted'
             });
         </script>
         <!-- CR-209: preconnect + dns-prefetch for GTM.
