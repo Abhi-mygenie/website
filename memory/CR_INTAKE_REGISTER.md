@@ -1087,7 +1087,7 @@ T8  Title uniqueness     PASS   15 titles all unique
 | CR | Summary | Status | Priority | File(s) |
 |---|---|---|---|---|
 | **CR-249** | **WhatsApp FAB — owner to decide: keep enabled, disable site-wide, or measure first.** FAB is controlled by `REACT_APP_WHATSAPP_ENABLED` env var (`App.js` L82). Currently **enabled** (var not set → defaults to enabled). Concern from audit: FAB may divert paid traffic away from demo form. Options: (A) Keep as-is. (B) Disable — add `REACT_APP_WHATSAPP_ENABLED=false` to `frontend/.env` + rebuild. (C) Measure — implement CR-248 first to track `whatsapp_click` volume, decide based on data. | 📋 Awaiting owner decision | **P2** | `frontend/.env` (if disable) |
-| **CR-250** | **Add compact hero-section form on 5 Google Ads landing pages.** Audit finding A1.2: paid traffic not engaging with anchor-jumped bottom forms. Proposed: embed a 3-field (name, phone, email) form directly in each page's hero section for immediate engagement without scrolling. Requires design decision + UX review of page layout. Impacts: `RestaurantPosSystem.jsx`, `RestaurantBillingSoftware.jsx`, `RestaurantManagementSoftware.jsx`, `CloudKitchenPos.jsx`, `QsrPosSystem.jsx`. | 📋 Awaiting owner decision + design approval | **P1** | 5 landing page JSX files |
+| **CR-250** | **Add compact hero-section form on 5 Google Ads landing pages.** Audit finding A1.2: paid traffic not engaging with anchor-jumped bottom forms. Proposed: embed a 3-field (name, phone, email) form directly in each page's hero section for immediate engagement without scrolling. | ⏸️ **DEFERRED by owner 2026-09-09** — Current StickyMobileCta + DemoBottomSheet setup deemed sufficient. Owner to observe conversion data for 15 days (until ~2026-09-24) before revisiting. | **P2 (deferred)** | Review after 2026-09-24 |
 | **CR-251** | **Add sticky mobile "Book Free Demo" bar to 5 Google Ads landing pages.** Audit finding A1.3: on mobile the demo form is below fold, sticky CTA absent. `StickyMobileCta` component exists (used on product/sector pages) but is not rendered on any of the 5 landing pages. Fix: import and render `StickyMobileCta` on each landing page, wired to open the existing demo modal. Low code effort; owner to confirm. | 📋 Awaiting owner decision | **P1** | 5 landing page JSX files |
 
 ---
@@ -1206,7 +1206,7 @@ Step 3 — yarn build + supervisorctl restart frontend (one rebuild covers all)
 | CR-247 | Fix lead_verifided typo — coordinate GTM rename + code | ⏸️ Closed — not required | P1 | AU |
 | CR-248 | Wire whatsapp_click event to GTM/GA4 | ⏸️ Closed — not required | P2 | AU |
 | CR-249 | WhatsApp FAB: owner decides enable/disable/measure | 📋 Owner decision | P2 | AV |
-| CR-250 | Add hero-section form to 5 landing pages | 📋 Owner decision | P1 | AV |
+| CR-250 | Add hero-section form to 5 landing pages | ⏸️ Deferred — observe 15 days until 2026-09-24 | P2 | AV |
 | CR-251 | Add StickyMobileCta to 5 landing pages | 📋 Owner decision | P1 | AV |
 | CR-252 | Automate Cloudflare cache purge on deploy | 🔲 Open | P1 | AW |
 | CR-253 | Freshsales: capture utm_query (literal search term) | 🔲 Open (dashboard) | P2 | AX |
@@ -1299,7 +1299,7 @@ Systematic investigation compared all 5 Google Ads landing pages (`/restaurant-p
 | CR-247 | Fix lead_verifided typo — coordinate GTM rename + code | ⏸️ Closed — not required | P1 | AU |
 | CR-248 | Wire whatsapp_click event to GTM/GA4 | ⏸️ Closed — not required | P2 | AU |
 | CR-249 | WhatsApp FAB: disabled via REACT_APP_WHATSAPP_ENABLED=false | ✅ Done (bug fix 2026-09-08) | P2 | AV |
-| CR-250 | Add hero-section form to 5 landing pages | 📋 Owner decision | P1 | AV |
+| CR-250 | Add hero-section form to 5 landing pages | ⏸️ Deferred — observe 15 days until 2026-09-24 | P2 | AV |
 | CR-251 | StickyMobileCta on 5 landing pages + mobile navbar "Book Demo" | ✅ Done (pre-existing + bug fix 2026-09-08) | P1 | AV |
 | CR-252 | Automate Cloudflare cache purge on deploy | 🔲 Open | P1 | AW |
 | CR-253 | Freshsales: capture utm_query (literal search term) | 🔲 Open (dashboard) | P2 | AX |
