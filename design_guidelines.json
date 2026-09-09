@@ -1,0 +1,142 @@
+{
+  "project_title": "CR-250 — Mobile First Fold Hero Embedded Compact Form Optimization",
+  "archetype": "THE PERFORMANCE PRO / HIGH-CONVERSION SAAS",
+  "theme": "Light theme with deep brand accents (#F6F8F5 background, #10B981 brand green, #14201A ink, #F26B33 orange)",
+  "viewport_target": "Mobile Viewport 375px - 390px First Fold (667px - 844px height max)",
+  "typography": {
+    "font_family_headings": "Clash Display, sans-serif",
+    "font_family_body": "Poppins, sans-serif",
+    "h1_mobile": "text-2xl sm:text-3xl font-bold text-[#14201A] leading-[1.12] tracking-tight",
+    "h2_mobile": "text-xl sm:text-2xl font-bold text-[#14201A] leading-tight",
+    "sub_mobile": "text-xs sm:text-sm text-[#5B6B61] leading-snug",
+    "label_uppercase": "text-[10px] uppercase tracking-widest font-bold text-[#5B6B61]"
+  },
+  "colors": {
+    "brand_green": "#10B981",
+    "brand_green_dark": "#059669",
+    "brand_sand": "#F6F8F5",
+    "brand_ink": "#14201A",
+    "brand_orange": "#F26B33",
+    "brand_muted": "#5B6B61",
+    "brand_line": "#E2E8F0",
+    "brand_deep": "#10402A",
+    "brand_deep_surface": "#0C2A1A",
+    "white": "#FFFFFF"
+  },
+  "form_layout_strategy": {
+    "mobile_hero_embedded_form": {
+      "fields_count": 3,
+      "fields": ["name", "phone", "email"],
+      "field_input_styling": "w-full rounded-xl border border-[#E2E8F0] bg-white px-3.5 py-2.5 text-xs text-[#14201A] placeholder:text-[#5B6B61]/60 focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981]/20 outline-none transition-all shadow-sm",
+      "submit_button_styling": "w-full bg-[#10B981] hover:bg-[#059669] text-white rounded-xl py-3 text-sm font-semibold shadow-[0_6px_20px_rgba(16,185,129,0.28)] flex items-center justify-center gap-2 transition-all active:scale-[0.98]",
+      "card_wrapper": "bg-white border border-[#E2E8F0] rounded-2xl p-3.5 sm:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.06)] backdrop-blur-sm",
+      "micro_disclaimer": "text-[10px] text-[#5B6B61] text-center mt-2"
+    }
+  },
+  "page_specific_guidelines": {
+    "homepage": {
+      "route": "/",
+      "component": "Hero.jsx",
+      "hero_structure": "Social proof pill badge -> Compact H1 -> Tight Subcopy -> Embedded 3-field DemoForm card -> Swiggy/Zomato/Razorpay/GST Trust Badges",
+      "mobile_fold_rules": "On mobile (max-width: 767px), render the 3-field compact inline DemoForm directly below sub-copy. Remove dual 'Book a Free Demo' / 'See Pricing' secondary button overflow. Keep proof pill and trust badges visible within the initial 667px scroll window."
+    },
+    "restaurant_pos_system": {
+      "route": "/restaurant-pos-system",
+      "component": "RestaurantPosSystem.jsx",
+      "hero_structure": "Category Pill -> Concise H1 -> Stat chips row -> Embedded 3-field DemoForm -> Trust Badges row",
+      "mobile_fold_rules": "Embedded hero form directly captures paid search visitors. Replace full-height hero banner image on mobile first fold with the compact 3-field form card."
+    },
+    "restaurant_billing_software": {
+      "route": "/restaurant-billing-software",
+      "component": "RestaurantBillingSoftware.jsx",
+      "hero_structure": "Billing Eyebrow -> Tight H1 -> 2-liner sub-copy -> Embedded 3-field Form -> Integration badges",
+      "mobile_fold_rules": "Ensure input fields use type='tel' and type='email' for native mobile keyboards. Compact vertical padding py-2 per input."
+    },
+    "restaurant_management_software": {
+      "route": "/restaurant-management-software",
+      "component": "RestaurantManagementSoftware.jsx",
+      "hero_structure": "Eyebrow -> H1 -> Embedded 3-field DemoForm -> Stat badges -> Trust bar",
+      "mobile_fold_rules": "Mobile viewport padding max py-4 in hero to guarantee form submit CTA button sits above 667px fold line."
+    },
+    "cloud_kitchen_pos": {
+      "route": "/cloud-kitchen-pos",
+      "component": "CloudKitchenPos.jsx",
+      "hero_structure": "Cloud Kitchen Pill -> High Intent H1 -> 3-field Hero Form -> Aggregator Trust Badges",
+      "mobile_fold_rules": "Direct form embed for fast Swiggy/Zomato brand operator lead capture."
+    },
+    "qsr_pos_system": {
+      "route": "/qsr-pos-system",
+      "component": "QsrPosSystem.jsx",
+      "hero_structure": "Fast Speed Pill -> Speed H1 -> Embedded 3-field DemoForm -> Trust Badges",
+      "mobile_fold_rules": "Form card with instant focus or micro submit button 'Get QSR Demo'."
+    },
+    "demo_landing": {
+      "route": "/demo",
+      "component": "DemoLanding.jsx",
+      "hero_structure": "Urgency Eyebrow -> H1 'See MyGenie Live' -> Micro-proof chips -> Embedded 3-field DemoForm card",
+      "mobile_fold_rules": "Dark background (#10402A) left context panel seamlessly integrates with white form card on mobile viewports."
+    },
+    "petpooja_alternative": {
+      "route": "/petpooja-alternative",
+      "component": "PetpoojaAlternative.jsx",
+      "hero_structure": "VSP Headline -> Mobile Stat Chips (₹1L / 40%) -> Embedded 3-field Form in Hero -> Trust Strip",
+      "mobile_fold_rules": "Comparison competitor page requires form directly embedded in hero section above fold for direct conversion."
+    },
+    "restaurant_pos_comparison": {
+      "route": "/restaurant-pos-comparison",
+      "component": "RestaurantPosComparison.jsx",
+      "hero_structure": "Dynamic H1 -> Stat cards row -> Embedded 3-field DemoForm -> Trust strip",
+      "mobile_fold_rules": "Embed compact hero form directly on competitor comparison page."
+    }
+  },
+  "visual_enhancers": {
+    "borders": "1px solid #E2E8F0 with subtle hover highlights",
+    "shadows": "Soft ambient shadow shadow-[0_10px_30px_rgba(0,0,0,0.06)] for floating form cards",
+    "glassmorphism": "backdrop-blur-md bg-white/95 for fixed header navigation bar",
+    "micro_interactions": "Active button state active:scale-[0.98], focus ring ring-2 ring-[#10B981]/20"
+  },
+  "component_name": {
+    "DemoForm": "/app/frontend/src/components/site/DemoForm.jsx",
+    "DemoBottomSheet": "/app/frontend/src/components/site/DemoBottomSheet.jsx",
+    "Hero": "/app/frontend/src/components/home/Hero.jsx",
+    "StickyMobileCta": "/app/frontend/src/components/home/StickyMobileCta.jsx",
+    "Navbar": "/app/frontend/src/components/site/Navbar.jsx"
+  },
+  "grids": {
+    "hero_grid_desktop": "grid lg:grid-cols-2 gap-8 items-center",
+    "hero_grid_mobile": "flex flex-col gap-4"
+  },
+  "layouts": {
+    "mobile_first_fold": "max-h-[667px] overflow-visible flex flex-col justify-start"
+  },
+  "motion": {
+    "transitions": "transition-all duration-200 ease-out",
+    "no_universal_transition": "Avoid transition: all globally. Apply targeted CSS transitions on background-color, border-color, shadow, transform."
+  },
+  "accessibility": {
+    "data_testid_required": "All input fields, submit buttons, badges, error messages, and form cards MUST contain data-testid attributes (e.g. data-testid='hero-demo-form', data-testid='demo-input-name', data-testid='demo-submit-btn').",
+    "input_accessibility": "Label associations, aria-required='true', type='tel' for phone, type='email' for email.",
+    "contrast_ratio": "Minimum 4.5:1 text contrast for all body and button text against backgrounds."
+  },
+  "media": {
+    "hero_banner": "/brand/banner.webp",
+    "hero_banner_mobile": "/brand/banner-mobile.webp",
+    "integrations": [
+      "/brand/integrations/swiggy.svg",
+      "/brand/integrations/zomato.svg",
+      "/brand/integrations/razorpay.svg"
+    ]
+  },
+  "3d_libraries": {
+    "recommended": "None required for mobile-first fold forms — keep bundle lightweight for instantaneous LCP (<1.5s)."
+  },
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Never alter the existing brand colors (#10B981, #059669, #F6F8F5, #14201A, #F26B33, #5B6B61).",
+    "Maintain Clash Display for headings and Poppins for body text.",
+    "Mobile viewport 375px–390px (667px height) must contain H1, trust badges, and the 3-field compact form in the first fold.",
+    "Always preserve all data-testid attributes on interactive elements.",
+    "Do not use transparent backgrounds on navigation bars or dropdowns without backdrop-blur.",
+    "OTP verification occurs after form submission on a second step/stage, keeping the initial hero form strictly to 3 fields (Name, Phone, Email)."
+  ],
+  "instructions_to_main_agent": "Ensure the 3-field compact form is consistently integrated across the hero sections of all 8 targeted pages. Use shortForm={true} on DemoForm component inside hero containers. Optimize spacing on mobile so that the primary CTA button is immediately visible without scrolling on standard 375x667px mobile screens."
+}
