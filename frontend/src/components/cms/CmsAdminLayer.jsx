@@ -76,7 +76,7 @@ function LoginModal() {
           </p>
         ) : null}
         <button
-          type="button"
+          type="submit"
           disabled={busy}
           data-testid="cms-login-submit"
           className="w-full py-2.5 rounded-lg bg-brand-green text-white font-semibold disabled:opacity-50"

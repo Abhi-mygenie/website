@@ -133,7 +133,7 @@ function LoginGate({ onAuthed }) {
         />
         {error && <p data-testid="leads-login-error" className="mt-3 text-sm text-rose-600">{error}</p>}
         <button
-          type="button"
+          type="submit"
           data-testid="leads-login-submit"
           disabled={busy}
           className="mt-5 w-full rounded-lg bg-slate-900 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
