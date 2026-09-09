@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CR-68 — Churned Clients Dashboard Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f9; color: #1a1a2e; }
+
+  .header { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-left h1 { font-size: 18px; font-weight: 700; color: #111; }
+  .header-left span { font-size: 12px; color: #6b7280; background: #f3f4f6; padding: 3px 8px; border-radius: 20px; }
+  .header-right { font-size: 12px; color: #9ca3af; }
+
+  .tabs { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 0 28px; display: flex; gap: 0; }
+  .tab { padding: 12px 20px; font-size: 13px; font-weight: 500; color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; }
+  .tab.active { color: #16a34a; border-bottom-color: #16a34a; font-weight: 600; }
+
+  .page { padding: 24px 28px; max-width: 1300px; }
+
+  /* Summary Cards */
+  .summary-row { display: flex; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
+  .card { flex: 1; min-width: 140px; background: #fff; border-radius: 12px; padding: 16px 18px; border: 1px solid #e5e7eb; cursor: pointer; transition: box-shadow .15s; }
+  .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.12); transform: translateY(-1px); }
+  .card.selected { box-shadow: 0 0 0 2.5px #16a34a; background: #f0fdf4; }
+  .card.c-watch.selected   { box-shadow: 0 0 0 2.5px #84cc16; background: #f7fee7; }
+  .card.c-atrisk.selected  { box-shadow: 0 0 0 2.5px #f59e0b; background: #fffbeb; }
+  .card.c-churnrisk.selected{ box-shadow: 0 0 0 2.5px #f97316; background: #fff7ed; }
+  .card.c-churned.selected { box-shadow: 0 0 0 2.5px #ef4444; background: #fef2f2; }
+  .card-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+  .card-click-hint { font-size: 10px; color: #9ca3af; margin-top: 6px; }
+  .card-num { font-size: 32px; font-weight: 800; line-height: 1; }
+  .card-sub { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+
+  .c-active   { border-top: 3px solid #16a34a; }
+  .c-watch    { border-top: 3px solid #84cc16; }
+  .c-atrisk   { border-top: 3px solid #f59e0b; }
+  .c-churnrisk{ border-top: 3px solid #f97316; }
+  .c-noorders { border-top: 3px solid #94a3b8; }
+  .c-churned  { border-top: 3px solid #ef4444; }
+
+  .c-active   .card-label { color: #16a34a; }
+  .c-watch    .card-label { color: #65a30d; }
+  .c-atrisk   .card-label { color: #d97706; }
+  .c-churnrisk .card-label { color: #ea580c; }
+  .c-noorders .card-label { color: #64748b; }
+  .c-churned  .card-label { color: #dc2626; }
+
+  /* Revenue at risk callout */
+  .risk-banner { background: linear-gradient(135deg, #fff7ed 0%, #fff3e0 100%); border: 1px solid #fed7aa; border-radius: 12px; padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+  .risk-banner .rb-left { display: flex; align-items: center; gap: 10px; }
+  .risk-banner .icon { font-size: 20px; }
+  .risk-banner .rb-title { font-size: 13px; font-weight: 700; color: #92400e; }
+  .risk-banner .rb-sub { font-size: 12px; color: #b45309; }
+  .risk-banner .rb-amount { font-size: 22px; font-weight: 800; color: #c2410c; }
+
+  /* Filters */
+  .filter-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+  .filter-row input { flex: 1; min-width: 200px; padding: 8px 14px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; outline: none; }
+  .filter-row input:focus { border-color: #16a34a; }
+  .filter-btn { padding: 8px 14px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 12px; font-weight: 500; background: #fff; cursor: pointer; color: #374151; }
+  .filter-btn.on { background: #f0fdf4; border-color: #16a34a; color: #16a34a; }
+  .count-badge { font-size: 11px; color: #6b7280; margin-left: auto; }
+
+  /* Table */
+  .table-wrap { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: #f9fafb; }
+  th { padding: 11px 14px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; color: #9ca3af; border-bottom: 1px solid #e5e7eb; white-space: nowrap; cursor: pointer; }
+  th:hover { color: #374151; }
+  th .sort { opacity: .4; margin-left: 2px; }
+  td { padding: 13px 14px; font-size: 13px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+
+  .rest-name { font-weight: 600; color: #111; font-size: 13px; }
+  .rest-id { font-size: 11px; color: #9ca3af; }
+
+  /* Status badges */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .b-active    { background: #dcfce7; color: #15803d; }
+  .b-watch     { background: #ecfccb; color: #4d7c0f; }
+  .b-atrisk    { background: #fef3c7; color: #b45309; }
+  .b-churnrisk { background: #ffedd5; color: #c2410c; }
+  .b-noorders  { background: #f1f5f9; color: #475569; }
+  .b-churned   { background: #fee2e2; color: #b91c1c; }
+
+  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .d-active { background: #16a34a; }
+  .d-watch  { background: #84cc16; }
+  .d-atrisk { background: #f59e0b; }
+  .d-churnrisk { background: #f97316; }
+  .d-noorders  { background: #94a3b8; }
+  .d-churned   { background: #ef4444; }
+
+  .num-big { font-size: 14px; font-weight: 700; color: #111; }
+  .num-small { font-size: 11px; color: #9ca3af; }
+  .rev-zero { color: #d1d5db; }
+  .rev-positive { font-weight: 600; color: #111; }
+
+  /* Last order */
+  .last-order-date { font-size: 12px; color: #374151; font-weight: 500; }
+  .last-order-time { font-size: 11px; color: #9ca3af; }
+  .inactive-pill { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .ip-low  { background: #fef9c3; color: #854d0e; }
+  .ip-mid  { background: #ffedd5; color: #9a3412; }
+  .ip-high { background: #fee2e2; color: #991b1b; }
+  .ip-ok   { background: #dcfce7; color: #166534; }
+
+  /* Action buttons */
+  .btn-wa { display: inline-flex; align-items: center; gap: 5px; background: #25D366; color: #fff; border: none; border-radius: 7px; padding: 6px 11px; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; }
+  .btn-wa:hover { background: #1da851; }
+  .btn-call { display: inline-flex; align-items: center; gap: 5px; background: #f3f4f6; color: #374151; border: none; border-radius: 7px; padding: 6px 11px; font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 6px; }
+  .btn-call:hover { background: #e5e7eb; }
+  .action-cell { display: flex; align-items: center; white-space: nowrap; }
+
+  /* Pagination */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 1px solid #f3f4f6; font-size: 12px; color: #6b7280; }
+  .pg-btns { display: flex; gap: 4px; }
+  .pg-btn { padding: 4px 10px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; cursor: pointer; font-size: 12px; }
+  .pg-btn.active { background: #16a34a; color: #fff; border-color: #16a34a; }
+
+  .mockup-note { background: #fffbeb; border: 1px dashed #fbbf24; border-radius: 8px; padding: 10px 16px; font-size: 12px; color: #92400e; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>MyGenie Admin</h1>
+    <span>Leads & Customers</span>
+  </div>
+  <div class="header-right">Last refreshed: Today, 10:45 AM &nbsp;|&nbsp; admin</div>
+</div>
+
+<div class="tabs">
+  <div class="tab">Funnel Overview</div>
+  <div class="tab">By Source</div>
+  <div class="tab">Lost Analysis</div>
+  <div class="tab active">Churned Clients</div>
+  <div class="tab">Attribution</div>
+</div>
+
+<div class="page">
+
+  <div class="mockup-note">
+    MOCKUP — CR-68 Churned Clients Dashboard &nbsp;|&nbsp; Data is illustrative based on UAT API structure. Production will show live numbers.
+  </div>
+
+  <div class="summary-row">
+    <div class="card c-watch selected" onclick="filterTable('3d')" style="cursor:pointer">
+      <div class="card-label">3 Days No Order</div>
+      <div class="card-num">28</div>
+      <div class="card-sub">Last order 3+ days ago</div>
+      <div class="card-click-hint">Click to filter</div>
+    </div>
+    <div class="card c-atrisk" onclick="filterTable('7d')" style="cursor:pointer">
+      <div class="card-label">7 Days No Order</div>
+      <div class="card-num">61</div>
+      <div class="card-sub">Last order 7+ days ago</div>
+      <div class="card-click-hint">Click to filter</div>
+    </div>
+    <div class="card c-churnrisk" onclick="filterTable('30d')" style="cursor:pointer">
+      <div class="card-label">30 Days No Order</div>
+      <div class="card-num">99</div>
+      <div class="card-sub">Last order 30+ days ago</div>
+      <div class="card-click-hint">Click to filter</div>
+    </div>
+    <div class="card c-churned" onclick="filterTable('30plus')" style="cursor:pointer">
+      <div class="card-label">30+ Days No Order</div>
+      <div class="card-num">104</div>
+      <div class="card-sub">No activity over a month</div>
+      <div class="card-click-hint">Click to filter</div>
+    </div>
+  </div>
+
+  <!-- Revenue at risk banner -->
+  <div class="risk-banner">
+    <div class="rb-left">
+      <span class="icon">⚠️</span>
+      <div>
+        <div class="rb-title">Revenue at Risk — clients with no orders in last 30 days</div>
+        <div class="rb-sub">28 went silent in 3d &nbsp;·&nbsp; 61 in 7d &nbsp;·&nbsp; 99 in 30d &nbsp;·&nbsp; 104 over 30d</div>
+      </div>
+    </div>
+    <div class="rb-amount">₹38.4L</div>
+  </div>
+
+  <!-- Filter Row — search only, cards are the filter -->
+  <div class="filter-row">
+    <input type="text" placeholder="Search restaurant name..."/>
+    <span class="count-badge">Showing 7 of 292 &nbsp;|&nbsp; Sort: Last Order ↑</span>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Restaurant <span class="sort">↕</span></th>
+          <th>Last Order <span class="sort">↑</span></th>
+          <th>Inactive <span class="sort">↕</span></th>
+          <th>Orders 7d <span class="sort">↕</span></th>
+          <th>Orders 30d <span class="sort">↕</span></th>
+          <th>Revenue 30d <span class="sort">↕</span></th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- 3 days no order -->
+        <tr>
+          <td><div class="rest-name">Welcome Resort</div></td>
+          <td>
+            <div class="last-order-date">24 Jul 2026</div>
+            <div class="last-order-time">3:55 PM</div>
+          </td>
+          <td><span class="inactive-pill ip-ok">3d</span></td>
+          <td><span class="num-big">12</span></td>
+          <td><span class="num-big">51</span></td>
+          <td><span class="rev-positive">₹56,883</span></td>
+          <td><div class="action-cell"><a href="#" class="btn-wa"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a><button class="btn-call">Call</button></div></td>
+        </tr>
+
+        <!-- 7 days no order -->
+        <tr>
+          <td><div class="rest-name">Hyatt Centric</div></td>
+          <td>
+            <div class="last-order-date">20 Jul 2026</div>
+            <div class="last-order-time">11:30 AM</div>
+          </td>
+          <td><span class="inactive-pill ip-low">7d</span></td>
+          <td><span class="num-big rev-zero">0</span></td>
+          <td><span class="num-big">1,614</span></td>
+          <td><span class="rev-positive">₹4,82,000</span></td>
+          <td><div class="action-cell"><a href="#" class="btn-wa"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a><button class="btn-call">Call</button></div></td>
+        </tr>
+
+        <!-- 30 days no order — high revenue -->
+        <tr>
+          <td><div class="rest-name">Royal Bar &amp; Restaurant</div></td>
+          <td>
+            <div class="last-order-date">27 Jun 2026</div>
+            <div class="last-order-time">7:42 PM</div>
+          </td>
+          <td><span class="inactive-pill ip-mid">30d</span></td>
+          <td><span class="num-big rev-zero">0</span></td>
+          <td><span class="num-big rev-zero">0</span></td>
+          <td><span class="rev-positive">₹7,54,455</span></td>
+          <td><div class="action-cell"><a href="#" class="btn-wa"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a><button class="btn-call">Call</button></div></td>
+        </tr>
+
+        <!-- 30 days no order -->
+        <tr>
+          <td><div class="rest-name">Roll Express Patiala</div></td>
+          <td>
+            <div class="last-order-date">27 Jun 2026</div>
+            <div class="last-order-time">2:15 PM</div>
+          </td>
+          <td><span class="inactive-pill ip-mid">30d</span></td>
+          <td><span class="num-big rev-zero">0</span></td>
+          <td><span class="num-big rev-zero">0</span></td>
+          <td><span class="rev-positive">₹6,15,138</span></td>
+          <td><div class="action-cell"><a href="#" class="btn-wa"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a><button class="btn-call">Call</button></div></td>
+        </tr>
+
+        <!-- 30+ days no order -->
+        <tr>
+          <td><div class="rest-name">Pahadi Roots</div></td>
+          <td>
+            <div class="last-order-date">28 Feb 2025</div>
+            <div class="last-order-time">7:23 PM</div>
+          </td>
+          <td><span class="inactive-pill ip-high">514d</span></td>
+          <td><span class="num-big rev-zero">0</span></td>
+          <td><span class="num-big rev-zero">0</span></td>
+          <td class="rev-zero">₹0</td>
+          <td><div class="action-cell"><a href="#" class="btn-wa"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a><button class="btn-call">Call</button></div></td>
+        </tr>
+
+        <!-- 30+ days no order -->
+        <tr>
+          <td><div class="rest-name">Bamboo Yoga</div></td>
+          <td>
+            <div class="last-order-date">16 Dec 2023</div>
+            <div class="last-order-time">6:12 PM</div>
+          </td>
+          <td><span class="inactive-pill ip-high">954d</span></td>
+          <td><span class="num-big rev-zero">0</span></td>
+          <td><span class="num-big rev-zero">0</span></td>
+          <td class="rev-zero">₹0</td>
+          <td><div class="action-cell"><a href="#" class="btn-wa"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a><button class="btn-call">Call</button></div></td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <span>Showing 7 of 278 restaurants</span>
+      <div class="pg-btns">
+        <button class="pg-btn">←</button>
+        <button class="pg-btn active">1</button>
+        <button class="pg-btn">2</button>
+        <button class="pg-btn">3</button>
+        <button class="pg-btn">→</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function filterTable(bucket) {
+  // Update card selected state
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  // Update count label
+  const counts = {'3d':'28','7d':'61','30d':'99','30plus':'104'};
+  document.querySelector('.count-badge').textContent = 'Showing ' + counts[bucket] + ' restaurants  |  Sort: Last Order ↑';
+}
+</script>
+</body>
+</html>

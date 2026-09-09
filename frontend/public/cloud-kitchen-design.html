@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cloud Kitchen Page — Design After Changes</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#e4e8e4}
+:root{--green:#10B981;--green-dk:#059669;--orange:#f26b33;--sand:#F6F8F5;--ink:#14201A;--muted:#5B6B61;--line:#E6EAE6;--deep:#10402A}
+.tabs{display:flex;background:#0d2218;position:sticky;top:0;z-index:200;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.tab{padding:13px 22px;font-size:11px;font-weight:700;color:#5B9070;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;text-transform:uppercase;letter-spacing:.05em}
+.tab.active{color:#10B981;border-color:#10B981;background:#132b1e}
+.page{display:none;max-width:980px;margin:0 auto;padding:24px 16px 40px}
+.page.active{display:block}
+.global-nav{background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:16px 16px 0 0;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+.nav-logo{display:flex;align-items:center;gap:9px}
+.nav-mark{width:28px;height:28px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;color:white;font-size:13px}
+.nav-text{font-weight:800;font-size:17px;color:var(--ink)}
+.nav-links{display:flex;gap:24px;font-size:13px;color:var(--muted)}
+.nav-btn{background:var(--green);color:white;border:none;border-radius:999px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer}
+.note-bar{background:white;border:1px solid var(--line);border-top:none;padding:8px 28px;font-size:11px;color:#9DB1A4}
+.hero{background:linear-gradient(135deg,#fff,#f8fcf9 60%,#f0f9f4);border:1px solid var(--line);border-top:none;padding:64px 28px 52px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;right:-60px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.09),transparent 70%);pointer-events:none}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;position:relative;z-index:1}
+.back{font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:16px}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;background:rgba(242,107,51,.1);color:var(--orange);border-radius:999px;padding:5px 14px;font-size:12px;font-weight:700;margin-bottom:16px}
+.h1{font-size:36px;font-weight:800;color:var(--ink);line-height:1.1;letter-spacing:-.025em;margin-bottom:14px}
+.new-text{color:var(--green);background:rgba(16,185,129,.08);border-radius:5px;padding:0 4px}
+.sub{font-size:14px;color:var(--muted);line-height:1.7;max-width:480px;margin-bottom:20px}
+.sub strong{color:var(--ink)}
+.cta-btn{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:white;border:none;border-radius:999px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 10px 28px rgba(16,185,129,.3);margin-bottom:16px}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.ibadge{display:inline-flex;align-items:center;gap:5px;background:white;border:1.5px solid var(--line);border-radius:9px;padding:6px 11px;font-size:11px;font-weight:700}
+.hero-card{background:var(--deep);border-radius:22px;padding:30px;min-height:300px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;top:-50px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(16,185,129,.2);filter:blur(40px)}
+.card-icon{font-size:28px;margin-bottom:12px;position:relative;z-index:1}
+.card-title{font-size:17px;font-weight:800;color:white;line-height:1.3;position:relative;z-index:1}
+.card-metric{background:white;border-radius:12px;padding:12px 16px;position:relative;z-index:1;margin-top:14px;display:inline-block}
+.card-num{font-size:32px;font-weight:800;color:var(--green);line-height:1}
+.card-label{font-size:11px;color:var(--muted);margin-top:2px}
+.change-note{background:#fffbeb;border:1.5px solid #f59e0b;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:11px;color:#92400e;display:flex;gap:6px}
+.section{background:white;border:1px solid var(--line);border-top:none;padding:48px 28px}
+.section.sand{background:var(--sand)}
+.section.dark{background:var(--deep);border-color:rgba(255,255,255,.08)}
+.s-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--green);margin-bottom:8px}
+.s-h2{font-size:26px;font-weight:800;color:var(--ink);line-height:1.15;letter-spacing:-.02em;margin-bottom:10px}
+.section.dark .s-h2{color:white}
+.s-sub{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:24px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.card{background:white;border:1.5px solid var(--line);border-radius:14px;padding:18px}
+.section.sand .card{background:var(--sand)}
+.card-inner{display:flex;gap:14px;align-items:flex-start}
+.cicon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.g{background:rgba(16,185,129,.1)}
+.o{background:rgba(242,107,51,.1)}
+.ctitle{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.cdesc{font-size:12px;color:var(--muted);line-height:1.6}
+.updated-badge{display:inline-block;background:var(--green);color:white;font-size:9px;font-weight:700;border-radius:4px;padding:2px 6px;margin-left:6px;vertical-align:middle;text-transform:uppercase}
+.proof-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.proof-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px}
+.p-metric{font-size:32px;font-weight:800;color:var(--green);line-height:1}
+.p-head{font-size:12px;font-weight:700;color:white;margin:5px 0 8px}
+.p-quote{font-size:12px;color:#9DB1A4;line-height:1.6;font-style:italic}
+.p-client{font-size:11px;color:#5B9070;margin-top:8px;font-weight:600}
+.faq-list{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.faq-item{background:white;border:1.5px solid var(--line);border-radius:11px;padding:14px 18px}
+.section.sand .faq-item{background:var(--sand)}
+.fq{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:5px}
+.fa{font-size:12px;color:var(--muted);line-height:1.65}
+.demo-sec{background:var(--deep);border:1px solid rgba(255,255,255,.08);border-top:none;padding:48px 28px}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
+.demo-copy h2{font-size:24px;font-weight:800;color:white;line-height:1.2;margin-bottom:10px}
+.demo-copy p{font-size:13px;color:#9DB1A4;line-height:1.7}
+.demo-form{background:white;border-radius:16px;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.ft{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:3px}
+.fs{font-size:12px;color:var(--muted);margin-bottom:15px}
+.fi{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:10px 13px;font-size:13px;margin-bottom:9px;font-family:inherit;outline:none}
+.fi:focus{border-color:var(--green)}
+.fsub{width:100%;background:var(--green);color:white;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.footer{background:#0a2416;border:1px solid rgba(255,255,255,.06);border-radius:0 0 16px 16px;padding:18px 28px;display:flex;gap:20px;font-size:12px;color:#5B9070}
+.footer a{color:#5B9070;text-decoration:none}
+/* diff table */
+.diff-table{width:100%;border-collapse:collapse;font-size:13px}
+.diff-table th{background:var(--ink);color:white;padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.diff-table td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.diff-table tr:nth-child(even) td{background:#fafcfa}
+.before-txt{color:#6b7280}
+.after-txt{color:#15803d;font-weight:600}
+.url-box{border-radius:10px;padding:14px 18px;margin-bottom:10px}
+.url-a{background:#f0fdf4;border:1px solid #bbf7d0}
+.url-b{background:#fef9f0;border:1px solid #fed7aa}
+</style>
+</head>
+<body>
+<div class="tabs">
+  <div class="tab active" onclick="show('after',this)">After Changes (Proposed)</div>
+  <div class="tab" onclick="show('diff',this)">Change Summary</div>
+</div>
+
+<!-- AFTER -->
+<div class="page active" id="after">
+  <div class="global-nav">
+    <div class="nav-logo"><div class="nav-mark">m</div><span class="nav-text">myGenie</span></div>
+    <div class="nav-links"><span>Solutions ▾</span><span>Product ▾</span><span>Pricing</span><span>Customers</span><span>Resources ▾</span></div>
+    <button class="nav-btn">Book a Free Demo</button>
+  </div>
+  <div class="note-bar">Global Navbar stays (sector page, NOT a standalone LP — all nav links remain visible)</div>
+
+  <div class="hero"><div class="hero-inner"><div>
+    <span class="back">← All solutions</span>
+    <div class="eyebrow">🍳 For Cloud Kitchens</div>
+    <h1 class="h1">Cloud kitchen <span class="new-text">POS & billing software</span> — every brand, every order, one screen.</h1>
+    <div class="change-note"><span>✏️</span><div><strong>H1 updated:</strong> Added "& billing software" — now targets both [cloud kitchen pos] (QS 7–8) AND [billing software for cloud kitchen] (QS 5) in one headline.</div></div>
+    <p class="sub" style="margin-top:14px">Juggling Swiggy, Zomato and multiple brands <strong>without proper cloud kitchen billing software</strong> means five tablets and chaos. MyGenie unifies orders, billing, and inventory into one backend.</p>
+    <div class="change-note"><span>✏️</span><div><strong>Sub updated:</strong> "billing software" now appears in the opening paragraph — adds keyword density.</div></div>
+    <button class="cta-btn" style="margin-top:18px">Book a Cloud Kitchen Demo →</button>
+    <div class="badges"><span class="ibadge"><img src="/brand/integrations/swiggy.svg" width="13" height="13"/><span style="color:#FC8019">Swiggy</span></span><span class="ibadge"><img src="/brand/integrations/zomato.svg" width="13" height="13"/><span style="color:#E23744">Zomato</span></span><span class="ibadge"><img src="/brand/integrations/razorpay.svg" width="13" height="13"/><span style="color:#3395FF">Razorpay</span></span><span class="ibadge" style="color:#15803d">✓ GST-ready</span></div>
+  </div>
+  <div class="hero-card"><div><div class="card-icon">👩‍🍳</div><div class="card-title">Cloud Kitchens run better on MyGenie.</div></div><div class="card-metric"><div class="card-num">1</div><div class="card-label">screen for every brand and every aggregator</div></div></div>
+  </div></div>
+
+  <!-- Pains — no change -->
+  <div class="section sand">
+    <h2 class="s-h2">We know cloud kitchens run on tight margins and split-second timing.</h2>
+    <p class="s-sub">Here's what gets in the way — and what MyGenie fixes. <em>(No changes to this section)</em></p>
+    <div class="grid4">
+      <div class="card"><div style="font-size:22px;margin-bottom:10px">📱</div><div class="ctitle">Aggregator juggling</div><div class="cdesc">Swiggy and Zomato orders across multiple tablets and brands.</div></div>
+      <div class="card"><div style="font-size:22px;margin-bottom:10px">🏷️</div><div class="ctitle">Multi-brand chaos</div><div class="cdesc">Separate menus, prices and stock for every brand.</div></div>
+      <div class="card"><div style="font-size:22px;margin-bottom:10px">📦</div><div class="ctitle">Inventory blind spots</div><div class="cdesc">Shared ingredients across brands impossible to track manually.</div></div>
+      <div class="card"><div style="font-size:22px;margin-bottom:10px">⚠️</div><div class="ctitle">Missed orders</div><div class="cdesc">Orders slip through at peak and cost you ratings.</div></div>
+    </div>
+  </div>
+
+  <!-- Solutions — KEY CHANGE -->
+  <div class="section">
+    <div class="s-eyebrow">How MyGenie solves it</div>
+    <h2 class="s-h2">Built for the way cloud kitchens actually work.</h2>
+    <div class="grid2">
+      <div class="card"><div class="card-inner"><div class="cicon g">🔄</div><div><div class="ctitle">Aggregator sync</div><div class="cdesc">Swiggy, Zomato and Magicpin orders flow into one screen. No missed orders.</div></div></div></div>
+      <div class="card" style="border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.03)">
+        <div class="card-inner"><div class="cicon g">🧾</div><div>
+          <div class="ctitle">Cloud kitchen billing software <span class="updated-badge">Updated</span></div>
+          <div class="cdesc">GST-ready billing for every brand. Separate menus, separate invoices, one screen — automatic. No billing machine needed.</div>
+          <div class="change-note" style="margin-top:8px"><span>✏️</span><div>Renamed from "Multi-brand billing" → <strong>"Cloud kitchen billing software"</strong>. Creates a h3 heading matching the QS 5 keyword exactly.</div></div>
+        </div></div>
+      </div>
+      <div class="card"><div class="card-inner"><div class="cicon o">📦</div><div><div class="ctitle">Central inventory</div><div class="cdesc">One shared stock source of truth across all brands. Recipe-level deduction per order.</div></div></div></div>
+      <div class="card"><div class="card-inner"><div class="cicon o">🛵</div><div><div class="ctitle">Direct delivery link</div><div class="cdesc">Commission-free delivery and takeaway orders directly. No aggregator cut.</div></div></div></div>
+    </div>
+  </div>
+
+  <!-- Proof — no change -->
+  <div class="section dark">
+    <h2 class="s-h2">Real cloud kitchens results.</h2>
+    <p style="font-size:12px;color:#5B9070;margin-bottom:4px">(No changes to this section)</p>
+    <div class="proof-grid">
+      <div class="proof-card"><div class="p-metric">40%</div><div class="p-head">lower fixed cost, lean ops</div><div class="p-quote">"We run lean on just a few mobile devices — no front desk, no printers. Monthly fixed cost dropped 40%."</div><div class="p-client">Love Bites</div></div>
+      <div class="proof-card"><div class="p-metric">2×</div><div class="p-head">outlets on one backend</div><div class="p-quote">"MyGenie let us launch a second kitchen on the same backend. Revenue doubled, infra cost stayed flat."</div><div class="p-client">Pavan Pages</div></div>
+    </div>
+  </div>
+
+  <!-- FAQ — 2 new -->
+  <div class="section sand">
+    <div class="s-eyebrow">FAQ</div>
+    <h2 class="s-h2">Cloud kitchen POS & billing software — your questions answered</h2>
+    <div class="change-note" style="margin-bottom:16px"><span>✏️</span><div>FAQ heading updated to include "billing software" — creates another indexed H2 for the QS 5 keyword. 2 new FAQ items added.</div></div>
+    <div class="faq-list">
+      <div class="faq-item"><div class="fq">Which aggregators integrate with the cloud kitchen POS?</div><div class="fa">Swiggy, Zomato and Magicpin sync directly. All orders appear in one screen — no manual entry.</div></div>
+      <div class="faq-item" style="border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.03)"><div class="fq">Is the cloud kitchen billing software GST-compliant? <span style="background:var(--green);color:white;font-size:9px;font-weight:700;border-radius:3px;padding:1px 5px;margin-left:4px">NEW</span></div><div class="fa">Yes — GST-ready bills generated automatically for every brand. Filing-ready reports included at no extra charge.</div></div>
+      <div class="faq-item"><div class="fq">Can I run multiple virtual brands from one kitchen?</div><div class="fa">Yes — each virtual brand gets its own menu, KDS screen, and billing template from one backend account.</div></div>
+      <div class="faq-item" style="border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.03)"><div class="fq">Do I need a billing machine for the cloud kitchen? <span style="background:var(--green);color:white;font-size:9px;font-weight:700;border-radius:3px;padding:1px 5px;margin-left:4px">NEW</span></div><div class="fa">No — MyGenie's cloud kitchen billing software runs on any phone or tablet. No billing machine or dedicated hardware required.</div></div>
+    </div>
+  </div>
+
+  <div class="demo-sec"><div class="demo-grid"><div class="demo-copy"><h2>See the cloud kitchen POS & billing software live</h2><p style="margin-top:10px">20-minute walkthrough — multi-brand billing, aggregator sync, inventory tracking.</p></div><div class="demo-form"><div class="ft">Book a cloud kitchen demo</div><div class="fs">Free · 20 minutes · No commitment</div><input class="fi" placeholder="Your name"/><input class="fi" placeholder="Phone number"/><input class="fi" placeholder="Cloud kitchen / brand name"/><button class="fsub">Book a Free Cloud Kitchen Demo →</button></div></div></div>
+  <div class="footer"><span>© 2026 MyGenie POS</span><a href="#">Privacy Policy</a><a href="#">Terms</a></div>
+</div>
+
+<!-- DIFF -->
+<div class="page" id="diff">
+  <div style="background:white;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:16px">
+    <div style="background:var(--ink);padding:16px 24px"><h2 style="color:white;font-size:18px;font-weight:800">/solutions/cloud-kitchens — Change Summary</h2><p style="color:#9DB1A4;font-size:12px;margin-top:4px">Only sectors.js changes. SectorPage.jsx component untouched.</p></div>
+    <div style="padding:24px">
+      <table class="diff-table">
+        <tr><th>Field</th><th>Before</th><th>After</th><th>QS Impact</th></tr>
+        <tr><td style="font-weight:700">h1</td><td class="before-txt">"Cloud kitchen POS — every brand and aggregator on one screen, one inventory."</td><td class="after-txt">"Cloud kitchen POS & billing software — every brand, every order, one screen."</td><td><span style="background:#f0fdf4;color:#15803d;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700">[billing software for cloud kitchen] QS 5→7+</span></td></tr>
+        <tr><td style="font-weight:700">sub</td><td class="before-txt">"Juggling Swiggy, Zomato…shouldn't mean five tablets and a spreadsheet."</td><td class="after-txt">"…without proper cloud kitchen billing software means five tablets and chaos."</td><td><span style="background:#f0fdf4;color:#15803d;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700">Keyword density ↑</span></td></tr>
+        <tr><td style="font-weight:700">solutions[1].title</td><td class="before-txt">"Multi-brand billing"</td><td class="after-txt">"Cloud kitchen billing software"</td><td><span style="background:#f0fdf4;color:#15803d;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700">Exact keyword as h3 heading</span></td></tr>
+        <tr><td style="font-weight:700">solutions[1].desc</td><td class="before-txt">"Run every brand from one backend with separate menus."</td><td class="after-txt">"GST-ready billing for every brand. Separate menus, separate invoices, one screen."</td><td><span style="background:#f0fdf4;color:#15803d;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700">GST + billing keywords</span></td></tr>
+        <tr><td style="font-weight:700">faqs (2 new)</td><td class="before-txt">No GST or billing software FAQ</td><td class="after-txt">"Is the cloud kitchen billing software GST-compliant?" + "Do I need a billing machine?"</td><td><span style="background:#f0fdf4;color:#15803d;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700">FAQPage JSON-LD + keyword</span></td></tr>
+      </table>
+    </div>
+  </div>
+  <div style="background:white;border:1.5px solid #f59e0b;border-radius:12px;padding:18px 22px;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:800;color:#92400e;margin-bottom:10px">⚠️ URL Decision (owner to confirm)</div>
+    <div class="url-box url-a"><div style="font-size:12px;font-weight:700;color:#15803d;margin-bottom:5px">Option A — Keep /solutions/cloud-kitchens (recommended)</div><div style="font-size:12px;color:#4b7a5d">No URL change. Update ads Final URL to match. Existing SEO ranking preserved. Zero redirect work.</div></div>
+    <div class="url-box url-b" style="margin-top:8px"><div style="font-size:12px;font-weight:700;color:#b45309;margin-bottom:5px">Option B — Change to /solutions/cloud-kitchen (brief says this)</div><div style="font-size:12px;color:#7c5a2a">Change slug in sectors.js, add 301 redirect, update sitemap + ads. Breaks existing indexed URL during transition.</div></div>
+  </div>
+  <div style="background:white;border:1px solid var(--line);border-radius:12px;padding:18px 22px">
+    <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:10px">What stays the same</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:var(--muted)">
+      <div>✓ Global Navbar (all nav links — sector page, not LP)</div>
+      <div>✓ Page title: "Cloud Kitchens POS System & Billing Software" (already correct)</div>
+      <div>✓ Pain points section (4 cards) — no changes</div>
+      <div>✓ Proof/testimonials (Love Bites, Pavan Pages) — no changes</div>
+      <div>✓ SectorPage.jsx component — untouched</div>
+      <div>✓ BreadcrumbList schema (CR-91 already implemented)</div>
+      <div>✓ StickyMobileCta (slides up on scroll)</div>
+      <div>✓ DemoForm at bottom of page</div>
+    </div>
+  </div>
+</div>
+<script>
+function show(id,el){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');el.classList.add('active');window.scrollTo(0,0)}
+</script>
+</body>
+</html>

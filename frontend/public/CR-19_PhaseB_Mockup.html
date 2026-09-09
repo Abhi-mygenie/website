@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-19 Phase B — Keyword Cost Mockup</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { background: #f8fafc; font-family: 'Inter', -apple-system, sans-serif; }
+  .amber-col { background: rgba(251, 191, 36, 0.06); }
+</style>
+</head>
+<body class="p-8 max-w-7xl mx-auto">
+
+<!-- Title -->
+<div class="mb-8">
+  <h1 class="text-2xl font-bold text-slate-900">CR-19 Phase B — Keyword-Level Cost Data</h1>
+  <p class="text-sm text-slate-500 mt-1">Mockup: Before vs After uploading Google Ads Keywords CSV</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- BEFORE: Current State -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="mb-12">
+  <div class="flex items-center gap-3 mb-4">
+    <span class="inline-block bg-red-100 text-red-700 text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full">BEFORE (Current)</span>
+    <span class="text-sm text-slate-400">Cost columns are blank — no keyword-level spend data</span>
+  </div>
+
+  <!-- Header + tab toggle -->
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h3 class="text-sm font-semibold text-slate-800">Attribution Performance</h3>
+      <p class="text-xs text-slate-400 mt-0.5">New leads only — requires UTM tracking on ad URLs</p>
+    </div>
+    <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs font-medium">
+      <button class="px-4 py-1.5 bg-slate-800 text-white">By Keyword</button>
+      <button class="px-4 py-1.5 bg-white text-slate-500 border-l border-slate-200">By Ad Set</button>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-slate-50 border-b border-slate-200">
+        <tr>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Keyword</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Source</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Leads</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Demo Sched.</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Sched %</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Demo Given</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Given %</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Won</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Lead→Win %</th>
+          <!-- NO cost columns shown currently -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+          <td class="px-4 py-3"><span class="font-mono text-xs bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">restaurant pos software</span></td>
+          <td class="px-4 py-3"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-xs text-slate-600">Google</span></span></td>
+          <td class="px-4 py-3 font-semibold text-slate-800">42</td>
+          <td class="px-4 py-3 text-slate-600">18</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50">42.9%</span></td>
+          <td class="px-4 py-3 text-slate-600">14</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50">77.8%</span></td>
+          <td class="px-4 py-3 font-semibold text-emerald-600">3</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50">7.1%</span></td>
+        </tr>
+        <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+          <td class="px-4 py-3"><span class="font-mono text-xs bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">billing software restaurant</span></td>
+          <td class="px-4 py-3"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-xs text-slate-600">Google</span></span></td>
+          <td class="px-4 py-3 font-semibold text-slate-800">28</td>
+          <td class="px-4 py-3 text-slate-600">10</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50">35.7%</span></td>
+          <td class="px-4 py-3 text-slate-600">8</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-amber-600 bg-amber-50">80.0%</span></td>
+          <td class="px-4 py-3 font-semibold text-emerald-600">2</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-amber-600 bg-amber-50">7.1%</span></td>
+        </tr>
+        <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+          <td class="px-4 py-3"><span class="font-mono text-xs bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">pos system for cafe</span></td>
+          <td class="px-4 py-3"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-xs text-slate-600">Google</span></span></td>
+          <td class="px-4 py-3 font-semibold text-slate-800">15</td>
+          <td class="px-4 py-3 text-slate-600">4</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-amber-600 bg-amber-50">26.7%</span></td>
+          <td class="px-4 py-3 text-slate-600">3</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-amber-600 bg-amber-50">75.0%</span></td>
+          <td class="px-4 py-3 font-semibold text-emerald-600">1</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100">6.7%</span></td>
+        </tr>
+        <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+          <td class="px-4 py-3"><span class="font-mono text-xs bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">cloud kitchen management</span></td>
+          <td class="px-4 py-3"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-xs text-slate-600">Google</span></span></td>
+          <td class="px-4 py-3 font-semibold text-slate-800">9</td>
+          <td class="px-4 py-3 text-slate-600">2</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100">22.2%</span></td>
+          <td class="px-4 py-3 text-slate-600">1</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100">50.0%</span></td>
+          <td class="px-4 py-3 font-semibold text-slate-400">0</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100">0%</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="text-xs text-slate-400 mt-2">94 leads with keyword attribution · sorted by leads</p>
+  <div class="mt-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 text-xs text-amber-700">
+    <strong>Notice:</strong> No Spend / CPL / CP Demo / CP Win columns — keyword cost data not available.
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- AFTER: With Keyword Cost Data -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="mb-12">
+  <div class="flex items-center gap-3 mb-4">
+    <span class="inline-block bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full">AFTER (With Keywords CSV uploaded)</span>
+    <span class="text-sm text-slate-400">Cost columns populated — full keyword ROI visible</span>
+  </div>
+
+  <!-- Header + tab toggle -->
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h3 class="text-sm font-semibold text-slate-800">Attribution Performance</h3>
+      <p class="text-xs text-slate-400 mt-0.5">New leads only — requires UTM tracking on ad URLs</p>
+    </div>
+    <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs font-medium">
+      <button class="px-4 py-1.5 bg-slate-800 text-white">By Keyword</button>
+      <button class="px-4 py-1.5 bg-white text-slate-500 border-l border-slate-200">By Ad Set</button>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-slate-50 border-b border-slate-200">
+        <tr>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Keyword</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Source</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Leads</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Demo Sched.</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Sched %</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Demo Given</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Given %</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Won</th>
+          <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wide">Lead→Win %</th>
+          <!-- NEW: Cost columns (amber headers) -->
+          <th class="px-4 py-3 text-xs font-semibold text-amber-600 uppercase tracking-wide bg-amber-50/40 border-l border-slate-200">Spend</th>
+          <th class="px-4 py-3 text-xs font-semibold text-amber-600 uppercase tracking-wide bg-amber-50/40">CPL</th>
+          <th class="px-4 py-3 text-xs font-semibold text-amber-600 uppercase tracking-wide bg-amber-50/40">CP Demo</th>
+          <th class="px-4 py-3 text-xs font-semibold text-amber-600 uppercase tracking-wide bg-amber-50/40">CP Win</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Row 1: restaurant pos software — BEST performer -->
+        <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+          <td class="px-4 py-3"><span class="font-mono text-xs bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">restaurant pos software</span></td>
+          <td class="px-4 py-3"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-xs text-slate-600">Google</span></span></td>
+          <td class="px-4 py-3 font-semibold text-slate-800">42</td>
+          <td class="px-4 py-3 text-slate-600">18</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50">42.9%</span></td>
+          <td class="px-4 py-3 text-slate-600">14</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50">77.8%</span></td>
+          <td class="px-4 py-3 font-semibold text-emerald-600">3</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50">7.1%</span></td>
+          <!-- Cost columns -->
+          <td class="px-4 py-3 amber-col border-l border-slate-100"><span class="font-semibold text-amber-700 text-xs">₹48,389</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹1,152</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹3,456</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹16,130</span></td>
+        </tr>
+        <!-- Row 2 -->
+        <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+          <td class="px-4 py-3"><span class="font-mono text-xs bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">billing software restaurant</span></td>
+          <td class="px-4 py-3"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-xs text-slate-600">Google</span></span></td>
+          <td class="px-4 py-3 font-semibold text-slate-800">28</td>
+          <td class="px-4 py-3 text-slate-600">10</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50">35.7%</span></td>
+          <td class="px-4 py-3 text-slate-600">8</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-amber-600 bg-amber-50">80.0%</span></td>
+          <td class="px-4 py-3 font-semibold text-emerald-600">2</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-amber-600 bg-amber-50">7.1%</span></td>
+          <td class="px-4 py-3 amber-col border-l border-slate-100"><span class="font-semibold text-amber-700 text-xs">₹25,118</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹897</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹3,140</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹12,559</span></td>
+        </tr>
+        <!-- Row 3 -->
+        <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+          <td class="px-4 py-3"><span class="font-mono text-xs bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">pos system for cafe</span></td>
+          <td class="px-4 py-3"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-xs text-slate-600">Google</span></span></td>
+          <td class="px-4 py-3 font-semibold text-slate-800">15</td>
+          <td class="px-4 py-3 text-slate-600">4</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-amber-600 bg-amber-50">26.7%</span></td>
+          <td class="px-4 py-3 text-slate-600">3</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-amber-600 bg-amber-50">75.0%</span></td>
+          <td class="px-4 py-3 font-semibold text-emerald-600">1</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100">6.7%</span></td>
+          <td class="px-4 py-3 amber-col border-l border-slate-100"><span class="font-semibold text-amber-700 text-xs">₹12,400</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹827</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹4,133</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹12,400</span></td>
+        </tr>
+        <!-- Row 4: No cost data (keyword not in CSV) -->
+        <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+          <td class="px-4 py-3"><span class="font-mono text-xs bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">cloud kitchen management</span></td>
+          <td class="px-4 py-3"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-xs text-slate-600">Google</span></span></td>
+          <td class="px-4 py-3 font-semibold text-slate-800">9</td>
+          <td class="px-4 py-3 text-slate-600">2</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100">22.2%</span></td>
+          <td class="px-4 py-3 text-slate-600">1</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100">50.0%</span></td>
+          <td class="px-4 py-3 font-semibold text-slate-400">0</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100">0%</span></td>
+          <!-- No cost data for this keyword -->
+          <td class="px-4 py-3 amber-col border-l border-slate-100"><span class="text-slate-300">—</span></td>
+          <td class="px-4 py-3 amber-col"><span class="text-slate-300">—</span></td>
+          <td class="px-4 py-3 amber-col"><span class="text-slate-300">—</span></td>
+          <td class="px-4 py-3 amber-col"><span class="text-slate-300">—</span></td>
+        </tr>
+        <!-- Row 5: Another keyword with cost -->
+        <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+          <td class="px-4 py-3"><span class="font-mono text-xs bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">restaurant management app</span></td>
+          <td class="px-4 py-3"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-xs text-slate-600">Google</span></span></td>
+          <td class="px-4 py-3 font-semibold text-slate-800">6</td>
+          <td class="px-4 py-3 text-slate-600">1</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100">16.7%</span></td>
+          <td class="px-4 py-3 text-slate-600">1</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50">100%</span></td>
+          <td class="px-4 py-3 font-semibold text-emerald-600">1</td>
+          <td class="px-4 py-3"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50">16.7%</span></td>
+          <td class="px-4 py-3 amber-col border-l border-slate-100"><span class="font-semibold text-amber-700 text-xs">₹3,439</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹573</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹3,439</span></td>
+          <td class="px-4 py-3 amber-col"><span class="font-semibold text-slate-700 text-xs">₹3,439</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="text-xs text-slate-400 mt-2">94 leads with keyword attribution · sorted by leads · * Spend data period: 2025-07-07 – 2026-06-23</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- KEY INSIGHT CALLOUT -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="bg-white border-2 border-emerald-200 rounded-xl p-6 mb-12">
+  <h3 class="text-sm font-bold text-emerald-800 uppercase tracking-wide mb-3">What This Tells You (Decision Power)</h3>
+  <div class="grid grid-cols-3 gap-6 text-sm">
+    <div>
+      <div class="text-xs text-slate-400 uppercase tracking-wide mb-1">Best CPL</div>
+      <div class="font-mono font-bold text-lg text-slate-900">₹573</div>
+      <div class="text-xs text-slate-500">"restaurant management app"</div>
+      <div class="text-xs text-emerald-600 font-semibold mt-1">→ Increase budget here</div>
+    </div>
+    <div>
+      <div class="text-xs text-slate-400 uppercase tracking-wide mb-1">Best CP Win</div>
+      <div class="font-mono font-bold text-lg text-slate-900">₹3,439</div>
+      <div class="text-xs text-slate-500">"restaurant management app"</div>
+      <div class="text-xs text-emerald-600 font-semibold mt-1">→ Cheapest won customer</div>
+    </div>
+    <div>
+      <div class="text-xs text-slate-400 uppercase tracking-wide mb-1">Most Volume + Wins</div>
+      <div class="font-mono font-bold text-lg text-slate-900">42 leads → 3 won</div>
+      <div class="text-xs text-slate-500">"restaurant pos software"</div>
+      <div class="text-xs text-amber-600 font-semibold mt-1">→ High spend (₹48K) but reliable pipeline</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- UPLOAD FLOW (no change needed) -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="mb-8">
+  <div class="flex items-center gap-3 mb-4">
+    <span class="inline-block bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full">UPLOAD FLOW</span>
+    <span class="text-sm text-slate-400">Same Ad Spend Upload section — auto-detects the report type</span>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-lg shadow-sm p-5 max-w-2xl">
+    <h3 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Ad Spend Upload</h3>
+
+    <div class="flex gap-3 mb-4">
+      <label class="flex items-center gap-1.5 text-sm">
+        <input type="radio" checked class="accent-emerald-600">
+        <span class="font-semibold text-slate-800">Auto-detect</span>
+      </label>
+      <label class="flex items-center gap-1.5 text-sm">
+        <input type="radio" class="accent-emerald-600">
+        <span class="text-slate-500">Google Ads</span>
+      </label>
+      <label class="flex items-center gap-1.5 text-sm">
+        <input type="radio" class="accent-emerald-600">
+        <span class="text-slate-500">Meta Ads</span>
+      </label>
+    </div>
+
+    <div class="border-2 border-dashed border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-500">
+      📄 Choose Google Ads Campaign, <strong class="text-blue-600">Google Ads Keywords</strong>, or Meta CSV file
+    </div>
+
+    <div class="mt-4 bg-blue-50 border border-blue-100 rounded-lg p-3 text-xs text-blue-700">
+      <strong>New:</strong> Now supports Google Ads <strong>Keywords report</strong> — the system auto-detects it from the "Keyword" column header. This populates CPL/CP Demo/CP Win in the "By Keyword" tab.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CHANGE SUMMARY -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="bg-slate-800 text-white rounded-xl p-6">
+  <h3 class="text-sm font-bold uppercase tracking-wide mb-4 text-slate-300">Change Summary</h3>
+  <div class="grid grid-cols-2 gap-6">
+    <div>
+      <h4 class="text-xs text-slate-400 uppercase tracking-wide mb-2">Files Changed</h4>
+      <ul class="space-y-1 text-sm">
+        <li><span class="text-amber-400">M</span> backend/ad_spend.py — <span class="text-slate-400">new keyword parser</span></li>
+        <li><span class="text-amber-400">M</span> backend/funnel.py — <span class="text-slate-400">keyword spend lookup</span></li>
+        <li><span class="text-amber-400">M</span> frontend/.../AttributionBreakdown.jsx — <span class="text-slate-400">show cost cols</span></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs text-slate-400 uppercase tracking-wide mb-2">What Stays The Same</h4>
+      <ul class="space-y-1 text-sm text-slate-400">
+        <li>✓ Existing Campaign CSV parser — untouched</li>
+        <li>✓ Existing Meta CSV parser — untouched</li>
+        <li>✓ API endpoints — no new routes</li>
+        <li>✓ Database schema — no new collections</li>
+        <li>✓ "By Ad Set" tab — unchanged</li>
+        <li>✓ Upload flow — unchanged (auto-detect)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
