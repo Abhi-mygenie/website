@@ -24,7 +24,7 @@
 | CR-49 | Attribution Field Redundancy Cleanup | ✅ **DONE** | LOW-MED | `server.py` L254–256: `latest_medium`/`latest_campaign` intentionally no longer written |
 | CR-50 | Calendly Overlay CSS Missing | ✅ **DONE** | — | `DemoForm.jsx` stage machine: `["form","otp","calendly"]`; `CalendlyInline.jsx` component present |
 | CR-51 | Persist `event_id` in `demo_requests` Mongo doc | ✅ **DONE** | — | `server.py` L362–366: CR-51 comment + `doc['event_id'] = payload.event_id` |
-| CR-52 | Server-Observable Browser Pixel Heartbeat | 🔲 Open | MEDIUM | No heartbeat/ping mechanism found in frontend or backend |
+| CR-52 | Server-Observable Browser Pixel Heartbeat | ⏸️ **CLOSED by owner 2026-09-09** — Events confirmed fine, diagnostic tooling not needed at this stage | LOW | — |
 | CR-53 | Backend-Driven Meta CAPI Mirror | ⏸️ **Owner said NO** — do not implement | HIGH | Confirmed closed per handover |
 | CR-57 | Sector-Page Demo Anchor Lands on Heading not Form (mobile) | ✅ **DONE** | — | `SectorPage.jsx` L269: `id="sector-demo"` div has `scroll-mt-20` (80px); StickyMobileCta uses `scrollIntoView({block:"center"})` |
 | CR-58 | Record pathname at Demo CTA click → latest_source | ⏸️ Backlog ("later") | P2 | Owner deferred |
