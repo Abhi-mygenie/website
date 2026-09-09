@@ -2,10 +2,34 @@
 
 **Registered:** 2026-09-05
 **Source:** Production Lighthouse audit — `www.mygenie.online` (3rd-party code 1,580ms blocking)
-**Status:** 🔲 Open — 👤 Owner action (GTM dashboard only, no code change)
+**Status:** 🔄 In Progress — Step 1 DONE · Steps 2–3 pending morning session
 **Priority:** P1
 **Owner:** GTM dashboard access required
 **File:** GTM container `GTM-K5D84Z3L` — tag configuration change only
+
+---
+
+## Progress Log
+
+### 2026-09-09 — Investigation + Step 1 DONE ✅
+
+**Investigation findings (from live GTM container JS, version 120):**
+- Confirmed Tag 85 (Google Analytics - GA4) and Tag 100 (Google Tag AW-16740091756) are both
+  `__googtag` type with NO `linked_id` / `vtp_linkedId` between them → two independent gtag.js downloads confirmed
+- GA4 Admin → Data Streams → Manage connected site tags showed **"0 connected"** — AW-16740091756
+  was never registered as a connected destination
+
+**Step 1 DONE:** GA4 Admin → Data Streams → Manage connected site tags
+- Connected: `AW-16740091756`
+- Nickname: `Google Ads — AW-16740091756`
+- Status: ✅ Connected (overlap period — both GTM tag AND connected site tag now initialise AW)
+
+**Pending — morning session:**
+- Step 2: Validate on `www.mygenie.online` — verify remarketing pixel (rmkt/collect 200), GA4 still
+  firing, conversion tag still works in GTM Preview
+- Step 3: GTM → Pause "Google Tag AW-16740091756" → Publish → monitor 24h → Delete → Publish final
+
+**Expected saving once complete:** −179 KB, −308ms blocking per page load
 
 ---
 
