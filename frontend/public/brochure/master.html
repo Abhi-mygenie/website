@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#10B981; --green-d:#059669; --orange:#FF6B00; --yellow:#FFE100;
+    --deep:#0C2A1A; --deep2:#14331F; --ink:#14201A; --muted:#5B6B61; --sand:#F6F8F5; --line:#E6EAE6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  @page{ size:A4; margin:0; }
+  body{ font-family:'Poppins',sans-serif; color:var(--ink); }
+  .disp{ font-family:'Clash Display','Poppins',sans-serif; font-weight:700; letter-spacing:-0.01em; word-spacing:0.04em; }
+  .page{ width:210mm; height:297mm; padding:13mm; position:relative; overflow:hidden; page-break-after:always; display:flex; flex-direction:column; }
+  .page:last-child{ page-break-after:auto; }
+  .deepbg{ background:var(--deep); color:#fff; }
+  .deep2bg{ background:var(--deep2); color:#fff; }
+  .sandbg{ background:var(--sand); }
+  .inkbg{ background:var(--ink); color:var(--sand); }
+  .over{ font-size:11pt; font-weight:700; letter-spacing:3px; text-transform:uppercase; }
+  .glow{ position:absolute; border-radius:50%; filter:blur(70px); }
+  .logo-chip{ display:inline-flex; background:#fff; border-radius:16px; padding:12px 20px; }
+  .logo-chip img{ height:44px; display:block; }
+  .pill{ display:inline-block; background:var(--green); color:#fff; font-weight:700; font-size:12pt; padding:13px 28px; border-radius:999px; }
+  .ic{ width:60px; height:60px; stroke:var(--green); stroke-width:1.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .chk{ width:18px;height:18px;stroke:var(--green);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none; }
+
+  /* ---------- COVER ---------- */
+  .cover-head{ display:flex; justify-content:space-between; align-items:center; }
+  .cover-mid{ flex:1; display:flex; flex-direction:column; justify-content:center; }
+  .cover-h1{ font-size:60pt; line-height:.9; letter-spacing:-0.03em; max-width:175mm; }
+  .stat-block{ margin:0 -13mm -13mm -13mm; background:var(--orange); padding:11mm 13mm 12mm; position:relative; overflow:hidden; }
+  .stat-wm{ position:absolute; right:-6mm; top:-14mm; font-size:230pt; line-height:1; color:rgba(255,255,255,.16); font-weight:700; }
+
+  /* ---------- PROBLEM ---------- */
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:7mm; flex:1; }
+  .pcard{ border:2px solid var(--line); background:#fff; border-radius:16px; padding:8mm; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; }
+  .pcard .wm{ position:absolute; top:4mm; right:6mm; font-size:76pt; line-height:1; color:rgba(20,32,26,.07); font-weight:700; }
+  .pcard h4{ font-size:19pt; font-weight:700; margin-bottom:4mm; position:relative; }
+  .pcard p{ font-size:11pt; color:var(--muted); line-height:1.45; position:relative; }
+  .pcard .bar{ width:42px;height:5px;background:var(--orange);border-radius:3px;margin-bottom:5mm;position:relative; }
+
+  /* ---------- SOLUTION ---------- */
+  .sol-hero{ background:var(--deep2); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:8mm; display:flex; gap:8mm; align-items:center; }
+  .sol-grid{ display:grid; grid-template-columns:1fr 1fr; gap:6mm; flex:1; }
+  .sol-card{ background:var(--deep2); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:7mm; display:flex; flex-direction:column; }
+  .sol-card h4{ font-size:15pt; font-weight:700; margin:5mm 0 2mm; }
+  .sol-card p{ font-size:10pt; color:rgba(255,255,255,.7); line-height:1.45; }
+
+  /* ---------- PROOF ---------- */
+  .proof-top{ flex:1; display:flex; flex-direction:column; }
+  .metrics{ display:grid; grid-template-columns:1fr 1fr; gap:6mm 8mm; margin-top:6mm; }
+  .metric .num{ font-size:62pt; line-height:.88; }
+  .metric .lbl{ font-size:10.5pt; color:var(--muted); margin-top:2mm; line-height:1.35; }
+  .proof-bot{ margin:8mm -13mm -13mm; background:var(--deep); color:#fff; padding:11mm 13mm 12mm; position:relative; }
+  .qmark{ font-size:90pt; line-height:.5; color:var(--yellow); font-family:Georgia,serif; }
+  .logostrip{ display:flex; gap:5mm; margin-top:7mm; }
+  .logostrip span{ height:13mm; flex:1; border-radius:9px; background:var(--deep2); border:1px solid rgba(255,255,255,.08); }
+
+  /* ---------- AI ---------- */
+  .ai-wm{ position:absolute; right:-4mm; top:24mm; font-size:200pt; font-weight:700; color:rgba(16,185,129,.07); letter-spacing:-0.04em; }
+  .ai-list{ flex:1; display:flex; flex-direction:column; position:relative; }
+  .ai-row{ flex:1; display:flex; gap:8mm; align-items:center; border-top:1.5px solid var(--line); padding:5mm 0; }
+  .ai-row:last-child{ border-bottom:1.5px solid var(--line); }
+  .ai-row .n{ font-family:'Clash Display'; font-weight:700; font-size:34pt; color:var(--green); width:70px; flex:none; }
+  .ai-row h4{ font-size:18pt; font-weight:700; }
+  .ai-row p{ font-size:11pt; color:var(--muted); margin-top:1mm; }
+
+  /* ---------- SECTORS ---------- */
+  .sec-grid{ flex:1; display:grid; grid-template-columns:repeat(3,1fr); grid-auto-rows:1fr; border-left:1px solid var(--line); border-top:1px solid var(--line); margin-top:7mm; }
+  .sec-cell{ border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:6mm; display:flex; flex-direction:column; justify-content:space-between; }
+  .sec-cell .idx{ font-size:9pt; color:var(--muted); font-weight:600; }
+  .sec-cell h4{ font-size:14.5pt; font-weight:700; line-height:1.1; }
+  .sec-cell.brand{ background:var(--green); color:#fff; }
+  .sec-dot{ width:10px;height:10px;border-radius:3px;background:var(--green); }
+
+  /* ---------- PRICING ---------- */
+  .rot{ position:absolute; left:2mm; top:50%; transform:translateY(-50%) rotate(-90deg); transform-origin:center; font-size:13pt; font-weight:700; letter-spacing:5px; color:var(--line); text-transform:uppercase; white-space:nowrap; }
+  .ptable{ flex:1; display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:0; border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-top:6mm; }
+  .pcol{ border-right:1px solid var(--line); display:flex; flex-direction:column; }
+  .pcol:last-child{ border-right:none; }
+  .pcol.dark{ background:var(--deep); color:#fff; }
+  .pcol .ph{ padding:6mm 5mm; border-bottom:1px solid var(--line); }
+  .pcol.dark .ph{ border-color:rgba(255,255,255,.12); }
+  .pcol .nm{ font-family:'Clash Display'; font-weight:700; font-size:15pt; }
+  .pcol .tg{ font-size:8.5pt; color:var(--muted); margin-top:1mm; line-height:1.3; min-height:9mm; }
+  .pcol.dark .tg{ color:rgba(255,255,255,.65); }
+  .frow{ font-size:9pt; padding:3.4mm 5mm; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:6px; }
+  .pcol.dark .frow{ border-color:rgba(255,255,255,.1); }
+  .frow .dash{ color:var(--line); font-weight:700; }
+  .badge-pop{ display:inline-block; background:var(--green); color:#fff; font-size:7.5pt; font-weight:700; padding:3px 10px; border-radius:999px; letter-spacing:.5px; margin-bottom:3mm; }
+  .reassure{ background:var(--sand); border-radius:0; padding:6mm; font-size:10pt; font-weight:500; text-align:center; }
+
+  /* ---------- BACK ---------- */
+  .back-cta{ font-size:40pt; line-height:.95; max-width:165mm; }
+  .qr-card{ background:#fff; border-radius:18px; padding:7mm; display:flex; gap:7mm; align-items:center; }
+  .qr-card img{ width:34mm; height:34mm; }
+  .contact-big{ font-size:17pt; font-weight:600; line-height:1.9; }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1 — COVER ============ -->
+<div class="page deepbg" data-testid="page-cover">
+  <div class="glow" style="width:360px;height:360px;background:var(--green);opacity:.45;top:-110px;right:-90px;"></div>
+  <div class="cover-head" style="position:relative;align-items:flex-start;">
+    <div>
+      <div class="logo-chip"><img src="/brochure/logo.svg"/></div>
+      <div class="disp" style="color:var(--yellow);font-size:13pt;margin-top:5mm;letter-spacing:0.01em;">Streamlined Hospitality. Exceptional Experience.</div>
+    </div>
+    <div class="over" style="color:var(--green);font-size:9.5pt;margin-top:4mm;">The Hospitality Operating System</div>
+  </div>
+  <div class="cover-mid" style="position:relative;">
+    <h1 class="disp cover-h1">Run a more profitable hospitality business — <span style="color:var(--yellow);">from your phone.</span></h1>
+    <p style="font-size:13pt;color:rgba(255,255,255,.8);margin-top:8mm;max-width:150mm;line-height:1.5;">POS, kitchen, inventory, customers and reporting — one operating system for cafés, restaurants, hotels and chains.</p>
+  </div>
+  <div class="stat-block" data-testid="cover-stat">
+    <div class="stat-wm disp">25%</div>
+    <div style="position:relative;color:#fff;">
+      <div style="font-size:14pt;font-weight:600;">Up to</div>
+      <div class="disp" style="font-size:96pt;line-height:.85;">25%</div>
+      <div style="font-size:20pt;font-weight:700;margin-top:1mm;">more profit*</div>
+      <div style="font-size:8pt;opacity:.8;margin-top:4mm;">*Based on internal case studies. Individual results may vary.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 2 — PROBLEM ============ -->
+<div class="page sandbg" data-testid="page-problem">
+  <div class="over" style="color:var(--green);">The Daily Reality</div>
+  <h2 class="disp" style="font-size:38pt;line-height:.98;margin-top:4mm;max-width:170mm;">Running hospitality shouldn't feel like firefighting.</h2>
+  <p style="font-size:12pt;color:var(--muted);margin-top:4mm;max-width:165mm;line-height:1.45;">Most owners lose money they never even see — to leakage, slow service, and blind spots across outlets.</p>
+  <div class="grid2" style="margin-top:7mm;">
+    <div class="pcard"><div class="wm disp">01</div><div class="bar"></div><h4>Silent leakage &amp; theft</h4><p>Voids, discounts and post-payment edits quietly drain your margin.</p></div>
+    <div class="pcard"><div class="wm disp">02</div><div class="bar"></div><h4>Slow service</h4><p>Queues, order mix-ups and lost kitchen chits cost you covers.</p></div>
+    <div class="pcard"><div class="wm disp">03</div><div class="bar"></div><h4>Staff dependency</h4><p>The business stops the moment you're not on the floor.</p></div>
+    <div class="pcard"><div class="wm disp">04</div><div class="bar"></div><h4>No visibility</h4><p>You can't fix what you can't see across every outlet.</p></div>
+  </div>
+  <p class="disp" style="font-size:17pt;color:var(--green);margin-top:6mm;">There's a calmer, more profitable way to run it. →</p>
+</div>
+
+<!-- ============ PAGE 3 — SOLUTION ============ -->
+<div class="page inkbg" data-testid="page-solution">
+  <div class="over" style="color:var(--green);">One System, Not Ten Tools</div>
+  <h2 class="disp" style="font-size:36pt;line-height:.98;margin-top:4mm;color:#fff;">One operating system.<br/>Every kind of outlet.</h2>
+  <div class="sol-hero" style="margin-top:6mm;">
+    <svg class="ic" viewBox="0 0 24 24" style="width:72px;height:72px;"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    <div><h3 class="disp" style="font-size:24pt;color:#fff;">Sell &amp; Serve Faster</h3><p style="font-size:11.5pt;color:rgba(255,255,255,.72);margin-top:2mm;max-width:120mm;line-height:1.45;">POS, Captain app, KOT/KDS, Scan &amp; Order and direct delivery — bill in seconds, even at peak rush.</p></div>
+  </div>
+  <div class="sol-grid" style="margin-top:6mm;">
+    <div class="sol-card"><svg class="ic" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg><h4>Run the Whole Property</h4><p>Hotel/room billing, food courts, offline mode — one consolidated checkout bill.</p></div>
+    <div class="sol-card"><svg class="ic" viewBox="0 0 24 24"><path d="M11 14a3 3 0 0 1 0-6h.5"/><path d="m18 15-2-2"/><path d="M20.4 14.5 16 10 12 14"/><path d="M2 12a10 10 0 1 0 20 0 10 10 0 0 0-20 0Z"/></svg><h4>Bring Customers Back</h4><p>CRM, loyalty, wallet, coupons and WhatsApp automation that lift repeat visits.</p></div>
+    <div class="sol-card"><svg class="ic" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/><path d="m9 12 2 2 4-4"/></svg><h4>Protect Your Profit</h4><p>Inventory, central stock, audit logs and smart validations stop leakage at source.</p></div>
+    <div class="sol-card"><svg class="ic" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><h4>See Everything</h4><p>Owner dashboard, reports, recipe-level P&amp;L and GST/VAT — live, from anywhere.</p></div>
+  </div>
+  <p style="font-size:11pt;font-weight:600;color:var(--yellow);margin-top:6mm;letter-spacing:.3px;">Go live in under 48 hours · Works offline · Runs on a few phones</p>
+</div>
+
+<!-- ============ PAGE 4 — PROOF ============ -->
+<div class="page sandbg" data-testid="page-proof" style="padding-bottom:0;">
+  <div class="proof-top">
+    <div class="over" style="color:var(--green);">Real Owners. Real Numbers.</div>
+    <h2 class="disp" style="font-size:38pt;line-height:.96;margin-top:4mm;max-width:165mm;">The numbers owners actually see.</h2>
+    <div class="metrics">
+      <div class="metric"><div class="num disp" style="color:var(--orange);">₹1 Lakh</div><div class="lbl">leakage caught in 2 weeks — Rhino</div></div>
+      <div class="metric"><div class="num disp" style="color:var(--green);">40%</div><div class="lbl">lower fixed cost — Love Bites</div></div>
+      <div class="metric"><div class="num disp" style="color:var(--green);">+22%</div><div class="lbl">covers per shift — Terraria</div></div>
+      <div class="metric"><div class="num disp" style="color:var(--orange);">2×</div><div class="lbl">revenue, flat cost — Pavan Pages</div></div>
+    </div>
+  </div>
+  <div class="proof-bot">
+    <div class="qmark">&rdquo;</div>
+    <p style="font-size:16pt;font-weight:500;line-height:1.4;max-width:160mm;margin-top:-4mm;">MyGenie showed us exactly where money was leaking. We caught it in two weeks.</p>
+    <div class="logostrip"><span></span><span></span><span></span><span></span><span></span></div>
+    <div style="margin-top:8mm;display:flex;align-items:center;gap:6mm;">
+      <span class="pill">Book a demo</span>
+      <span style="font-size:11pt;color:rgba(255,255,255,.7);">See it on your own data.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 5 — AI ============ -->
+<div class="page" data-testid="page-ai" style="background:#fff;">
+  <div class="ai-wm disp">AI</div>
+  <div class="over" style="color:var(--green);">Practical AI by MyGenie</div>
+  <h2 class="disp" style="font-size:36pt;line-height:.98;margin-top:4mm;max-width:165mm;">AI that works on the floor — not in a pitch deck.</h2>
+  <div class="ai-list" style="margin-top:5mm;">
+    <div class="ai-row"><div class="n disp">01</div><div><h4>Menu in minutes</h4><p>Upload your menu — AI builds items, categories and prices. Live in minutes, not days.</p></div></div>
+    <div class="ai-row"><div class="n disp">02</div><div><h4>Catch what's hurting profit</h4><p>AI auto-audits every report and flags voids, over-discounts and stock variance.</p></div></div>
+    <div class="ai-row"><div class="n disp">03</div><div><h4>Lift every bill</h4><p>AI suggests the right add-on at the right moment. Bigger average bills, automatically.</p></div></div>
+    <div class="ai-row"><div class="n disp">04</div><div><h4>Win back customers</h4><p>AI groups regulars, lapsed and big spenders for targeted WhatsApp offers.</p></div></div>
+  </div>
+  <p class="disp" style="font-size:16pt;color:var(--orange);margin-top:5mm;">Loud on results, quiet on the tech.</p>
+</div>
+
+<!-- ============ PAGE 6 — SECTORS ============ -->
+<div class="page sandbg" data-testid="page-sectors">
+  <div class="over" style="color:var(--green);">From a Single Café to a 50-Outlet Chain</div>
+  <h2 class="disp" style="font-size:36pt;line-height:.98;margin-top:4mm;">Tuned to the way you actually run.</h2>
+  <div class="sec-grid">
+    <div class="sec-cell"><div class="sec-dot"></div><h4>Restaurants</h4><div class="idx">01</div></div>
+    <div class="sec-cell"><div class="sec-dot"></div><h4>Cafés</h4><div class="idx">02</div></div>
+    <div class="sec-cell"><div class="sec-dot"></div><h4>QSR / Fast Food</h4><div class="idx">03</div></div>
+    <div class="sec-cell"><div class="sec-dot"></div><h4>Cloud Kitchens</h4><div class="idx">04</div></div>
+    <div class="sec-cell"><div class="sec-dot"></div><h4>Hotels &amp; Resorts</h4><div class="idx">05</div></div>
+    <div class="sec-cell"><div class="sec-dot"></div><h4>Food Courts</h4><div class="idx">06</div></div>
+    <div class="sec-cell"><div class="sec-dot"></div><h4>Canteens &amp; Mess</h4><div class="idx">07</div></div>
+    <div class="sec-cell"><div class="sec-dot"></div><h4>Chains &amp; Franchises</h4><div class="idx">08</div></div>
+    <div class="sec-cell"><div class="sec-dot"></div><h4>Bars &amp; Pubs</h4><div class="idx">09</div></div>
+    <div class="sec-cell"><div class="sec-dot"></div><h4>Bakeries</h4><div class="idx">10</div></div>
+    <div class="sec-cell"><div class="sec-dot"></div><h4>Ice Cream &amp; Desserts</h4><div class="idx">11</div></div>
+    <div class="sec-cell brand"><div class="sec-dot" style="background:var(--yellow);"></div><h4>…and your<br/>format too.</h4><div class="idx" style="color:rgba(255,255,255,.7);">→ Book a demo</div></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 7 — PRICING ============ -->
+<div class="page" data-testid="page-pricing" style="background:#fff;">
+  <div class="rot">Billed Annually</div>
+  <div style="padding-left:6mm;display:flex;flex-direction:column;flex:1;">
+    <div class="over" style="color:var(--green);">Simple, Transparent Pricing</div>
+    <h2 class="disp" style="font-size:34pt;line-height:.98;margin-top:4mm;">Build your plan. Billed annually.</h2>
+    <div class="ptable">
+      <div class="pcol">
+        <div class="ph"><div class="nm">Starter</div><div class="tg">New &amp; single small outlets</div></div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Cloud POS &amp; Billing</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> KOT / KDS</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Inventory (basic)</div>
+        <div class="frow"><span class="dash">—</span> CRM &amp; Loyalty</div>
+        <div class="frow"><span class="dash">—</span> WhatsApp Automation</div>
+        <div class="frow"><span class="dash">—</span> Practical AI Suite</div>
+        <div class="frow"><span class="dash">—</span> Multi-outlet &amp; Central</div>
+        <div class="frow" style="border-bottom:none;"><span class="dash">—</span> Priority Support</div>
+      </div>
+      <div class="pcol">
+        <div class="ph"><div class="nm">Growth</div><div class="tg">Cafés &amp; growing restaurants</div></div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Cloud POS &amp; Billing</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> KOT / KDS</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Inventory Control</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> CRM &amp; Loyalty</div>
+        <div class="frow"><span class="dash">—</span> WhatsApp Automation</div>
+        <div class="frow"><span class="dash">—</span> Practical AI Suite</div>
+        <div class="frow"><span class="dash">—</span> Multi-outlet &amp; Central</div>
+        <div class="frow" style="border-bottom:none;"><span class="dash">—</span> Priority Support</div>
+      </div>
+      <div class="pcol dark">
+        <div class="ph"><span class="badge-pop">MOST POPULAR</span><div class="nm">Pro</div><div class="tg">Full-service, QSR &amp; high volume</div></div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Cloud POS &amp; Billing</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> KOT / KDS</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Inventory Control</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> CRM &amp; Loyalty</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> WhatsApp Automation</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Practical AI Suite</div>
+        <div class="frow"><span class="dash" style="color:rgba(255,255,255,.3);">—</span> Multi-outlet &amp; Central</div>
+        <div class="frow" style="border-bottom:none;"><span class="dash" style="color:rgba(255,255,255,.3);">—</span> Priority Support</div>
+      </div>
+      <div class="pcol">
+        <div class="ph"><div class="nm">Chain</div><div class="tg">Multi-outlet, hotels &amp; franchises</div></div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Cloud POS &amp; Billing</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> KOT / KDS</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Inventory Control</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> CRM &amp; Loyalty</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> WhatsApp Automation</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Practical AI Suite</div>
+        <div class="frow"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Multi-outlet &amp; Central</div>
+        <div class="frow" style="border-bottom:none;"><svg class="chk" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Priority Support</div>
+      </div>
+    </div>
+    <div class="reassure" style="margin-top:6mm;border-radius:12px;">Go live in 48 hours · Works offline · Runs on existing phones · Add only what you need — <b>your exact price is confirmed on your demo call.</b></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 8 — BACK COVER ============ -->
+<div class="page deep2bg" data-testid="page-back">
+  <div class="glow" style="width:340px;height:340px;background:var(--green);opacity:.35;top:-110px;left:-90px;"></div>
+  <div class="logo-chip" style="position:relative;align-self:flex-start;"><img src="/brochure/logo.svg"/></div>
+  <h2 class="disp back-cta" style="margin-top:14mm;position:relative;color:#fff;">Ready to run a more profitable business?</h2>
+  <p style="font-size:14pt;color:rgba(255,255,255,.82);margin-top:5mm;max-width:150mm;line-height:1.5;position:relative;">Book a free demo and see MyGenie on your own data.</p>
+  <div class="qr-card" style="margin-top:9mm;align-self:flex-start;">
+    <img src="/brochure/qr.png"/>
+    <div>
+      <span class="pill" style="background:var(--orange);">Book a Free Demo</span>
+      <div style="font-size:9pt;color:var(--muted);margin-top:3mm;letter-spacing:1px;text-transform:uppercase;font-weight:600;">Scan to book in 30 seconds</div>
+    </div>
+  </div>
+  <div style="margin-top:auto;position:relative;">
+    <div class="contact-big" style="color:#fff;">
+      <div style="display:flex;gap:5mm;align-items:center;"><svg class="ic" viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--yellow);"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg> 9579504871</div>
+      <div style="display:flex;gap:5mm;align-items:center;"><svg class="ic" viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--yellow);"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> support@mygenie.online</div>
+      <div style="display:flex;gap:5mm;align-items:center;"><svg class="ic" viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--yellow);"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/></svg> www.mygenie.online</div>
+    </div>
+    <div style="height:1px;background:rgba(255,255,255,.18);margin:7mm 0 5mm;"></div>
+    <p class="disp" style="font-size:17pt;color:var(--yellow);">Streamlined Hospitality. Exceptional Experience.</p>
+  </div>
+</div>
+
+</body>
+</html>
