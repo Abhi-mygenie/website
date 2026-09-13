@@ -24,8 +24,13 @@ Response contains full lead records: name, phone, email, business name, city, ou
 - Regulatory: PII of Indian consumers/businesses (DPDP Act 2023 relevance).
 
 ## Investigation still required (INVESTIGATION gate)
+**Partial finding 2026-09-13 (read-only, during Step 2):** item 2 below is confirmed — the sibling list endpoints are also unauthenticated on production:
+- `GET /api/quotes` (`server.py` L664 `get_quotes()`, no Depends) → prod HTTP 200, 31,938 bytes
+- `GET /api/contact-messages` (`server.py` L739 `get_contact_messages()`, no Depends) → prod HTTP 200, 4,627 bytes
+Scope of CR-266 = all three public list endpoints. The gated equivalent already exists: `GET /api/cms/leads` (L930, `get_dashboard_admin`).
+
 1. Who consumes this endpoint? (`grep -rn "demo-requests" frontend/src` → determine if `/leads` dashboard uses it or the gated `/api/cms/...` routes.)
-2. Are `POST /api/demo-request` siblings (`quote-requests`, `contact-requests` GET lists) similarly open?
+2. ~~Are `POST /api/demo-request` siblings (`quote-requests`, `contact-requests` GET lists) similarly open?~~ **Yes — confirmed above.**
 3. Nginx/Cloudflare access logs: any non-browser hits to this path?
 
 ## Candidate fix (for IMPACT/PLAN gates — not approved)

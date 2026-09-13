@@ -1,0 +1,276 @@
+{
+  "_comment": "Manual governance overrides applied by scripts/gov/build_matrix.py. Every entry must cite a decision (owner Dn or dated chat). Never delete entries; append.",
+  "status_overrides": {
+    "101": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-2 2026-09-13: full prerender rollout live (65 prerendered routes)"
+    },
+    "195": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-2 2026-09-13: roll-up says done"
+    },
+    "239": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-2 2026-09-13: Batch AY done 2026-09-08 per roll-up"
+    },
+    "242": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-2 2026-09-13: Batch AY done per roll-up"
+    },
+    "243": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-2 2026-09-13: Batch AY done per roll-up"
+    },
+    "244": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-2 2026-09-13: Batch AY done per roll-up"
+    },
+    "246": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-2 2026-09-13: Batch AY done per roll-up"
+    },
+    "240": {
+      "state": "APPROVAL",
+      "note": "D-2: code done per roll-up but owner must confirm city count value (75 / 100+ / 60+)"
+    },
+    "241": {
+      "state": "APPROVAL",
+      "note": "D-2: owner must confirm go-live 24h vs 48h"
+    },
+    "245": {
+      "state": "APPROVAL",
+      "note": "D-2: owner must confirm Petpooja '1.5 lakh' sentence"
+    },
+    "249": {
+      "state": "CLOSED",
+      "note": "D-2/D-5 2026-09-13: WhatsApp FAB off verified on prod R0 (no whatsapp-fab in HTML). Pod frontend/.env lacks key — re-add before any preview rebuild"
+    },
+    "251": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-2/D-4 evidence: StickyMobileCta/QuickDemoSheet present in all 5 LP files (PetpoojaAlternative 7, RBS 4, RPS 4, RMS 4, QSR 4, CloudKitchen 4)"
+    },
+    "253": {
+      "state": "OWNER-ACTION",
+      "note": "D-2: Freshsales admin + Google Ads dashboard"
+    },
+    "254": {
+      "state": "OWNER-ACTION",
+      "note": "D-2: Freshsales field mapping investigation is owner-side"
+    },
+    "255": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-2: done per roll-up; IA + plan exist"
+    },
+    "258": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-2: done per roll-up"
+    },
+    "259": {
+      "state": "IMPLEMENTATION",
+      "note": "2026-09-13 matrix build: code refs CR-259 found in frontend/src/components/site/DemoBottomSheet.jsx + LP pages → implemented but no QA/closure record and register still 🔲. Needs QA gate. CR-261 (auto-close after 259) to be re-checked."
+    },
+    "263": {
+      "state": "OWNER-ACTION",
+      "note": "D-2: owner provides CALENDLY_WEBHOOK_SIGNING_KEY"
+    },
+    "264": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-2: closed 2026-09-09 per register header; GTM-K5D84Z3L verified in prod HTML 2026-09-13 (R0)"
+    },
+    "201": {
+      "state": "IMPLEMENTATION",
+      "note": "Unclassified cell says PARTIAL — mountedRef guard done, remainder open"
+    },
+    "233": {
+      "state": "LEGACY-CLOSED",
+      "note": "Combined IA/plan CR-233_CR-234 exists; code refs CR-233 present"
+    },
+    "265": {
+      "state": "CLOSURE",
+      "note": "Retro record; owner acknowledgement closes"
+    },
+    "266": {
+      "state": "INTAKE",
+      "note": "D-1: normal queue. Scope = /api/demo-requests, /api/quotes, /api/contact-messages all public on prod"
+    },
+    "267": {
+      "state": "INTAKE",
+      "note": "D-6: register only"
+    },
+    "35": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence 2026-09-13: all 3 recovered phones present in demo_requests (7368833274, 9120292964, 9191657299 → 1 each)"
+    },
+    "62": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: investigation-only CR; delivered via CR-63/CR-64 which have code refs (server.py L651/L721, freshsales.py L230)"
+    },
+    "70": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: public/index.html has 0 'Inter', preloads clash-display-700/600 woff2, Poppins present (18 refs)"
+    },
+    "80": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: SoftwareApplication schema in src/lib/seo.js"
+    },
+    "83": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: src/data/sectors.js h1 strings carry 'POS system & billing software' keywords; SectorPage.jsx L96 renders doc.hero.h1"
+    },
+    "87": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: LandingFooter imported/rendered in src/pages/DemoLanding.jsx (2 refs)"
+    },
+    "90": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: public/sitemap.xml contains /product and /solutions hub URLs"
+    },
+    "123": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: BlogPost.jsx L82 (1200x630) and L108 (400x250) img width/height"
+    },
+    "127": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: src/data/products.js has 0 .png, 5 .webp"
+    },
+    "128": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: src/components/site/Logo.jsx L14 explicit width={61}"
+    },
+    "129": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: frontend/scripts/static-server.js L18-21 'public, max-age=31536000, immutable' for hashed assets"
+    },
+    "131": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: tailwind.config.js content excludes '!./src/components/ui/**'"
+    },
+    "132": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: src/components/home/StickyMobileCta.jsx uses transition-transform + translate-y-full, 0 transition-all"
+    },
+    "232": {
+      "state": "LEGACY-CLOSED",
+      "note": "D-4 evidence: prod curl -I → cf-cache-status: REVALIDATED, cache-control: max-age=600 (HTML edge-cached)"
+    },
+    "197": {
+      "state": "REOPENED-UNVERIFIED",
+      "note": "D-4: performance claim (TBT 490→?) cannot be verified statically; needs Lighthouse run on /restaurant-pos-comparison"
+    }
+  },
+  "legacy_crs": {
+    "1": {
+      "title": "Lead capture forms (demo / quote / contact) → Mongo + Freshsales (CR-1b)",
+      "prio": "P0"
+    },
+    "2": {
+      "title": "Attribution capture (UTM/click-ids/referrer) + server-side IP geolocation",
+      "prio": "P0"
+    },
+    "3": {
+      "title": "Client-side GTM + dataLayer for online conversions (CR-3A) + click-id coverage (CR-3B)",
+      "prio": "P0"
+    },
+    "4": {
+      "title": "Contact-messages capture extension (CR-4B)",
+      "prio": "P1"
+    },
+    "7": {
+      "title": "Internal Leads View — read-only sales triage (/leads)",
+      "prio": "P1"
+    },
+    "10": {
+      "title": "Razorpay payment integration (payments.py)",
+      "prio": "P1"
+    },
+    "18": {
+      "title": "Freshsales standard fields (state) + extra_fields guard + lifecycle/status ID mapping",
+      "prio": "P1"
+    },
+    "19": {
+      "title": "Ads Intelligence: Ad Spend CSV parsers, CRM Sync, Funnel (Phases 1–4, Journey webhook)",
+      "prio": "P1"
+    },
+    "20": {
+      "title": "/petpooja-alternative standalone Google Ads landing page",
+      "prio": "P0"
+    },
+    "21": {
+      "title": "/demo standalone landing page (CR-21-E) + landing-source tag in CRM",
+      "prio": "P0"
+    },
+    "23": {
+      "title": "Google Meet link + scheduled time pushed to Freshsales",
+      "prio": "P2"
+    },
+    "25": {
+      "title": "New attribution custom fields (cf_*) in Freshsales sync",
+      "prio": "P1"
+    },
+    "26": {
+      "title": "Freshsales Source Sync — pull all contacts with first_source",
+      "prio": "P1"
+    },
+    "27": {
+      "title": "Attribution stitching endpoints (Phase G) + CampaignTable UI",
+      "prio": "P1"
+    },
+    "28": {
+      "title": "gclid in its own Freshsales field + cross-channel funnel (Phase I)",
+      "prio": "P1"
+    },
+    "33": {
+      "title": "Full click-id coverage in gtm.js attribution push",
+      "prio": "P1"
+    },
+    "35": {
+      "title": "Patch 3 lost leads into demo_requests (Atlas quota incident) — one-time data fix",
+      "prio": "P0"
+    },
+    "36": {
+      "title": "Meta Ads daily breakdown incremental sync (ads_mcp.py)",
+      "prio": "P1"
+    },
+    "37": {
+      "title": "Google Ads daily-granularity rows (segments.date)",
+      "prio": "P1"
+    },
+    "67": {
+      "title": "Funnel: Payment Awaited + Payment Received count as won",
+      "prio": "P2"
+    },
+    "68": {
+      "title": "Churned Clients Dashboard (/api/cms/churn-report + ChurnPanel.jsx) — closed 2026-07-28, iteration_21",
+      "prio": "P1"
+    },
+    "117": {
+      "title": "Prerender snapshot pollution (head/state leaking between routes)",
+      "prio": "P1"
+    },
+    "118": {
+      "title": "Poppins blocking CSS → FCP fix",
+      "prio": "P1"
+    },
+    "119": {
+      "title": "Trust logos resize to 128px",
+      "prio": "P2"
+    },
+    "120": {
+      "title": "EditableImage missing width/height (Hero + Logo) — CLS",
+      "prio": "P1"
+    },
+    "121": {
+      "title": "Sitemap missing hub pages",
+      "prio": "P1"
+    },
+    "122": {
+      "title": "Sitemap stale lastmod dates",
+      "prio": "P2"
+    },
+    "123": {
+      "title": "Blog markdown images missing width/height",
+      "prio": "P2"
+    }
+  },
+  "unused_numbers_note": "CR-5,6,8,9,11–17,22,29,31,32,34,38,46,54–56,61,66,69,138: no code ref, no doc, no register row → number unused/unknown. Never reuse."
+}
