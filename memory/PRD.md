@@ -41,7 +41,15 @@ Full-stack deployment of the MyGenie restaurant POS & billing software marketing
 - Frontend: RUNNING (port 3000) — Static pre-built React bundle
 - MongoDB (local): RUNNING (backup/unused, using remote)
 
+## Governance / Control Layer (started 2026-09-13)
+- Owner directive: no requirement/issue may go straight to implementation. Gates: INTAKE → INVESTIGATION → IMPACT → PLAN → APPROVAL → IMPLEMENTATION → QA → CLOSURE. Approval authority: owner only (explicit "approved CR-xxx" in chat).
+- Layer lives in `/app/memory/governance/`. Enforcement = docs + `scripts/gov_check.py` (Step 5, not yet built).
+- **Step 1 DONE (2026-09-13, read-only):** `governance/BASELINE_2026-09-13.md`, `governance/REGISTER_RECONCILIATION_2026-09-13.md`, retro CR-265, new CR-266 (P0: `/api/demo-requests` public PII). Awaiting owner sign-off on decisions D-1…D-6 in the baseline.
+- **Steps 2–8 PENDING sign-off:** AGENT_RULES.md, GATES.md, templates (intake / IA / plan / QA / closure), TRACEABILITY_MATRIX.md, gov_check.py, regression suite list.
+- Rule for agents from now: any code change without an approved CR is a governance violation — register it, do not fix it.
+
 ## P0 Backlog
+- **CR-266**: `GET /api/demo-requests` unauthenticated on production — fix NOT applied, awaiting owner gate decision.
 - Razorpay, Meta Ads, Google Ads, Freshsales API keys are commented out (inactive)
 - Calendly webhook signing key not configured (non-blocking warning)
 - RECEIPT_EMAIL_* not configured

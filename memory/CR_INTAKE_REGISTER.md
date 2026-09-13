@@ -2,6 +2,7 @@
 
 **Last validated:** 2026-09-02 (new build audit + code-level validation — all findings verified against source and prerendered build)
 **Updated:** 2026-09-09 — CR-220 ✅ FULLY DONE (Fix A + Fix B + Fix C all complete, GTM published). CR-264 ✅ CLOSED (GTM confirmed live on production). CR-221 ✅ CLOSED (Incognito test confirms remarketing pixel firing — 200 OK, failures were ad blocker). CR-222 ✅ CLOSED (same test, same result). CR-216 🔲 Partially done (base tags migrated to Google Tag type — verify library sharing).
+**Updated:** 2026-09-13 — GOVERNANCE BASELINE frozen (`governance/BASELINE_2026-09-13.md`). Register reconciled read-only (`governance/REGISTER_RECONCILIATION_2026-09-13.md`): 19 CRs have conflicting statuses across duplicate rows — resolutions proposed, NOT applied pending owner sign-off. Added BATCH BE: CR-265 (retro), CR-266 (P0 security, INTAKE).
 **Legend:** ✅ Implemented · 🔲 Open · ⏸️ Backlog/Deferred · 👤 Owner action (no code) · 📋 Awaiting owner approval
 
 ---
@@ -1499,3 +1500,12 @@ Build:   cd /app/frontend && yarn build && sudo supervisorctl restart frontend
 | **CR-262** | `demo_booked` GTM trigger missing — Calendly bookings untracked | ⏸️ Closed — not required | P1 | — |
 | **CR-263** | Calendly webhook signing key not set — redundancy broken | 🔲 Open — needs key | P2 | After key added to `.env` + backend restart |
 | **CR-264** | GTM_ID in production build — verify or deploy | 📋 Close after verification | P0 | After owner confirms GTM fires on `www.mygenie.online` |
+
+---
+
+## BATCH BE — Governance Baseline (CR-265 → CR-266) · raised 2026-09-13
+
+| CR | Title | Status | Prio | Gate | Doc |
+|---|---|---|---|---|---|
+| **CR-265** | Retro-register: `GET /api/demo-requests` 500 fixed by probe-doc filter (`server.py` L577–578, commit `900ce42`, 2026-09-11) — shipped without CR/IA/plan/approval | 📋 Retro record — owner acknowledgement closes it | P2 | CLOSURE (retro) | `CR-265_DemoRequests_500_Probe_Filter.md` |
+| **CR-266** | **`GET /api/demo-requests` has NO auth — lead PII (name/phone/email/attribution) publicly readable on `www.mygenie.online` (HTTP 200, 332 KB).** All sibling dashboard endpoints use `get_dashboard_admin`; this one was missed. | 🔲 **INTAKE — no fix applied, awaiting owner decision (fast-track?)** | **P0** | INTAKE | `CR-266_DemoRequests_Public_PII_Exposure.md` |
