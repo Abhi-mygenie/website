@@ -574,7 +574,8 @@ async def calendly_webhook(
 
 @api_router.get("/demo-requests", response_model=List[DemoRequest])
 async def get_demo_requests():
-    items = await db.demo_requests.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    # Filter out probe/invalid docs that are missing required fields (e.g. cr59-probe)
+    items = await db.demo_requests.find({"name": {"$exists": True, "$ne": None}}, {"_id": 0}).sort("created_at", -1).to_list(1000)
     for it in items:
         if isinstance(it.get('created_at'), str):
             it['created_at'] = datetime.fromisoformat(it['created_at'])

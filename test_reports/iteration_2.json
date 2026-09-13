@@ -1,0 +1,57 @@
+{
+  "summary": "Full backend and frontend testing of MyGenie POS form submissions. All critical form APIs work. Key finding: GET /api/demo-requests returns 500 due to corrupted probe document. ROI Calculator page missing (404). Demo form E2E works perfectly with OTP step appearing after submit.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "GET /api/demo-requests",
+        "issue": "Returns 500 — corrupted probe document {id:'cr59-probe', phone:'x', cleaned:true} in MongoDB is missing 'name' field causing Pydantic ResponseValidationError. Fix: either delete the probe doc from MongoDB or make the DemoRequest response_model fields Optional.",
+        "priority": "CRITICAL"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "ROI Calculator",
+        "issue": "/roi-calculator returns 404 Page Not Found but the footer links to it as 'ROI Calculator'. Page doesn't exist in the frontend router.",
+        "selector": "N/A",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "Contact form submission (UI)",
+        "issue": "Contact form at /contact could not be tested via Playwright automation (the MessageForm.jsx sends to /api/contact). Backend curl confirms endpoint works. The form has 'Years in business *' select (data-testid=message-select-years) — Playwright couldn't select by label but by index works. The form submission itself wasn't confirmed via UI due to select option mismatch.",
+        "affected_selectors": ["[data-testid='message-select-years']"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_forms.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "CRITICAL: Fix GET /api/demo-requests 500 — delete corrupted probe doc from MongoDB (id='cr59-probe') OR make DemoRequest response_model fields Optional so Pydantic doesn't fail on missing 'name'",
+    "MEDIUM: Create /roi-calculator page or remove link from footer",
+    "LOW: Contact form 'Years in business' select options — ensure label values match options (Playwright test failed with label 'Less than 1 year' not found, actual options are 'Yet to open', '0 – 2 years', '2+ years')"
+  ],
+  "critical_code_review_comments": [
+    "server.py line 575: GET /api/demo-requests uses response_model=List[DemoRequest] but a probe document in MongoDB missing 'name' field causes Pydantic ResponseValidationError -> 500. Fix: add error handling around serialization or make DemoRequest.name Optional in the response model, or add a MongoDB filter to exclude probe/invalid docs.",
+    "The /roi-calculator route is referenced in the footer but not implemented in React Router — will show 404 to users who click it."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_forms.py"
+  ],
+  "success_rate": {
+    "backend": "86% (6/7 tests pass — GET /api/demo-requests intentionally fails due to known bug)",
+    "frontend": "85% — homepage demo form E2E ✅, /demo page loads ✅, /restaurant-billing-software loads ✅, /pricing page loads ✅, OTP step after demo submit ✅, /roi-calculator 404 ❌, contact form UI submit not confirmed ⚠️"
+  },
+  "test_credentials": "No auth needed for form submissions. CMS: admin/admin123 (not tested in this iteration)",
+  "seed_data_creation": "Test leads created in MongoDB: phone=9000000001 (demo), phone=9222222222 (contact via curl)",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All form POST endpoints work: /api/demo-request (with antijunk), /api/contact, /api/quote, /api/otp/send. GET /api/demo-requests returns 500 (known corrupted probe doc). Demo form E2E UI tested — shows OTP step after submit. /roi-calculator does not exist. Contact form backend works (curl verified) but UI automation was partially blocked by select option label mismatch.",
+  "rca_of_issue": "GET /api/demo-requests 500: The MongoDB collection contains a document with id='cr59-probe', phone='x', cleaned=true, but missing required field 'name'. When FastAPI tries to serialize this via response_model=List[DemoRequest], Pydantic raises a ValidationError which becomes a 500 response. Fix options: (1) db.demo_requests.delete_one({'id':'cr59-probe'}) from MongoDB, (2) wrap the serialization in a try/except to skip invalid docs, (3) add a query filter like find({'name': {'$exists': True}})."
+}
