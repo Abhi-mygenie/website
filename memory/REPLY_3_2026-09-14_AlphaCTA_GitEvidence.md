@@ -93,3 +93,25 @@ Campaign stays live. No code has been changed on this side.
 - Reply Brief B1 left `6dc7dd67` fully unknown. Narrowed: it is a post-CR-209 prerendered build (CR-264 closure on 9 Sep confirmed the interaction-first GTM loader live), i.e. from 8 Sep or later. Only the owner can say which 8 Sep build it was.
 
 *Files:* this reply `memory/REPLY_3_2026-09-14_AlphaCTA_GitEvidence.md` · register Batch BE `memory/CR_INTAKE_REGISTER.md` · prior docs `INVESTIGATION_2026-09-14_AlphaCTA_Brief_Validation.md`, `REPLY_BRIEF_2026-09-14_AlphaCTA_Questions.md`.
+
+---
+
+## 7. Addendum — Google Ads campaign table (owner screenshot, 14 Sep)
+
+| Date | Clicks | Spend | Conversions |
+|---|---|---|---|
+| 8 Sep | 30 | ₹2,833 | 2 |
+| 9 Sep | 27 | ₹2,747 | 3 |
+| 10 Sep | 28 | ₹2,596 | 3 |
+| 11 Sep | 21 | ₹2,201 | 0 |
+| 12 Sep | 28 | ₹2,198 | 0 |
+| 13 Sep | 22 | ₹2,205 | 0 |
+| 14 Sep (partial) | 14 | ₹1,365 | 0 |
+
+What it adds:
+- **Statistical caveat withdrawn.** 8–10 Sep: 8 conversions / 85 clicks = 9.4 %. 11–14 Sep: 0 / 85 clicks. Expected ≈ 8 at the prior rate; P(0) ≈ 0.03 %. Click volume, spend and CPC are flat across the break. If the 8–10 Sep baseline is genuine, the break is now beyond doubt.
+- **The 8–10 Sep leads were gclid-attributed ad clicks** (Google Ads only counts gclid-linked conversions). This rules out "someone typed utm params". It does **not** rule out Reading 3 — a phone test that starts by tapping the live ad is a gclid click. Only D4 (names / phones / `source_page`) does.
+- **Ads 8 vs GA4 5 Book demo:** the campaign column is counting more than one conversion action (likely `form_submitted` ₹0 + `thankyou_conversion` ₹200, minus dedupe). Ads ops: segment the 8 by conversion action so we know how many were OTP-verified bookings vs form submits — should reconcile to GA4's 5/5.
+- 9.4 % click-to-conversion on cold non-brand search for a POS demo is unusually high; 0 % for four days is unusually low. The pages have shown neither a normal rate nor a stable one — another reason to identify the five people before treating 9.4 % as the baseline CR-265 must restore.
+
+Position unchanged: D4 first (ten minutes), then approve/ship CR-265/266/267 with the CTA-works criterion, then judge lead rate against whatever baseline D4 establishes.
