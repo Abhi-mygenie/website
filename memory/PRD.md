@@ -155,3 +155,9 @@ Current pod build: `main.68115448.js`
 8. Restarted both services via supervisorctl
 9. Confirmed live at preview URL
 10. Synced full /memory/ dir (348 files + 57 customer logos) from remote repo
+
+## 2026-09-14 — Investigation session (read-only, no code changes)
+- Validated ads-ops brief `alpha-cta-brief.md` (Alpha LP lead drop). Findings: `INVESTIGATION_2026-09-14_AlphaCTA_Brief_Validation.md`; reply/questions brief: `REPLY_BRIEF_2026-09-14_AlphaCTA_Questions.md`.
+- Root-cause candidates verified on prod: JS-only `<button>` CTAs on 5 Alpha pages (zero `href="#lp-demo"`), createRoot dead window, `ScrollToTop` yank on first mount. Homepage + Petpooja keep `<a href>` path and convert.
+- Registered **BATCH BE**: CR-265 (P0, Alpha CTAs → `<a href="#lp-demo">` + sheet onClick), CR-266 (ScrollToTop first-mount guard), CR-267 (`cta_click`/`sheet_open` events). Status: awaiting owner approval; impact analysis + line-by-line plan not yet written.
+- Frontend `build/` was wiped by pod restart and rebuilt (`yarn build`) so preview serves again.

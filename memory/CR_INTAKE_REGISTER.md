@@ -1,6 +1,7 @@
 # CR Intake Register — Grouped by Batch
 
 **Last validated:** 2026-09-02 (new build audit + code-level validation — all findings verified against source and prerendered build)
+**Updated:** 2026-09-14 — BATCH BE registered: CR-265 (Alpha LP CTAs → `<a href="#lp-demo">` + sheet, P0 Revenue), CR-266 (ScrollToTop first-mount guard), CR-267 (`cta_click`/`sheet_open` events). Source: `REPLY_BRIEF_2026-09-14_AlphaCTA_Questions.md`.
 **Updated:** 2026-09-09 — CR-220 ✅ FULLY DONE (Fix A + Fix B + Fix C all complete, GTM published). CR-264 ✅ CLOSED (GTM confirmed live on production). CR-221 ✅ CLOSED (Incognito test confirms remarketing pixel firing — 200 OK, failures were ad blocker). CR-222 ✅ CLOSED (same test, same result). CR-216 🔲 Partially done (base tags migrated to Google Tag type — verify library sharing).
 **Legend:** ✅ Implemented · 🔲 Open · ⏸️ Backlog/Deferred · 👤 Owner action (no code) · 📋 Awaiting owner approval
 
@@ -1499,3 +1500,83 @@ Build:   cd /app/frontend && yarn build && sudo supervisorctl restart frontend
 | **CR-262** | `demo_booked` GTM trigger missing — Calendly bookings untracked | ⏸️ Closed — not required | P1 | — |
 | **CR-263** | Calendly webhook signing key not set — redundancy broken | 🔲 Open — needs key | P2 | After key added to `.env` + backend restart |
 | **CR-264** | GTM_ID in production build — verify or deploy | 📋 Close after verification | P0 | After owner confirms GTM fires on `www.mygenie.online` |
+
+
+---
+
+## BATCH BE — Alpha Landing Pages: CTA Must Work Before JavaScript (CR-265 → CR-267)
+
+*Source: Ads-ops brief `alpha-cta-brief.md` (14 Sep 2026) + website-agent validation `INVESTIGATION_2026-09-14_AlphaCTA_Brief_Validation.md` / `REPLY_BRIEF_2026-09-14_AlphaCTA_Questions.md`.*
+*Registered 2026-09-14 by intake agent. No code changed at registration.*
+
+### Background (verified on production 14 Sep)
+
+- Five Google Ads "Alpha" pages (`/restaurant-billing-software`, `/restaurant-pos-system`, `/restaurant-management-software`, `/cloud-kitchen-pos`, `/qsr-pos-system`) produced 0 paid `form_submitted` / `book_demo` 11–13 Sep (64 paid sessions, ~3.3 expected). Control `/petpooja-alternative` and homepage keep converting on the same build, GTM, backend.
+- Structural difference (live HTML): homepage hero CTA = `<a href="#demo">` (CR-157) and Petpooja hero + 3 pricing CTAs = `<a href="#vsp-demo">`; **all 8 CTAs on each Alpha page are `<button type="button" onClick={openSheet}>` — zero `href="#…"` on the page.** CR-259 replaced the former `<a href="#lp-demo">` (removed earlier by CR-230) without keeping the href fallback.
+- `src/index.js` uses `createRoot` and waits for `main.js` (148 KB gz, `defer`) + page chunk (≤3 s race) before first render → prerendered page is visible but every `<button>` is inert for 1–5 s on real phones. Reproduced on prod: tap at 0.9 s → nothing.
+- Compounding: `App.js` `ScrollToTop` runs `window.scrollTo(0,0)` on first mount when no URL hash → visitor who scrolled during the dead window is yanked to top (reproduced: scrollY 1116 → 0 at 2.8 s). Anchor CTAs set a hash and escape this; buttons never do.
+- Open questions to owner/ads-ops (deploy times of `6dc7dd67`/`01355ca7`/`b23cd364`, GA4 `form_location` split, CR-230 baseline contradiction) are tracked in the reply brief — **they gate CR-265 approval, not its registration.**
+
+### CRs
+
+| CR | Title | Status | Priority | Batch |
+|---|---|---|---|---|
+| **CR-265** | Alpha LP CTAs → `<a href="#lp-demo">` with sheet-opening `onClick` (JS-free fallback) — 5 pages | 📋 **Registered — awaiting owner approval + impact analysis** | **P0 — Revenue** | BE |
+| **CR-266** | `ScrollToTop` first-mount guard — do not reset scroll on initial render | 📋 Registered — bundle with CR-265 | **P1** | BE |
+| **CR-267** | `cta_click` + `sheet_open` dataLayer events → GA4 (GTM-K5D84Z3L) | 📋 Registered — bundle with CR-265 | **P1 — Observability** | BE |
+
+---
+
+### CR-265 — Alpha LP CTAs: restore `href="#lp-demo"` fallback, keep bottom sheet
+
+| Field | Detail |
+|---|---|
+| **Type** | Conversion fix / resilience (same principle as CR-157) |
+| **Problem** | Every "Book a Free Demo" CTA on the 5 Alpha pages is a JS-only `<button>`. Before React mounts the tap is silently dropped; there is no route to the form without JavaScript. Homepage and Petpooja both have an `<a href>` path and keep converting. |
+| **Change** | Each CTA becomes `<a href="#lp-demo" onClick={(e) => { e.preventDefault(); openSheet(); }} …>` (identical pattern to `Hero.jsx` L45–48). Behaviour: JS ready → sheet opens, exactly as today; JS not ready → browser scrolls to the existing `<section id="lp-demo" class="… scroll-mt-20">` which already contains `<DemoForm shortForm>`. Desktop unchanged. |
+| **Scope — per file (line refs 14 Sep)** | `RestaurantBillingSoftware.jsx` L35 navbar (`billing-lp-navbar-cta`), L89 pricing ×3 (`billing-plan-cta-*`), L144 hero (`billing-lp-cta-primary`) · `RestaurantPosSystem.jsx` L35, L89, L151 · `RestaurantManagementSoftware.jsx` L35, L89, L144 · `CloudKitchenPos.jsx` L37, L91, L154 · `QsrPosSystem.jsx` L35, L89, L153. Navbar CTA receives `onDemo` prop → `<a href="#lp-demo" onClick={(e)=>{e.preventDefault(); onDemo();}}>`. |
+| **Sticky mobile bar** | `components/home/StickyMobileCta.jsx` L77 `sticky-mobile-cta-btn` is shared by 15+ pages. Two options for impact analysis: (a) leave as `<button>` (bar only appears after hero scrolls out, i.e. after user interaction — React is usually mounted by then); (b) add optional `href` prop rendered as `<a>` when provided. Default recommendation: (a) for CR-265, revisit under CR-266 data. |
+| **Out of scope** | `DemoBottomSheet.jsx`, `DemoForm.jsx`, backend, GTM tags, Petpooja/homepage (already correct), copy/styling. Do **not** remove the in-page `#lp-demo` form (it is the fallback). |
+| **Risks** | (1) `<a>` inside pricing card must keep `block w-full text-center` classes — visual parity check at 390 px and 1920 px. (2) Any test asserting `button[data-testid="…-lp-cta-primary"]` breaks → update Playwright selectors to `[data-testid=…]` only. (3) Hash `#lp-demo` will appear in URL when JS-free path is used — `ScrollToTop` already skips on hash, fine. (4) `scroll-mt-20` (80 px) exists on all 5 `#lp-demo` sections; on mobile the anchor lands on the section heading, form fields ~1 screen below (the original CR-230 complaint) — acceptable as fallback; a mobile form-first layout in the `#lp-demo` section is a separate CR if wanted. |
+| **Acceptance** | (a) `curl -s https://www.mygenie.online/<page> \| grep -c 'href="#lp-demo"'` ≥ 5 on each of the 5 pages. (b) Playwright, JS delayed 2.5 s: tap hero CTA at ~1 s → `location.hash === "#lp-demo"` and `#lp-demo` in viewport. (c) Same tap after mount → `quick-demo-sheet` has `translate-y-0`, URL hash unchanged. (d) Submit through sheet → `POST /api/demo-request` 200, dataLayer `form_submitted` with `form_location: quick_book_sheet`. (e) Lighthouse mobile ≥ current. (f) Business: paid `form_start` on Alpha pages returns toward Petpooja's rate within 7 days. |
+| **Rollback** | Revert 5 files; no data/schema impact. |
+| **Depends on** | Owner approval. Recommended: answers to D1–D3 + D7 in reply brief first (24 h) to confirm the sheet has converted real visitors elsewhere. |
+| **Estimate** | ~25 one-line JSX edits across 5 files + selector updates in tests; one rebuild + prod deploy + CF purge. |
+
+---
+
+### CR-266 — `ScrollToTop`: skip `scrollTo(0,0)` on first mount
+
+| Field | Detail |
+|---|---|
+| **Problem** | `App.js` L15–21 `ScrollToTop` fires on the initial render as well as on route changes. With `createRoot` + delayed first render, a visitor who has already scrolled the prerendered HTML is reset to the top when React mounts. Reproduced on prod (scrollY 1116 → 0 at ~2.8 s). Hurts every page; hurts Alpha most because no CTA sets a hash. |
+| **Change** | Track first mount (e.g. `useRef(true)` → skip on first effect run, or skip when `window.scrollY > 0` at mount). Route-change behaviour unchanged. |
+| **Scope** | `frontend/src/App.js` L15–21 only. Site-wide effect. |
+| **Risks** | Client-side navigation from a scrolled page must still reset to top — covered by "route change" path. Prerender (Puppeteer) unaffected (scrollY 0). |
+| **Acceptance** | Playwright, JS delayed 2.5 s: `scrollTo(0,1500)` at 1 s → after `window.__pageChunks` is set, `scrollY` still ≈ 1500. Navigate `/pricing` → `/` via link → scrollY 0. |
+| **Priority / bundle** | P1, ship in the same build as CR-265. |
+
+---
+
+### CR-267 — `cta_click` and `sheet_open` dataLayer events
+
+| Field | Detail |
+|---|---|
+| **Problem** | A dead CTA is indistinguishable from an uninterested visitor in GA4 — no event fires between page_view and `form_start`. |
+| **Change** | `pushEvent("cta_click", { cta_location: "hero" \| "navbar" \| "pricing-<plan>" \| "sticky", page_path })` in each CTA handler; `pushEvent("sheet_open", { sector })` in `DemoBottomSheet` when `open` becomes true (effect on `[open]`). Owner adds two GA4 event tags + Custom Event triggers in GTM-K5D84Z3L (👤 owner). |
+| **Scope** | `lib/gtm.js` (no change — `pushEvent` exists), 5 LP files (handler), `DemoBottomSheet.jsx` (one `useEffect`), `StickyMobileCta.jsx` (handler). GTM: 2 triggers + 2 tags. |
+| **Risks** | Event volume trivial. Must not be registered as conversions. |
+| **Acceptance** | Prod Tag Assistant: tap hero → `cta_click{cta_location:"hero"}` then `sheet_open{sector}` in dataLayer; GA4 DebugView shows both. |
+| **Priority / bundle** | P1, same build as CR-265; GTM side is owner action. |
+
+---
+
+### Batch BE roll-up
+
+| CR | Title | Status | Priority | Close condition |
+|---|---|---|---|---|
+| **CR-265** | Alpha LP CTAs → `<a href="#lp-demo">` + sheet onClick (5 pages) | 📋 Awaiting owner approval → impact analysis → line-by-line plan | **P0 — Revenue** | Acceptance (a)–(e) pass on prod; (f) reviewed at +7 days |
+| **CR-266** | `ScrollToTop` first-mount guard | 📋 Registered | P1 | Playwright scroll-preservation test passes on prod |
+| **CR-267** | `cta_click` / `sheet_open` events + GTM tags | 📋 Registered (code) · 👤 Owner (GTM) | P1 | Events visible in GA4 DebugView on prod |
+
+**Sequencing:** owner answers reply-brief D1–D3, D7 (24 h) → approve CR-265 → impact analysis + line-by-line plan (separate docs, per house rule) → implement 265+266+267 in one build → deploy + CF purge → 48 h `form_start`/`cta_click` read → 7-day lead read.
