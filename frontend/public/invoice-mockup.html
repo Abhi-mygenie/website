@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MyGenie Invoice Mockup</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      font-family: Helvetica, Arial, sans-serif;
+      gap: 24px;
+    }
+
+    .page-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #374151;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .toggle-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .toggle-bar button {
+      padding: 7px 16px;
+      border-radius: 6px;
+      border: 2px solid #f26b33;
+      background: #fff;
+      color: #f26b33;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .toggle-bar button.active {
+      background: #f26b33;
+      color: #fff;
+    }
+
+    /* ─── A4 INVOICE ─── */
+    .invoice {
+      width: 794px;
+      min-height: 1123px;
+      background: #fff;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Top orange bar */
+    .top-bar {
+      height: 5px;
+      background: linear-gradient(90deg, #f26b33 60%, #329937 100%);
+    }
+
+    /* ─── HEADER ─── */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 24px 32px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .logo-wrap img {
+      height: 40px;
+      width: auto;
+      display: block;
+    }
+    .doc-type-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .doc-type {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #6b7280;
+    }
+    .original-badge {
+      background: #329937;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      padding: 2px 7px;
+      border-radius: 3px;
+    }
+
+    .header-right {
+      text-align: right;
+    }
+    .invoice-no {
+      font-size: 17px;
+      font-weight: 800;
+      color: #f26b33;
+      letter-spacing: -0.3px;
+    }
+    .header-meta {
+      font-size: 11px;
+      color: #6b7280;
+      line-height: 1.8;
+      margin-top: 6px;
+    }
+    .header-meta strong {
+      color: #111827;
+    }
+
+    /* ─── PARTIES ─── */
+    .parties {
+      display: flex;
+      padding: 20px 32px;
+      gap: 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .party {
+      flex: 1;
+    }
+    .party + .party {
+      border-left: 1px solid #f0f0f0;
+      padding-left: 28px;
+      margin-left: 28px;
+    }
+    .party-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #f26b33;
+      margin-bottom: 8px;
+    }
+    .party-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .party-legal {
+      font-size: 10px;
+      color: #6b7280;
+      margin-top: 2px;
+      line-height: 1.5;
+    }
+    .party-detail {
+      font-size: 11px;
+      color: #374151;
+      line-height: 1.7;
+      margin-top: 6px;
+    }
+    .gstin-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #fff7f0;
+      border: 1px solid #fdd9c8;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #c45a22;
+      padding: 2px 8px;
+      margin-top: 6px;
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── META ROW ─── */
+    .meta-row {
+      display: flex;
+      gap: 0;
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .meta-cell {
+      flex: 1;
+      padding: 10px 32px;
+      font-size: 11px;
+      color: #6b7280;
+      border-right: 1px solid #f0f0f0;
+    }
+    .meta-cell:last-child { border-right: none; }
+    .meta-cell strong {
+      display: block;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+    .meta-cell span {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    /* ─── LINE ITEMS ─── */
+    .items-section {
+      padding: 20px 32px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead tr {
+      background: #111827;
+    }
+    thead th {
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 10px 10px;
+      text-align: left;
+    }
+    thead th.r { text-align: right; }
+    thead th.c { text-align: center; }
+
+    tbody tr { border-bottom: 1px solid #f3f4f6; }
+    tbody tr:hover { background: #fffaf7; }
+    tbody td {
+      font-size: 11px;
+      color: #111827;
+      padding: 10px 10px;
+      vertical-align: top;
+    }
+    tbody td.r { text-align: right; }
+    tbody td.c { text-align: center; color: #6b7280; }
+
+    .item-main { font-weight: 600; font-size: 12px; }
+    .item-sub  { font-size: 10px; color: #9ca3af; margin-top: 2px; }
+    .addon-indent { padding-left: 14px; }
+    .addon-dot {
+      display: inline-block;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #f26b33;
+      margin-right: 5px;
+      vertical-align: middle;
+      margin-bottom: 1px;
+    }
+    .hsn-code {
+      font-size: 11px;
+      color: #374151;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ─── TOTALS ─── */
+    .totals-wrap {
+      display: flex;
+      justify-content: flex-end;
+      padding: 16px 32px 0;
+    }
+    .totals-box {
+      width: 290px;
+      border: 1px solid #f0f0f0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #374151;
+      border-bottom: 1px solid #f9f9f9;
+    }
+    .totals-row .label { color: #6b7280; }
+    .totals-row .val   { font-weight: 600; color: #111827; font-variant-numeric: tabular-nums; }
+    .totals-row.grand {
+      background: #f26b33;
+      padding: 12px 14px;
+    }
+    .totals-row.grand .label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .totals-row.grand .val {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* ─── TAX NOTE ─── */
+    .tax-note {
+      margin: 10px 32px 0;
+      font-size: 10px;
+      color: #9ca3af;
+      font-style: italic;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .tax-note span { max-width: 290px; text-align: right; }
+
+    /* ─── DIVIDER ─── */
+    .section-gap { flex: 1; min-height: 32px; }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      margin: 0 32px 28px;
+      padding-top: 18px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .footer-left p {
+      font-size: 10px;
+      color: #9ca3af;
+      line-height: 1.8;
+    }
+    .footer-right {
+      text-align: right;
+    }
+    .footer-right .stamp {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: 2px dashed #f26b33;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .footer-right .stamp p {
+      font-size: 8px;
+      font-weight: 700;
+      color: #f26b33;
+      text-align: center;
+      letter-spacing: 0.06em;
+      line-height: 1.4;
+    }
+
+    /* ─── BOTTOM BAR ─── */
+    .bottom-bar {
+      height: 4px;
+      background: linear-gradient(90deg, #329937 40%, #f26b33 100%);
+    }
+  </style>
+</head>
+<body>
+
+<p class="page-title">MyGenie POS — Invoice Design Mockup v2</p>
+
+<div class="toggle-bar">
+  <button class="active" onclick="showScenario('b2b-same')">B2B — UP Buyer (CGST + SGST)</button>
+  <button onclick="showScenario('b2c')">B2C — No GSTIN (IGST)</button>
+  <button onclick="showScenario('b2b-diff')">B2B — Other State (IGST)</button>
+</div>
+
+<!-- ══════════════════════════════ INVOICE ══════════════════════════════ -->
+<div class="invoice">
+  <div class="top-bar"></div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-wrap">
+        <img src="/brand/logo.svg" alt="MyGenie POS" />
+      </div>
+      <div class="doc-type-row">
+        <span class="doc-type">GST Tax Invoice</span>
+        <span class="original-badge">ORIGINAL</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="invoice-no">MG_2026_27_JUNE_00012</div>
+      <div class="header-meta">
+        <strong>Date:</strong> 21 June 2026<br>
+        <strong>Txn ID:</strong> pay_QcXH8k3mN2vR7tPd9wBfLs4Kj
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTIES -->
+  <div class="parties">
+    <div class="party">
+      <div class="party-label">Billed From</div>
+      <div class="party-name">MyGenie POS</div>
+      <div class="party-legal">HOSIGENIE HOSPITALITY SERVICES PRIVATE LIMITED</div>
+      <div class="party-detail">
+        E-291, Dayal Bagh Road, Kamal Nagar,<br>
+        Agra, Uttar Pradesh – 282005
+      </div>
+      <div class="gstin-chip">GSTIN: 09AAHCH4730Q1Z0</div>
+    </div>
+    <div class="party">
+      <div class="party-label">Billed To</div>
+      <div class="party-name">Ravi Mehta</div>
+      <div class="party-detail" id="buyer-detail">
+        Terraria Café, Pune<br>
+        Phone: 9876543210<br>
+        ravi@terraracafe.com
+      </div>
+      <div class="gstin-chip buyer-gstin" id="buyer-gstin">GSTIN: 09AAJCT1234K1Z5</div>
+    </div>
+  </div>
+
+  <!-- META ROW -->
+  <div class="meta-row">
+    <div class="meta-cell">
+      <strong>Place of Supply</strong>
+      <span id="place-of-supply">Uttar Pradesh (09)</span>
+    </div>
+    <div class="meta-cell">
+      <strong>Reverse Charge</strong>
+      <span>No</span>
+    </div>
+    <div class="meta-cell">
+      <strong>Billing Period</strong>
+      <span>Annual · 1 Outlet</span>
+    </div>
+    <div class="meta-cell">
+      <strong>Supply Type</strong>
+      <span id="supply-type">Intra-State</span>
+    </div>
+  </div>
+
+  <!-- LINE ITEMS -->
+  <div class="items-section">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40%">Description</th>
+          <th style="width:12%">HSN / SAC</th>
+          <th class="c" style="width:8%">Qty</th>
+          <th class="r" style="width:16%">Rate / mo</th>
+          <th class="r" style="width:24%">Amount / yr (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="item-main">Pro Plan</div>
+            <div class="item-sub">Annual subscription · 1 outlet · MyGenie POS</div>
+          </td>
+          <td><span class="hsn-code">998313</span></td>
+          <td class="c">1</td>
+          <td class="r">₹2,499</td>
+          <td class="r">₹29,988</td>
+        </tr>
+        <tr>
+          <td class="addon-indent">
+            <span class="addon-dot"></span>WhatsApp Automation
+            <div class="item-sub" style="padding-left:10px">Add-on · Annual</div>
+          </td>
+          <td><span class="hsn-code">998313</span></td>
+          <td class="c">1</td>
+          <td class="r">₹499</td>
+          <td class="r">₹5,988</td>
+        </tr>
+        <tr>
+          <td class="addon-indent">
+            <span class="addon-dot"></span>Loyalty + Wallet
+            <div class="item-sub" style="padding-left:10px">Add-on · Annual</div>
+          </td>
+          <td><span class="hsn-code">998313</span></td>
+          <td class="c">1</td>
+          <td class="r">₹399</td>
+          <td class="r">₹4,788</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TOTALS -->
+  <div class="totals-wrap">
+    <div class="totals-box">
+      <div class="totals-row">
+        <span class="label">Subtotal</span>
+        <span class="val">₹40,764</span>
+      </div>
+      <!-- B2B same state -->
+      <div class="totals-row" id="tax-cgst">
+        <span class="label">CGST @ 9%</span>
+        <span class="val">₹3,669</span>
+      </div>
+      <div class="totals-row" id="tax-sgst">
+        <span class="label">SGST @ 9%</span>
+        <span class="val">₹3,669</span>
+      </div>
+      <!-- IGST -->
+      <div class="totals-row" id="tax-igst" style="display:none">
+        <span class="label">IGST @ 18%</span>
+        <span class="val">₹7,337</span>
+      </div>
+      <div class="totals-row grand">
+        <span class="label">Total Payable</span>
+        <span class="val">₹48,101</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tax-note">
+    <span id="tax-note">* CGST & SGST applied — Seller (UP-09) and Buyer (UP-09) in same state</span>
+  </div>
+
+  <div class="section-gap"></div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">
+      <p>
+        This is a computer-generated invoice. No physical signature required.<br>
+        Annual subscription — non-refundable after activation.<br>
+        For queries: support@mygenie.in &nbsp;|&nbsp; mygenie.in
+      </p>
+      <p style="margin-top: 8px; font-size: 10px; color: #c4c4c4;">
+        HOSIGENIE HOSPITALITY SERVICES PRIVATE LIMITED &nbsp;·&nbsp; GSTIN: 09AAHCH4730Q1Z0
+      </p>
+    </div>
+    <div class="footer-right">
+      <div class="stamp">
+        <p>COMPUTER<br>GENERATED</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar"></div>
+</div>
+
+<p style="font-size:11px; color:#6b7280; text-align:center; max-width:600px; line-height:1.7">
+  Toggle between scenarios to preview tax section changes.<br>
+  Logo, colors, and layout shown here will be replicated in the actual PDF.
+</p>
+
+<script>
+function showScenario(scenario) {
+  document.querySelectorAll('.toggle-bar button').forEach(b => b.classList.remove('active'));
+  const cgst  = document.getElementById('tax-cgst');
+  const sgst  = document.getElementById('tax-sgst');
+  const igst  = document.getElementById('tax-igst');
+  const pos   = document.getElementById('place-of-supply');
+  const stype = document.getElementById('supply-type');
+  const note  = document.getElementById('tax-note');
+  const bgstin = document.getElementById('buyer-gstin');
+
+  if (scenario === 'b2b-same') {
+    document.querySelectorAll('.toggle-bar button')[0].classList.add('active');
+    cgst.style.display = sgst.style.display = '';
+    igst.style.display = 'none';
+    pos.textContent = 'Uttar Pradesh (09)';
+    stype.textContent = 'Intra-State (B2B)';
+    note.textContent = '* CGST & SGST applied — Seller (UP-09) and Buyer (UP-09) in same state';
+    bgstin.style.display = 'inline-flex';
+    bgstin.textContent = 'GSTIN: 09AAJCT1234K1Z5';
+  } else if (scenario === 'b2c') {
+    document.querySelectorAll('.toggle-bar button')[1].classList.add('active');
+    cgst.style.display = sgst.style.display = 'none';
+    igst.style.display = '';
+    pos.textContent = '— (B2C, not provided)';
+    stype.textContent = 'Inter-State (B2C)';
+    note.textContent = '* IGST applied — Buyer state not determined (no GSTIN provided)';
+    bgstin.style.display = 'none';
+  } else {
+    document.querySelectorAll('.toggle-bar button')[2].classList.add('active');
+    cgst.style.display = sgst.style.display = 'none';
+    igst.style.display = '';
+    pos.textContent = 'Maharashtra (27)';
+    stype.textContent = 'Inter-State (B2B)';
+    note.textContent = '* IGST applied — Buyer (MH-27) and Seller (UP-09) in different states';
+    bgstin.style.display = 'inline-flex';
+    bgstin.textContent = 'GSTIN: 27AAJCT5678M1Z2';
+  }
+}
+</script>
+</body>
+</html>

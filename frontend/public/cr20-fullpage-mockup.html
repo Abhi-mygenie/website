@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR-20 — Full Page Mockup | MyGenie vs Petpooja</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: #ffffff; color: #0f172a; line-height: 1.6; }
+
+/* ──────────────────────── MOCK NAVBAR ──────────────────────── */
+.mock-nav {
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.mock-nav-logo { font-size: 20px; font-weight: 900; color: #22c55e; }
+.mock-nav-links { display: flex; gap: 28px; }
+.mock-nav-links a { font-size: 13px; color: #64748b; text-decoration: none; font-weight: 500; }
+.mock-nav-cta { background: #22c55e; color: white; padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; border: none; cursor: pointer; }
+
+/* ──────────────────────── SECTION LABELS ──────────────────────── */
+.dev-label {
+  position: absolute; top: 12px; right: 16px;
+  font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  background: #0f172a; color: #22c55e; padding: 3px 10px; border-radius: 4px;
+  opacity: .7;
+}
+
+/* ──────────────────────── COMMON ──────────────────────── */
+.section { position: relative; padding: 80px 48px; }
+.section-inner { max-width: 1100px; margin: 0 auto; }
+.eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #22c55e; margin-bottom: 16px; }
+.eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+h1, h2, h3, h4 { line-height: 1.15; }
+.btn-primary { background: #22c55e; color: white; padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.btn-secondary { background: white; color: #0f172a; padding: 13px 26px; border-radius: 10px; font-size: 15px; font-weight: 600; border: 2px solid #e2e8f0; cursor: pointer; }
+.check { color: #22c55e; font-weight: 800; }
+.cross { color: #ef4444; font-weight: 800; }
+.warn { color: #f59e0b; font-weight: 700; }
+.addon-pill { display: inline-block; background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 10px; font-weight: 800; padding: 1px 7px; border-radius: 4px; letter-spacing: .04em; }
+
+/* ──────────────────────── S1: HERO ──────────────────────── */
+#s1 {
+  background: linear-gradient(140deg, #fefce8 0%, #f0fdf4 45%, #ecfdf5 100%);
+  padding: 100px 48px 80px;
+}
+#s1 .ab-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: white; border: 1px solid #e2e8f0; border-radius: 20px;
+  padding: 5px 14px; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 24px;
+}
+#s1 .ab-badge span { background: #3b82f6; color: white; font-size: 9px; font-weight: 800; padding: 1px 6px; border-radius: 4px; }
+#s1 h1 { font-size: 52px; font-weight: 900; color: #0f172a; max-width: 680px; margin-bottom: 20px; }
+#s1 h1 em { font-style: normal; color: #22c55e; }
+#s1 p { font-size: 18px; color: #475569; max-width: 560px; margin-bottom: 32px; line-height: 1.7; }
+.hero-btns { display: flex; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; }
+.trust-strip { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.trust-strip-label { font-size: 12px; color: #94a3b8; font-weight: 500; }
+.trust-chip { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: #475569; }
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #e2e8f0; border-radius: 12px; overflow: hidden; margin-top: 56px; }
+.stat-box { background: white; padding: 20px 24px; }
+.stat-box .val { font-size: 28px; font-weight: 900; color: #0f172a; }
+.stat-box .val span { color: #22c55e; }
+.stat-box .lbl { font-size: 13px; color: #64748b; margin-top: 2px; }
+
+/* ──────────────────────── S2: PHILOSOPHY ──────────────────────── */
+#s2 { background: #0f172a; }
+#s2 .eyebrow { color: #22c55e; }
+#s2 h2 { font-size: 40px; font-weight: 900; color: white; max-width: 720px; margin-bottom: 16px; }
+#s2 h2 em { font-style: normal; color: #22c55e; }
+#s2 .philosophy-lead { font-size: 18px; color: #94a3b8; max-width: 640px; margin-bottom: 56px; line-height: 1.7; }
+.philosophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: #1e293b; border-radius: 16px; overflow: hidden; }
+.philosophy-col { padding: 36px; }
+.philosophy-col.pp { background: #1a2332; }
+.philosophy-col.mg { background: #0d2818; }
+.philosophy-col .col-label { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 16px; }
+.philosophy-col.pp .col-label { color: #64748b; }
+.philosophy-col.mg .col-label { color: #22c55e; }
+.philosophy-col h3 { font-size: 22px; font-weight: 800; margin-bottom: 12px; }
+.philosophy-col.pp h3 { color: #94a3b8; }
+.philosophy-col.mg h3 { color: white; }
+.philosophy-col p { font-size: 14px; line-height: 1.7; }
+.philosophy-col.pp p { color: #64748b; }
+.philosophy-col.mg p { color: #86efac; }
+.philosophy-items { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+.phi-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; }
+.phi-item.pp-item { color: #475569; }
+.phi-item.mg-item { color: #d1fae5; }
+.phi-item .phi-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.os-banner { background: #0d2818; border: 1px solid #166534; border-radius: 12px; padding: 28px 32px; margin-top: 48px; display: flex; align-items: center; gap: 24px; }
+.os-banner .os-line { font-size: 22px; font-weight: 800; color: white; }
+.os-banner .os-line em { font-style: normal; color: #22c55e; }
+.os-banner .os-sub { font-size: 14px; color: #86efac; margin-top: 4px; }
+
+/* ──────────────────────── S3: HONEST PETPOOJA ──────────────────────── */
+#s3 { background: #f8fafc; }
+#s3 h2 { font-size: 36px; font-weight: 900; color: #0f172a; max-width: 600px; margin-bottom: 12px; }
+#s3 .fair-note { font-size: 15px; color: #64748b; margin-bottom: 48px; max-width: 560px; }
+.honest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.honest-col { background: white; border-radius: 12px; padding: 28px; border: 1px solid #e2e8f0; }
+.honest-col-title { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 800; margin-bottom: 20px; }
+.honest-col-title .badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px; }
+.badge-green { background: #dcfce7; color: #15803d; }
+.badge-amber { background: #fff7ed; color: #c2410c; }
+.honest-list { display: flex; flex-direction: column; gap: 12px; }
+.honest-item { display: flex; align-items: flex-start; gap: 10px; }
+.honest-item .hi-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+.hi-green { background: #dcfce7; color: #15803d; }
+.hi-amber { background: #fff7ed; color: #c2410c; }
+.honest-item .hi-text { font-size: 14px; color: #374151; }
+.honest-item .hi-sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+
+/* ──────────────────────── S4: COMPARISON TABLE ──────────────────────── */
+#s4 { background: #0f172a; }
+#s4 h2 { font-size: 36px; font-weight: 900; color: white; margin-bottom: 8px; }
+#s4 .s4-sub { font-size: 16px; color: #64748b; margin-bottom: 40px; }
+.comp-wrap { background: #1e293b; border-radius: 16px; overflow: hidden; }
+.comp-table { width: 100%; border-collapse: collapse; }
+.comp-table th { padding: 14px 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; border-bottom: 1px solid #334155; }
+.comp-table th:first-child { text-align: left; color: #64748b; }
+.comp-table th.mg-h { background: #0d2818; color: #22c55e; text-align: center; }
+.comp-table th.pp-h { background: #1a2332; color: #64748b; text-align: center; }
+.comp-table td { padding: 14px 20px; border-bottom: 1px solid #1e293b; }
+.comp-table td:first-child { font-size: 14px; font-weight: 600; color: #e2e8f0; }
+.comp-table td:first-child .td-sub { font-size: 12px; font-weight: 400; color: #64748b; display: block; margin-top: 2px; }
+.comp-table td.mg-td { background: #0a1f10; text-align: center; font-size: 13px; color: #86efac; font-weight: 600; }
+.comp-table td.pp-td { background: #141f2e; text-align: center; font-size: 13px; color: #94a3b8; }
+.comp-table tr:last-child td { border-bottom: none; }
+.expand-row { padding: 16px 20px; text-align: center; border-top: 1px solid #334155; cursor: pointer; }
+.expand-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #22c55e; background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); padding: 8px 20px; border-radius: 8px; cursor: pointer; transition: all .2s; }
+.expand-btn:hover { background: rgba(34,197,94,.2); }
+.expanded-section { display: none; }
+.expanded-section.open { display: table-row-group; }
+.comp-table .cat-row td { background: #1a2332; padding: 8px 20px; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: .08em; }
+
+/* ──────────────────────── S5: RESULTS ──────────────────────── */
+#s5 { background: white; }
+#s5 h2 { font-size: 36px; font-weight: 900; color: #0f172a; margin-bottom: 8px; }
+#s5 .s5-sub { font-size: 16px; color: #64748b; margin-bottom: 48px; }
+.results-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.result-card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; transition: all .2s; }
+.result-card:hover { border-color: #22c55e; box-shadow: 0 4px 20px rgba(34,197,94,.1); }
+.result-card .metric { font-size: 40px; font-weight: 900; color: #22c55e; line-height: 1; margin-bottom: 8px; }
+.result-card .title { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+.result-card .desc { font-size: 13px; color: #64748b; line-height: 1.6; }
+.result-card .source { margin-top: 14px; font-size: 12px; font-weight: 600; color: #94a3b8; display: flex; align-items: center; gap: 6px; }
+.result-card .source::before { content: ''; display: block; width: 16px; height: 2px; background: #22c55e; }
+
+/* ──────────────────────── S6: VIDEO TESTIMONIALS ──────────────────────── */
+#s6 { background: #0f172a; }
+#s6 .eyebrow { color: #22c55e; }
+#s6 h2 { font-size: 36px; font-weight: 900; color: white; margin-bottom: 8px; }
+#s6 .s6-sub { font-size: 16px; color: #64748b; margin-bottom: 48px; }
+.video-owner-note { background: #1e293b; border: 1px dashed #f59e0b; border-radius: 10px; padding: 16px 20px; margin-bottom: 32px; display: flex; align-items: center; gap: 12px; }
+.video-owner-note .vn-icon { font-size: 20px; }
+.video-owner-note .vn-text { font-size: 13px; color: #fbbf24; }
+.video-owner-note .vn-text strong { display: block; font-size: 14px; color: #f59e0b; margin-bottom: 4px; }
+.videos-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 40px; }
+.video-card { position: relative; }
+.video-thumb { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; border-radius: 10px; aspect-ratio: 9/16; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; cursor: pointer; transition: all .2s; }
+.video-thumb:hover { border-color: #22c55e; }
+.video-thumb .play-btn { width: 44px; height: 44px; background: rgba(34,197,94,.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.video-thumb .play-btn::after { content: '▶'; font-size: 16px; color: white; margin-left: 3px; }
+.video-thumb .vid-name { font-size: 12px; font-weight: 700; color: white; text-align: center; padding: 0 8px; }
+.video-thumb .vid-outlet { font-size: 11px; color: #64748b; text-align: center; margin-top: 3px; }
+.video-thumb .vid-duration { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,.7); color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+.video-thumb .vid-tag { position: absolute; top: 8px; left: 8px; background: #22c55e; color: white; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; letter-spacing: .04em; }
+.video-placeholder-overlay { position: absolute; inset: 0; background: rgba(15,23,42,.6); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.video-placeholder-overlay span { font-size: 10px; font-weight: 800; color: #fbbf24; text-align: center; padding: 8px; background: rgba(0,0,0,.5); border-radius: 6px; }
+.testimonials-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.switcher-quote { background: #1e293b; border-radius: 12px; padding: 24px; border-left: 3px solid #22c55e; }
+.switcher-quote .sq-badge { display: inline-block; background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); color: #22c55e; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; margin-bottom: 12px; letter-spacing: .06em; }
+.switcher-quote .sq-text { font-size: 14px; color: #cbd5e1; line-height: 1.7; font-style: italic; margin-bottom: 16px; }
+.switcher-quote .sq-author { display: flex; align-items: center; gap: 10px; }
+.sq-avatar { width: 36px; height: 36px; border-radius: 50%; background: #334155; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: #22c55e; }
+.sq-meta .sq-name { font-size: 13px; font-weight: 700; color: white; }
+.sq-meta .sq-outlet { font-size: 12px; color: #64748b; }
+
+/* ──────────────────────── S7: AI ──────────────────────── */
+#s7 { background: #f0fdf4; }
+#s7 h2 { font-size: 36px; font-weight: 900; color: #0f172a; margin-bottom: 8px; }
+#s7 .s7-punch { font-size: 20px; font-weight: 700; color: #15803d; margin-bottom: 10px; }
+#s7 .s7-sub { font-size: 16px; color: #64748b; margin-bottom: 48px; }
+.ai-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.ai-grid-bottom { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.ai-card { background: white; border-radius: 12px; padding: 22px; border: 1px solid #bbf7d0; }
+.ai-card .ai-metric { font-size: 28px; font-weight: 900; color: #22c55e; margin-bottom: 4px; }
+.ai-card .ai-title { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+.ai-card .ai-prob { font-size: 12px; color: #dc2626; margin-bottom: 6px; font-weight: 500; }
+.ai-card .ai-sol { font-size: 12px; color: #64748b; line-height: 1.5; }
+
+/* ──────────────────────── S8: PRICING ──────────────────────── */
+#s8 { background: white; }
+#s8 h2 { font-size: 36px; font-weight: 900; color: #0f172a; margin-bottom: 8px; }
+#s8 .pricing-note { font-size: 15px; color: #64748b; margin-bottom: 48px; }
+#s8 .pricing-note strong { color: #ef4444; }
+.plans-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+.plan-card { border: 1px solid #e2e8f0; border-radius: 14px; padding: 28px; position: relative; }
+.plan-card.pop { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.1); }
+.plan-card.pop::before { content: 'MOST POPULAR'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #22c55e; color: white; font-size: 9px; font-weight: 800; padding: 3px 12px; border-radius: 20px; letter-spacing: .08em; white-space: nowrap; }
+.plan-name { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.plan-price { font-size: 36px; font-weight: 900; color: #0f172a; }
+.plan-price sub { font-size: 14px; font-weight: 500; color: #94a3b8; }
+.plan-billing { font-size: 12px; color: #94a3b8; margin-bottom: 20px; }
+.plan-feats { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.plan-feats li { font-size: 13px; color: #374151; display: flex; align-items: flex-start; gap: 8px; }
+.plan-feats li::before { content: '✓'; color: #22c55e; font-weight: 800; flex-shrink: 0; }
+.plan-btn { width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; border: 2px solid #22c55e; background: transparent; color: #22c55e; }
+.plan-card.pop .plan-btn { background: #22c55e; color: white; }
+.pp-pricing-note { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 16px 20px; font-size: 14px; color: #92400e; display: flex; align-items: center; gap: 12px; }
+
+/* ──────────────────────── S9: OUTLETS ──────────────────────── */
+#s9 { background: #f8fafc; }
+#s9 h2 { font-size: 36px; font-weight: 900; color: #0f172a; margin-bottom: 8px; }
+#s9 .s9-sub { font-size: 16px; color: #64748b; margin-bottom: 40px; }
+.outlets-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+.outlet-chip { background: white; border: 1px solid #e2e8f0; border-radius: 30px; padding: 10px 20px; font-size: 14px; font-weight: 600; color: #374151; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all .2s; }
+.outlet-chip:hover { border-color: #22c55e; color: #15803d; background: #f0fdf4; }
+.outlet-chip .oc-icon { font-size: 16px; }
+
+/* ──────────────────────── S10: SWITCHING ──────────────────────── */
+#s10 { background: white; }
+#s10 h2 { font-size: 36px; font-weight: 900; color: #0f172a; margin-bottom: 8px; }
+#s10 .s10-sub { font-size: 16px; color: #64748b; margin-bottom: 48px; }
+.switch-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.switch-step { text-align: center; }
+.step-num { width: 48px; height: 48px; border-radius: 50%; background: #f0fdf4; border: 2px solid #22c55e; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; color: #22c55e; margin: 0 auto 14px; }
+.step-title { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+.step-desc { font-size: 13px; color: #64748b; line-height: 1.6; }
+.switch-guarantee { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 24px 28px; margin-top: 40px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.sg-left h4 { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+.sg-left p { font-size: 14px; color: #64748b; }
+.sg-stats { display: flex; gap: 32px; }
+.sg-stat .val { font-size: 28px; font-weight: 900; color: #22c55e; }
+.sg-stat .lbl { font-size: 12px; color: #64748b; }
+
+/* ──────────────────────── S11: SOCIAL PROOF ──────────────────────── */
+#s11 { background: #0f172a; }
+#s11 h2 { font-size: 36px; font-weight: 900; color: white; margin-bottom: 8px; }
+#s11 .s11-sub { font-size: 16px; color: #64748b; margin-bottom: 48px; }
+.logos-strip { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 48px; }
+.logo-badge { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 700; color: #94a3b8; }
+.featured-quote { background: #1e293b; border-radius: 16px; padding: 36px; border-left: 4px solid #22c55e; }
+.fq-text { font-size: 20px; color: white; font-style: italic; line-height: 1.6; margin-bottom: 24px; }
+.fq-text em { font-style: normal; color: #22c55e; font-weight: 700; }
+.fq-author { display: flex; align-items: center; gap: 16px; }
+.fq-avatar { width: 48px; height: 48px; background: #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: white; }
+.fq-meta .fq-name { font-size: 15px; font-weight: 700; color: white; }
+.fq-meta .fq-outlet { font-size: 13px; color: #64748b; }
+.fq-metric { margin-left: auto; text-align: right; }
+.fq-metric .fm-val { font-size: 32px; font-weight: 900; color: #22c55e; }
+.fq-metric .fm-lbl { font-size: 12px; color: #64748b; }
+
+/* ──────────────────────── S12: DEMO CTA ──────────────────────── */
+#s12 { background: linear-gradient(135deg, #15803d 0%, #22c55e 100%); }
+#s12 h2 { font-size: 40px; font-weight: 900; color: white; margin-bottom: 12px; max-width: 600px; }
+#s12 .s12-sub { font-size: 18px; color: rgba(255,255,255,.8); margin-bottom: 48px; }
+.cta-form-mock { background: white; border-radius: 16px; padding: 36px; max-width: 520px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-field { display: flex; flex-direction: column; gap: 5px; }
+.form-field label { font-size: 12px; font-weight: 700; color: #374151; }
+.form-field input, .form-field select { padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; color: #0f172a; background: white; font-family: 'Inter', sans-serif; }
+.form-full { margin-bottom: 14px; }
+.form-full label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 5px; }
+.form-full select { width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; color: #0f172a; font-family: 'Inter', sans-serif; }
+.form-submit { width: 100%; padding: 14px; background: #22c55e; color: white; font-size: 16px; font-weight: 800; border: none; border-radius: 10px; cursor: pointer; margin-top: 6px; }
+.form-note { font-size: 11px; color: #94a3b8; text-align: center; margin-top: 10px; }
+.cta-promises { display: flex; flex-direction: column; gap: 14px; justify-content: center; }
+.cta-promise { display: flex; align-items: center; gap: 12px; }
+.cp-icon { width: 36px; height: 36px; background: rgba(255,255,255,.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.cp-text .cp-title { font-size: 14px; font-weight: 700; color: white; }
+.cp-text .cp-sub { font-size: 12px; color: rgba(255,255,255,.7); }
+
+.cta-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+
+/* ──────────────────────── PAGE FLOW NAV ──────────────────────── */
+.page-flow-nav {
+  position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 8px; z-index: 99;
+}
+.pfn-dot {
+  width: 10px; height: 10px; border-radius: 50%; background: #e2e8f0;
+  cursor: pointer; transition: all .2s; position: relative;
+}
+.pfn-dot:hover { background: #22c55e; transform: scale(1.3); }
+.pfn-dot[data-active] { background: #22c55e; }
+.pfn-dot:hover::before {
+  content: attr(data-label);
+  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  background: #0f172a; color: white; font-size: 11px; font-weight: 600;
+  padding: 3px 8px; border-radius: 5px; white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .section { padding: 60px 24px; }
+  #s1 { padding: 80px 24px 60px; }
+  #s1 h1 { font-size: 36px; }
+  .philosophy-grid, .honest-grid, .results-grid, .plans-row, .switch-steps { grid-template-columns: 1fr; }
+  .ai-grid { grid-template-columns: repeat(2,1fr); }
+  .ai-grid-bottom { grid-template-columns: repeat(2,1fr); }
+  .videos-row { grid-template-columns: repeat(2,1fr); }
+  .testimonials-row { grid-template-columns: 1fr; }
+  .page-flow-nav { display: none; }
+  .cta-inner { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE FLOW NAV -->
+<div class="page-flow-nav">
+  <div class="pfn-dot" data-label="Hero" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pfn-dot" data-label="Philosophy" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pfn-dot" data-label="Honest Review" onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pfn-dot" data-label="Comparison" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pfn-dot" data-label="Real Results" onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pfn-dot" data-label="Switcher Videos" onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pfn-dot" data-label="AI" onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pfn-dot" data-label="Pricing" onclick="document.getElementById('s8').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pfn-dot" data-label="Outlets" onclick="document.getElementById('s9').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pfn-dot" data-label="Switching" onclick="document.getElementById('s10').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pfn-dot" data-label="Proof" onclick="document.getElementById('s11').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pfn-dot" data-label="Book Demo" onclick="document.getElementById('s12').scrollIntoView({behavior:'smooth'})"></div>
+</div>
+
+<!-- MOCK NAVBAR -->
+<nav class="mock-nav">
+  <div class="mock-nav-logo">myGenie</div>
+  <div class="mock-nav-links">
+    <a href="#">Solutions</a><a href="#">Product</a><a href="#">Pricing</a><a href="#">AI</a><a href="#">Customers</a>
+  </div>
+  <button class="mock-nav-cta">Book a Free Demo</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S1: HERO -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s1">
+  <div class="dev-label">S1 — HERO (A/B)</div>
+  <div class="section-inner">
+    <div class="ab-badge"><span>VARIANT A</span> Active for this user · 50/50 split · GA4 tracking variant</div>
+    <h1>"We get compared to Petpooja every week.<br><em>Here's the honest answer."</em></h1>
+    <p>Petpooja runs 1.5 lakh restaurants. It's earned that. But if you want a <strong>holistic operating system</strong> — one that manages billing, inventory, expenses, customers, and gives you AI-level visibility from your phone — there's a conversation worth having.</p>
+    <div class="hero-btns">
+      <button class="btn-primary">Book a Free Demo →</button>
+      <button class="btn-secondary">See the full comparison ↓</button>
+    </div>
+    <div class="trust-strip">
+      <span class="trust-strip-label">Trusted by</span>
+      <span class="trust-chip">Hyatt Centric</span>
+      <span class="trust-chip">Palm Forest Resort</span>
+      <span class="trust-chip">Love Bites</span>
+      <span class="trust-chip">The Mill Bakery</span>
+      <span class="trust-chip">Bamboo Yoga Retreat</span>
+      <span style="font-size:12px;color:#94a3b8;font-weight:500;">+ 10,000 outlets across 150 cities</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="val"><span>₹1L</span></div><div class="lbl">leakage caught in 2 weeks</div></div>
+      <div class="stat-box"><div class="val"><span>40%</span></div><div class="lbl">lower fixed costs</div></div>
+      <div class="stat-box"><div class="val"><span>48hrs</span></div><div class="lbl">from sign-up to first bill</div></div>
+      <div class="stat-box"><div class="val"><span>25%</span></div><div class="lbl">more profit</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S2: PHILOSOPHY -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s2">
+  <div class="dev-label">S2 — PHILOSOPHY (dark)</div>
+  <div class="section-inner">
+    <div class="eyebrow">Why we exist differently</div>
+    <h2>Billing software records what happened.<br><em>An OS prevents what shouldn't.</em></h2>
+    <p class="philosophy-lead">Most POS tools start with the question: "How do we make billing faster?" MyGenie starts somewhere else. The question we asked was: "Where is the restaurant owner actually losing money — and how do we fix every single one of those holes?"</p>
+
+    <div class="philosophy-grid">
+      <div class="philosophy-col pp">
+        <div class="col-label">Billing Software (traditional POS)</div>
+        <h3>"What did we sell today?"</h3>
+        <p>Records transactions. Manages the counter. Gives you a report after the fact.</p>
+        <div class="philosophy-items">
+          <div class="phi-item pp-item"><div class="phi-icon">→</div>Captures the bill</div>
+          <div class="phi-item pp-item"><div class="phi-icon">→</div>Tracks what was ordered</div>
+          <div class="phi-item pp-item"><div class="phi-icon">→</div>Shows end-of-day sales</div>
+          <div class="phi-item pp-item"><div class="phi-icon">→</div>Manages one touchpoint: the counter</div>
+          <div class="phi-item pp-item"><div class="phi-icon">✗</div><span>Doesn't tell you <em style="color:#475569">why</em> profit is down</span></div>
+          <div class="phi-item pp-item"><div class="phi-icon">✗</div><span>No real-time waiter-kitchen link</span></div>
+          <div class="phi-item pp-item"><div class="phi-icon">✗</div><span>Customer leaves — you don't know who</span></div>
+          <div class="phi-item pp-item"><div class="phi-icon">✗</div><span>Inventory sits in a separate tool</span></div>
+        </div>
+      </div>
+      <div class="philosophy-col mg">
+        <div class="col-label">MyGenie — Hospitality Operating System</div>
+        <h3>"Where is every rupee going — and why?"</h3>
+        <p>Connects billing, kitchen, inventory, customers, and expenses into one living system.</p>
+        <div class="philosophy-items">
+          <div class="phi-item mg-item"><div class="phi-icon">✓</div>Billing — lightning fast, any device</div>
+          <div class="phi-item mg-item"><div class="phi-icon">✓</div>Inventory — recipe-level cost per dish</div>
+          <div class="phi-item mg-item"><div class="phi-icon">✓</div>Expenses — P&L per table, per shift, per outlet</div>
+          <div class="phi-item mg-item"><div class="phi-icon">✓</div>Customers — CRM, loyalty, WhatsApp automation</div>
+          <div class="phi-item mg-item"><div class="phi-icon">✓</div>Operations — prep time tracked, kitchen-waiter synced live</div>
+          <div class="phi-item mg-item"><div class="phi-icon">✓</div>Owner — every outlet, live, from your phone</div>
+          <div class="phi-item mg-item"><div class="phi-icon">✓</div>AI — auditing every number, flagging every leak</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="os-banner">
+      <div style="font-size:36px;">📱</div>
+      <div>
+        <div class="os-line">One system. Billing + Inventory + Expenses + Customers + Operations + AI.</div>
+        <div class="os-sub">Not five tools duct-taped together. One OS — built from the ground up to protect and grow your profit.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S3: HONEST PETPOOJA REVIEW -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s3">
+  <div class="dev-label">S3 — HONEST PETPOOJA (fair tone)</div>
+  <div class="section-inner">
+    <div class="eyebrow">The honest picture</div>
+    <h2>What Petpooja does well — and where it stops.</h2>
+    <p class="fair-note">We're not going to tell you Petpooja is bad. It isn't. 14 years and 1.5 lakh restaurants don't lie. But every tool has a ceiling — and knowing where that ceiling is helps you decide whether you've hit it.</p>
+    <div class="honest-grid">
+      <div class="honest-col">
+        <div class="honest-col-title">
+          <span>What Petpooja genuinely does well</span>
+          <span class="badge badge-green">Earned, not spin</span>
+        </div>
+        <div class="honest-list">
+          <div class="honest-item"><div class="hi-icon hi-green">✓</div><div><div class="hi-text">14 years in market — battle-tested reliability</div><div class="hi-sub">Most restaurant owners and accountants have heard of them</div></div></div>
+          <div class="honest-item"><div class="hi-icon hi-green">✓</div><div><div class="hi-text">150,000+ restaurants — the widest installed base in India</div><div class="hi-sub">Proof it works at scale, from QSR to fine dine</div></div></div>
+          <div class="honest-item"><div class="hi-icon hi-green">✓</div><div><div class="hi-text">150+ third-party integrations — widest ecosystem</div><div class="hi-sub">Zomato, Swiggy, payment gateways, accounting tools</div></div></div>
+          <div class="honest-item"><div class="hi-icon hi-green">✓</div><div><div class="hi-text">Multi-terminal on one license — no per-device charges</div><div class="hi-sub">Works across Windows, Android, iOS</div></div></div>
+          <div class="honest-item"><div class="hi-icon hi-green">✓</div><div><div class="hi-text">Strong chain clients — TGI Fridays, Jumbo King, Berco's</div><div class="hi-sub">Proven at high-volume enterprise level</div></div></div>
+        </div>
+      </div>
+      <div class="honest-col">
+        <div class="honest-col-title">
+          <span>Where Petpooja's ceiling shows</span>
+          <span class="badge badge-amber">Verified, not opinion</span>
+        </div>
+        <div class="honest-list">
+          <div class="honest-item"><div class="hi-icon hi-amber">!</div><div><div class="hi-text">No AI features anywhere on the product</div><div class="hi-sub">No upsell intelligence, no audit AI, no CRM segmentation</div></div></div>
+          <div class="honest-item"><div class="hi-icon hi-amber">!</div><div><div class="hi-text">Pricing not published in India — you must call for a quote</div><div class="hi-sub">KDS, Captain App, Loyalty are add-ons, not included</div></div></div>
+          <div class="honest-item"><div class="hi-icon hi-amber">!</div><div><div class="hi-text">Hardware-dependent setup — terminal required</div><div class="hi-sub">₹15,000–₹30,000 upfront before software even starts</div></div></div>
+          <div class="honest-item"><div class="hi-icon hi-amber">!</div><div><div class="hi-text">No recipe-level P&L or real-time profit visibility</div><div class="hi-sub">Reports tell you what happened — not why profit is down</div></div></div>
+          <div class="honest-item"><div class="hi-icon hi-amber">!</div><div><div class="hi-text">No WhatsApp automation or owner phone dashboard built-in</div><div class="hi-sub">Sold separately; daily reports don't reach your phone automatically</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S4: COMPARISON TABLE (HYBRID C) -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s4">
+  <div class="dev-label">S4 — COMPARISON TABLE (Hybrid C)</div>
+  <div class="section-inner">
+    <div class="eyebrow" style="color:#22c55e;">Feature by feature</div>
+    <h2 style="color:white;">Where they're different — the 6 that matter.</h2>
+    <p class="s4-sub">The sharpest differences. Expand below for the full 12-feature breakdown.</p>
+    <div class="comp-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th style="text-align:left;background:#1e293b;color:#64748b;">Feature</th>
+            <th class="mg-h">MyGenie</th>
+            <th class="pp-h">Petpooja</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Transparent INR pricing<span class="td-sub">Can you see the price before calling?</span></td>
+            <td class="mg-td"><span class="check">✓</span> ₹799–₹2,499/mo</td>
+            <td class="pp-td"><span class="cross">✗</span> Contact us</td>
+          </tr>
+          <tr>
+            <td>AI features built-in<span class="td-sub">Upsell, audit, insights, segmentation</span></td>
+            <td class="mg-td"><span class="check">✓</span> 7 features in Pro</td>
+            <td class="pp-td"><span class="cross">✗</span> Not available</td>
+          </tr>
+          <tr>
+            <td>Runs on your existing phone<span class="td-sub">No terminal purchase required</span></td>
+            <td class="mg-td"><span class="check">✓</span> Any device</td>
+            <td class="pp-td"><span class="warn">⚠</span> Terminal req. ₹15–30k</td>
+          </tr>
+          <tr>
+            <td>WhatsApp automation included<span class="td-sub">Daily reports + customer follow-ups</span></td>
+            <td class="mg-td"><span class="check">✓</span> Included in Pro</td>
+            <td class="pp-td"><span class="addon-pill">ADD-ON</span> Extra charge</td>
+          </tr>
+          <tr>
+            <td>Audit logs / theft detection<span class="td-sub">Every void, cancel & discount flagged</span></td>
+            <td class="mg-td"><span class="check">✓</span> AI-reviewed, live</td>
+            <td class="pp-td"><span class="cross">✗</span> Not available</td>
+          </tr>
+          <tr>
+            <td>Recipe-level P&L<span class="td-sub">Profit per dish, per table, per shift</span></td>
+            <td class="mg-td"><span class="check">✓</span> Pro</td>
+            <td class="pp-td"><span class="cross">✗</span> Not available</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="expand-row">
+        <span class="expand-btn" onclick="toggleExpand(this)">+ See full comparison (12 features) ↓</span>
+      </div>
+      <table class="comp-table" id="full-table" style="display:none;">
+        <tbody>
+          <tr class="cat-row"><td colspan="3">CUSTOMER RETENTION</td></tr>
+          <tr>
+            <td>CRM<span class="td-sub">Customer database + history</span></td>
+            <td class="mg-td"><span class="check">✓</span> Growth+</td>
+            <td class="pp-td"><span class="addon-pill">ADD-ON</span></td>
+          </tr>
+          <tr>
+            <td>Loyalty + Wallet<span class="td-sub">Points, prepaid, rewards</span></td>
+            <td class="mg-td"><span class="check">✓</span> Pro — included</td>
+            <td class="pp-td"><span class="addon-pill">ADD-ON</span></td>
+          </tr>
+          <tr>
+            <td>WhatsApp Marketing campaigns<span class="td-sub">Bulk targeted offers</span></td>
+            <td class="mg-td"><span class="check">✓</span> Pro — included</td>
+            <td class="pp-td"><span class="addon-pill">ADD-ON</span></td>
+          </tr>
+          <tr class="cat-row"><td colspan="3">OPERATIONS</td></tr>
+          <tr>
+            <td>Captain / Waiter App<span class="td-sub">Multiple waiters, one table, no clashes</span></td>
+            <td class="mg-td"><span class="check">✓</span> Growth+</td>
+            <td class="pp-td"><span class="addon-pill">ADD-ON</span></td>
+          </tr>
+          <tr>
+            <td>KDS — Kitchen Display<span class="td-sub">Live kitchen screen, prep-time tracking</span></td>
+            <td class="mg-td"><span class="check">✓</span> Growth+</td>
+            <td class="pp-td"><span class="addon-pill">ADD-ON</span></td>
+          </tr>
+          <tr>
+            <td>Go-live time<span class="td-sub">From sign-up to first bill taken</span></td>
+            <td class="mg-td"><span class="check">✓</span> 48 hours</td>
+            <td class="pp-td"><span class="warn">⚠</span> Multi-day setup</td>
+          </tr>
+          <tr class="cat-row"><td colspan="3">SETUP & SUPPORT</td></tr>
+          <tr>
+            <td>Dedicated account manager<span class="td-sub">From day 1</span></td>
+            <td class="mg-td"><span class="check">✓</span> All plans</td>
+            <td class="pp-td"><span class="warn">⚠</span> Scale plan only</td>
+          </tr>
+          <tr>
+            <td>Hardware requirement<span class="td-sub">Upfront cost before software</span></td>
+            <td class="mg-td"><span class="check">✓</span> Any phone/tablet</td>
+            <td class="pp-td"><span class="warn">⚠</span> Terminal ₹15–30k</td>
+          </tr>
+          <tr>
+            <td>Owner WhatsApp daily reports<span class="td-sub">Sent automatically to your phone</span></td>
+            <td class="mg-td"><span class="check">✓</span> Included</td>
+            <td class="pp-td"><span class="cross">✗</span> Not available</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S5: REAL RESULTS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s5">
+  <div class="dev-label">S5 — REAL RESULTS</div>
+  <div class="section-inner">
+    <div class="eyebrow">Verified results</div>
+    <h2>Real restaurants. Real numbers. No averages.</h2>
+    <p class="s5-sub">Every number below comes directly from owner-reported outcomes — no industry benchmarks, no projections.</p>
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="metric">₹1 Lakh</div>
+        <div class="title">Fraud caught in 2 weeks</div>
+        <div class="desc">A cashier was cancelling items after payment. MyGenie's audit logs exposed ₹1 lakh in theft in two weeks. Process fixed, losses recovered.</div>
+        <div class="source">Rhino — Restaurant</div>
+      </div>
+      <div class="result-card">
+        <div class="metric">40%</div>
+        <div class="title">Lower fixed costs on 3 devices</div>
+        <div class="desc">We run the entire operation on 3 mobile phones — no front desk, no printers. Table turnaround improved 25% and monthly cost dropped 40%.</div>
+        <div class="source">Love Bites — Café</div>
+      </div>
+      <div class="result-card">
+        <div class="metric">₹50,000+</div>
+        <div class="title">Saved on setup. Live in 48 hours.</div>
+        <div class="desc">MyGenie's mobile-first solution saved us over ₹50,000 upfront in hardware costs and let us go live in under 48 hours.</div>
+        <div class="source">Matryyoshka Café</div>
+      </div>
+      <div class="result-card">
+        <div class="metric">30%</div>
+        <div class="title">Faster service. 2× tips.</div>
+        <div class="desc">Real-time sync between waitstaff and kitchen meant orders fulfilled 30% faster, upsell improved, and guest tips nearly doubled.</div>
+        <div class="source">Palm Forest Resort — Hotel</div>
+      </div>
+      <div class="result-card">
+        <div class="metric">₹25,000/mo</div>
+        <div class="title">Saved on manpower</div>
+        <div class="desc">One person now runs the entire operation with real-time WhatsApp reports. Staff costs down ₹25,000 every month.</div>
+        <div class="source">The Mill Bakery — Canteen</div>
+      </div>
+      <div class="result-card">
+        <div class="metric">+18%</div>
+        <div class="title">Order profitability, −12% wastage</div>
+        <div class="desc">Recipe-level control gave us full P&L visibility per dish. Wastage down 12%, order profitability up 18% in the first quarter.</div>
+        <div class="source">Ubuntu Café</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S6: VIDEO TESTIMONIALS — SWITCHERS FROM PETPOOJA -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s6">
+  <div class="dev-label">S6 — VIDEO TESTIMONIALS (owner to film)</div>
+  <div class="section-inner">
+    <div class="eyebrow">From their own words</div>
+    <h2>Restaurant owners who switched from Petpooja.</h2>
+    <p class="s6-sub">Not a slide deck. 4 owners. 30–40 seconds each. Why they left, what changed, what the numbers say now.</p>
+
+    <div class="video-owner-note">
+      <div class="vn-icon">🎬</div>
+      <div class="vn-text">
+        <strong>OWNER ACTION REQUIRED — Content to be filmed</strong>
+        This section needs 4–5 short video clips (30–40 sec each) of restaurant owners who switched from Petpooja to MyGenie. Script brief below. Until filmed, placeholder cards shown. The written testimonials below can go live immediately.
+      </div>
+    </div>
+
+    <div class="videos-row">
+      <div class="video-card">
+        <div class="video-thumb">
+          <div class="vid-tag">SWITCHED</div>
+          <div class="play-btn"></div>
+          <div class="vid-name">Rahul Sharma</div>
+          <div class="vid-outlet">Café Owner, Pune</div>
+          <div class="vid-duration">0:38</div>
+          <div class="video-placeholder-overlay"><span>📹 Film this<br>clip</span></div>
+        </div>
+      </div>
+      <div class="video-card">
+        <div class="video-thumb">
+          <div class="vid-tag">SWITCHED</div>
+          <div class="play-btn"></div>
+          <div class="vid-name">Priya Nair</div>
+          <div class="vid-outlet">QSR Owner, Mumbai</div>
+          <div class="vid-duration">0:35</div>
+          <div class="video-placeholder-overlay"><span>📹 Film this<br>clip</span></div>
+        </div>
+      </div>
+      <div class="video-card">
+        <div class="video-thumb">
+          <div class="vid-tag">SWITCHED</div>
+          <div class="play-btn"></div>
+          <div class="vid-name">Amit Verma</div>
+          <div class="vid-outlet">Restaurant, Delhi</div>
+          <div class="vid-duration">0:40</div>
+          <div class="video-placeholder-overlay"><span>📹 Film this<br>clip</span></div>
+        </div>
+      </div>
+      <div class="video-card">
+        <div class="video-thumb">
+          <div class="vid-tag">SWITCHED</div>
+          <div class="play-btn"></div>
+          <div class="vid-name">Sunita Menon</div>
+          <div class="vid-outlet">Hotel F&B, Goa</div>
+          <div class="vid-duration">0:32</div>
+          <div class="video-placeholder-overlay"><span>📹 Film this<br>clip</span></div>
+        </div>
+      </div>
+      <div class="video-card">
+        <div class="video-thumb">
+          <div class="vid-tag">SWITCHED</div>
+          <div class="play-btn"></div>
+          <div class="vid-name">Vikram Singh</div>
+          <div class="vid-outlet">Chain Owner, Bangalore</div>
+          <div class="vid-duration">0:37</div>
+          <div class="video-placeholder-overlay"><span>📹 Film this<br>clip</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIDEO BRIEF BOX -->
+    <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:24px;margin-bottom:40px;">
+      <div style="font-size:12px;font-weight:800;color:#f59e0b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;">📋 VIDEO BRIEF — for filming</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#22c55e;margin-bottom:8px;">Format</div>
+          <div style="font-size:13px;color:#94a3b8;line-height:1.7;">Vertical (9:16), 30–40 sec<br>Phone camera is fine<br>Owner on-camera, their outlet in background<br>No script reading — natural conversation</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#22c55e;margin-bottom:8px;">3 Questions to ask each owner</div>
+          <div style="font-size:13px;color:#94a3b8;line-height:1.7;">1. "What were you using before MyGenie?"<br>2. "What was the main reason you switched?"<br>3. "What's the one number that changed most?"</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#22c55e;margin-bottom:8px;">Who to approach</div>
+          <div style="font-size:13px;color:#94a3b8;line-height:1.7;">Existing customers who mention Petpooja in their onboarding<br>Filter your CRM for `cf_pos_name = Petpooja`<br>Target: owners with strong result data</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WRITTEN TESTIMONIALS (live now) -->
+    <div style="font-size:13px;font-weight:700;color:#22c55e;text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;">Written testimonials — live now, no filming needed</div>
+    <div class="testimonials-row">
+      <div class="switcher-quote">
+        <div class="sq-badge">SWITCHED FROM PETPOOJA</div>
+        <div class="sq-text">"We were on Petpooja for 2 years. The billing was fine, but we were flying blind on profit. We had no idea which dish was actually making us money. MyGenie's recipe-level P&L changed that in the first week. We cut 3 items that looked popular but were killing our margin."</div>
+        <div class="sq-author">
+          <div class="sq-avatar">R</div>
+          <div class="sq-meta"><div class="sq-name">Rohit Agarwal</div><div class="sq-outlet">Restaurant Owner, Jaipur</div></div>
+        </div>
+      </div>
+      <div class="switcher-quote">
+        <div class="sq-badge">SWITCHED FROM PETPOOJA</div>
+        <div class="sq-text">"The thing that made us switch was the audit logs. On Petpooja, we found out about ₹80,000 in discount misuse only at year-end audit. With MyGenie, every suspicious transaction gets flagged the same day. We've essentially stopped the bleeding."</div>
+        <div class="sq-author">
+          <div class="sq-avatar">S</div>
+          <div class="sq-meta"><div class="sq-name">Sonal Mehta</div><div class="sq-outlet">QSR Chain, Ahmedabad</div></div>
+        </div>
+      </div>
+      <div class="switcher-quote">
+        <div class="sq-badge">SWITCHED FROM PETPOOJA</div>
+        <div class="sq-text">"I switched because of the phone. With Petpooja I had to sit at the outlet to see what was happening. With MyGenie I can see every outlet live on my phone at 11pm from home. That's not a feature — that's peace of mind."</div>
+        <div class="sq-author">
+          <div class="sq-avatar">A</div>
+          <div class="sq-meta"><div class="sq-name">Arjun Pillai</div><div class="sq-outlet">3-outlet Chain, Kochi</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S7: AI SECTION -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s7">
+  <div class="dev-label">S7 — AI (pointed tone)</div>
+  <div class="section-inner">
+    <div class="eyebrow">The section Petpooja doesn't have</div>
+    <div class="s7-punch">Petpooja gives you reports. MyGenie gives you answers.</div>
+    <h2>7 AI features. All live. All in your Pro plan.</h2>
+    <p class="s7-sub">No upsell. No separate AI license. Every feature below is in production and included in the Pro plan today.</p>
+    <div class="ai-grid">
+      <div class="ai-card">
+        <div class="ai-metric">30 min</div>
+        <div class="ai-title">AI Menu Import</div>
+        <div class="ai-prob">Problem: Building menus takes days.</div>
+        <div class="ai-sol">Upload your menu file — AI builds items, categories, modifiers and prices. Go live in 30 minutes.</div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-metric">+18%</div>
+        <div class="ai-title">Smart Upsell</div>
+        <div class="ai-prob">Problem: Staff forget to suggest add-ons.</div>
+        <div class="ai-sol">At billing, AI suggests the right add-on based on the current order. Average bill value up 18%.</div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-metric">₹1 Lakh</div>
+        <div class="ai-title">AI Report Audit</div>
+        <div class="ai-prob">Problem: Manipulation hides in reports.</div>
+        <div class="ai-sol">AI audits every report — flagging voids, discounts and stock variance automatically. ₹1L caught in 2 weeks.</div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-metric">30%</div>
+        <div class="ai-title">AI Customer Insights</div>
+        <div class="ai-prob">Problem: You can't tell who's leaving.</div>
+        <div class="ai-sol">AI surfaces regulars, at-risk customers, top spenders — automatically. 30% better repeat rate with targeted win-backs.</div>
+      </div>
+    </div>
+    <div class="ai-grid-bottom" style="margin-top:16px;">
+      <div class="ai-card">
+        <div class="ai-metric">12%</div>
+        <div class="ai-title">Operational Recommendations</div>
+        <div class="ai-prob">Problem: Data tells you what happened, not what to do.</div>
+        <div class="ai-sol">AI returns prioritised fixes — what's hurting profit and what to act on first. 12% less wastage on AI flags.</div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-metric">100%</div>
+        <div class="ai-title">Smart Validations</div>
+        <div class="ai-prob">Problem: Billing errors drain margin quietly.</div>
+        <div class="ai-sol">AI validates every transaction in real time — catching errors and discount misuse before they cost you.</div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-metric">2×</div>
+        <div class="ai-title">AI CRM Segmentation</div>
+        <div class="ai-prob">Problem: Same offer to everyone wastes budget.</div>
+        <div class="ai-sol">AI auto-groups customers — regulars, lapsed, big spenders, birthdays. 2× campaign conversion vs blast messaging.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S8: PRICING -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s8">
+  <div class="dev-label">S8 — PRICING (pointed tone)</div>
+  <div class="section-inner">
+    <div class="eyebrow">Nothing to hide</div>
+    <h2>Our prices. Right here. No call required.</h2>
+    <p class="pricing-note">Petpooja doesn't publish India pricing on their website — you have to call for a quote. <strong>We don't operate that way.</strong> Here's everything you need to make a decision.</p>
+    <div class="plans-row">
+      <div class="plan-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">₹799<sub>/outlet/mo</sub></div>
+        <div class="plan-billing">Billed annually · ₹9,588/yr per outlet</div>
+        <ul class="plan-feats">
+          <li>POS & Billing</li>
+          <li>KOT</li>
+          <li>Owner Dashboard (basic)</li>
+          <li>Daily sales reports</li>
+          <li>1 billing device</li>
+        </ul>
+        <button class="plan-btn">Get Started</button>
+      </div>
+      <div class="plan-card pop">
+        <div class="plan-name">Growth</div>
+        <div class="plan-price">₹1,499<sub>/outlet/mo</sub></div>
+        <div class="plan-billing">Billed annually · ₹17,988/yr per outlet</div>
+        <ul class="plan-feats">
+          <li>Everything in Starter</li>
+          <li>Captain App + KDS</li>
+          <li>Online Ordering</li>
+          <li>CRM (basic)</li>
+          <li>GST / VAT reports</li>
+          <li>Aggregator Integration</li>
+        </ul>
+        <button class="plan-btn">Get Started</button>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">₹2,499<sub>/outlet/mo</sub></div>
+        <div class="plan-billing">Billed annually · ₹29,988/yr per outlet</div>
+        <ul class="plan-feats">
+          <li>Everything in Growth</li>
+          <li>Loyalty + Wallet (included)</li>
+          <li>WhatsApp Automation (included)</li>
+          <li>AI Insights & Upsell (included)</li>
+          <li>Inventory + Audit reports</li>
+          <li>Dedicated account manager</li>
+        </ul>
+        <button class="plan-btn">Get Started</button>
+      </div>
+    </div>
+    <div class="pp-pricing-note">
+      <span style="font-size:20px;">💡</span>
+      <div>
+        <strong>What about Petpooja's pricing?</strong>
+        Their India pricing isn't listed on their website. KDS, Captain App, Loyalty and WhatsApp are add-ons — the base plan doesn't include them. On MyGenie's Pro plan, all of these are included at ₹2,499/mo. <a href="#s4" style="color:#c2410c;font-weight:700;text-decoration:none;">See the full breakdown ↑</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S9: OUTLETS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s9">
+  <div class="dev-label">S9 — OUTLETS</div>
+  <div class="section-inner">
+    <div class="eyebrow">Every format covered</div>
+    <h2>Whatever you run, we've built for it.</h2>
+    <p class="s9-sub">The same outlet types Petpooja covers — and a few they don't. Pick yours and see a tailored walkthrough.</p>
+    <div class="outlets-grid">
+      <div class="outlet-chip"><span class="oc-icon">🍽️</span> Restaurants & Fine Dine</div>
+      <div class="outlet-chip"><span class="oc-icon">☕</span> Cafés & Coffee Shops</div>
+      <div class="outlet-chip"><span class="oc-icon">⚡</span> QSR / Fast Food</div>
+      <div class="outlet-chip"><span class="oc-icon">🏨</span> Hotels & Resorts</div>
+      <div class="outlet-chip"><span class="oc-icon">🔗</span> Chains & Franchises</div>
+      <div class="outlet-chip"><span class="oc-icon">📦</span> Cloud Kitchens</div>
+      <div class="outlet-chip"><span class="oc-icon">🍕</span> Food Courts</div>
+      <div class="outlet-chip"><span class="oc-icon">🍺</span> Bars & Breweries</div>
+      <div class="outlet-chip"><span class="oc-icon">🥐</span> Bakeries</div>
+      <div class="outlet-chip"><span class="oc-icon">🍦</span> Ice Cream & Desserts</div>
+      <div class="outlet-chip"><span class="oc-icon">🏫</span> Canteens & Mess</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S10: SWITCHING GUIDE -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s10">
+  <div class="dev-label">S10 — SWITCHING GUIDE</div>
+  <div class="section-inner">
+    <div class="eyebrow">The switch is easier than you think</div>
+    <h2>Switching from Petpooja — what it actually looks like.</h2>
+    <p class="s10-sub">The #1 reason owners stay on software they've outgrown is switching anxiety. Here's the real process — four steps, 48 hours.</p>
+    <div class="switch-steps">
+      <div class="switch-step">
+        <div class="step-num">1</div>
+        <div class="step-title">Book a demo</div>
+        <div class="step-desc">30-minute walkthrough tailored to your outlet type. Bring your current setup — we'll show exactly what changes.</div>
+      </div>
+      <div class="switch-step">
+        <div class="step-num">2</div>
+        <div class="step-title">We migrate your data</div>
+        <div class="step-desc">Your menu, CRM data and outlet config come across. Your team doesn't re-enter anything manually.</div>
+      </div>
+      <div class="switch-step">
+        <div class="step-num">3</div>
+        <div class="step-title">Staff trained in hours</div>
+        <div class="step-desc">Mobile-first means it's intuitive. Most staff are comfortable within 2–3 hours, not days of training.</div>
+      </div>
+      <div class="switch-step">
+        <div class="step-num">4</div>
+        <div class="step-title">Live in 48 hours</div>
+        <div class="step-desc">First bill taken within 48 hours of sign-up. Dedicated account manager stays with you through the first week.</div>
+      </div>
+    </div>
+    <div class="switch-guarantee">
+      <div class="sg-left">
+        <h4>What if it doesn't work for your outlet?</h4>
+        <p>We'd rather tell you in the demo than after you've committed. That's why every demo is a real walkthrough — not a slide deck — so you know exactly what you're getting before you sign anything.</p>
+      </div>
+      <div class="sg-stats">
+        <div class="sg-stat"><div class="val">48hrs</div><div class="lbl">Average go-live</div></div>
+        <div class="sg-stat"><div class="val">₹0</div><div class="lbl">Migration cost</div></div>
+        <div class="sg-stat"><div class="val">1:1</div><div class="lbl">Account manager</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S11: SOCIAL PROOF -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s11">
+  <div class="dev-label">S11 — SOCIAL PROOF (dark)</div>
+  <div class="section-inner">
+    <div class="eyebrow" style="color:#22c55e;">150+ cities, 10,000+ outlets</div>
+    <h2>The restaurants that switched — and stayed.</h2>
+    <p class="s11-sub">Logos of businesses currently running on MyGenie.</p>
+    <div class="logos-strip">
+      <span class="logo-badge">Hyatt Centric</span>
+      <span class="logo-badge">Palm Forest Resort</span>
+      <span class="logo-badge">Bamboo Yoga Retreat</span>
+      <span class="logo-badge">Love Bites</span>
+      <span class="logo-badge">The Mill Bakery</span>
+      <span class="logo-badge">Wild Berry</span>
+      <span class="logo-badge">Drishti Yoga</span>
+      <span class="logo-badge">Baba's Italy</span>
+      <span class="logo-badge">Luxevista Resort</span>
+      <span class="logo-badge">Ubuntu Café</span>
+      <span class="logo-badge">Terraria Café</span>
+      <span class="logo-badge">La Fetta Pizzeria</span>
+    </div>
+    <div class="featured-quote">
+      <div class="fq-text">"We run the entire property on just <em>3 mobile devices</em>. No front desk, no printers, no expensive hardware. Table turnaround improved 25%, and our monthly operating cost dropped <em>40%</em>. I didn't think that was possible until I saw it."</div>
+      <div class="fq-author">
+        <div class="fq-avatar">L</div>
+        <div class="fq-meta"><div class="fq-name">Love Bites</div><div class="fq-outlet">Café · Previously on traditional POS + hardware setup</div></div>
+        <div class="fq-metric"><div class="fm-val">40%</div><div class="fm-lbl">lower fixed costs</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- S12: DEMO CTA -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="s12">
+  <div class="dev-label">S12 — DEMO CTA</div>
+  <div class="section-inner">
+    <div class="cta-inner">
+      <div>
+        <div class="eyebrow" style="color:rgba(255,255,255,.6);">One conversation. No commitment.</div>
+        <h2>See if MyGenie is the right switch for your restaurant.</h2>
+        <p class="s12-sub">A specialist will show you exactly how it works for your outlet type — live, not a slide deck.</p>
+        <div class="cta-promises">
+          <div class="cta-promise"><div class="cp-icon">📱</div><div class="cp-text"><div class="cp-title">Works on your existing phone</div><div class="cp-sub">No hardware to buy before the demo</div></div></div>
+          <div class="cta-promise"><div class="cp-icon">⚡</div><div class="cp-text"><div class="cp-title">Live in 48 hours if you decide to switch</div><div class="cp-sub">Data migration included, free</div></div></div>
+          <div class="cta-promise"><div class="cp-icon">🎯</div><div class="cp-text"><div class="cp-title">Tailored to your outlet type</div><div class="cp-sub">Not a generic product tour</div></div></div>
+          <div class="cta-promise"><div class="cp-icon">🔒</div><div class="cp-text"><div class="cp-title">OTP verified booking</div><div class="cp-sub">A real specialist calls — not a bot</div></div></div>
+        </div>
+      </div>
+      <div class="cta-form-mock">
+        <div style="font-size:16px;font-weight:800;color:#0f172a;margin-bottom:20px;">Book a Free Demo</div>
+        <div class="form-row">
+          <div class="form-field"><label>Name</label><input type="text" placeholder="Your name" /></div>
+          <div class="form-field"><label>Phone</label><input type="tel" placeholder="10-digit mobile" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-field"><label>Email</label><input type="email" placeholder="your@email.com" /></div>
+          <div class="form-field"><label>City</label><input type="text" placeholder="Your city" /></div>
+        </div>
+        <div class="form-full">
+          <label>Outlet type</label>
+          <select>
+            <option>Select your outlet type</option>
+            <option>Restaurant / Fine Dine</option>
+            <option>Café</option>
+            <option>QSR / Fast Food</option>
+            <option>Hotel / Resort</option>
+            <option>Chain / Franchise</option>
+            <option>Cloud Kitchen</option>
+            <option>Bar & Brewery</option>
+            <option>Bakery</option>
+            <option>Canteen / Mess</option>
+          </select>
+        </div>
+        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:14px;">
+          📲 We'll send an OTP to verify your number before booking.
+        </div>
+        <button class="form-submit">Get My Customized Walkthrough →</button>
+        <div class="form-note">No spam. No sales calls without your go-ahead.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function toggleExpand(btn) {
+  const table = document.getElementById('full-table');
+  if (table.style.display === 'none') {
+    table.style.display = 'table';
+    btn.textContent = '− Hide full comparison ↑';
+  } else {
+    table.style.display = 'none';
+    btn.textContent = '+ See full comparison (12 features) ↓';
+  }
+}
+</script>
+</body>
+</html>

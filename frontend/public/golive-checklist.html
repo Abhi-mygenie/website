@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>MyGenie POS — Go-Live Checklist</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --orange:#f26b33; --green:#329937; --dark:#111827;
+  --muted:#6b7280; --border:#e5e7eb; --sand:#f9fafb;
+  --red:#dc2626; --amber:#d97706; --blue:#2563eb;
+  --light-green:#f0fdf4; --light-orange:#fff7ed;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f4f6;color:var(--dark);font-size:14px;line-height:1.5;}
+
+/* ── HEADER ── */
+.header{background:var(--dark);padding:20px 36px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--orange);}
+.header-left{display:flex;align-items:center;gap:14px;}
+.logo{height:30px;width:auto;}
+.doc-title{color:#fff;font-size:15px;font-weight:700;}
+.doc-sub{color:#9ca3af;font-size:11px;margin-top:2px;}
+.progress-wrap{text-align:right;}
+.prog-label{color:#9ca3af;font-size:11px;margin-bottom:4px;}
+.prog-bar{width:180px;height:7px;background:#374151;border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--green));border-radius:4px;transition:width 0.5s;}
+.prog-pct{color:#fff;font-size:13px;font-weight:700;margin-top:3px;}
+
+/* ── LAYOUT ── */
+.container{max-width:900px;margin:0 auto;padding:24px 20px 80px;}
+
+/* ── INTRO ── */
+.intro{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:20px;}
+.intro h2{font-size:16px;font-weight:700;margin-bottom:6px;}
+.intro p{font-size:13px;color:var(--muted);line-height:1.7;}
+.legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+.leg-dot{width:10px;height:10px;border-radius:50%;}
+
+/* ── STEP CARD ── */
+.step{background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;transition:box-shadow 0.2s;}
+.step.done{border-color:#bbf7d0;background:var(--light-green);}
+.step.active{border-color:var(--orange);box-shadow:0 0 0 3px rgba(242,107,51,0.1);}
+
+/* ── STEP HEADER ── */
+.step-header{padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none;}
+.step-header:hover{background:rgba(0,0,0,0.02);}
+.step-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;border:2px solid var(--border);color:var(--muted);background:#fff;}
+.done .step-num{background:var(--green);border-color:var(--green);color:#fff;}
+.active .step-num{background:var(--orange);border-color:var(--orange);color:#fff;}
+.step-meta{flex:1;}
+.step-title{font-size:15px;font-weight:700;color:var(--dark);}
+.done .step-title{color:#166534;}
+.step-subtitle{font-size:12px;color:var(--muted);margin-top:2px;}
+.step-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.04em;}
+.badge-who-you{background:#fff7ed;color:#c2410c;}
+.badge-who-dev{background:#eff6ff;color:#1d4ed8;}
+.badge-who-both{background:#faf5ff;color:#7e22ce;}
+.badge-time{background:#f3f4f6;color:var(--muted);}
+.badge-p0{background:#fee2e2;color:#991b1b;}
+.badge-p1{background:#fef3c7;color:#92400e;}
+.badge-optional{background:#f0fdf4;color:#166534;}
+.chevron{font-size:12px;color:var(--muted);transition:transform 0.2s;margin-left:auto;}
+.step.collapsed .chevron{transform:rotate(-90deg);}
+.step.collapsed .step-body{display:none;}
+
+/* ── STEP BODY ── */
+.step-body{padding:0 20px 20px;}
+.step-divider{height:1px;background:var(--border);margin:0 0 16px;}
+
+/* ── CHECKLIST ── */
+.checklist{list-style:none;}
+.checklist li{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.checklist li:last-child{border-bottom:none;}
+.checklist li.done-item .check-label{text-decoration:line-through;color:var(--muted);}
+.check-box{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:1px;transition:all 0.15s;}
+.check-box.checked{background:var(--green);border-color:var(--green);color:#fff;}
+.check-content{flex:1;}
+.check-label{font-weight:600;font-size:13px;cursor:pointer;}
+.check-detail{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.6;}
+.check-detail code{background:#f3f4f6;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:11px;}
+.check-detail a{color:var(--blue);text-decoration:none;}
+.check-detail a:hover{text-decoration:underline;}
+
+/* ── VERIFY BLOCK ── */
+.verify-block{background:var(--sand);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-top:14px;}
+.verify-title{font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px;}
+.verify-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;font-size:12px;color:var(--dark);}
+.verify-item:last-child{margin-bottom:0;}
+.verify-icon{color:var(--green);flex-shrink:0;margin-top:1px;}
+
+/* ── WARN / NOTE BLOCKS ── */
+.warn-block{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:12px 14px;margin-top:12px;}
+.warn-title{font-size:11px;font-weight:800;color:var(--orange);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
+.warn-text{font-size:12px;color:#92400e;line-height:1.6;}
+.info-block{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;margin-top:12px;}
+.info-title{font-size:11px;font-weight:800;color:var(--blue);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
+.info-text{font-size:12px;color:#1e40af;line-height:1.6;}
+
+/* ── MARK DONE BUTTON ── */
+.mark-done-btn{margin-top:14px;padding:9px 20px;border-radius:6px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;width:100%;}
+.mark-done-btn.not-done{background:var(--dark);color:#fff;}
+.mark-done-btn.not-done:hover{background:#374151;}
+.mark-done-btn.is-done{background:var(--light-green);color:var(--green);border:1px solid #bbf7d0;}
+
+/* ── STEP 7 SPECIAL ── */
+.step-7-finale{text-align:center;padding:20px 0 10px;}
+.step-7-finale .big{font-size:32px;margin-bottom:8px;}
+.step-7-finale p{font-size:13px;color:var(--muted);}
+
+/* ── OPTIONAL SECTION ── */
+.optional-section{background:#fff;border:1px dashed var(--border);border-radius:10px;padding:16px 20px;margin-top:8px;}
+.optional-title{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:10px;}
+.optional-item{font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;}
+.optional-item:last-child{border-bottom:none;}
+
+/* ── PRINT ── */
+@media print{
+  body{background:#fff;}
+  .header{position:static;border-bottom:2px solid var(--dark);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .step.collapsed .step-body{display:block;}
+  .mark-done-btn,.chevron{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <img src="/brand/logo-light.svg" class="logo" alt="MyGenie POS"/>
+    <div>
+      <div class="doc-title">Go-Live Checklist — 8 Steps</div>
+      <div class="doc-sub">www.mygenie.online · Interactive · Version 1.1 · June 2026</div>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-label">Steps completed</div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="prog-pct" id="prog-pct">0 / 8 steps done</div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- INTRO -->
+<div class="intro">
+  <h2>How to use this checklist</h2>
+  <p>Work through each step in order. Tick each sub-item as you complete it. Click <strong>"Mark Step Done"</strong> to close a step and move to the next. Steps 1–2 (GTM) can be done before deployment. Step 4 is the deploy. Steps 5–7 run on the same day as the deploy.</p>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:#c2410c"></div>Your action</div>
+    <div class="leg"><div class="leg-dot" style="background:#1d4ed8"></div>Dev action</div>
+    <div class="leg"><div class="leg-dot" style="background:#7e22ce"></div>Both</div>
+    <div class="leg"><div class="leg-dot" style="background:#991b1b"></div>P0 — blocks go-live</div>
+    <div class="leg"><div class="leg-dot" style="background:#166534"></div>Step done</div>
+  </div>
+</div>
+
+<!-- ═══════════════ PRE-PRODUCTION STATUS ═══════════════ -->
+<div style="background:#fff;border:1px solid #bbf7d0;border-radius:12px;margin-bottom:16px;overflow:hidden;">
+  <div style="background:#f0fdf4;padding:14px 20px;border-bottom:1px solid #bbf7d0;display:flex;align-items:center;gap:10px;">
+    <div style="width:28px;height:28px;background:#329937;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800;flex-shrink:0;">✓</div>
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#166534;">Pre-Production Validation — dataLayer Verified</div>
+      <div style="font-size:12px;color:#4ade80;margin-top:1px;">Completed 2026-06-22 · Verified on preview URL before deployment</div>
+    </div>
+    <div style="margin-left:auto;background:#329937;color:#fff;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;">DONE</div>
+  </div>
+  <div style="padding:16px 20px;">
+    <p style="font-size:13px;color:#374151;margin-bottom:14px;">The React app pushes the correct variables to <code style="background:#f3f4f6;padding:1px 5px;border-radius:3px;font-size:11px;">window.dataLayer</code> pre-production. Validated by running <code style="background:#f3f4f6;padding:1px 5px;border-radius:3px;font-size:11px;">dataLayer.filter(e=>e.event)</code> in DevTools Console on the preview URL after a real form submission.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px;">
+        <div style="font-size:11px;font-weight:800;color:#329937;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">✅ Confirmed working</div>
+        <div style="font-size:12px;color:#374151;line-height:1.9;">
+          <div>• <strong>form_submitted</strong> event fires</div>
+          <div>• <strong>thankyou_conversion</strong> fires with conversion_value: <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">500</code></div>
+          <div>• <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">event_id</code> same UUID on both events (deduplication ✓)</div>
+          <div>• <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">email</code>, <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">phone</code> (+91 format), <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">external_id</code></div>
+          <div>• <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">first_name</code> / <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">last_name</code> split correctly</div>
+          <div>• <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">city_name</code> from geo lookup (Agra ✓)</div>
+          <div>• <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">event_time</code> Unix timestamp correct</div>
+          <div>• <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">otp_verified</code>, <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">lead_quality</code>, <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">outlet_name</code></div>
+          <div>• <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">gclid</code>, <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">fbclid</code>, <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">gbraid</code>, <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">wbraid</code>, <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">msclkid</code> present (null on direct)</div>
+          <div>• Lead saved to MongoDB + Freshsales CRM ✓</div>
+        </div>
+      </div>
+
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px;">
+        <div style="font-size:11px;font-weight:800;color:#329937;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">✅ Also confirmed (2026-06-22)</div>
+        <div style="font-size:12px;color:#374151;line-height:1.9;">
+          <div>• <strong>demo_booked</strong> fires after Calendly slot booked · conversion_value: <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">2000</code> ✅</div>
+          <div>• <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">event_id</code> stitched across all 5 events — same UUID end-to-end ✅</div>
+          <div>• <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">form_location: "calendly"</code> on demo_booked ✅</div>
+          <div>• Full 5-event funnel confirmed: page_view → form_submitted → thankyou_conversion → demo_booked ✅</div>
+          <div>• <strong>Conversion values updated 2026-06-22:</strong> form_submitted=₹200 · thankyou_conversion=₹500 · lead_verifided=₹500 · demo_booked=₹1000 ✅</div>
+          <div>• FB - OTP Verified: all 6 AM fields (City, Email, ExternalID, First Name, Last Name, Phone) ✅</div>
+          <div>• FB - Book demo: all 6 AM fields confirmed ✅</div>
+        </div>
+      </div>
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px;margin-top:8px;">
+        <div style="font-size:11px;font-weight:800;color:#d97706;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">⏳ Still needs production</div>
+        <div style="font-size:12px;color:#374151;line-height:1.9;">
+          <div>• <code style="background:#e5e7eb;padding:0 4px;border-radius:3px;">fbp</code> cookie — FB pixel sets this; null on preview (GTM host-gated to www)</div>
+          <div>• GTM tags actually firing (FB pixel, GA4, Google Ads) — needs www.mygenie.online</div>
+          <div>• Meta Events Manager Test Events — needs production pixel fire</div>
+          <div>• GA4 Realtime — needs GTM live on www</div>
+          <div>• <strong>lead_verifided</strong> event — test with real OTP on www</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;">
+      <div style="font-size:11px;font-weight:800;color:#1d4ed8;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">How to re-validate anytime</div>
+      <div style="font-size:12px;color:#1e40af;line-height:1.7;">Open preview URL → DevTools → Console tab → fill + submit form → type <code style="background:#dbeafe;padding:1px 5px;border-radius:3px;">dataLayer.filter(e => e.event)</code> → Enter. All events and variable values are visible without GTM firing.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 1 ═══════════════ -->
+<div class="step done" id="step-1">
+  <div class="step-header" onclick="toggle('step-1')">
+    <div class="step-num" style="background:#166534;">✓</div>
+    <div class="step-meta">
+      <div class="step-title">GTM — Add Advanced Matching to 2 more tags <span style="color:#166534;font-size:13px;font-weight:600;margin-left:8px;">✅ DONE 2026-06-22</span></div>
+      <div class="step-subtitle">FB - OTP Verified: all 6 AM fields confirmed · FB - Book demo: all 6 AM fields confirmed · fb-schedule: done (per owner)</div>
+      <div class="step-badges">
+        <span class="badge badge-who-you">You</span>
+        <span class="badge badge-time">~10 min</span>
+        <span class="badge badge-p0">P0</span>
+      </div>
+    </div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="step-body">
+    <div class="step-divider"></div>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin-bottom:12px;">
+      <div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:8px;">✅ Validated 2026-06-22</div>
+      <div style="font-size:12px;color:#374151;line-height:1.8;">
+        <div>• <strong>FB - OTP Verified:</strong> City→{{city_name}}, Email→{{email}}, External ID→{{phone}}, First Name→{{DLV First Name}}, Last Name→{{DLV Last Name}}, Phone→{{phone}} ✅</div>
+        <div>• <strong>FB - Book demo:</strong> First Name→{{DLV First Name}}, Last Name→{{DLV Last Name}}, Phone→{{phone}}, Email→{{email}}, External ID→{{phone}}, City→{{city_name}} ✅</div>
+        <div>• <strong>Event ID</strong> on FB - Book demo: <code>{{gtm event id}}</code> · on FB - OTP Verified: <code>OTP Verified.{{event_id}}</code> ✅</div>
+        <div>• <strong>fb-schedule (FB - Book Appointment):</strong> AM fields added by owner ✅</div>
+          <div>• <strong>calendly Trigger:</strong> Custom Event → Event name = <code>demo_booked</code> → fires fb-schedule + GA4 - Book Appointment ✅ (confirmed 2026-06-22)</div>
+      </div>
+    </div>
+    <button class="mark-done-btn" style="background:#166534;cursor:default;" disabled>Step 1 Complete ✅</button>
+  </div>
+</div>
+  <div class="step-body">
+    <div class="step-divider"></div>
+    <ul class="checklist" id="cl-1">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Open GTM container GTM-K5D84Z3L</div>
+          <div class="check-detail">Go to <a href="https://tagmanager.google.com" target="_blank">tagmanager.google.com</a> → Workspaces → Tags</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Open "FB - OTP Verified" tag</div>
+          <div class="check-detail">Click the tag → scroll to "Customer Information Data Parameters"</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Add 6 Advanced Matching fields to "FB - OTP Verified"</div>
+          <div class="check-detail">
+            Copy exactly from <code>FB - Book demo</code> tag:<br>
+            <code>em</code> → <code>{{DLV Email}}</code><br>
+            <code>ph</code> → <code>{{DLV Phone}}</code><br>
+            <code>fn</code> → <code>{{DLV First Name}}</code><br>
+            <code>ln</code> → <code>{{DLV Last Name}}</code><br>
+            <code>ct</code> → <code>{{DLV City Name}}</code><br>
+            <code>external_id</code> → <code>{{DLV Phone}}</code>
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Save "FB - OTP Verified" tag</div>
+          <div class="check-detail">Click Save — do NOT publish yet</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Open "FB - Book Appointment" tag and add same 6 AM fields</div>
+          <div class="check-detail">Same 6 rows as above → Save</div>
+        </div>
+      </li>
+
+    </ul>
+
+    <div class="verify-block">
+      <div class="verify-title">How to verify (before publishing)</div>
+      <div class="verify-item"><span class="verify-icon">→</span> GTM Preview → enter your preview URL → fill + OTP-verify the demo form</div>
+      <div class="verify-item"><span class="verify-icon">→</span> In Preview panel: click "FB - OTP Verified" under Fired Tags → Variables → confirm all 6 show actual values (not <code>undefined</code>)</div>
+      <div class="verify-item"><span class="verify-icon">→</span> If any show <code>undefined</code> → check variable names exactly match the DLV variable names in your GTM</div>
+    </div>
+
+    <button class="mark-done-btn not-done" onclick="markDone('step-1', this)">Mark Step 1 Done → Move to Step 2</button>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 2 ═══════════════ -->
+<div class="step done" id="step-2">
+  <div class="step-header" onclick="toggle('step-2')">
+    <div class="step-num" style="background:#166534;">✓</div>
+    <div class="step-meta">
+      <div class="step-title">GTM — Publish updated container <span style="color:#166534;font-size:13px;font-weight:600;margin-left:8px;">✅ DONE 2026-06-22</span></div>
+      <div class="step-subtitle">Container published with AM fields on OTP Verified + Book Appointment tags</div>
+      <div class="step-badges">
+        <span class="badge badge-who-you">You</span>
+        <span class="badge badge-time">~2 min</span>
+        <span class="badge badge-p0">P0</span>
+      </div>
+    </div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="step-body">
+    <div class="step-divider"></div>
+    <ul class="checklist" id="cl-2">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Run GTM Preview full regression (before publishing)</div>
+          <div class="check-detail">
+            5 actions to confirm in Preview:<br>
+            1. Page load → Pixel base, GA4 Config, Conversion Linker fire<br>
+            2. Submit form → <code>form_submitted</code> fires<br>
+            3. OTP verify → <code>lead_verifided</code> fires (FB + GA4 + GAds)<br>
+            4. Demo form complete → <code>thankyou_conversion</code> fires<br>
+            5. Calendly booking → <code>demo_booked</code> fires
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Click Submit in GTM → Publish</div>
+          <div class="check-detail">Add version description: <code>AM added to FB - OTP Verified + FB - Book Appointment</code></div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Confirm version number increments</div>
+          <div class="check-detail">GTM → Versions → new version should appear at top</div>
+        </div>
+      </li>
+
+    </ul>
+
+    <div class="warn-block">
+      <div class="warn-title">⚠️ GTM only loads on www.mygenie.online</div>
+      <div class="warn-text">The container is host-gated — it will NOT fire on the preview URL. Full verification happens in Step 5 after deploying to production.</div>
+    </div>
+
+    <button class="mark-done-btn" style="background:#166534;cursor:default;" disabled>Step 2 Complete ✅</button>
+  </div>
+</div>
+
+<!-- ═══════════════ GTM REFERENCE MAP ═══════════════ -->
+<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:16px;overflow:hidden;">
+  <div style="background:#f8fafc;padding:14px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:10px;">
+    <div style="width:28px;height:28px;background:#4f46e5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;flex-shrink:0;">↔</div>
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#1e1b4b;">GTM Container Map — Frozen Reference (GTM-K5D84Z3L)</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:1px;">Verified 2026-06-22 · Code ↔ dataLayer ↔ Trigger ↔ Tag mapping</div>
+    </div>
+  </div>
+  <div style="padding:16px 20px;">
+
+    <div style="font-size:11px;font-weight:800;color:#6b7280;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">Code → dataLayer → GTM Trigger → Tags fired</div>
+
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead>
+        <tr style="background:#f1f5f9;">
+          <th style="text-align:left;padding:8px 10px;border:1px solid #e2e8f0;color:#374151;font-weight:700;">User action</th>
+          <th style="text-align:left;padding:8px 10px;border:1px solid #e2e8f0;color:#374151;font-weight:700;">dataLayer event</th>
+          <th style="text-align:left;padding:8px 10px;border:1px solid #e2e8f0;color:#374151;font-weight:700;">Value</th>
+          <th style="text-align:left;padding:8px 10px;border:1px solid #e2e8f0;color:#374151;font-weight:700;">GTM Trigger</th>
+          <th style="text-align:left;padding:8px 10px;border:1px solid #e2e8f0;color:#374151;font-weight:700;">Tags that fire</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;">Form submitted</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 5px;border-radius:3px;">form_submitted</code></td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;">₹200</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;"><code style="background:#fef3c7;padding:1px 5px;border-radius:3px;">OTP - form_submitted</code> ⚠️ PAUSED</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;color:#6b7280;">otp Button data Tag (paused)</td>
+        </tr>
+        <tr style="background:#f0fdf4;">
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;">OTP verified ✅</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 5px;border-radius:3px;">lead_verifided</code></td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;">₹500</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;"><code style="background:#dcfce7;padding:1px 5px;border-radius:3px;">lead_verifided</code> ✅</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;"><strong>FB - OTP Verified</strong> · GA4 - OTP Verified (PAUSED)</td>
+        </tr>
+        <tr style="background:#eff6ff;">
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;">Form complete → Calendly shown ✅</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 5px;border-radius:3px;">thankyou_conversion</code></td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;">₹500</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;"><code style="background:#dbeafe;padding:1px 5px;border-radius:3px;">Book demo</code> ✅</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;"><strong>FB - Book demo</strong> · <strong>GA4 - Book demo</strong> · <strong>GAds - Book Demo</strong> ← PRIMARY now</td>
+        </tr>
+        <tr style="background:#fef9c3;">
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;">Calendly slot booked ✅</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 5px;border-radius:3px;">demo_booked</code></td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;">₹1000</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;"><code style="background:#fef08a;padding:1px 5px;border-radius:3px;">calendly Trigger</code> ✅</td>
+          <td style="padding:8px 10px;border:1px solid #e2e8f0;"><strong>fb-schedule</strong> · <strong>GA4 - Book Appointment</strong> ← will be PRIMARY post go-live</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px;">
+        <div style="font-size:11px;font-weight:800;color:#d97706;text-transform:uppercase;margin-bottom:6px;">⚠️ Paused tags (intentional)</div>
+        <div style="font-size:12px;color:#374151;line-height:1.8;">
+          <div>• GA4 - OTP Verified (lead_verifided trigger)</div>
+          <div>• otp Button data Tag (form_submitted)</div>
+          <div>• Google Lead data Tag</div>
+          <div>• Meta Lead Data Tag</div>
+        </div>
+      </div>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px;">
+        <div style="font-size:11px;font-weight:800;color:#166534;text-transform:uppercase;margin-bottom:6px;">Google Ads conversion plan — FROZEN 2026-06-22</div>
+        <div style="font-size:12px;color:#374151;line-height:1.8;">
+          <div>• <strong>Days 0–30 (PRIMARY):</strong> GAds - Book Demo → <code>thankyou_conversion</code> · form complete · ₹500 · higher volume for bidding signals</div>
+          <div>• <strong>Day 30+ (NEW PRIMARY):</strong> demo_booked → GA4 Key Event → import to Google Ads → set Primary · ₹1000</div>
+          <div>• <strong>Demotion:</strong> thankyou_conversion → Secondary after Step 3 complete</div>
+          <div style="margin-top:4px;color:#6b7280;font-size:11px;">Rationale: Google Smart Bidding needs 30+ conversions/month. thankyou_conversion fires on every form submit → gives Google signals while demo_booked pool builds up over first month.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 3 ═══════════════ -->
+<div class="step collapsed" id="step-3">
+  <div class="step-header" onclick="toggle('step-3')">
+    <div class="step-num">3</div>
+    <div class="step-meta">
+      <div class="step-title">Google Ads — Set up demo_booked conversion</div>
+      <div class="step-subtitle">GA4 Key Event → import to Ads → set Primary → plan Zapier off</div>
+      <div class="step-badges">
+        <span class="badge badge-who-you">You</span>
+        <span class="badge badge-time">~15 min + 24h wait</span>
+        <span class="badge badge-p0">P0</span>
+      </div>
+    </div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="step-body">
+    <div class="step-divider"></div>
+    <ul class="checklist" id="cl-3">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">GA4 → Mark demo_booked as Key Event</div>
+          <div class="check-detail">
+            <a href="https://analytics.google.com" target="_blank">analytics.google.com</a> → Admin → Events → find <code>demo_booked</code> → toggle <strong>"Mark as key event"</strong> = ON<br>
+            If <code>demo_booked</code> doesn't appear yet → site needs to be deployed first (the event only fires on www.mygenie.online)
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Wait 24 hours for GA4 data</div>
+          <div class="check-detail">GA4 needs at least one recorded <code>demo_booked</code> event before it appears in Google Ads for import</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Google Ads → Import demo_booked as conversion</div>
+          <div class="check-detail">
+            <a href="https://ads.google.com" target="_blank">ads.google.com</a> → Goals → Conversions → New conversion → <strong>Import</strong> → Google Analytics 4 → select <code>demo_booked</code> → Import and Continue
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Set demo_booked as Primary conversion</div>
+          <div class="check-detail">In the imported conversion action → Edit → Bid optimisation = <strong>Primary action</strong> · Category = Book appointment</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Note: do NOT turn off Zapier yet</div>
+          <div class="check-detail">Wait 48–72h after this step and confirm demo_booked is recording conversions in Google Ads. Then turn off Zapier in Step 6.</div>
+        </div>
+      </li>
+
+    </ul>
+
+    <div class="verify-block">
+      <div class="verify-title">How to verify</div>
+      <div class="verify-item"><span class="verify-icon">→</span> Google Ads → Goals → Conversions → <code>demo_booked</code> shows Status = Active</div>
+      <div class="verify-item"><span class="verify-icon">→</span> Wait 2–3 days → confirm conversion count is incrementing (not zero)</div>
+    </div>
+
+    <button class="mark-done-btn not-done" onclick="markDone('step-3', this)">Mark Step 3 Done → Move to Step 4</button>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 4 ═══════════════ -->
+<div class="step collapsed" id="step-4">
+  <div class="step-header" onclick="toggle('step-4')">
+    <div class="step-num">4</div>
+    <div class="step-meta">
+      <div class="step-title">Deploy site to www.mygenie.online</div>
+      <div class="step-subtitle">Update backend URL → Emergent Deploy → Cloudflare 301s → SSL check</div>
+      <div class="step-badges">
+        <span class="badge badge-who-both">Both</span>
+        <span class="badge badge-time">~20 min</span>
+        <span class="badge badge-p0">P0 — the big one</span>
+      </div>
+    </div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="step-body">
+    <div class="step-divider"></div>
+
+    <div class="info-block" style="margin-bottom:14px;">
+      <div class="info-title">Before clicking Deploy</div>
+      <div class="info-text">Tell Dev to update <code>REACT_APP_BACKEND_URL</code> to the production backend URL first. This is the single most critical env var — if it still points to the preview URL, all demo forms will fail on production.</div>
+    </div>
+
+    <ul class="checklist" id="cl-4">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Dev: update REACT_APP_BACKEND_URL to production backend URL</div>
+          <div class="check-detail">Currently: <code>preview.emergentagent.com</code> — must change to your production API URL</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Click Deploy in Emergent dashboard</div>
+          <div class="check-detail">Emergent → your project → Deploy → confirm</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Cloudflare: import bulk redirects for 19 old URLs</div>
+          <div class="check-detail">
+            <a href="https://dash.cloudflare.com" target="_blank">dash.cloudflare.com</a> → mygenie.online → Bulk Redirects → Create Redirect List → import <code>frontend/cloudflare-bulk-redirects.csv</code> → attach a Bulk Redirect Rule
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Confirm non-www → www 301 is still active in Cloudflare</div>
+          <div class="check-detail">Cloudflare → Rules → Redirect Rules → the existing non-www rule must stay ON</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Confirm SSL certificate is green on www.mygenie.online</div>
+          <div class="check-detail">Open <a href="https://www.mygenie.online" target="_blank">https://www.mygenie.online</a> in browser → padlock = secure, no SSL error</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Quick smoke test: homepage loads and demo form is visible</div>
+          <div class="check-detail">Open <a href="https://www.mygenie.online" target="_blank">https://www.mygenie.online</a> → confirm page loads, logo shows, demo form renders</div>
+        </div>
+      </li>
+
+    </ul>
+
+    <div class="warn-block">
+      <div class="warn-title">Rollback trigger — revert DNS immediately if:</div>
+      <div class="warn-text">
+        • Old URLs return 404 (not 301)<br>
+        • Homepage is blank or forms give errors<br>
+        • SSL error on www.mygenie.online<br>
+        Rollback = repoint DNS/CNAME back to old origin. Keep old site live for 7 days.
+      </div>
+    </div>
+
+    <button class="mark-done-btn not-done" onclick="markDone('step-4', this)">Mark Step 4 Done → Move to Step 5</button>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 5 ═══════════════ -->
+<div class="step collapsed" id="step-5">
+  <div class="step-header" onclick="toggle('step-5')">
+    <div class="step-num">5</div>
+    <div class="step-meta">
+      <div class="step-title">Post-deploy verification (run same day as deploy)</div>
+      <div class="step-subtitle">GTM events · GA4 · Meta · 301 redirects · sitemap · webhooks · test payment</div>
+      <div class="step-badges">
+        <span class="badge badge-who-both">Both</span>
+        <span class="badge badge-time">~30 min</span>
+        <span class="badge badge-p0">P0</span>
+      </div>
+    </div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="step-body">
+    <div class="step-divider"></div>
+    <ul class="checklist" id="cl-5">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">GTM Preview — verify all 4 events on production</div>
+          <div class="check-detail">
+            GTM → Preview → enter <code>https://www.mygenie.online</code><br>
+            1. Submit form → <code>form_submitted</code> fires<br>
+            2. Verify OTP → <code>lead_verifided</code> fires<br>
+            3. Complete demo form → <code>thankyou_conversion</code> fires<br>
+            4. Book Calendly → <code>demo_booked</code> fires
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">GA4 Realtime — events visible within 30 seconds</div>
+          <div class="check-detail">GA4 → Reports → Realtime → submit demo form → confirm <code>form_submitted</code> + <code>lead_verifided</code> appear</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Meta Events Manager — Test Events</div>
+          <div class="check-detail">
+            <a href="https://business.facebook.com" target="_blank">Meta Events Manager</a> → your pixel → Test Events → enter <code>https://www.mygenie.online</code> → submit form + OTP → confirm <code>Lead</code> event appears with match parameters
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Test 301 redirects — old URLs must not 404</div>
+          <div class="check-detail">
+            Test in browser or curl: <code>https://www.mygenie.online/fine-dining</code> → should redirect to <code>/solutions/restaurants</code><br>
+            Also test: <code>/quick-service</code>, <code>/Cafe-and-coffee-shop</code>, <code>/about-us</code>, <code>/blogs</code>
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Submit sitemap to Google Search Console</div>
+          <div class="check-detail">
+            <a href="https://search.google.com/search-console" target="_blank">GSC</a> → <code>https://www.mygenie.online</code> property → Sitemaps → Add → <code>https://www.mygenie.online/sitemap.xml</code> → Submit
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Register Razorpay webhook to production URL</div>
+          <div class="check-detail">
+            <a href="https://dashboard.razorpay.com" target="_blank">Razorpay dashboard</a> → Settings → Webhooks → Add webhook<br>
+            URL: <code>https://[production-backend]/api/payments/razorpay/webhook</code><br>
+            Events: <code>payment.captured</code>, <code>payment.failed</code><br>
+            Secret: from <code>RAZORPAY_WEBHOOK_SECRET</code> in backend/.env
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Re-register Calendly webhook to production URL</div>
+          <div class="check-detail">
+            Calendly → Integrations → Webhooks → update endpoint to production backend URL → re-enter signing key from <code>CALENDLY_WEBHOOK_SIGNING_KEY</code>
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Run Razorpay test card payment on production</div>
+          <div class="check-detail">
+            Go to <a href="https://www.mygenie.online/pricing" target="_blank">www.mygenie.online/pricing</a> → Buy Online → complete with:<br>
+            Card: <code>4111 1111 1111 1111</code> · Expiry: <code>12/28</code> · CVV: <code>123</code> · OTP: <code>1234</code><br>
+            Confirm: PaymentSuccess page loads, invoice PDF downloads with correct filename
+          </div>
+        </div>
+      </li>
+
+    </ul>
+
+    <div class="verify-block">
+      <div class="verify-title">All pass checklist</div>
+      <div class="verify-item"><span class="verify-icon">→</span> GTM Preview shows all 4 events firing</div>
+      <div class="verify-item"><span class="verify-icon">→</span> GA4 Realtime: events visible</div>
+      <div class="verify-item"><span class="verify-icon">→</span> Meta Test Events: Lead + Schedule visible</div>
+      <div class="verify-item"><span class="verify-icon">→</span> Old URLs redirect (not 404)</div>
+      <div class="verify-item"><span class="verify-icon">→</span> Payment success page works</div>
+    </div>
+
+    <button class="mark-done-btn not-done" onclick="markDone('step-5', this)">Mark Step 5 Done → Move to Step 6</button>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 6 ═══════════════ -->
+<div class="step collapsed" id="step-6">
+  <div class="step-header" onclick="toggle('step-6')">
+    <div class="step-num">6</div>
+    <div class="step-meta">
+      <div class="step-title">Turn off Zapier appointment import</div>
+      <div class="step-subtitle">Only after demo_booked is confirmed receiving conversions in Google Ads</div>
+      <div class="step-badges">
+        <span class="badge badge-who-you">You</span>
+        <span class="badge badge-time">~5 min · 48h after Step 5</span>
+        <span class="badge badge-p0">P0</span>
+      </div>
+    </div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="step-body">
+    <div class="step-divider"></div>
+
+    <div class="warn-block" style="margin-bottom:14px;">
+      <div class="warn-title">⚠️ Critical timing — do NOT rush this step</div>
+      <div class="warn-text">Wait <strong>48–72 hours after Step 5</strong> and confirm <code>demo_booked</code> is recording conversions in Google Ads before turning off Zapier. If browser-side isn't working, turning Zapier off = zero appointment conversion signals to Google Ads.</div>
+    </div>
+
+    <ul class="checklist" id="cl-6">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Confirm demo_booked conversion is recording in Google Ads</div>
+          <div class="check-detail">Google Ads → Goals → Conversions → <code>demo_booked</code> → confirm conversion count > 0 (not "No recent conversions")</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Turn off Zapier → Freshsales → Google Ads zap</div>
+          <div class="check-detail"><a href="https://zapier.com" target="_blank">zapier.com</a> → find "Freshsales → Create Click Conversion" zap → toggle OFF</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Monitor Google Ads for 24h after turning Zapier off</div>
+          <div class="check-detail">Confirm conversion count doesn't drop to zero. If it does → turn Zapier back ON immediately and investigate.</div>
+        </div>
+      </li>
+
+    </ul>
+
+    <button class="mark-done-btn not-done" onclick="markDone('step-6', this)">Mark Step 6 Done → Move to Step 7</button>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 7 ═══════════════ -->
+<div class="step collapsed" id="step-7">
+  <div class="step-header" onclick="toggle('step-7')">
+    <div class="step-num">7</div>
+    <div class="step-meta">
+      <div class="step-title">Switch to live Razorpay keys + final sign-off</div>
+      <div class="step-subtitle">Swap rzp_test_ → rzp_live_ · real payment test · CR closed · 🎉</div>
+      <div class="step-badges">
+        <span class="badge badge-who-both">Both</span>
+        <span class="badge badge-time">~5 min</span>
+        <span class="badge badge-p0">P0</span>
+      </div>
+    </div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="step-body">
+    <div class="step-divider"></div>
+    <ul class="checklist" id="cl-7">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Dev: swap RAZORPAY_KEY_ID to rzp_live_ in backend/.env</div>
+          <div class="check-detail">Current: <code>rzp_test_T4H5r8lcX79cyc</code> → change to <code>rzp_live_9lMs01gisZhwQX</code> (and matching secret)</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Dev: restart backend after .env change</div>
+          <div class="check-detail"><code>sudo supervisorctl restart backend</code></div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Do one real payment test on production</div>
+          <div class="check-detail">Small real transaction on <a href="https://www.mygenie.online/pricing" target="_blank">pricing page</a> → confirm PaymentSuccess page, PDF invoice, SMS link, Freshsales updated to Paid Online + Won</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Owner sign-off in CR-GOLIVE_Validation.md</div>
+          <div class="check-detail">Mark G5 as complete with your name and date</div>
+        </div>
+      </li>
+
+    </ul>
+
+    <div class="step-7-finale">
+      <div class="big">🎉</div>
+      <p><strong>CR-GOLIVE closed.</strong> www.mygenie.online is live with full tracking, payments, and CRM.</p>
+    </div>
+
+    <button class="mark-done-btn not-done" onclick="markDone('step-7', this)">🎉 Mark Step 7 Done — Go-Live Complete!</button>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 8 ═══════════════ -->
+<div class="step collapsed" id="step-8">
+  <div class="step-header" onclick="toggle('step-8')">
+    <div class="step-num">8</div>
+    <div class="step-meta">
+      <div class="step-title">Zapier Offline Conversions — CR-15</div>
+      <div class="step-subtitle">Demo Scheduled (offline) · Demo Given · Purchase (offline) → Google Ads OCI + Meta CAPI</div>
+      <div class="step-badges">
+        <span class="badge badge-who-you">You</span>
+        <span class="badge badge-time">~2–3h build · do after go-live</span>
+        <span class="badge badge-p0">P0</span>
+      </div>
+    </div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="step-body">
+    <div class="step-divider"></div>
+
+    <div class="info-block" style="margin-bottom:16px;">
+      <div class="info-title">What this step does</div>
+      <div class="info-text">When a lead does NOT self-book Calendly, or when they attend the demo, or when they pay offline (bank/UPI/cheque) — Zapier fires conversion signals directly to Google Ads (OCI) and Meta (CAPI). These are signals the website GTM tags can never see. This step builds those 3 Zaps.</div>
+    </div>
+
+    <!-- PRE-REQUISITES -->
+    <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--orange);margin-bottom:10px;margin-top:4px;">Pre-requisites — complete before building any Zap</div>
+    <ul class="checklist" id="cl-8a">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Freshsales field audit — identify 4 custom field names</div>
+          <div class="check-detail">
+            Open any Freshsales contact created from the new website → check which custom fields are populated. You need the internal field names for:<br>
+            • <code>gclid</code> — Google Click ID (e.g. <code>cf_gclid</code>)<br>
+            • <code>fbclid</code> — Facebook Click ID (e.g. <code>cf_fbclid</code>)<br>
+            • <code>fbp</code> — Facebook browser cookie (e.g. <code>cf_fbp</code>)<br>
+            • <code>event_id</code> — lead UUID from MongoDB (e.g. <code>cf_lead_id</code>) — <strong>most important</strong><br>
+            Share these names with Dev to confirm they match what the backend sends.
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Create "Demo given" conversion action in Google Ads</div>
+          <div class="check-detail">
+            Google Ads → Goals → Conversions → New conversion action → <strong>Import from clicks (offline)</strong><br>
+            Name: <code>Demo given</code> · Category: Book appointment · Value: ₹2,000 · Count: One per click<br>
+            Add to goal: "Book appointment" (same goal as Demo Scheduled).<br>
+            <em>This action does not exist yet — must be created before Zap 2 can fire.</em>
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Confirm Calendly calendar names for Zap 1 filter</div>
+          <div class="check-detail">
+            Zap 1 needs to distinguish between bookings made via the <strong>website widget</strong> (already tracked by <code>demo_booked</code>) and bookings made by the <strong>sales team</strong> on behalf of the user.<br>
+            Confirm: what is the name/URL of the sales team's Calendly calendar vs the embedded website calendar?
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Confirm Freshsales deal stage names for Zap 2 + Zap 3</div>
+          <div class="check-detail">
+            • Zap 2 trigger: what is the exact deal stage name for "demo was given / attended"? (e.g. <code>Demo Given</code>, <code>Demo Attended</code>)<br>
+            • Zap 3 trigger: what is the exact deal stage name for "customer paid offline"? (e.g. <code>Won</code>, <code>Closed Won</code>)<br>
+            These must be confirmed before building the Zap triggers.
+          </div>
+        </div>
+      </li>
+
+    </ul>
+
+    <!-- ZAP 1 -->
+    <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin:18px 0 10px;">Zap 1 — Demo Scheduled (offline path only)</div>
+    <div class="info-block" style="margin-bottom:10px;">
+      <div class="info-title">When it fires</div>
+      <div class="info-text">Sales team manually books Calendly on behalf of a user who did NOT self-book on the website. The website's <code>demo_booked</code> tag did NOT fire for this lead. No deduplication risk — mutually exclusive with Zap.</div>
+    </div>
+    <ul class="checklist" id="cl-8b">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Zap 1 trigger: Calendly → Invitee Created (filter: sales team calendar only)</div>
+          <div class="check-detail">Zapier → New Zap → Trigger: Calendly → Invitee Created → filter to fire only for the sales team calendar (not the website-embedded one). Use the calendar name confirmed in pre-requisites.</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Zap 1 → Action A: Google Ads OCI → "Book appointments"</div>
+          <div class="check-detail">
+            Google Ads → Create Click Conversion action:<br>
+            • <code>conversion_name</code>: <code>Book appointments</code><br>
+            • <code>gclid</code>: [Freshsales contact <code>cf_gclid</code> field]<br>
+            • <code>conversion_time</code>: Calendly <code>invitee.created_at</code> in IST (ISO 8601: <code>2026-06-22T14:30:00+05:30</code>)<br>
+            • <code>conversion_value</code>: <code>1000</code><br>
+            • <code>order_id</code>: [lead UUID from Freshsales <code>cf_lead_id</code>] — prevents duplicate counting
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Zap 1 → Action B: Meta CAPI → "Schedule" event</div>
+          <div class="check-detail">
+            Meta Conversions API action:<br>
+            • <code>event_name</code>: <code>Schedule</code><br>
+            • <code>event_id</code>: [lead UUID from Freshsales <code>cf_lead_id</code>] — <strong>dedup key</strong><br>
+            • <code>event_time</code>: Unix timestamp of booking<br>
+            • <code>event_source_url</code>: <code>https://www.mygenie.online/</code><br>
+            • <code>user_data.ph</code>: contact phone · <code>user_data.em</code>: contact email · <code>user_data.external_id</code>: phone with +91<br>
+            • <code>custom_data.value</code>: <code>1000</code> · <code>custom_data.currency</code>: <code>INR</code>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+
+    <!-- ZAP 2 -->
+    <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin:18px 0 10px;">Zap 2 — Demo Given (exclusively offline)</div>
+    <div class="info-block" style="margin-bottom:10px;">
+      <div class="info-title">When it fires</div>
+      <div class="info-text">Customer actually attended the demo (not just booked it). Freshsales deal stage changes to "Demo Given" (confirm exact name). This is a higher-intent signal than booking — recommended value ₹2,000.</div>
+    </div>
+    <ul class="checklist" id="cl-8c">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Zap 2 trigger: Freshsales → Deal stage changed to "Demo Given"</div>
+          <div class="check-detail">Zapier → New Zap → Trigger: Freshsales → Deal Updated → filter: stage = [confirmed stage name from pre-requisites].</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Zap 2 → Action A: Google Ads OCI → "Demo given" (new conversion action)</div>
+          <div class="check-detail">
+            • <code>conversion_name</code>: <code>Demo given</code> (the new action created in pre-requisites)<br>
+            • <code>gclid</code>: [Freshsales <code>cf_gclid</code>]<br>
+            • <code>conversion_time</code>: demo appointment time, IST<br>
+            • <code>conversion_value</code>: <code>2000</code><br>
+            • <code>order_id</code>: [lead UUID]
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Zap 2 → Action B: Meta CAPI → "ViewContent" (or custom "Demo Given")</div>
+          <div class="check-detail">
+            • <code>event_name</code>: <code>ViewContent</code> (or custom: <code>Demo Given</code>)<br>
+            • <code>event_id</code>: [lead UUID] + <code>_demo_given</code> — <strong>append suffix</strong> so Meta doesn't deduplicate against the Schedule event for same lead<br>
+            • <code>user_data</code>: phone, email, external_id, fbc, fbp<br>
+            • <code>custom_data.value</code>: <code>2000</code> · <code>custom_data.currency</code>: <code>INR</code>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+
+    <!-- ZAP 3 -->
+    <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin:18px 0 10px;">Zap 3 — Purchase (offline payment path)</div>
+    <div class="info-block" style="margin-bottom:10px;">
+      <div class="info-title">When it fires</div>
+      <div class="info-text">Customer pays via bank transfer, UPI, or cheque (not through Razorpay on website). Freshsales deal marked "Won". <strong>Deduplication required</strong> — same lead could theoretically appear in both online and offline paths. Use <code>order_id = lead_uuid + "_purchase"</code> to prevent double-counting.</div>
+    </div>
+    <ul class="checklist" id="cl-8d">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Zap 3 trigger: Freshsales → Deal stage changed to "Won" (filter: offline payment method)</div>
+          <div class="check-detail">Zapier → New Zap → Trigger: Freshsales → Deal Updated → filter: stage = Won AND payment_method ≠ Razorpay (or filter by specific offline indicator in Freshsales).</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Zap 3 → Action A: Google Ads OCI → "Purchased"</div>
+          <div class="check-detail">
+            • <code>conversion_name</code>: <code>Purchased</code> (existing conversion action — 19 historical conversions)<br>
+            • <code>gclid</code>: [Freshsales <code>cf_gclid</code>]<br>
+            • <code>conversion_time</code>: payment date, IST<br>
+            • <code>conversion_value</code>: actual deal value from Freshsales (NOT fixed — use variable value for value-based bidding)<br>
+            • <code>order_id</code>: [lead UUID] + <code>_purchase</code> — prevents dedup with online Razorpay purchase
+          </div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Zap 3 → Action B: Meta CAPI → "Purchase" event</div>
+          <div class="check-detail">
+            • <code>event_name</code>: <code>Purchase</code><br>
+            • <code>event_id</code>: [lead UUID] + <code>_purchase</code><br>
+            • <code>user_data</code>: phone, email, external_id, fbc, fbp<br>
+            • <code>custom_data.value</code>: actual deal value · <code>custom_data.currency</code>: <code>INR</code>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+
+    <!-- DEDUP REFERENCE TABLE -->
+    <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin:18px 0 10px;">Deduplication Reference Table</div>
+    <div style="overflow-x:auto;margin-bottom:14px;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead>
+        <tr style="background:#f1f5f9;">
+          <th style="text-align:left;padding:7px 10px;border:1px solid #e2e8f0;color:#374151;font-weight:700;">Zap event</th>
+          <th style="text-align:left;padding:7px 10px;border:1px solid #e2e8f0;color:#374151;font-weight:700;">Google Ads conversion_name</th>
+          <th style="text-align:left;padding:7px 10px;border:1px solid #e2e8f0;color:#374151;font-weight:700;">Google order_id</th>
+          <th style="text-align:left;padding:7px 10px;border:1px solid #e2e8f0;color:#374151;font-weight:700;">Meta event_name</th>
+          <th style="text-align:left;padding:7px 10px;border:1px solid #e2e8f0;color:#374151;font-weight:700;">Meta event_id</th>
+          <th style="text-align:left;padding:7px 10px;border:1px solid #e2e8f0;color:#374151;font-weight:700;">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;font-weight:600;">Demo Scheduled (offline)</td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">Book appointments</code></td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">lead_uuid</code></td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">Schedule</code></td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">lead_uuid</code></td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;">₹1,000</td>
+        </tr>
+        <tr style="background:#f8fafc;">
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;font-weight:600;">Demo Given</td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">Demo given</code> (new)</td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">lead_uuid</code></td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">ViewContent</code></td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">lead_uuid_demo_given</code></td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;">₹2,000</td>
+        </tr>
+        <tr>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;font-weight:600;">Purchase (offline)</td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">Purchased</code></td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">lead_uuid_purchase</code></td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">Purchase</code></td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;"><code style="background:#f3f4f6;padding:1px 4px;border-radius:3px;">lead_uuid_purchase</code></td>
+          <td style="padding:7px 10px;border:1px solid #e2e8f0;">Actual deal value</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <!-- QA -->
+    <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin:18px 0 10px;">QA — Test each Zap before declaring done</div>
+    <ul class="checklist" id="cl-8e">
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Create a test Freshsales contact with known gclid + event_id</div>
+          <div class="check-detail">Use a contact you have control over. Set <code>cf_gclid = TESTGCLID123</code> and <code>cf_lead_id = test-uuid-001</code> manually in Freshsales.</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Trigger each Zap manually in Zapier test mode</div>
+          <div class="check-detail">Zapier → each Zap → Test → Run → confirm all actions execute without errors. Check Google Ads OCI upload and Meta CAPI response codes.</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Google Ads OCI: conversions increment within 3 hours</div>
+          <div class="check-detail">Google Ads → Goals → Conversions → check "All conversions" column for each conversion action. OCI data typically appears within 1–3 hours.</div>
+        </div>
+      </li>
+
+      <li onclick="tick(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-label">Meta Events Manager → Test Events: event appears</div>
+          <div class="check-detail">Meta Events Manager → your pixel → Test Events tab → confirm Schedule, ViewContent, and Purchase events appear from the Zap test.</div>
+        </div>
+      </li>
+
+    </ul>
+
+    <div class="warn-block">
+      <div class="warn-title">CR-15 blocker — owner actions required first</div>
+      <div class="warn-text">Zaps cannot be built until the 4 pre-requisite steps above are complete (Freshsales field names, "Demo given" conversion action, Calendly calendar names, deal stage names). Confirm these details before the build session.</div>
+    </div>
+
+    <button class="mark-done-btn not-done" onclick="markDone('step-8', this)">Mark Step 8 Done — Zapier Offline Tracking Live!</button>
+  </div>
+</div>
+
+<!-- OPTIONAL SECTION -->
+<div class="optional-section">
+  <div class="optional-title">After go-live — Optional improvements (can do anytime, don't block launch)</div>
+  <div class="optional-item">📊 <strong>Enhanced Conversions (Google Ads)</strong> — GTM → Book Demo tag → User-Provided Data → map email, phone, name. Improves attribution match rate.</div>
+  <div class="optional-item">📏 <strong>GA4 Custom Dimensions</strong> — GA4 Admin → Custom definitions → add otp_verified, form_location, plan_interest. Enables segmentation in reports.</div>
+  <div class="optional-item">🔒 <strong>Consent Mode Variables in GTM</strong> — Create consent variables from localStorage mg_consent → wire to tag consent settings.</div>
+  <div class="optional-item">🚫 <strong>Junk Exclusion Audience</strong> — Google/Meta → build audience where lead_quality = junk → apply as exclusion on campaigns.</div>
+  <div class="optional-item">💰 <strong>Conversion Values in GTM</strong> — map conversion_value (₹500 book demo, ₹2000 appointment) into Ads + Meta tags for value-based bidding.</div>
+</div>
+
+</div><!-- end container -->
+
+<script>
+// ── TOGGLE SECTION ──
+function toggle(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+// ── TICK ITEM ──
+function tick(li) {
+  const box = li.querySelector('.check-box');
+  const isDone = box.classList.toggle('checked');
+  box.textContent = isDone ? '✓' : '';
+  li.classList.toggle('done-item', isDone);
+  updateProgress();
+}
+
+// ── MARK STEP DONE ──
+function markDone(stepId, btn) {
+  const step = document.getElementById(stepId);
+  const isDone = step.classList.toggle('done');
+  if (isDone) {
+    btn.className = 'mark-done-btn is-done';
+    btn.textContent = '✅ Step Done';
+    // Tick all items in this step
+    step.querySelectorAll('.checklist li').forEach(li => {
+      const box = li.querySelector('.check-box');
+      if (!box.classList.contains('checked')) {
+        box.classList.add('checked');
+        box.textContent = '✓';
+        li.classList.add('done-item');
+      }
+    });
+    // Auto-open next step
+    const num = parseInt(stepId.split('-')[1]);
+    const next = document.getElementById(`step-${num + 1}`);
+    if (next) {
+      next.classList.remove('collapsed');
+      next.classList.add('active');
+      next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  } else {
+    btn.className = 'mark-done-btn not-done';
+    btn.textContent = `Mark Step ${stepId.split('-')[1]} Done`;
+    step.classList.remove('active');
+  }
+  updateProgress();
+}
+
+// ── PROGRESS ──
+function updateProgress() {
+  const total = 8;
+  const done  = document.querySelectorAll('.step.done').length;
+  const pct   = Math.round(done / total * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = `${done} / ${total} steps done`;
+}
+
+// ── DATE ──
+document.title = `MyGenie Go-Live Checklist — ${new Date().toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}`;
+
+updateProgress();
+</script>
+</body>
+</html>
