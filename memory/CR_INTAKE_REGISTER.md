@@ -1,6 +1,7 @@
 # CR Intake Register — Grouped by Batch
 
 **Last validated:** 2026-09-02 (new build audit + code-level validation — all findings verified against source and prerendered build)
+**Updated:** 2026-09-14 (evening) — BATCH BE **approved by owner** (Option A). CR-265/266/267 + new CR-268 (remove consent banner, keep region-aware consent defaults). Owner decision: ship all four in one build; do not wait for D4. Full context: `HANDOVER_2026-09-14_Session14.md`.
 **Updated:** 2026-09-14 — BATCH BE registered: CR-265 (Alpha LP CTAs → `<a href="#lp-demo">` + sheet, P0 Revenue), CR-266 (ScrollToTop first-mount guard), CR-267 (`cta_click`/`sheet_open` events). Source: `REPLY_BRIEF_2026-09-14_AlphaCTA_Questions.md`.
 **Updated:** 2026-09-09 — CR-220 ✅ FULLY DONE (Fix A + Fix B + Fix C all complete, GTM published). CR-264 ✅ CLOSED (GTM confirmed live on production). CR-221 ✅ CLOSED (Incognito test confirms remarketing pixel firing — 200 OK, failures were ad blocker). CR-222 ✅ CLOSED (same test, same result). CR-216 🔲 Partially done (base tags migrated to Google Tag type — verify library sharing).
 **Legend:** ✅ Implemented · 🔲 Open · ⏸️ Backlog/Deferred · 👤 Owner action (no code) · 📋 Awaiting owner approval
@@ -1504,7 +1505,7 @@ Build:   cd /app/frontend && yarn build && sudo supervisorctl restart frontend
 
 ---
 
-## BATCH BE — Alpha Landing Pages: CTA Must Work Before JavaScript (CR-265 → CR-267)
+## BATCH BE — Alpha Landing Pages: CTA Must Work Before JavaScript + Consent Banner Removal (CR-265 → CR-268)
 
 *Source: Ads-ops brief `alpha-cta-brief.md` (14 Sep 2026) + website-agent validation `INVESTIGATION_2026-09-14_AlphaCTA_Brief_Validation.md` / `REPLY_BRIEF_2026-09-14_AlphaCTA_Questions.md`.*
 *Registered 2026-09-14 by intake agent. No code changed at registration.*
@@ -1521,9 +1522,10 @@ Build:   cd /app/frontend && yarn build && sudo supervisorctl restart frontend
 
 | CR | Title | Status | Priority | Batch |
 |---|---|---|---|---|
-| **CR-265** | Alpha LP CTAs → `<a href="#lp-demo">` with sheet-opening `onClick` (JS-free fallback) — 5 pages | 📋 **Registered — awaiting owner approval + impact analysis** | **P0 — Revenue** | BE |
-| **CR-266** | `ScrollToTop` first-mount guard — do not reset scroll on initial render | 📋 Registered — bundle with CR-265 | **P1** | BE |
-| **CR-267** | `cta_click` + `sheet_open` dataLayer events → GA4 (GTM-K5D84Z3L) | 📋 Registered — bundle with CR-265 | **P1 — Observability** | BE |
+| **CR-265** | Alpha LP CTAs → `<a href="#lp-demo">` with sheet-opening `onClick` (JS-free fallback) — 5 pages | ✅ **APPROVED 2026-09-14 (owner)** — next: impact analysis + line-by-line plan → implement | **P0 — Revenue** | BE |
+| **CR-266** | `ScrollToTop` first-mount guard — do not reset scroll on initial render | ✅ **APPROVED 2026-09-14** — same build as 265 | **P1** | BE |
+| **CR-267** | `cta_click` + `sheet_open` dataLayer events → GA4 (GTM-K5D84Z3L) | ✅ **APPROVED 2026-09-14** (code) · 👤 Owner (GTM tags) | **P1 — Observability** | BE |
+| **CR-268** | Remove cookie consent banner entirely; keep region-aware Consent Mode v2 defaults (Option A) | ✅ **APPROVED 2026-09-14 (owner decision)** — same build as 265 | **P1 — Conversion friction** | BE |
 
 ---
 
@@ -1571,12 +1573,32 @@ Build:   cd /app/frontend && yarn build && sudo supervisorctl restart frontend
 
 ---
 
+### CR-268 — Remove consent banner (Option A); keep region-aware Consent Mode v2 defaults
+
+| Field | Detail |
+|---|---|
+| **Owner decision** | 2026-09-14: **"Option A"** — remove the banner altogether. Rationale confirmed with owner: campaigns are 100 % India; no EEA/UK traffic goal. |
+| **Why it is safe (compliance)** | Consent Mode v2 defaults (CR-219) are **region-aware and live in `public/index.html` + `lib/gtm.js`**: EEA/GB → `denied` by default; everyone else (India) → `granted` by default, *before* any banner shows. Google's EU User Consent Policy is satisfied by the default signals, not by the UI. India DPDP Act 2023 does not mandate a cookie banner of this kind; Privacy Policy link remains in footer. For an Indian visitor "Accept" changes nothing and "Decline" only switches *off* GA4/Ads/Meta for that person — the banner can only lose data. |
+| **Why it hurts conversion** | 48 px strip on the bottom of every mobile screen for **every first-time visitor (= every paid click)**; same `z-[70]` as `DemoBottomSheet` and mounted after `<Routes>` → overlaps the sheet's bottom edge (submit button clears by 8 px, "No spam" line hidden — measured 14 Sep at 390×844); forces `StickyMobileCta` up by 48 px; adds `body.consent-banner-open` padding hack; extra tap target competing with the CTA; reflexive "Decline" taps kill conversion tracking. Owner's own tests never see it (consent already stored) — a real test-vs-production difference. |
+| **Change** | Remove the UI, keep the signals. |
+| **Scope — exact touch points (14 Sep line refs)** | `App.js` L8 (import) + L81 (`<ConsentBanner />`) → remove. `components/site/ConsentBanner.jsx` → delete. `index.css` L70–77 (`body.consent-banner-open` padding rules) → remove. `components/home/StickyMobileCta.jsx` L3 (`hasConsentChoice` import), L13 (`consentUp` state), L20–25 (banner MutationObserver), L71 (`consentUp ? "-translate-y-12" : "translate-y-0"` → always `translate-y-0`) → simplify. `scripts/prerender.js` L119–120 (strips banner from snapshot) → now a no-op; remove for cleanliness. `lib/gtm.js`: **keep** `setDefaultConsent()` (region defaults + restores stored choice), `updateConsent()`, `CONSENT_KEY`; `hasConsentChoice()` / `setConsentChoice()` become unused → remove or leave (no runtime effect). `public/index.html` Consent Mode default block (CR-219) → **keep unchanged**. |
+| **Out of scope** | GTM container, consent-mode tags, Privacy Policy page, `/privacy` link in footer. |
+| **Risks** | (1) Visitors who previously clicked Decline keep `mg_consent=denied` in localStorage → `setDefaultConsent()` still restores denied for them (correct, respects their choice). (2) CR-139 / CR-201 / CR-93 docs reference the banner — mark superseded. (3) Any Playwright test asserting `consent-banner` → remove. (4) If EU ads ever start: re-add a banner **for EEA/UK only** (geo via Cloudflare `CF-IPCountry` or existing `backend/geo.py`) — register as a new CR then. |
+| **Acceptance** | (a) Prod HTML of any page: `grep -c 'consent-banner'` = 0. (b) Mobile 390×844 first visit (cleared storage): no strip at bottom; sticky CTA sits flush at `bottom-0`; open sheet → nothing overlaps submit button or "No spam" line. (c) `dataLayer` still contains the `consent default` entries (region-aware) on load — verify in Tag Assistant; GA4/Ads tags fire for an India visitor without any click. (d) No `body.consent-banner-open` class ever applied. |
+| **Rollback** | Re-add `<ConsentBanner />` render + component from git; no data impact. |
+| **Estimate** | ~20 lines removed across 5 files; part of the Batch BE build. |
+
+---
+
 ### Batch BE roll-up
 
 | CR | Title | Status | Priority | Close condition |
 |---|---|---|---|---|
-| **CR-265** | Alpha LP CTAs → `<a href="#lp-demo">` + sheet onClick (5 pages) | 📋 Awaiting owner approval → impact analysis → line-by-line plan | **P0 — Revenue** | Acceptance (a)–(e) pass on prod; (f) reviewed at +7 days |
-| **CR-266** | `ScrollToTop` first-mount guard | 📋 Registered | P1 | Playwright scroll-preservation test passes on prod |
-| **CR-267** | `cta_click` / `sheet_open` events + GTM tags | 📋 Registered (code) · 👤 Owner (GTM) | P1 | Events visible in GA4 DebugView on prod |
+| **CR-265** | Alpha LP CTAs → `<a href="#lp-demo">` + sheet onClick (5 pages) | ✅ Approved → impact analysis → line-by-line plan → implement | **P0 — Revenue** | Acceptance (a)–(e) pass on prod. **Primary business criterion: `cta_click → sheet_open` ≥ 95 % on mobile paid sessions** (proves CTA works). Lead-rate recovery judged only against the baseline D4 establishes (see `REPLY_3…` §3 Reading 3). |
+| **CR-266** | `ScrollToTop` first-mount guard | ✅ Approved | P1 | Playwright scroll-preservation test passes on prod |
+| **CR-267** | `cta_click` / `sheet_open` events + GTM tags | ✅ Approved (code) · 👤 Owner (GTM) | P1 | Events visible in GA4 DebugView on prod |
+| **CR-268** | Remove consent banner; keep Consent Mode defaults | ✅ Approved (Option A) | P1 | No `consent-banner` in prod HTML; consent defaults still in dataLayer; sheet unobstructed at 390 px |
 
-**Sequencing:** owner answers reply-brief D1–D3, D7 (24 h) → approve CR-265 → impact analysis + line-by-line plan (separate docs, per house rule) → implement 265+266+267 in one build → deploy + CF purge → 48 h `form_start`/`cta_click` read → 7-day lead read.
+**Owner decision 2026-09-14 (evening):** "Option A" for the banner; ship 265+266+267+268 together; **do not wait for D4** — analytics interpretation is parked, the Ads table (85 clicks / ₹8k / 0 conversions over 11–14 Sep vs 8 conversions / 85 clicks on 8–10 Sep) is treated as the operative fact.
+
+**Sequencing (approved):** impact analysis + line-by-line plan for 265/266/267/268 (separate docs, per house rule; owner reviews) → implement in one build → preview QA (testing agent: 5 LPs + homepage + Petpooja, desktop + 390 px, throttled-JS tap test, scroll-preservation test, no banner, sheet submit path) → production build with prod env → owner deploys + CF purge + **records hash and IST time** → owner adds 2 GTM tags (CR-267) + registers `form_location`, `cta_location` GA4 custom dimensions → 48 h read on Ads conversions + `cta_click → sheet_open → form_start` → 7-day lead read. D4 (identity of the five 8–10 Sep leads) remains an open owner item for interpretation only.

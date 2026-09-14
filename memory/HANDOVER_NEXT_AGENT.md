@@ -1,3 +1,5 @@
+> **2026-09-14 update:** latest handover is `HANDOVER_2026-09-14_Session14.md` (Alpha LP lead drop — Batch BE CR-265–268 approved, planning docs pending). Read it first.
+
 # Agent Handover — 2026-09-08 · Session 10
 # Session: CR-238 Suspense-Flash Fix (Option C) — SHIPPED
 
