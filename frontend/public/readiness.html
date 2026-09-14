@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>MyGenie POS — Go-Live Readiness Contract</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --orange:#f26b33;--green:#329937;--dark:#111827;--muted:#6b7280;
+  --border:#e5e7eb;--sand:#f9fafb;--red:#dc2626;--amber:#d97706;
+  --blue:#2563eb;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f4f6;color:var(--dark);font-size:14px;line-height:1.5;}
+/* ── HEADER ── */
+.header{background:var(--dark);padding:24px 40px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;}
+.header-left{display:flex;align-items:center;gap:16px;}
+.logo{height:32px;width:auto;}
+.doc-title{color:#fff;font-size:16px;font-weight:700;letter-spacing:-0.3px;}
+.doc-subtitle{color:#9ca3af;font-size:11px;margin-top:2px;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.progress-wrap{text-align:right;}
+.progress-label{color:#9ca3af;font-size:11px;margin-bottom:4px;}
+.progress-bar{width:200px;height:8px;background:#374151;border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--green));border-radius:4px;transition:width 0.4s;}
+.progress-pct{color:#fff;font-size:13px;font-weight:700;margin-top:4px;}
+.print-btn{background:var(--orange);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0.04em;}
+.print-btn:hover{opacity:0.9;}
+
+/* ── LAYOUT ── */
+.container{max-width:1100px;margin:0 auto;padding:24px 20px 60px;}
+
+/* ── IDS STRIP ── */
+.ids-strip{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 24px;display:flex;gap:24px;flex-wrap:wrap;margin-bottom:20px;}
+.id-item{display:flex;flex-direction:column;gap:2px;}
+.id-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+.id-value{font-family:'SF Mono',Monaco,Consolas,monospace;font-size:12px;font-weight:600;color:var(--dark);}
+
+/* ── SECTION ── */
+.section{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden;}
+.section-header{padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;}
+.section-header:hover{background:var(--sand);}
+.section-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.section-title{font-weight:700;font-size:15px;flex:1;}
+.section-meta{font-size:12px;color:var(--muted);}
+.section-count{font-size:12px;font-weight:700;padding:2px 10px;border-radius:20px;background:var(--sand);color:var(--muted);}
+.chevron{font-size:12px;color:var(--muted);transition:transform 0.2s;}
+.section.collapsed .chevron{transform:rotate(-90deg);}
+.section.collapsed .section-body{display:none;}
+
+/* ── TABLE ── */
+.section-body{padding:0;}
+table{width:100%;border-collapse:collapse;}
+thead th{background:var(--sand);padding:10px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);}
+thead th:last-child{width:56px;text-align:center;}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:#fffaf7;}
+tbody tr.done{background:#f0fdf4;}
+tbody tr.done td{color:#166534;}
+tbody td{padding:12px 16px;vertical-align:top;}
+.item-name{font-weight:600;font-size:13px;margin-bottom:2px;}
+.item-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.item-desc code{background:#f3f4f6;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:11px;color:var(--dark);}
+.how-to{font-size:12px;line-height:1.6;color:#374151;}
+.how-to strong{color:var(--dark);}
+.how-to code{background:#f3f4f6;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:11px;}
+td.owner-cell{text-align:center;}
+.owner-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;}
+.owner-you{background:#fff7ed;color:#c2410c;}
+.owner-dev{background:#eff6ff;color:#1d4ed8;}
+.owner-both{background:#faf5ff;color:#7e22ce;}
+.priority-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:0.04em;}
+.p0{background:#fee2e2;color:#991b1b;}
+.p1{background:#fef3c7;color:#92400e;}
+.p2{background:#eff6ff;color:#1e40af;}
+
+/* ── STATUS ── */
+.status-cell{text-align:center;}
+.status-dot{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.2s;}
+.status-done{background:#d1fae5;color:#059669;}
+.status-pending{background:#fee2e2;color:#dc2626;}
+.status-partial{background:#fef3c7;color:#d97706;}
+.check-col{text-align:center;width:48px;}
+.check-box{width:22px;height:22px;border:2px solid var(--border);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;}
+.done .check-box{background:var(--green);border-color:var(--green);color:#fff;}
+
+/* ── LEGEND ── */
+.legend{display:flex;gap:16px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid var(--border);background:var(--sand);}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);}
+.legend-dot{width:10px;height:10px;border-radius:50%;}
+
+/* ── CONTRACT FOOTER ── */
+.contract-footer{background:#fff;border:1px solid var(--border);border-radius:10px;padding:28px 32px;margin-top:24px;}
+.contract-title{font-size:16px;font-weight:700;margin-bottom:8px;}
+.contract-text{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:24px;}
+.sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+.sign-block{}
+.sign-label{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.sign-line{border-bottom:1px solid var(--dark);padding-bottom:4px;margin-bottom:6px;min-height:32px;}
+.sign-name{font-size:12px;color:var(--muted);}
+.date-stamp{font-size:12px;color:var(--muted);margin-top:16px;}
+
+/* ── SUMMARY CARDS ── */
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.summary-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;}
+.summary-card .num{font-size:28px;font-weight:800;line-height:1;}
+.summary-card .lbl{font-size:11px;color:var(--muted);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;}
+.green-num{color:var(--green);}
+.orange-num{color:var(--orange);}
+.red-num{color:var(--red);}
+.blue-num{color:var(--blue);}
+
+@media print{
+  body{background:#fff;}
+  .header{position:static;background:var(--dark) !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .print-btn{display:none;}
+  .section.collapsed .section-body{display:block;}
+  .chevron{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <img src="/brand/logo-light.svg" class="logo" alt="MyGenie POS"/>
+    <div>
+      <div class="doc-title">Go-Live Readiness Contract</div>
+      <div class="doc-subtitle">Meta Ads · Google Ads · GTM · Consent · SEO · Deployment · Zapier Offline (CR-15) — Version 1.1 · June 2026</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="progress-wrap">
+      <div class="progress-label">Overall completion</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="progress-pct" id="progress-pct">0 / 0 done</div>
+    </div>
+    <button class="print-btn" onclick="window.print()">⬇ Print PDF</button>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- IDS STRIP -->
+<div class="ids-strip">
+  <div class="id-item"><div class="id-label">GTM Container</div><div class="id-value">GTM-K5D84Z3L</div></div>
+  <div class="id-item"><div class="id-label">GA4 Measurement ID</div><div class="id-value">G-KWHHFEZ5Q3</div></div>
+  <div class="id-item"><div class="id-label">Meta Pixel ID</div><div class="id-value">2862017797322752</div></div>
+  <div class="id-item"><div class="id-label">Google Ads Account</div><div class="id-value">AW-16740091756</div></div>
+  <div class="id-item"><div class="id-label">Ads Conversion Label</div><div class="id-value">NtqdClejmOgaEOyOpq4-</div></div>
+  <div class="id-item"><div class="id-label">Production Domain</div><div class="id-value">www.mygenie.online</div></div>
+  <div class="id-item"><div class="id-label">FB Domain Verification</div><div class="id-value">52wnu6dg7xaa18lrghxek38u535rtw</div></div>
+</div>
+
+<!-- SUMMARY CARDS -->
+<div class="summary-grid" id="summary-grid">
+  <div class="summary-card"><div class="num green-num" id="cnt-done">0</div><div class="lbl">Completed</div></div>
+  <div class="summary-card"><div class="num red-num" id="cnt-p0">0</div><div class="lbl">P0 Pending</div></div>
+  <div class="summary-card"><div class="num orange-num" id="cnt-p1">0</div><div class="lbl">P1 Pending</div></div>
+  <div class="summary-card"><div class="num blue-num" id="cnt-total">0</div><div class="lbl">Total Items</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 1 — CODE SIDE (FOR REFERENCE) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s1">
+  <div class="section-header" onclick="toggle('s1')">
+    <div class="section-icon" style="background:#d1fae5">✅</div>
+    <div class="section-title">1 — Website Code (Dev Side)</div>
+    <div class="section-meta">All done · no action needed from you</div>
+    <div class="section-count" id="s1-count">—</div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead><tr><th>Item</th><th>How to Verify</th><th>Owner</th><th>Priority</th><th>✓</th></tr></thead>
+      <tbody>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">GTM container loads on www.mygenie.online</div><div class="item-desc">Host-gated — does NOT load on preview URL by design. Fires only on production domain.</div></td>
+          <td class="how-to">After deploy: open GTM Preview → enter <code>https://www.mygenie.online</code> → confirm container tag fires.</td>
+          <td class="owner-cell"><span class="owner-dev">Dev</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">dataLayer events fire on all 5 lead surfaces</div><div class="item-desc">DemoForm · MessageForm · CheckoutModal · CalendlyInline · RoiCalculator all push events.</div></td>
+          <td class="how-to">Open browser console → submit demo form → check <code>window.dataLayer</code> for <code>form_submitted</code> + <code>lead_verifided</code> + <code>thankyou_conversion</code>.</td>
+          <td class="owner-cell"><span class="owner-dev">Dev</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">Event names match live GTM container exactly</div><div class="item-desc"><code>form_submitted</code> · <code>lead_verifided</code> (typo intentional) · <code>thankyou_conversion</code> · <code>demo_booked</code></div></td>
+          <td class="how-to">Check <code>frontend/src/lib/gtm.js</code> → <code>GTM_EVENT_NAME</code> map. Confirm typo <code>lead_verifided</code> matches GTM trigger name exactly.</td>
+          <td class="owner-cell"><span class="owner-dev">Dev</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">Identity fields in every event payload</div><div class="item-desc"><code>email</code>, <code>phone</code> (E.164), <code>first_name</code>, <code>last_name</code>, <code>city_name</code>, <code>external_id</code></div></td>
+          <td class="how-to">Submit a lead → inspect dataLayer push → confirm all 6 identity fields present.</td>
+          <td class="owner-cell"><span class="owner-dev">Dev</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">Click-IDs captured in payload</div><div class="item-desc"><code>gclid</code>, <code>fbclid</code>, <code>fbp</code>, <code>gbraid</code>, <code>wbraid</code>, <code>msclkid</code></div></td>
+          <td class="how-to">Append <code>?gclid=TEST123</code> to homepage URL → submit form → confirm <code>gclid: "TEST123"</code> in dataLayer push.</td>
+          <td class="owner-cell"><span class="owner-dev">Dev</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">Conversion values in payload</div><div class="item-desc"><code>form_submitted</code>=₹0 · <code>lead_verifided</code>=₹500 · <code>demo_booked</code>=₹2,000 · <code>currency</code>=INR</div></td>
+          <td class="how-to">Submit form → check dataLayer for <code>conversion_value: 0</code>. Verify OTP → check <code>conversion_value: 500</code>.</td>
+          <td class="owner-cell"><span class="owner-dev">Dev</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">Consent Mode v2 default fires before GTM loads</div><div class="item-desc">All 4 signals denied by default. <code>ConsentBanner</code> Accept/Decline updates signals.</div></td>
+          <td class="how-to">Open prod site in fresh incognito → check dataLayer → confirm <code>consent default</code> push happens BEFORE GTM container tag. Accept banner → confirm <code>consent update</code> with all signals granted.</td>
+          <td class="owner-cell"><span class="owner-dev">Dev</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">REACT_APP_GTM_ID set in frontend/.env</div><div class="item-desc">Value: <code>GTM-K5D84Z3L</code> — was accidentally dropped in a prior session, now restored.</div></td>
+          <td class="how-to">Check <code>frontend/.env</code> → confirm <code>REACT_APP_GTM_ID=GTM-K5D84Z3L</code> present.</td>
+          <td class="owner-cell"><span class="owner-dev">Dev</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>All 8 items complete — no action needed</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 2 — GTM CONTAINER (OWNER SIDE) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s2">
+  <div class="section-header" onclick="toggle('s2')">
+    <div class="section-icon" style="background:#fef3c7">📦</div>
+    <div class="section-title">2 — GTM Container Configuration</div>
+    <div class="section-meta">tagmanager.google.com · Container: GTM-K5D84Z3L</div>
+    <div class="section-count" id="s2-count">—</div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead><tr><th>Item</th><th>How to Verify</th><th>Owner</th><th>Priority</th><th>✓</th></tr></thead>
+      <tbody>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">calendly Trigger created (Custom Event: demo_booked)</div><div class="item-desc">Fires when Calendly inline widget emits <code>event_scheduled</code>. Event name = <code>demo_booked</code>.</div></td>
+          <td class="how-to">GTM → Triggers → find <code>calendly Trigger</code> → type = Custom Event → event name = <code>demo_booked</code>. ✅ Already confirmed done.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">GA4 - Book Appointment tag created</div><div class="item-desc">GA4 Event tag on <code>calendly Trigger</code> → event name <code>demo_booked</code>.</div></td>
+          <td class="how-to">GTM → Tags → <code>GA4 - Book Appointment</code> → confirm trigger = calendly Trigger. Container published ✅.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">FB - OTP Verified tag unpaused</div><div class="item-desc">Trigger = <code>lead_verified</code> custom event (no typo here — GTM trigger name is correct).</div></td>
+          <td class="how-to">GTM → Tags → <code>FB - OTP Verified</code> → confirm status = Active (not paused). ✅ Done.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">Container published (13 tags / 9 triggers)</div><div class="item-desc">Latest version published and live.</div></td>
+          <td class="how-to">GTM → Versions → confirm latest version = Published. Count: 13 tags, 9 triggers. ✅ Done.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Manual Advanced Matching replicated to FB - OTP Verified tag</div><div class="item-desc">Copy the 6-row AM block from <code>FB - Book demo</code>: <code>em→email</code>, <code>ph→phone</code>, <code>fn→first_name</code>, <code>ln→last_name</code>, <code>ct→city_name</code>, <code>external_id→external_id</code>.</div></td>
+          <td class="how-to">GTM → Tags → <code>FB - OTP Verified</code> → Customer Information → add 6 AM fields matching <code>FB - Book demo</code>. Save → Publish.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Manual Advanced Matching replicated to FB - Book Appointment (schedule) tag</div><div class="item-desc">Same 6-field AM block on the <code>Schedule</code> standard event tag you created for the calendly trigger.</div></td>
+          <td class="how-to">GTM → Tags → <code>FB - Book Appointment</code> → Customer Information → add same 6 AM fields → Save → Publish.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Consent Mode v2 variables wired to all tags</div><div class="item-desc">Create GTM Variables reading <code>mg_consent</code> from localStorage → wire to GA4 / Ads / Meta tags as consent checks.</div></td>
+          <td class="how-to">GTM → Variables → New → 1st Party Cookie / JS Variable reading <code>localStorage.getItem('mg_consent')</code>. Go to each conversion tag → Advanced Settings → Consent Settings → map your consent variables.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Republish container after AM + Consent changes</div><div class="item-desc">Any tag edits require a new publish to go live.</div></td>
+          <td class="how-to">GTM → Submit → Publish. Confirm version number increments.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Full GTM Preview verification on www.mygenie.online</div><div class="item-desc">Confirm all 4 events fire → tags trigger → no errors after production deploy.</div></td>
+          <td class="how-to">GTM → Preview → enter <code>https://www.mygenie.online</code> → submit form → check: <code>form_submitted</code> fires correct tags. Verify OTP → <code>lead_verifided</code> fires. Book Calendly → <code>demo_booked</code> fires.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Done</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Pending</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 3 — GOOGLE ADS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s3">
+  <div class="section-header" onclick="toggle('s3')">
+    <div class="section-icon" style="background:#dbeafe">📊</div>
+    <div class="section-title">3 — Google Ads</div>
+    <div class="section-meta">ads.google.com · Account: AW-16740091756</div>
+    <div class="section-count" id="s3-count">—</div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead><tr><th>Item</th><th>How to Verify</th><th>Owner</th><th>Priority</th><th>✓</th></tr></thead>
+      <tbody>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">GAds - Book Demo fires on lead_verifided (OTP verified only)</div><div class="item-desc">Fires on <code>lead_verifided</code> trigger — counts only OTP-verified leads as conversions. Smart bidding optimises toward verified leads, not junk.</div></td>
+          <td class="how-to">GTM → Tags → <code>GAds - Book Demo</code> → confirm trigger = <code>lead_verifided</code> custom event. If still on <code>form_submitted</code> → repoint immediately.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Mark demo_booked as GA4 Key Event</div><div class="item-desc">Required so Google Ads can import <code>demo_booked</code> as a conversion. GA4 must see it as Key Event first.</div></td>
+          <td class="how-to">GA4 → Admin → Events → find <code>demo_booked</code> → toggle "Mark as key event" = ON. Wait up to 24h for data to appear.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Import demo_booked into Google Ads as "Book appointment" conversion</div><div class="item-desc">Existing "Book appointments" was Import-from-clicks (Zapier-fed, no Conversion ID/Label). Create new website-source conversion or import from GA4.</div></td>
+          <td class="how-to">Google Ads → Goals → Conversions → New conversion action → Import → Google Analytics 4 properties → select <code>demo_booked</code> key event → Import and Continue.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Set demo_booked conversion as Primary</div><div class="item-desc">Must be Primary for campaign optimisation. "Submit lead form" stays as secondary.</div></td>
+          <td class="how-to">Google Ads → Goals → Conversions → select the imported <code>demo_booked</code> action → Edit → Category = "Book appointment" → Count = "Once" → Bid optimisation = "Primary action".</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Turn off Zapier appointment import</div><div class="item-desc">Zapier currently sends "Book appointments" offline conversion from Freshsales. Once browser-side demo_booked is live → turn off Zapier to avoid double-counting.</div></td>
+          <td class="how-to">Zapier dashboard → find Freshsales → Google Ads "Create Click Conversion" zap → toggle OFF. Confirm in Google Ads that conversion count doesn't duplicate. Only turn off AFTER browser-side verified.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Enhanced Conversions for leads — turned ON</div><div class="item-desc">Hashes + uploads identity fields (email, phone, name) for better attribution. Uses existing dataLayer fields — no code change needed.</div></td>
+          <td class="how-to">Google Ads → Goals → Conversions → Book Demo conversion → Edit settings → Enhanced conversions for leads = ON. In GTM: Book Demo conversion tag → User-Provided Data → map <code>email</code>, <code>phone</code>, <code>first_name</code>, <code>last_name</code> from dataLayer variables.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Map conversion_value into Google Ads conversion tags</div><div class="item-desc">Website sends <code>conversion_value</code> and <code>currency: "INR"</code> in dataLayer. Map to tag value field for value-based bidding.</div></td>
+          <td class="how-to">GTM → <code>GAds - Book Demo</code> → Conversion Value → select "Use value from dataLayer" → variable = <code>conversion_value</code>. Currency = INR. Save → Publish.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Register GA4 custom dimensions (otp_verified, form_location, plan_interest)</div><div class="item-desc">Required for segmentation in GA4 reports and audience building. Fields already in dataLayer.</div></td>
+          <td class="how-to">GA4 → Admin → Custom definitions → Custom dimensions (event-scoped) → Create: <code>otp_verified</code> (boolean), <code>form_location</code> (text), <code>plan_interest</code> (text), <code>lead_quality</code> (text).</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Build junk-exclusion audience (lead_quality = junk)</div><div class="item-desc">Suppress remarketing to bot/too-fast submits. Saves budget.</div></td>
+          <td class="how-to">Google Ads → Audiences → + New audience → Website visitors → Custom combination → Event = <code>form_submitted</code> where <code>lead_quality = junk</code>. Apply as exclusion on campaigns.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p2">P2</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 4 — META ADS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s4">
+  <div class="section-header" onclick="toggle('s4')">
+    <div class="section-icon" style="background:#ede9fe">📘</div>
+    <div class="section-title">4 — Meta Ads (Facebook / Instagram)</div>
+    <div class="section-meta">business.facebook.com · Pixel: 2862017797322752</div>
+    <div class="section-count" id="s4-count">—</div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead><tr><th>Item</th><th>How to Verify</th><th>Owner</th><th>Priority</th><th>✓</th></tr></thead>
+      <tbody>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">Meta Pixel base tag active on all pages</div><div class="item-desc">Base pixel fires PageView on every route change via GTM.</div></td>
+          <td class="how-to">Meta Events Manager → Test Events → enter <code>https://www.mygenie.online</code> → browse pages → confirm <code>PageView</code> fires on each navigation.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">FB - Book demo tag fires on lead_verifided</div><div class="item-desc">Standard event = Lead. Fires on OTP-verified form submission.</div></td>
+          <td class="how-to">GTM → Tags → <code>FB - Book demo</code> → trigger = <code>lead_verifided</code>. Meta Events Manager → Test Events → submit + verify OTP → confirm Lead event appears.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">FB - Book Appointment (Schedule event) created on calendly trigger</div><div class="item-desc">Standard event = Schedule. Fires when Calendly booking confirmed.</div></td>
+          <td class="how-to">GTM → <code>FB - Book Appointment</code> → trigger = <code>calendly Trigger</code>, event = <code>Schedule</code>. ✅ Confirmed done.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">FB - OTP Verified tag unpaused</div><div class="item-desc">Was paused — now active. Fires on <code>lead_verified</code> trigger.</div></td>
+          <td class="how-to">GTM → Tags → <code>FB - OTP Verified</code> → Status = Active. ✅ Done.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="done" onclick="toggleRow(this)">
+          <td><div class="item-name">Manual Advanced Matching on FB - Book demo (6 fields)</div><div class="item-desc"><code>em→email</code>, <code>ph→phone</code>, <code>fn→first_name</code>, <code>ln→last_name</code>, <code>ct→city_name</code>, <code>external_id→external_id</code></div></td>
+          <td class="how-to">GTM → <code>FB - Book demo</code> → Customer Information Data Parameters → confirm 6 rows present. ✅ Done.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box">✓</div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Manual AM replicated to FB - OTP Verified tag</div><div class="item-desc">Same 6-field block needed on this tag for match quality.</div></td>
+          <td class="how-to">GTM → <code>FB - OTP Verified</code> → Customer Information → add same 6 AM fields as FB - Book demo → Save → Publish.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Manual AM replicated to FB - Book Appointment (Schedule) tag</div><div class="item-desc">All conversion tags need AM for high Event Match Quality.</div></td>
+          <td class="how-to">GTM → <code>FB - Book Appointment</code> → Customer Information → add same 6 AM fields → Save → Publish.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Event Match Quality score ≥ 6.0 in Meta Events Manager</div><div class="item-desc">EMQ measures how well your events match Meta user profiles. Target: 6.0+. Higher = better attribution + lower CPL.</div></td>
+          <td class="how-to">Meta Events Manager → your pixel → Events → check EMQ score for Lead + Schedule events. If below 6.0 → check AM fields are mapped correctly.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p1">P1</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Facebook domain verification preserved</div><div class="item-desc">Meta verification code already in <code>index.html</code>: <code>52wnu6dg7xaa18lrghxek38u535rtw</code></div></td>
+          <td class="how-to">Meta Business Settings → Brand Safety → Domains → <code>mygenie.online</code> → Status = Verified. If not: open <code>frontend/public/index.html</code> → confirm meta tag present → deploy.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 5 — DEPLOYMENT & SEO -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s5">
+  <div class="section-header" onclick="toggle('s5')">
+    <div class="section-icon" style="background:#dcfce7">🚀</div>
+    <div class="section-title">5 — Site Deployment & SEO Cutover</div>
+    <div class="section-meta">www.mygenie.online · Cloudflare · Emergent</div>
+    <div class="section-count" id="s5-count">—</div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead><tr><th>Item</th><th>How to Verify</th><th>Owner</th><th>Priority</th><th>✓</th></tr></thead>
+      <tbody>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">REACT_APP_BACKEND_URL updated to production backend</div><div class="item-desc">Currently pointing to preview URL. Must point to production backend before deploy or forms will fail.</div></td>
+          <td class="how-to">Check <code>frontend/.env</code> → <code>REACT_APP_BACKEND_URL</code> = production URL (not <code>preview.emergentagent.com</code>). After update: rebuild and deploy.</td>
+          <td class="owner-cell"><span class="owner-both">Both</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">301 redirect layer live at Cloudflare (19 old URL mappings)</div><div class="item-desc">19 old → new URL mappings prepared in <code>cloudflare-bulk-redirects.csv</code>. Must be live at DNS flip or old URLs return 404.</div></td>
+          <td class="how-to">Cloudflare dashboard → Bulk Redirects → import <code>frontend/cloudflare-bulk-redirects.csv</code> → attach Bulk Redirect Rule. Test: <code>curl -sI https://www.mygenie.online/fine-dining</code> → expect HTTP 301 to new URL.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">non-www → www 301 preserved after cutover</div><div class="item-desc"><code>mygenie.online</code> must redirect to <code>www.mygenie.online</code>. Currently live — must stay active post-cutover.</div></td>
+          <td class="how-to"><code>curl -sI https://mygenie.online/</code> → expect <code>301 → https://www.mygenie.online/</code>. Run after DNS switch.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">SSL certificate green on www.mygenie.online</div><div class="item-desc">HTTPS must be valid before any tracking fires (Conversion Linker requires HTTPS).</div></td>
+          <td class="how-to">Open <code>https://www.mygenie.online</code> in browser → check padlock = secure. <code>curl -sI https://www.mygenie.online</code> → HTTP 200, no SSL errors.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Sitemap submitted to Google Search Console</div><div class="item-desc">48 URLs in sitemap. Submit immediately after DNS switch for faster re-indexing.</div></td>
+          <td class="how-to">GSC → <code>https://www.mygenie.online</code> property → Sitemaps → Add → <code>https://www.mygenie.online/sitemap.xml</code> → Submit. Confirm status = Success.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Razorpay webhook registered to production URL</div><div class="item-desc">Currently registered to preview URL. After deploy: re-register to production backend URL.</div></td>
+          <td class="how-to">Razorpay dashboard → Settings → Webhooks → update URL to <code>https://[production-backend]/api/payments/razorpay/webhook</code>. Events: <code>payment.captured</code>, <code>payment.failed</code>. Secret: from backend .env.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Swap Razorpay back to live keys (rzp_live_)</div><div class="item-desc">Currently on test keys. After full card test passes → swap to live keys before public launch.</div></td>
+          <td class="how-to">backend/.env → <code>RAZORPAY_KEY_ID=rzp_live_9lMs01gisZhwQX</code> → restart backend → test a small real payment to confirm.</td>
+          <td class="owner-cell"><span class="owner-both">Both</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Calendly webhook re-registered to production URL</div><div class="item-desc">Calendly webhook points to backend for demo_booked event. Must be updated after deploy.</div></td>
+          <td class="how-to">Calendly → Integrations → Webhooks → update endpoint to production backend URL → re-enter signing key from <code>CALENDLY_WEBHOOK_SIGNING_KEY</code> in .env. Test with a booking.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 6 — POST-DEPLOY VERIFICATION -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s6">
+  <div class="section-header" onclick="toggle('s6')">
+    <div class="section-icon" style="background:#fce7f3">🔍</div>
+    <div class="section-title">6 — Post-Deploy Verification (run on go-live day)</div>
+    <div class="section-meta">Run these checks within 2 hours of DNS switch</div>
+    <div class="section-count" id="s6-count">—</div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead><tr><th>Item</th><th>How to Check</th><th>Owner</th><th>Priority</th><th>✓</th></tr></thead>
+      <tbody>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">All 19 old URLs return HTTP 301 (not 404)</div><div class="item-desc">Critical for SEO. Old indexed URLs must redirect — not 404.</div></td>
+          <td class="how-to"><code>curl -sI https://www.mygenie.online/fine-dining | grep -i HTTP</code> → expect <code>301</code>. Repeat for all 19 old paths from <code>cloudflare-bulk-redirects.csv</code>.</td>
+          <td class="owner-cell"><span class="owner-both">Both</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">All main pages return HTTP 200</div><div class="item-desc">Homepage, pricing, solutions, product, blog — all must return 200.</div></td>
+          <td class="how-to"><code>curl -s -o /dev/null -w '%{http_code}' https://www.mygenie.online/pricing</code> → expect 200. Check: / /pricing /solutions /product /customers /blog /contact /about</td>
+          <td class="owner-cell"><span class="owner-both">Both</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Demo form submits successfully on production</div><div class="item-desc">End-to-end: form → OTP → Freshsales lead created → GTM events fire.</div></td>
+          <td class="how-to">Fill demo form on <code>www.mygenie.online</code> with real phone → complete OTP → check Freshsales for new contact → check GA4 Realtime for <code>form_submitted</code> + <code>lead_verifided</code>.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">GTM Preview — all 4 events confirmed on production</div><div class="item-desc">Only fires on www.mygenie.online. Use GTM Preview to confirm all tags fire correctly.</div></td>
+          <td class="how-to">GTM → Preview → enter <code>https://www.mygenie.online</code> → 1. Submit form → check <code>form_submitted</code> tag fires. 2. Verify OTP → check <code>lead_verifided</code>. 3. Complete demo form → check <code>thankyou_conversion</code>. 4. Book Calendly → check <code>demo_booked</code>.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">GA4 Realtime shows events within 5 minutes</div><div class="item-desc">Confirms GA4 receiving events from production site.</div></td>
+          <td class="how-to">GA4 → Reports → Realtime → submit a test lead → within 5 min: see <code>form_submitted</code>, then OTP → <code>lead_verifided</code>. After Calendly booking → <code>demo_booked</code> appears.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Meta Events Manager — Test Events shows Lead + Schedule</div><div class="item-desc">Confirms Meta Pixel receiving events with Advanced Matching data.</div></td>
+          <td class="how-to">Meta Events Manager → your pixel → Test Events → enter <code>https://www.mygenie.online</code> → submit + OTP → confirm <code>Lead</code> event appears with match parameters (em, ph, fn, ln).</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Sitemap returns 48 URLs, all www domain</div><div class="item-desc">No preview URL leakage. All 48 URLs on correct domain.</div></td>
+          <td class="how-to"><code>curl -s https://www.mygenie.online/sitemap.xml | grep -c '&lt;loc&gt;'</code> → expect 48. <code>curl -s https://www.mygenie.online/sitemap.xml | grep -i 'preview\|localhost'</code> → expect empty.</td>
+          <td class="owner-cell"><span class="owner-both">Both</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Razorpay test payment on production (with test keys)</div><div class="item-desc">Confirm full payment flow: checkout → payment → PaymentSuccess page → invoice PDF → SMS.</div></td>
+          <td class="how-to">Go to <code>www.mygenie.online/pricing</code> → Buy Online → use test card <code>4111 1111 1111 1111</code> / expiry <code>12/28</code> / CVV <code>123</code> / OTP <code>1234</code> → confirm PaymentSuccess page loads with order details + Download Invoice button.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ROLLBACK TRIGGERS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s7">
+  <div class="section-header" onclick="toggle('s7')">
+    <div class="section-icon" style="background:#fee2e2">⚠️</div>
+    <div class="section-title">7 — Rollback Triggers (revert DNS immediately if any occur)</div>
+    <div class="section-meta">Keep old site live for 7 days after cutover</div>
+    <div class="section-count" id="s7-count">—</div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead><tr><th>Trigger Condition</th><th>Detection Method</th><th>Action</th><th>Severity</th><th>✓</th></tr></thead>
+      <tbody>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Old URLs returning 404 (not 301)</div><div class="item-desc">SEO equity loss — immediate rollback required.</div></td>
+          <td class="how-to"><code>curl -sI https://www.mygenie.online/fine-dining</code> → if 404 → rollback DNS.</td>
+          <td class="how-to"><strong>Repoint DNS/CNAME back to old origin immediately.</strong></td>
+          <td><span class="priority-badge p0">CRITICAL</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Homepage or forms rendering blank</div><div class="item-desc">Usually caused by REACT_APP_BACKEND_URL still pointing to preview/unreachable server.</div></td>
+          <td class="how-to">Open <code>https://www.mygenie.online</code> → if white screen or form 500 errors → check backend URL in .env.</td>
+          <td class="how-to"><strong>Fix backend URL in .env → rebuild → redeploy. If takes > 30 min → rollback DNS.</strong></td>
+          <td><span class="priority-badge p0">CRITICAL</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">SSL certificate error on www.mygenie.online</div><div class="item-desc">Conversion Linker fails, GTM won't load, payments blocked.</div></td>
+          <td class="how-to">Browser padlock shows "Not Secure" → check Cloudflare SSL settings → Full (strict) mode.</td>
+          <td class="how-to"><strong>Fix SSL in Cloudflare. If > 15 min → rollback DNS.</strong></td>
+          <td><span class="priority-badge p0">CRITICAL</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td><div class="item-name">Sitemap serving preview domain URLs</div><div class="item-desc">Would cause mass canonical pointing to wrong domain → deindex risk.</div></td>
+          <td class="how-to"><code>curl -s https://www.mygenie.online/sitemap.xml | grep preview</code> → if output found → fix REACT_APP_SITE_URL in .env → rebuild.</td>
+          <td class="how-to"><strong>Fix SITE_URL → rebuild → redeploy. Do NOT leave this for >1h.</strong></td>
+          <td><span class="priority-badge p0">CRITICAL</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 8 — ZAPIER OFFLINE CONVERSIONS (CR-15) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="s8">
+  <div class="section-header" onclick="toggle('s8')">
+    <div class="section-icon" style="background:#fef9c3">⚡</div>
+    <div class="section-title">8 — Zapier Offline Conversions (CR-15)</div>
+    <div class="section-meta">Demo Scheduled · Demo Given · Purchase → Google Ads OCI + Meta CAPI · do after go-live</div>
+    <div class="section-count" id="s8-count">—</div>
+    <div class="chevron">▼</div>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead><tr><th>Item</th><th>How to Do It</th><th>Owner</th><th>Priority</th><th>✓</th></tr></thead>
+      <tbody>
+
+        <!-- PRE-REQUISITES -->
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td>
+            <div class="item-name">Freshsales field audit — map 4 custom field names</div>
+            <div class="item-desc">Zaps need the exact Freshsales field names for: <code>gclid</code>, <code>fbclid</code>, <code>fbp</code>, <code>event_id</code> (lead UUID). Without these, Zapier cannot pass the deduplication IDs to Google / Meta.</div>
+          </td>
+          <td class="how-to">Open any Freshsales contact created from the new website → check custom fields section → note internal field names (e.g. <code>cf_gclid</code>, <code>cf_fbclid</code>, <code>cf_fbp</code>, <code>cf_lead_id</code>). Share with Dev to confirm backend is sending them.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td>
+            <div class="item-name">Create "Demo given" conversion action in Google Ads</div>
+            <div class="item-desc">New offline conversion action needed for Zap 2. Does not exist yet — must be created before building Zap 2.</div>
+          </td>
+          <td class="how-to">Google Ads → Goals → Conversions → New conversion action → <strong>Import from clicks (offline)</strong> → Name: <code>Demo given</code> · Category: Book appointment · Value: ₹2,000 · Count: One per click. Add to goal: "Book appointment".</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td>
+            <div class="item-name">Confirm Calendly calendar names (sales vs website)</div>
+            <div class="item-desc">Zap 1 must fire only for sales-team calendar bookings, not for website-embedded Calendly (which is already tracked by browser-side <code>demo_booked</code>).</div>
+          </td>
+          <td class="how-to">Check Calendly account → identify the sales team's calendar link vs the embedded website calendar link. Note both names. This is the filter condition for Zap 1 trigger.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td>
+            <div class="item-name">Confirm Freshsales deal stage names for Zap 2 + Zap 3</div>
+            <div class="item-desc">Zap 2 trigger needs the exact stage name for "demo attended". Zap 3 trigger needs the exact stage name for "offline payment received / won".</div>
+          </td>
+          <td class="how-to">Freshsales → Deals → Pipeline → note the exact stage labels used for: (a) demo attended (e.g. <code>Demo Given</code>) and (b) offline payment won (e.g. <code>Won</code>, <code>Closed Won</code>).</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+
+        <!-- ZAP 1 -->
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td>
+            <div class="item-name">Zap 1 built: Demo Scheduled (offline) → Google Ads OCI "Book appointments" + Meta CAPI "Schedule"</div>
+            <div class="item-desc">
+              Trigger: Calendly Invitee Created, filter: sales team calendar only.<br>
+              Google OCI: <code>conversion_name=Book appointments</code> · <code>gclid</code> from Freshsales · <code>conversion_value=1000</code> · <code>order_id=lead_uuid</code><br>
+              Meta CAPI: <code>event_name=Schedule</code> · <code>event_id=lead_uuid</code> · <code>value=1000</code> · <code>currency=INR</code>
+            </div>
+          </td>
+          <td class="how-to">Zapier → New Zap → Trigger: Calendly Invitee Created → add filter step → Action A: Google Ads Create Click Conversion → Action B: Meta Conversions API. Fill all fields per CR-15 spec (see <code>/CR-15_Zapier_Offline_Conversion_Events.md</code>).</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+
+        <!-- ZAP 2 -->
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td>
+            <div class="item-name">Zap 2 built: Demo Given → Google Ads OCI "Demo given" + Meta CAPI "ViewContent"</div>
+            <div class="item-desc">
+              Trigger: Freshsales Deal stage changed to "Demo Given" (confirm name).<br>
+              Google OCI: <code>conversion_name=Demo given</code> · <code>gclid</code> from Freshsales · <code>conversion_value=2000</code><br>
+              Meta CAPI: <code>event_name=ViewContent</code> · <code>event_id=lead_uuid_demo_given</code> (suffix prevents dedup with Schedule event) · <code>value=2000</code>
+            </div>
+          </td>
+          <td class="how-to">Zapier → New Zap → Trigger: Freshsales Deal Updated (filter: stage = Demo Given) → Action A: Google Ads OCI → Action B: Meta CAPI. <strong>Important:</strong> append <code>_demo_given</code> to <code>event_id</code> in Meta CAPI so it's not deduplicated against the Schedule event for the same lead.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+
+        <!-- ZAP 3 -->
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td>
+            <div class="item-name">Zap 3 built: Purchase (offline) → Google Ads OCI "Purchased" + Meta CAPI "Purchase"</div>
+            <div class="item-desc">
+              Trigger: Freshsales Deal stage "Won" + payment method = offline.<br>
+              Google OCI: <code>conversion_name=Purchased</code> · actual deal value from Freshsales · <code>order_id=lead_uuid_purchase</code><br>
+              Meta CAPI: <code>event_name=Purchase</code> · <code>event_id=lead_uuid_purchase</code> · actual deal value · <code>currency=INR</code>
+            </div>
+          </td>
+          <td class="how-to">Zapier → New Zap → Trigger: Freshsales Deal Updated (filter: stage = Won, payment method = offline/bank/UPI) → Action A: Google Ads OCI → Action B: Meta CAPI. Use actual deal value (not hardcoded) for value-based bidding. Append <code>_purchase</code> to <code>order_id</code> and <code>event_id</code> to prevent dedup with online Razorpay purchase.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+
+        <!-- QA -->
+        <tr data-priority="pending" onclick="toggleRow(this)">
+          <td>
+            <div class="item-name">QA: test all 3 Zaps in Zapier test mode</div>
+            <div class="item-desc">Create a test Freshsales contact with known <code>gclid</code> and <code>event_id</code>. Trigger each Zap manually. Verify Google Ads OCI upload (allow 1–3h) and Meta CAPI Test Events.</div>
+          </td>
+          <td class="how-to">Zapier → each Zap → Test → Run. Check: (a) Google Ads → Goals → Conversions → "All conversions" column increments within 3h. (b) Meta Events Manager → Test Events tab → Schedule, ViewContent, Purchase appear. Confirm no duplicate count for leads who also triggered browser-side events.</td>
+          <td class="owner-cell"><span class="owner-you">You</span></td>
+          <td><span class="priority-badge p0">P0</span></td>
+          <td class="check-col"><div class="check-box"></div></td>
+        </tr>
+
+      </tbody>
+    </table>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>All pending — do after go-live · blocked on owner pre-requisites (field audit, deal stage names, Calendly calendar names)</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTRACT FOOTER -->
+<div class="contract-footer">
+  <div class="contract-title">Go-Live Sign-Off</div>
+  <div class="contract-text">
+    This document serves as the go-live readiness contract for <strong>MyGenie POS</strong> (<strong>www.mygenie.online</strong>).
+    All P0 items must be completed and verified before DNS cutover. Sections 1–4 (code + GTM + Ads + Meta) must be green before
+    Razorpay is switched to live keys. The deployment team (Emergent) and the business owner jointly confirm readiness by signing below.
+    Rollback authority rests with the business owner and must be exercised within 2 hours of any P0 failure detected post-cutover.
+  </div>
+  <div class="sign-grid">
+    <div class="sign-block">
+      <div class="sign-label">Business Owner / Marketing</div>
+      <div class="sign-line"></div>
+      <div class="sign-name">Abhishek · HOSIGENIE HOSPITALITY SERVICES PVT LTD</div>
+    </div>
+    <div class="sign-block">
+      <div class="sign-label">Development Team</div>
+      <div class="sign-line"></div>
+      <div class="sign-name">MyGenie Dev · Emergent Labs</div>
+    </div>
+  </div>
+  <div class="date-stamp" id="date-stamp"></div>
+</div>
+
+</div><!-- end container -->
+
+<script>
+// ── TOGGLE SECTION ──
+function toggle(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+// ── TOGGLE ROW (mark done) ──
+function toggleRow(row) {
+  const isDone = row.classList.toggle('done');
+  const box = row.querySelector('.check-box');
+  box.textContent = isDone ? '✓' : '';
+  updateCounts();
+}
+
+// ── AUTO MARK pre-done rows ──
+document.querySelectorAll('tr[data-priority="done"]').forEach(row => {
+  row.classList.add('done');
+  row.querySelector('.check-box').textContent = '✓';
+});
+
+// ── COUNT & PROGRESS ──
+function updateCounts() {
+  const all   = document.querySelectorAll('tbody tr');
+  const done  = document.querySelectorAll('tbody tr.done');
+  const p0rows = document.querySelectorAll('tbody tr:not(.done)');
+
+  let p0 = 0, p1 = 0;
+  p0rows.forEach(r => {
+    const badge = r.querySelector('.priority-badge');
+    if (!badge) return;
+    if (badge.classList.contains('p0')) p0++;
+    else if (badge.classList.contains('p1')) p1++;
+  });
+
+  const total = all.length;
+  const doneCnt = done.length;
+  const pct = total ? Math.round(doneCnt / total * 100) : 0;
+
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = doneCnt + ' / ' + total + ' done (' + pct + '%)';
+  document.getElementById('cnt-done').textContent = doneCnt;
+  document.getElementById('cnt-p0').textContent = p0;
+  document.getElementById('cnt-p1').textContent = p1;
+  document.getElementById('cnt-total').textContent = total;
+
+  // Per-section counts
+  ['s1','s2','s3','s4','s5','s6','s7','s8'].forEach(id => {
+    const sec = document.getElementById(id);
+    const secDone = sec.querySelectorAll('tbody tr.done').length;
+    const secAll  = sec.querySelectorAll('tbody tr').length;
+    document.getElementById(id + '-count').textContent = secDone + ' / ' + secAll;
+  });
+}
+
+// ── DATE ──
+document.getElementById('date-stamp').textContent =
+  'Document generated: ' + new Date().toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'});
+
+// ── INIT ──
+updateCounts();
+</script>
+</body>
+</html>

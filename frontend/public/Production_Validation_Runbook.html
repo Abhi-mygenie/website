@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Production Validation — Demo Scheduled Status &amp; Calendly Integration</title>
+<style>
+  :root {
+    --brand: #10b981;
+    --brand-dark: #059669;
+    --ink: #14201a;
+    --muted: #5b7a68;
+    --sand: #f6f8f5;
+    --line: #e2e8e4;
+    --red: #ef4444;
+    --orange: #f97316;
+    --blue: #3b82f6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #f8fafb;
+    color: var(--ink);
+    line-height: 1.7;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    background: var(--ink);
+    color: #fff;
+    padding: 2rem 2.5rem;
+    border-radius: 16px 16px 0 0;
+  }
+  .header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .header .subtitle { color: #9db1a4; font-size: 0.9rem; }
+  .header .meta {
+    display: flex; gap: 1.5rem; margin-top: 1rem;
+    font-size: 0.8rem; color: #7a9485;
+  }
+  .header .meta span { display: flex; align-items: center; gap: 0.3rem; }
+  .badge {
+    display: inline-block;
+    background: var(--brand);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.6rem;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge.orange { background: var(--orange); }
+
+  /* Body */
+  .body {
+    background: #fff;
+    padding: 2rem 2.5rem;
+    border-radius: 0 0 16px 16px;
+    border: 1px solid var(--line);
+    border-top: none;
+  }
+
+  /* Section */
+  .section { margin-bottom: 2.5rem; }
+  .section:last-child { margin-bottom: 0; }
+  .section h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    border-bottom: 2px solid var(--brand);
+    display: inline-block;
+    padding-bottom: 0.2rem;
+    margin-bottom: 1rem;
+  }
+  .section h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 1.5rem 0 0.5rem 0;
+  }
+  .section p, .section li {
+    font-size: 0.88rem;
+    color: #334155;
+  }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+  .flow-box {
+    background: var(--sand);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+  .flow-box.highlight {
+    background: #ecfdf5;
+    border-color: var(--brand);
+    color: var(--brand-dark);
+    font-weight: 700;
+  }
+  .flow-arrow {
+    color: var(--muted);
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  /* Code block */
+  pre {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 1.2rem 1.5rem;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    margin: 0.75rem 0;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  }
+  pre .comment { color: #64748b; }
+  pre .string { color: #86efac; }
+  pre .cmd { color: #fbbf24; }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.75rem 0;
+    font-size: 0.82rem;
+  }
+  th {
+    text-align: left;
+    background: var(--sand);
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 2px solid var(--line);
+  }
+  td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--line);
+    color: #334155;
+  }
+  tr:last-child td { border-bottom: none; }
+  code {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  /* Steps */
+  .step {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    counter-increment: step-counter;
+  }
+  .step::before {
+    content: counter(step-counter);
+    position: absolute;
+    top: -0.6rem;
+    left: 1rem;
+    background: var(--brand);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+  }
+  .step .expect {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    color: var(--brand-dark);
+    margin-top: 0.5rem;
+  }
+  .step .fail {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    color: #b91c1c;
+    margin-top: 0.5rem;
+  }
+  .steps-container { counter-reset: step-counter; margin-top: 1rem; }
+
+  /* Alert */
+  .alert {
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    margin: 1rem 0;
+  }
+  .alert.warn {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+  }
+  .alert.info {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+  }
+  .alert.success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+  }
+  .alert strong { font-weight: 700; }
+
+  /* Checklist */
+  .checklist {
+    list-style: none;
+    padding: 0;
+  }
+  .checklist li {
+    padding: 0.4rem 0;
+    padding-left: 1.75rem;
+    position: relative;
+    font-size: 0.85rem;
+  }
+  .checklist li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid var(--line);
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ─── HEADER ─────────────────────────────────────────────── -->
+<div class="header">
+  <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
+    <h1>Production Validation Runbook</h1>
+    <span class="badge orange">P1</span>
+  </div>
+  <div class="subtitle">Demo Scheduled Status &amp; Calendly Integration — Validation &amp; Debugging Guide</div>
+  <div class="meta">
+    <span>Date: July 2026</span>
+    <span>Server: <code style="color:#86efac; background:rgba(255,255,255,0.1);">root@ip-172-31-22-82</code></span>
+    <span>Backend: <code style="color:#86efac; background:rgba(255,255,255,0.1);">/var/www/website/backend</code></span>
+  </div>
+</div>
+
+<div class="body">
+
+<!-- ─── CONTEXT ─────────────────────────────────────────────── -->
+<div class="section">
+  <h2>Context — What Happens When a Demo is Booked</h2>
+
+  <p>When a user books a demo through the Calendly widget, <strong>two paths</strong> fire to update the Freshsales contact:</p>
+
+  <h3>Path 1 — Client-side (immediate, from browser)</h3>
+  <div class="flow">
+    <div class="flow-box">User picks Calendly slot</div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-box">DemoForm.jsx <code>markBooked()</code></div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-box">POST /api/demo-booked</div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-box highlight">freshsales.mark_demo_booked()</div>
+  </div>
+
+  <h3>Path 2 — Calendly Webhook (async, from Calendly servers)</h3>
+  <div class="flow">
+    <div class="flow-box">Calendly fires <code>invitee.created</code></div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-box">POST /api/calendly/webhook</div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-box highlight">freshsales.mark_demo_booked()</div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-box">+ Meet link + Demo time</div>
+  </div>
+
+  <h3>What <code>mark_demo_booked()</code> Sets in Freshsales</h3>
+  <table>
+    <tr><th>Field</th><th>Value</th><th>Source</th></tr>
+    <tr><td><strong>contact_status_id</strong></td><td><code>402001331872</code> = "Follow up for scheduling demo"</td><td>Env: <code>FRESHSALES_STATUS_DEMO_BOOKED_ID</code></td></tr>
+    <tr><td><strong>Tag added</strong></td><td>"Follow up for scheduling demo"</td><td>Env: <code>FRESHSALES_DEMO_BOOKED_TAG</code></td></tr>
+    <tr><td><strong>lifecycle_stage_id</strong></td><td><code>403021121245</code> (Lead)</td><td>Env: <code>FRESHSALES_LIFECYCLE_DEMO_BOOKED_ID</code></td></tr>
+    <tr><td><strong>cf_meeting_link</strong></td><td>Google Meet URL</td><td>Path 2 only (webhook)</td></tr>
+    <tr><td><strong>cf_channel_manager_name</strong></td><td>Demo time in IST</td><td>Path 2 only (webhook)</td></tr>
+  </table>
+
+  <div class="alert warn">
+    <strong>Important:</strong> Path 2 (webhook) only fires if <code>CALENDLY_WEBHOOK_CALLBACK_URL</code> is set and the webhook is registered in Calendly. If empty, only Path 1 fires — and it does NOT set meet link or demo time.
+  </div>
+</div>
+
+<!-- ─── VALIDATION STEPS ────────────────────────────────────── -->
+<div class="section">
+  <h2>Validation Steps — Run on Production Server</h2>
+
+  <div class="alert info">
+    <strong>SSH into production:</strong> <code>ssh root@ip-172-31-22-82</code><br>
+    All commands below assume you're in <code>/var/www/website/backend</code>
+  </div>
+
+  <div class="steps-container">
+
+    <!-- Step 1 -->
+    <div class="step">
+      <h4>Check Environment Variables Are Loaded</h4>
+      <p>Verify the backend has the correct Freshsales config for demo booking:</p>
+<pre>cd /var/www/website/backend
+python3 -c "
+from dotenv import load_dotenv; load_dotenv('.env')
+import os
+print('DEMO_BOOKED_STATUS_ID:', os.environ.get('FRESHSALES_STATUS_DEMO_BOOKED_ID'))
+print('DEMO_BOOKED_TAG:', os.environ.get('FRESHSALES_DEMO_BOOKED_TAG'))
+print('DEMO_BOOKED_LIFECYCLE_ID:', os.environ.get('FRESHSALES_LIFECYCLE_DEMO_BOOKED_ID'))
+print('CALENDLY_WEBHOOK_CALLBACK_URL:', os.environ.get('CALENDLY_WEBHOOK_CALLBACK_URL'))
+print('CALENDLY_API_TOKEN:', os.environ.get('CALENDLY_API_TOKEN', '')[:20] + '...')
+"</pre>
+      <div class="expect"><strong>Expected:</strong><br>
+        DEMO_BOOKED_STATUS_ID: <code>402001331872</code><br>
+        DEMO_BOOKED_TAG: <code>Follow up for scheduling demo</code><br>
+        CALENDLY_WEBHOOK_CALLBACK_URL: <code>https://www.mygenie.online/api/calendly/webhook</code>
+      </div>
+      <div class="fail"><strong>If CALENDLY_WEBHOOK_CALLBACK_URL is empty:</strong> Path 2 (webhook) will never fire. Meet link and demo time won't be written to Freshsales. Set it to <code>https://www.mygenie.online/api/calendly/webhook</code> and restart.</div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step">
+      <h4>Verify Freshsales Module Loaded Correctly</h4>
+      <p>Confirm the running Python process has the right values (not stale from before an env change):</p>
+<pre>cd /var/www/website/backend
+python3 -c "
+from dotenv import load_dotenv; load_dotenv('.env')
+import sys; sys.path.insert(0, '.')
+import freshsales
+print('is_enabled:', freshsales.is_enabled())
+print('DEMO_BOOKED_TAG:', repr(freshsales.DEMO_BOOKED_TAG))
+print('DEMO_BOOKED_STATUS_ID:', freshsales.DEMO_BOOKED_STATUS_ID)
+print('DEMO_BOOKED_LIFECYCLE_ID:', freshsales.DEMO_BOOKED_LIFECYCLE_ID)
+"</pre>
+      <div class="expect"><strong>Expected:</strong><br>
+        is_enabled: <code>True</code><br>
+        DEMO_BOOKED_TAG: <code>'Follow up for scheduling demo'</code><br>
+        DEMO_BOOKED_STATUS_ID: <code>402001331872</code>
+      </div>
+      <div class="fail"><strong>If is_enabled is False:</strong> <code>FRESHSALES_API_KEY</code> or <code>FRESHSALES_BASE_URL</code> is missing. Check <code>.env</code>.<br>
+        <strong>If TAG shows 'Demo Scheduled (Web)':</strong> Env var wasn't loaded. Restart: <code>systemctl restart mygenie-api.service</code></div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step">
+      <h4>Check Calendly Webhook Registration</h4>
+      <p>Verify whether a webhook is actually registered in Calendly pointing to your production URL:</p>
+<pre>cd /var/www/website/backend
+python3 -c "
+from dotenv import load_dotenv; load_dotenv('.env')
+import httpx, os
+token = os.environ.get('CALENDLY_API_TOKEN')
+r = httpx.get('https://api.calendly.com/users/me',
+    headers={'Authorization': f'Bearer {token}'})
+user = r.json()
+org = user['resource']['current_organization']
+print('Org:', org)
+
+r2 = httpx.get('https://api.calendly.com/webhook_subscriptions',
+    params={'organization': org, 'scope': 'organization'},
+    headers={'Authorization': f'Bearer {token}'})
+hooks = r2.json().get('collection', [])
+print(f'Registered webhooks: {len(hooks)}')
+for h in hooks:
+    print(f'  URL:    {h[\"callback_url\"]}')
+    print(f'  State:  {h[\"state\"]}')
+    print(f'  Events: {h[\"events\"]}')
+    print()
+if not hooks:
+    print('WARNING: No webhooks registered!')
+    print('Path 2 (Calendly webhook) will NOT fire.')
+    print('Meet link + demo time will NOT be written to Freshsales.')
+"</pre>
+      <div class="expect"><strong>Expected:</strong> At least 1 webhook pointing to <code>https://www.mygenie.online/api/calendly/webhook</code> with state <code>active</code></div>
+      <div class="fail"><strong>If 0 webhooks:</strong> Set <code>CALENDLY_WEBHOOK_CALLBACK_URL=https://www.mygenie.online/api/calendly/webhook</code> in <code>.env</code>, restart the backend. The startup code (<code>_sync_calendly_webhook</code>) will auto-register it.</div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step">
+      <h4>Live Test — Submit a Demo Lead End-to-End</h4>
+      <p>Open a browser to <code>https://www.mygenie.online</code> and complete the full flow:</p>
+      <ol style="padding-left:1.25rem; font-size:0.85rem;">
+        <li>Fill the demo form (use a test name + your real phone for OTP)</li>
+        <li>Enter OTP code</li>
+        <li>Pick a Calendly slot and confirm booking</li>
+      </ol>
+      <p>While doing this, watch the backend logs in another terminal:</p>
+<pre><span class="comment"># Terminal 2 — watch logs live</span>
+tail -f /var/log/mygenie-api*.log 2>/dev/null | grep -iE "demo-booked|demo_booked|mark_demo|calendly|webhook|Freshsales"
+
+<span class="comment"># If logs are in journalctl instead:</span>
+journalctl -u mygenie-api -f | grep -iE "demo-booked|demo_booked|mark_demo|calendly"</pre>
+      <div class="expect"><strong>Expected log entries:</strong><br>
+        1. <code>POST /api/demo-booked</code> (client-side path)<br>
+        2. <code>Calendly invitee.created processed email=... contact=...</code> (webhook path, if registered)<br>
+        No Freshsales 400/500 errors.
+      </div>
+      <div class="fail"><strong>If no log entries appear:</strong> The POST isn't reaching the backend. Check browser DevTools Network tab for failed <code>/api/demo-booked</code> request. Common causes: CORS, wrong <code>REACT_APP_BACKEND_URL</code>, or network error.</div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step">
+      <h4>Verify Freshsales Contact Was Updated</h4>
+      <p>After the test booking, check if the contact's status changed in Freshsales:</p>
+<pre><span class="comment"># Find the test lead in MongoDB</span>
+cd /var/www/website/backend
+python3 -c "
+from dotenv import load_dotenv; load_dotenv('.env')
+from pymongo import MongoClient
+import os
+client = MongoClient(os.environ.get('MONGO_URL'))
+db = client[os.environ.get('DB_NAME')]
+
+<span class="comment"># Replace with your test name</span>
+doc = db.demo_requests.find_one(
+    {'name': {'\\$regex': 'YOUR_TEST_NAME', '\\$options': 'i'}},
+    {'_id':0, 'name':1, 'freshsales_contact_id':1, 'status':1,
+     'demo_booked_at':1, 'meet_link':1, 'demo_at':1},
+    sort=[('created_at', -1)])
+print(doc)
+"</pre>
+      <div class="expect"><strong>Expected:</strong><br>
+        <code>status: 'demo_booked'</code><br>
+        <code>freshsales_contact_id: 402XXXXXXXXX</code> (not None)<br>
+        <code>demo_booked_at: '2026-07-...'</code><br>
+        <code>meet_link: '...'</code> (only if webhook fired)<br>
+        <code>demo_at: '26 Jul 2026, ...'</code> (only if webhook fired)
+      </div>
+      <div class="fail"><strong>If freshsales_contact_id is None:</strong> Freshsales upsert_contact failed during form submission. Check logs for <code>Freshsales create 400</code> or <code>Freshsales upsert error</code>.<br>
+        <strong>If status is not 'demo_booked':</strong> The <code>POST /api/demo-booked</code> didn't execute. Check browser console for errors.<br>
+        <strong>If meet_link is missing:</strong> Calendly webhook didn't fire. Go back to Step 3.</div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step">
+      <h4>Verify in Freshsales CRM</h4>
+      <p>Open the test contact in Freshsales and confirm:</p>
+      <ul class="checklist">
+        <li>Status = <strong>"Follow up for scheduling demo"</strong></li>
+        <li>Tag <strong>"Follow up for scheduling demo"</strong> is present</li>
+        <li>Tag <strong>"OTP-Verified"</strong> is present</li>
+        <li>Custom field <strong>cf_meeting_link</strong> has the Google Meet URL (webhook path only)</li>
+        <li>Custom field <strong>cf_channel_manager_name</strong> has the demo date/time (webhook path only)</li>
+      </ul>
+      <div class="fail"><strong>If status is still "New":</strong> <code>mark_demo_booked()</code> failed silently. Most common cause: Freshsales API rejected the <code>contact_status_id</code> write. Check logs for <code>Freshsales demo-booked 400</code>.<br>
+        <strong>If tag is "Demo Scheduled (Web)" instead of "Follow up for scheduling demo":</strong> Backend was not restarted after <code>.env</code> change. Run <code>systemctl restart mygenie-api.service</code>.</div>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="step">
+      <h4>Manual API Test (bypass frontend)</h4>
+      <p>If the frontend test is unclear, call the API directly to isolate backend issues:</p>
+<pre><span class="comment"># Test with a known Freshsales contact ID</span>
+curl -s -X POST https://www.mygenie.online/api/demo-booked \
+  -H "Content-Type: application/json" \
+  -d '{
+    "freshsales_contact_id": 402213582497,
+    "email": "test@example.com",
+    "lead_id": null
+  }' | python3 -m json.tool</pre>
+      <div class="expect"><strong>Expected:</strong> <code>{"ok": true, "freshsales_contact_id": 402213582497}</code><br>
+        Then check the contact in Freshsales — status should now be "Follow up for scheduling demo".</div>
+      <div class="fail"><strong>If returns <code>{"ok": true, "freshsales_contact_id": null}</code>:</strong> Contact not found. Verify the ID exists in Freshsales.<br>
+        <strong>If returns 500 error:</strong> Check backend logs immediately.</div>
+    </div>
+
+  </div><!-- /steps-container -->
+</div>
+
+<!-- ─── COMMON ISSUES ──────────────────────────────────────── -->
+<div class="section">
+  <h2>Common Issues &amp; Fixes</h2>
+  <table>
+    <tr><th style="width:35%;">Symptom</th><th style="width:35%;">Cause</th><th>Fix</th></tr>
+    <tr>
+      <td>Status stays "New" after booking</td>
+      <td><code>mark_demo_booked()</code> not firing or failing</td>
+      <td>Check backend logs for errors. Verify <code>POST /api/demo-booked</code> reaches backend.</td>
+    </tr>
+    <tr>
+      <td>Tag shows "Demo Scheduled (Web)" instead of "Follow up for scheduling demo"</td>
+      <td>Backend loaded before <code>FRESHSALES_DEMO_BOOKED_TAG</code> was added to <code>.env</code></td>
+      <td><code>systemctl restart mygenie-api.service</code></td>
+    </tr>
+    <tr>
+      <td>No meet link or demo time in Freshsales</td>
+      <td><code>CALENDLY_WEBHOOK_CALLBACK_URL</code> is empty &mdash; webhook not registered</td>
+      <td>Set it to <code>https://www.mygenie.online/api/calendly/webhook</code>, restart backend</td>
+    </tr>
+    <tr>
+      <td>Webhook registered but not firing</td>
+      <td>Calendly webhook state is <code>disabled</code> or URL is wrong</td>
+      <td>Re-register: delete old webhook via API, set correct callback URL, restart</td>
+    </tr>
+    <tr>
+      <td>Freshsales returns 400 on status update</td>
+      <td><code>contact_status_id</code> value doesn't match Freshsales config</td>
+      <td>Verify <code>FRESHSALES_STATUS_DEMO_BOOKED_ID=402001331872</code> exists in Freshsales &rarr; Admin &rarr; Contact Statuses</td>
+    </tr>
+    <tr>
+      <td>Works in preview/UAT but not production</td>
+      <td>Different <code>.env</code>, different code version, or backend not restarted</td>
+      <td>Compare <code>.env</code> files, deploy latest code, restart service</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ─── ENV REFERENCE ──────────────────────────────────────── -->
+<div class="section">
+  <h2>Environment Variables Reference</h2>
+  <p>These must be set in <code>/var/www/website/backend/.env</code>:</p>
+  <table>
+    <tr><th>Variable</th><th>Value</th><th>Purpose</th></tr>
+    <tr><td><code>FRESHSALES_STATUS_DEMO_BOOKED_ID</code></td><td><code>402001331872</code></td><td>Sets contact status to "Follow up for scheduling demo"</td></tr>
+    <tr><td><code>FRESHSALES_DEMO_BOOKED_TAG</code></td><td><code>Follow up for scheduling demo</code></td><td>Tag added on booking</td></tr>
+    <tr><td><code>FRESHSALES_LIFECYCLE_DEMO_BOOKED_ID</code></td><td><code>403021121245</code></td><td>Lifecycle stage (Lead)</td></tr>
+    <tr><td><code>CALENDLY_WEBHOOK_CALLBACK_URL</code></td><td><code>https://www.mygenie.online/api/calendly/webhook</code></td><td>Auto-registers Calendly webhook at startup</td></tr>
+    <tr><td><code>CALENDLY_WEBHOOK_SIGNING_KEY</code></td><td><code>65124833...</code></td><td>Verifies webhook authenticity</td></tr>
+    <tr><td><code>CALENDLY_API_TOKEN</code></td><td><code>eyJraWQ...</code></td><td>Calendly API access for webhook registration</td></tr>
+    <tr><td><code>FRESHSALES_API_KEY</code></td><td><code>tjds_FuP4t...</code></td><td>Freshsales API authentication</td></tr>
+    <tr><td><code>FRESHSALES_BASE_URL</code></td><td><code>https://mygenie-org.myfreshworks.com/crm/sales/api</code></td><td>Freshsales API endpoint</td></tr>
+  </table>
+  <div class="alert warn">
+    <strong>After any <code>.env</code> change:</strong> You MUST restart the backend.<br>
+    <code>systemctl restart mygenie-api.service</code><br>
+    Python reads env vars at module import time. A file change alone does not take effect.
+  </div>
+</div>
+
+<!-- ─── QUICK RESTART ──────────────────────────────────────── -->
+<div class="section">
+  <h2>Quick Commands</h2>
+<pre><span class="comment"># Restart backend after .env change</span>
+<span class="cmd">systemctl restart mygenie-api.service</span>
+
+<span class="comment"># Check service status</span>
+<span class="cmd">systemctl status mygenie-api.service</span>
+
+<span class="comment"># Watch logs live</span>
+<span class="cmd">tail -f /var/log/mygenie-api*.log | grep -iE "demo-booked|calendly|Freshsales"</span>
+
+<span class="comment"># Verify env loaded in running process</span>
+<span class="cmd">curl -s https://www.mygenie.online/api/_diag/freshsales-tag | python3 -m json.tool</span>
+<span class="comment"># (returns 404 if _diag endpoint not deployed — use Python method from Step 2 instead)</span></pre>
+</div>
+
+</div><!-- /body -->
+</div><!-- /container -->
+</body>
+</html>

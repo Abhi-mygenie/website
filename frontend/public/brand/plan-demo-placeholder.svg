@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="Feature demo coming soon">
+  <rect width="800" height="600" fill="#F6F8F5"/>
+  <rect x="24" y="24" width="752" height="552" rx="24" fill="#ffffff" stroke="#E6EAE6" stroke-width="2"/>
+  <rect x="24" y="24" width="752" height="552" rx="24" fill="none" stroke="#10B981" stroke-width="2" stroke-dasharray="10 12" opacity="0.45"/>
+  <g transform="translate(400 250)">
+    <circle r="56" fill="#10B981" opacity="0.12"/>
+    <path d="M-18 -26 L28 0 L-18 26 Z" fill="#10B981"/>
+  </g>
+  <text x="400" y="380" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="34" font-weight="700" fill="#14201A">Feature demo</text>
+  <text x="400" y="420" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20" font-weight="500" fill="#5B6B61">GIF coming soon — upload via CMS</text>
+</svg>

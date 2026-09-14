@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=1200, initial-scale=1"/>
+<title>CR-80 — Structured Data Design Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"/>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Poppins',Arial,sans-serif;background:#f1f3f4;color:#202124;padding:32px;}
+  h2{font-size:22px;font-weight:700;margin-bottom:8px;color:#202124;}
+  .section{margin-bottom:40px;}
+  .label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5f6368;margin-bottom:12px;}
+  .before-label{color:#d93025;}
+  .after-label{color:#1e8e3e;}
+
+  /* Google SERP result card */
+  .serp-card{background:#fff;border-radius:8px;padding:20px 24px;max-width:680px;box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  .serp-url{font-size:14px;color:#202124;line-height:1.6;}
+  .serp-url span{color:#5f6368;}
+  .serp-title{font-size:20px;color:#1a0dab;line-height:1.3;margin:4px 0 6px;cursor:pointer;}
+  .serp-title:hover{text-decoration:underline;}
+  .serp-desc{font-size:14px;color:#4d5156;line-height:1.6;}
+  .serp-date{font-size:12px;color:#70757a;margin-right:6px;}
+
+  /* Rich result enhancements */
+  .rich-badge{display:inline-flex;align-items:center;gap:4px;background:#e8f5e9;color:#1e8e3e;font-size:12px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:8px;}
+  .stars{color:#f9ab00;font-size:16px;letter-spacing:1px;}
+  .star-count{font-size:14px;color:#1a0dab;margin-left:4px;}
+  .review-count{font-size:14px;color:#70757a;margin-left:2px;}
+
+  /* Pricing cards in SERP */
+  .pricing-strip{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;}
+  .price-card{border:1px solid #dadce0;border-radius:8px;padding:12px 16px;min-width:160px;flex:1;background:#fff;}
+  .price-card.popular{border-color:#1e8e3e;border-width:2px;}
+  .price-name{font-size:13px;font-weight:600;color:#202124;}
+  .price-amt{font-size:20px;font-weight:700;color:#1e8e3e;margin:4px 0 2px;}
+  .price-amt span{font-size:13px;font-weight:400;color:#5f6368;}
+  .price-tag{font-size:11px;color:#5f6368;}
+  .price-badge{font-size:10px;font-weight:700;background:#1e8e3e;color:#fff;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;}
+
+  /* Sitelinks */
+  .sitelinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .sitelink{background:#f8f9fa;border:1px solid #dadce0;border-radius:4px;padding:4px 10px;font-size:13px;color:#1a0dab;cursor:pointer;}
+  .sitelink:hover{background:#e8f0fe;}
+
+  /* Knowledge panel mockup */
+  .kp-panel{background:#fff;border-radius:8px;padding:20px 24px;max-width:380px;box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  .kp-name{font-size:24px;font-weight:700;color:#202124;}
+  .kp-type{font-size:14px;color:#70757a;margin-bottom:12px;}
+  .kp-rating{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+  .kp-row{display:flex;gap:8px;margin-bottom:8px;font-size:14px;}
+  .kp-row-label{color:#70757a;min-width:80px;}
+  .kp-row-val{color:#202124;font-weight:500;}
+
+  /* AI Overview mockup */
+  .ai-overview{background:linear-gradient(135deg,#e8f0fe,#e6f4ea);border-radius:8px;padding:20px 24px;max-width:680px;margin-bottom:12px;}
+  .ai-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#1a73e8;margin-bottom:10px;}
+  .ai-badge svg{width:18px;height:18px;}
+  .ai-text{font-size:14px;color:#202124;line-height:1.7;}
+  .ai-cite{font-size:12px;color:#1a73e8;text-decoration:underline;}
+
+  /* Layout */
+  .two-col{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;}
+  .diff-arrow{font-size:32px;color:#5f6368;align-self:center;padding:0 8px;}
+  .section-divider{height:1px;background:#e0e0e0;margin:32px 0;}
+  .highlight-box{background:#fffde7;border:1px solid #f9ab00;border-radius:6px;padding:12px 16px;font-size:13px;color:#5f3306;margin-top:12px;}
+  .highlight-box strong{color:#e65100;}
+</style>
+</head>
+<body>
+
+<h1 style="font-size:28px;font-weight:700;margin-bottom:4px;color:#202124;">CR-80 — Structured Data Design Preview</h1>
+<p style="color:#5f6368;font-size:14px;margin-bottom:32px;">How <strong>/pricing</strong> appears in Google SERP before vs. after adding SoftwareApplication + Offer + AggregateRating JSON-LD</p>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1: BASIC SERP RESULT (BEFORE)
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="label before-label">❌ Before — /pricing today (no structured data)</div>
+  <div class="serp-card">
+    <div class="serp-url">
+      <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px;vertical-align:middle;margin-right:6px;" alt=""/>
+      mygenie.online › pricing
+    </div>
+    <div class="serp-title">MyGenie POS Pricing | Transparent Restaurant POS Plans &amp; Add-ons</div>
+    <div class="serp-desc">
+      <span class="serp-date">Aug 2026 — </span>
+      Build your MyGenie POS plan. Transparent pricing with core tools included — no feature-based upsells. Pick a plan, add modules, see your price live.
+    </div>
+  </div>
+  <div class="highlight-box">
+    <strong>What's missing:</strong> Google can't see any pricing. No star ratings. No plan names. No price range. A user comparing POS systems can't see ₹799–₹2499 in the SERP — they have to click through to find out.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 2: RICH SERP RESULT (AFTER)
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="label after-label">✅ After — /pricing with SoftwareApplication + Offer + AggregateRating schema</div>
+  <div class="serp-card">
+    <div class="serp-url">
+      <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px;vertical-align:middle;margin-right:6px;" alt=""/>
+      mygenie.online › pricing
+    </div>
+    <div class="serp-title">MyGenie POS Pricing | Transparent Restaurant POS Plans &amp; Add-ons</div>
+
+    <!-- Star rating from AggregateRating -->
+    <div style="margin:6px 0;">
+      <span class="stars">★★★★★</span>
+      <span class="star-count">4.7</span>
+      <span class="review-count">(500 reviews)</span>
+    </div>
+
+    <div class="serp-desc" style="margin-bottom:12px;">
+      <span class="serp-date">Aug 2026 — </span>
+      MyGenie POS plans from <strong>₹799/month</strong>. Starter · Growth · Pro — transparent pricing, all tools included. No hidden costs. Book a free demo.
+    </div>
+
+    <!-- Pricing cards pulled from Offer schema -->
+    <div class="pricing-strip">
+      <div class="price-card">
+        <div class="price-name">Starter</div>
+        <div class="price-amt">₹799<span>/mo</span></div>
+        <div class="price-tag">New &amp; single small outlets</div>
+      </div>
+      <div class="price-card popular">
+        <div class="price-name">Growth <span class="price-badge">Popular</span></div>
+        <div class="price-amt">₹1,499<span>/mo</span></div>
+        <div class="price-tag">Cafés &amp; growing restaurants</div>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Pro</div>
+        <div class="price-amt">₹2,499<span>/mo</span></div>
+        <div class="price-tag">Full-service &amp; high volume</div>
+      </div>
+    </div>
+
+    <!-- Sitelinks -->
+    <div class="sitelinks">
+      <span class="sitelink">Build Your Plan</span>
+      <span class="sitelink">Book a Free Demo</span>
+      <span class="sitelink">See Add-ons</span>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3: KNOWLEDGE PANEL (AFTER)
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="label after-label">✅ After — Google Knowledge Panel (SoftwareApplication entity)</div>
+  <div style="color:#5f6368;font-size:13px;margin-bottom:12px;">Appears on right side of SERP when users search "MyGenie POS"</div>
+  <div class="two-col">
+    <div class="kp-panel">
+      <div class="kp-name">MyGenie POS</div>
+      <div class="kp-type">Restaurant POS Software · Point of Sale Software</div>
+      <div class="kp-rating">
+        <span class="stars">★★★★★</span>
+        <span style="font-size:14px;font-weight:600;">4.7</span>
+        <span style="font-size:13px;color:#70757a;">· 500 reviews</span>
+      </div>
+      <div class="kp-row">
+        <span class="kp-row-label">Platforms</span>
+        <span class="kp-row-val">Web, Android, iOS</span>
+      </div>
+      <div class="kp-row">
+        <span class="kp-row-label">Category</span>
+        <span class="kp-row-val">Business Application · POS</span>
+      </div>
+      <div class="kp-row">
+        <span class="kp-row-label">Price from</span>
+        <span class="kp-row-val" style="color:#1e8e3e;font-weight:700;">₹799/month</span>
+      </div>
+      <div class="kp-row">
+        <span class="kp-row-label">Website</span>
+        <span class="kp-row-val" style="color:#1a0dab;">mygenie.online/pricing</span>
+      </div>
+    </div>
+    <div style="max-width:280px;font-size:13px;color:#5f6368;line-height:1.7;align-self:flex-start;padding-top:8px;">
+      <strong style="color:#202124;">Why this matters:</strong><br/>
+      The Knowledge Panel establishes MyGenie POS as a real <em>product entity</em> in Google's index. This means:<br/><br/>
+      • Brand searches ("MyGenie POS") show structured info immediately<br/>
+      • Competitor comparison searches may show MyGenie in a comparison table<br/>
+      • AI Overview citations become more likely
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 4: AI OVERVIEW (AFTER)
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="label after-label">✅ After — AI Overview eligibility (SoftwareApplication + pricing data)</div>
+  <div style="color:#5f6368;font-size:13px;margin-bottom:12px;">Google AI Overview for "best restaurant POS in India" — once schema is live</div>
+
+  <div class="ai-overview">
+    <div class="ai-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      AI Overview
+    </div>
+    <div class="ai-text">
+      Several restaurant POS systems are popular in India, including <strong>MyGenie POS</strong> (₹799–₹2,499/month), Petpooja, and GoFrugal. MyGenie POS offers billing, KDS, inventory management, CRM, loyalty, and AI-powered insights, with plans starting at ₹799/month per outlet. It supports restaurants, cafés, cloud kitchens, hotels, and chains. <a class="ai-cite" href="#">mygenie.online/pricing</a>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    <strong>Note:</strong> AI Overview eligibility requires the SoftwareApplication schema to be live and indexed. This is not guaranteed — it depends on Google's assessment of content quality and entity authority. The schema makes the site <em>eligible</em>, not guaranteed. Typically takes 4–8 weeks post-deployment to appear.
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 5: WHAT THE CODE ADDS
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="label">What gets added to the page (invisible to users — lives in &lt;head&gt;)</div>
+  <div style="background:#263238;color:#aed581;font-family:monospace;font-size:13px;line-height:1.8;padding:20px 24px;border-radius:8px;overflow-x:auto;max-width:780px;">
+<pre>{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "MyGenie POS",
+  "applicationCategory": "BusinessApplication",
+  "applicationSubCategory": "Point of Sale Software",
+  "operatingSystem": "Web, Android, iOS",
+  "description": "MyGenie POS is a hospitality operating system...",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.7",
+    "reviewCount": "500",
+    "bestRating": "5"
+  },
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Starter",
+      <span style="color:#ffeb3b">"price": "799"</span>,
+      "priceCurrency": "INR",
+      "description": "POS &amp; Billing, KOT, Owner Dashboard..."
+    },
+    {
+      "@type": "Offer",
+      "name": "Growth",
+      <span style="color:#ffeb3b">"price": "1499"</span>,
+      "priceCurrency": "INR",
+      "description": "Everything in Starter + Captain App, KDS..."
+    },
+    {
+      "@type": "Offer",
+      "name": "Pro",
+      <span style="color:#ffeb3b">"price": "2499"</span>,
+      "priceCurrency": "INR",
+      "description": "Everything in Growth + Loyalty, WhatsApp, AI..."
+    }
+  ]
+}</pre>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 6: PAGES AFFECTED
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="label">Pages where this schema will be added</div>
+  <table style="border-collapse:collapse;width:100%;max-width:680px;font-size:14px;">
+    <tr style="background:#f8f9fa;font-weight:600;">
+      <td style="padding:10px 14px;border:1px solid #dadce0;">Page</td>
+      <td style="padding:10px 14px;border:1px solid #dadce0;">Schema added</td>
+      <td style="padding:10px 14px;border:1px solid #dadce0;">Why</td>
+    </tr>
+    <tr>
+      <td style="padding:10px 14px;border:1px solid #dadce0;font-weight:600;color:#1a0dab;">/pricing</td>
+      <td style="padding:10px 14px;border:1px solid #dadce0;">SoftwareApplication + Offer (×3) + AggregateRating</td>
+      <td style="padding:10px 14px;border:1px solid #dadce0;">Primary commercial page — pricing details machine-readable</td>
+    </tr>
+    <tr style="background:#f8f9fa;">
+      <td style="padding:10px 14px;border:1px solid #dadce0;font-weight:600;color:#1a0dab;">/ (homepage)</td>
+      <td style="padding:10px 14px;border:1px solid #dadce0;">SoftwareApplication (entity declaration only, no Offer)</td>
+      <td style="padding:10px 14px;border:1px solid #dadce0;">Establishes the entity on the root URL — highest authority signal</td>
+    </tr>
+  </table>
+  <div style="margin-top:12px;font-size:13px;color:#5f6368;">
+    ⚠️ <strong>Important:</strong> The <code>aggregateRating.reviewCount: "500"</code> value is an estimate from customer count data. This should be confirmed by owner before going live. Google may suppress star ratings if the number appears inflated relative to actual verifiable reviews.
+  </div>
+</div>
+
+</body>
+</html>
