@@ -66,12 +66,3 @@ body {
 }
 
 
-/* CR-93 — push content above consent banner on mobile/tablet */
-body.consent-banner-open {
-  padding-bottom: 48px; /* h-12 banner height */
-}
-@media (min-width: 1024px) {
-  body.consent-banner-open {
-    padding-bottom: 0; /* desktop: thin banner, no overlap */
-  }
-}

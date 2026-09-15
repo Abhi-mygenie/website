@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { ArrowRight, CalendarCheck, Loader2 } from "lucide-react";
 import OtpVerifyBlock from "@/components/site/OtpVerifyBlock";
-import { pushLead, newEventId } from "@/lib/gtm";
+import { pushLead, newEventId, pushEvent } from "@/lib/gtm";
 import { getAttribution } from "@/lib/attribution";
 import { useAntiBot, Honeypot, leadQuality } from "@/lib/antiBot";
 import { loadCalendly } from "@/lib/calendly";
@@ -58,6 +58,11 @@ export default function DemoBottomSheet({ sector, open, onClose }) {
       return () => clearTimeout(t);
     }
   }, [open]);
+
+  // CR-267: fire sheet_open when sheet transitions from closed → open
+  useEffect(() => {
+    if (open) pushEvent("sheet_open", { sector });
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Calendly postMessage — always popup (sheet is narrow, no CalendlyInline)
   // Mirrors DemoForm mobile path exactly. scheduledRef prevents double-fire.

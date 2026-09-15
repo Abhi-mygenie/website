@@ -112,13 +112,6 @@ function serveBuild() {
           Array.from(tags).slice(0, -1).forEach(m => m.remove());
         });
 
-        // ── CR-167: strip ConsentBanner — session-dependent UI must not bake into prerendered HTML ─
-        // ConsentBanner useEffect fires at mount → Puppeteer captures show=true (banner visible).
-        // React hydrates with show=false (initial state) → DOM mismatch → React error #418 → CSR fallback.
-        // Strip the element and its body class so prerendered HTML matches React's initial render state.
-        document.querySelectorAll('[data-testid="consent-banner"]').forEach(n => n.remove());
-        document.body.classList.remove("consent-banner-open");
-
         // Inject hero image preload so browser starts download at HTML parse time
         // CR-233: selector extended — catches homepage (hero-visual wrapper) AND all 5 ad
         // landing pages (img[data-testid$="-hero-image"]: pos, billing, mgmt, ck, qsr).

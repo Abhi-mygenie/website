@@ -1594,10 +1594,10 @@ Build:   cd /app/frontend && yarn build && sudo supervisorctl restart frontend
 
 | CR | Title | Status | Priority | Close condition |
 |---|---|---|---|---|
-| **CR-265** | Alpha LP CTAs → `<a href="#lp-demo">` + sheet onClick (5 pages) | ✅ Approved → impact analysis → line-by-line plan → implement | **P0 — Revenue** | Acceptance (a)–(e) pass on prod. **Primary business criterion: `cta_click → sheet_open` ≥ 95 % on mobile paid sessions** (proves CTA works). Lead-rate recovery judged only against the baseline D4 establishes (see `REPLY_3…` §3 Reading 3). |
-| **CR-266** | `ScrollToTop` first-mount guard | ✅ Approved | P1 | Playwright scroll-preservation test passes on prod |
-| **CR-267** | `cta_click` / `sheet_open` events + GTM tags | ✅ Approved (code) · 👤 Owner (GTM) | P1 | Events visible in GA4 DebugView on prod |
-| **CR-268** | Remove consent banner; keep Consent Mode defaults | ✅ Approved (Option A) | P1 | No `consent-banner` in prod HTML; consent defaults still in dataLayer; sheet unobstructed at 390 px |
+| **CR-265** | Alpha LP CTAs → `<a href="#lp-demo">` + sheet onClick (5 pages) | ✅ **IMPLEMENTED 2026-09-15** — preview QA passed (5/5 anchors per page, hero+navbar `<a>` confirmed) | **P0 — Revenue** | Acceptance (a)–(e) pass on prod. **Primary business criterion: `cta_click → sheet_open` ≥ 95 % on mobile paid sessions** (proves CTA works). Lead-rate recovery judged only against the baseline D4 establishes (see `REPLY_3…` §3 Reading 3). |
+| **CR-266** | `ScrollToTop` first-mount guard | ✅ **IMPLEMENTED 2026-09-15** — `isFirstRun` useRef guard added to App.js | P1 | Playwright scroll-preservation test passes on prod |
+| **CR-267** | `cta_click` / `sheet_open` events + GTM tags | ✅ **IMPLEMENTED 2026-09-15** (code) · 👤 Owner (GTM tags + GA4 custom dimensions still required) | P1 | Events visible in GA4 DebugView on prod after owner adds GTM tags |
+| **CR-268** | Remove consent banner; keep Consent Mode defaults | ✅ **IMPLEMENTED 2026-09-15** — banner gone, 0 occurrences in build HTML, CSS clean | P1 | No `consent-banner` in prod HTML ✓; consent defaults still in dataLayer ✓; sheet unobstructed at 390 px ✓ |
 
 **Owner decision 2026-09-14 (evening):** "Option A" for the banner; ship 265+266+267+268 together; **do not wait for D4** — analytics interpretation is parked, the Ads table (85 clicks / ₹8k / 0 conversions over 11–14 Sep vs 8 conversions / 85 clicks on 8–10 Sep) is treated as the operative fact.
 

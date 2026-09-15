@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ArrowRight } from "lucide-react";
-import { hasConsentChoice } from "@/lib/gtm";
+import { pushEvent } from "@/lib/gtm";
 
 /**
  * Sticky bottom CTA bar — mobile only (hidden on lg+).
@@ -10,19 +10,8 @@ import { hasConsentChoice } from "@/lib/gtm";
 export default function StickyMobileCta({ onDemo }) {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
-  const [consentUp, setConsentUp] = useState(!hasConsentChoice());
   const [formActive, setFormActive] = useState(false);
   const heroRef = useRef(null);
-
-  // Track consent banner in DOM — adjust bottom offset when it's showing.
-  // Initial value from useState(!hasConsentChoice()) is correct at mount.
-  // MutationObserver updates when banner mounts/unmounts (e.g. after user accepts).
-  useEffect(() => {
-    const check = () => setConsentUp(!!document.querySelector('[data-testid="consent-banner"]'));
-    const obs = new MutationObserver(check);
-    obs.observe(document.body, { childList: true, subtree: true });
-    return () => obs.disconnect();
-  }, []);
 
   // Hide during OTP / form active stage
   useEffect(() => {
@@ -56,6 +45,7 @@ export default function StickyMobileCta({ onDemo }) {
   }, [dismissed]);
 
   const handleClick = () => {
+    pushEvent("cta_click", { cta_location: "sticky", page_path: window.location.pathname });
     if (onDemo) {
       onDemo();
     } else {
@@ -68,7 +58,7 @@ export default function StickyMobileCta({ onDemo }) {
   return (
     <div
       className={`lg:hidden fixed bottom-0 left-0 right-0 z-50 transition-transform duration-300 ease-out ${
-        visible ? (consentUp ? "-translate-y-12" : "translate-y-0") : "translate-y-full"
+        visible ? "translate-y-0" : "translate-y-full"
       }`}
       data-testid="sticky-mobile-cta"
     >

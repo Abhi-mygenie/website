@@ -10,6 +10,7 @@ import Logo from "@/components/site/Logo";
 import TrustBand from "@/components/home/TrustBand";
 import StickyMobileCta from "@/components/home/StickyMobileCta";
 import { SOFTWARE_APP_JSONLD } from "@/lib/seo";
+import { pushEvent } from "@/lib/gtm";
 import { COMPANY } from "@/data/company";
 
 const FAQ_SCHEMA = {
@@ -32,9 +33,9 @@ function LandingNavbar({ onDemo }) {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-[0_2px_20px_rgba(0,0,0,0.05)]" data-testid="mgmt-lp-navbar">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
         <Logo />
-        <button type="button" onClick={onDemo} className="bg-brand-green hover:bg-brand-greenDark text-white font-semibold rounded-full px-5 py-2.5 text-sm transition-all hover:-translate-y-0.5 shadow-[0_4px_14px_rgba(16,184,129,0.3)]" data-testid="mgmt-lp-navbar-cta">
+        <a href="#lp-demo" onClick={(e) => { e.preventDefault(); pushEvent("cta_click", { cta_location: "navbar", page_path: window.location.pathname }); onDemo(); }} className="bg-brand-green hover:bg-brand-greenDark text-white font-semibold rounded-full px-5 py-2.5 text-sm transition-all hover:-translate-y-0.5 shadow-[0_4px_14px_rgba(16,184,129,0.3)]" data-testid="mgmt-lp-navbar-cta">
           Book Free Demo
-        </button>
+        </a>
       </div>
     </header>
   );
@@ -86,9 +87,9 @@ function LpPricing({ openSheet }) {
                     </li>
                   ))}
                 </ul>
-                <button type="button" onClick={openSheet} className={`block w-full text-center py-3 rounded-xl text-sm font-bold transition-all ${plan.pop ? "bg-brand-green hover:bg-brand-greenDark text-white" : "border border-brand-green text-brand-green hover:bg-brand-green/10"}`} data-testid={`mgmt-plan-cta-${plan.name.toLowerCase()}`}>
+                <a href="#lp-demo" onClick={(e) => { e.preventDefault(); pushEvent("cta_click", { cta_location: `pricing-${plan.name.toLowerCase()}`, page_path: window.location.pathname }); openSheet(); }} className={`block w-full text-center py-3 rounded-xl text-sm font-bold transition-all ${plan.pop ? "bg-brand-green hover:bg-brand-greenDark text-white" : "border border-brand-green text-brand-green hover:bg-brand-green/10"}`} data-testid={`mgmt-plan-cta-${plan.name.toLowerCase()}`}>
                   Get Started
-                </button>
+                </a>
               </div>
             </Reveal>
           ))}
@@ -141,9 +142,9 @@ export default function RestaurantManagementSoftware() {
                   ))}
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <button type="button" onClick={openSheet} className="inline-flex items-center gap-2 bg-brand-green hover:bg-brand-greenDark text-white rounded-full px-7 py-4 font-semibold transition-all hover:-translate-y-0.5 shadow-[0_10px_26px_rgba(24,168,74,0.32)]" data-testid="mgmt-lp-cta-primary">
+                  <a href="#lp-demo" onClick={(e) => { e.preventDefault(); pushEvent("cta_click", { cta_location: "hero", page_path: window.location.pathname }); openSheet(); }} className="inline-flex items-center gap-2 bg-brand-green hover:bg-brand-greenDark text-white rounded-full px-7 py-4 font-semibold transition-all hover:-translate-y-0.5 shadow-[0_10px_26px_rgba(24,168,74,0.32)]" data-testid="mgmt-lp-cta-primary">
                     Book a Free Management Demo <ArrowRight className="w-5 h-5" />
-                  </button>
+                  </a>
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-2" data-testid="mgmt-lp-works-with">
                   <span className="text-xs text-brand-muted font-semibold uppercase tracking-wide mr-1">Works with</span>

@@ -1,11 +1,10 @@
 import "@/App.css";
-import { useEffect, useState, Suspense, lazy } from "react";
+import { useEffect, useState, Suspense, lazy, useRef } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import Home from "@/pages/Home";
 import { ROUTES, NotFound } from "@/routes";
 const CmsAdminLayer = lazy(() => import("@/components/cms/CmsAdminLayer"));
-import ConsentBanner from "@/components/site/ConsentBanner";
 import WhatsAppFab from "@/components/site/WhatsAppFab";
 import ScrollDepthTracker from "@/components/site/ScrollDepthTracker";
 import { REDIRECTS } from "@/data/redirects";
@@ -14,7 +13,9 @@ import { setDefaultConsent, pushEvent } from "@/lib/gtm";
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
+  const isFirstRun = useRef(true);
   useEffect(() => {
+    if (isFirstRun.current) { isFirstRun.current = false; return; }
     if (!hash) window.scrollTo(0, 0);
   }, [pathname, hash]);
   return null;
@@ -78,7 +79,6 @@ function App() {
           </Routes>
       </BrowserRouter>
       {hydrated && <Suspense fallback={null}><CmsAdminLayer /></Suspense>}
-      <ConsentBanner />
       {process.env.REACT_APP_WHATSAPP_ENABLED !== "false" && <WhatsAppFab />}
     </div>
   );
