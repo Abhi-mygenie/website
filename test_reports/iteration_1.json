@@ -1,0 +1,53 @@
+{
+  "summary": "Tested all 4 CRs (265-268) on Batch BE for mygenie.online. CR-265, CR-266, CR-267, CR-268 all verified as working except for the form submission flow where the backend /api/demo-request returns {saved: false}, preventing OTP stage from showing.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "POST /api/demo-request",
+        "issue": "Returns HTTP 200 but body is {saved: false} when submitting from DemoBottomSheet with test data (name='QA Test', phone='9999999999', email='qa@test.com'). Frontend code checks `if (res.data?.saved === false)` and shows error toast, staying on form stage. OTP screen never appears.",
+        "priority": "HIGH"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Quick demo sheet form submission → OTP",
+        "issue": "Form stays on 'form' stage after submit because backend returns {saved: false}. This is a backend issue causing the frontend flow to break.",
+        "affected_selectors": ["[data-testid='quick-demo-otp']", "[data-testid='quick-demo-submit-btn']"]
+      }
+    ],
+    "design_issues": []
+  },
+  "cr_test_results": {
+    "CR-265_a_tags": "PASS - All 5 pages (billing, pos, mgmt, ck, qsr), all 5 CTAs per page (navbar, hero, pricing-starter, pricing-growth, pricing-pro) are <a href='#lp-demo'> NOT <button>",
+    "CR-265_sheet_open": "PASS - Hero CTA click opens bottom sheet (translate-y-0) on billing page",
+    "CR-265_fallback_section": "PASS - All 5 pages have section#lp-demo with data-testid='{prefix}-lp-demo' and scroll-mt-20",
+    "CR-266_scroll_preservation": "PASS - scrollY NOT reset to 0 on initial React mount (useRef guard working)",
+    "CR-267_cta_click_event": "PASS - cta_click event fires in dataLayer with cta_location='hero' on CTA click",
+    "CR-267_sheet_open_event": "PASS - sheet_open event fires in dataLayer with sector='billing-software'",
+    "CR-268_consent_banner_absent": "PASS - data-testid='consent-banner' absent from DOM on all pages tested (billing, pos, mgmt, ck, qsr, homepage, petpooja-alternative)",
+    "CR-268_mobile_submit_visible": "PASS - Submit button (y=736, h=52) and No spam text (y=796) both within 844px viewport, no banner obscuring",
+    "CR-268_sticky_mobile_cta": "PASS - After hero scrolled out, StickyMobileCta has translate-y-0, computed transform=matrix(1,0,0,1,0,0), bottom=0px. No -translate-y-12 offset",
+    "CR-268_datalayer_consent": "PASS - dataLayer contains region-aware consent 'default' entries (EEA/GB denied, India granted) from public/index.html even without consent banner",
+    "control_homepage": "PASS - Homepage loads, no consent banner, Book a Free Demo CTA visible",
+    "control_petpooja": "PASS - /petpooja-alternative loads, no consent banner, dataLayer consent present",
+    "form_submission_flow": "FAIL - API returns {saved: false}, OTP stage never appears"
+  },
+  "test_report_links": ["/app/test_reports/iteration_1.json"],
+  "action_items": [
+    "Investigate why POST /api/demo-request returns {saved: false} for test data (name=QA Test, phone=9999999999, email=qa@test.com). Likely antiBot lead quality score is too low for test data, or MongoDB save is failing silently."
+  ],
+  "critical_code_review_comments": [
+    "DemoBottomSheet.jsx L116: `if (res.data?.saved === false)` silently swallows the error with a toast but doesn't log — consider adding backend error detail to the toast for debugging",
+    "The antiBot leadQuality check may be rejecting automated test submissions — test data phone/email might score below threshold"
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only test)", "frontend": "92% (11/12 test cases pass, form submit flow fails due to backend {saved: false})"},
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "All CR-265, CR-266, CR-267, CR-268 frontend implementations verified working. Only failing test is full form submission flow — /api/demo-request returns {saved: false}. All 5 Alpha LP pages have correct <a> CTAs. Consent banner gone everywhere. DataLayer events fire correctly. StickyMobileCta at bottom-0 with no extra offset.",
+  "rca_of_issue": "Form submission fails because POST /api/demo-request returns HTTP 200 with body {saved: false}. The frontend DemoBottomSheet correctly handles this by showing a toast error and NOT advancing to OTP stage. Root cause is in the backend — either the antiBot leadQuality() signals from a Playwright-driven browser are too low, or there's a MongoDB write failure. The antiBot useAntiBot() hook generates signals based on browser behavior; automated tests may not generate sufficient interaction signals. Reproduction: open sheet, fill form with name=QA Test/phone=9999999999/email=qa@test.com, submit — API returns {saved: false}."
+}
