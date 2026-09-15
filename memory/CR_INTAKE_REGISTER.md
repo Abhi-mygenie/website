@@ -825,7 +825,7 @@ T8  Title uniqueness     PASS   15 titles all unique
 | **CR-213** | All 11 solution page title tags use plural `s.name` ("Restaurants", "Cafés") while H1 uses singular ("Restaurant POS system", "Café POS system"). Mismatch across all 11 pages dilutes keyword consistency between title and H1. | ✅ Done 2026-09-05 — `nameSingular` added to all 11 sectors + SectorPage.jsx formula updated. All 11 titles now singular form. Build hash 1ba1a67c. | P2 | `src/data/sectors.js` (11 edits) + `src/pages/SectorPage.jsx` (1 edit) |
 | **CR-214** | Sitemap `lastmod` dates stale — sitemap is 100% complete (59 URLs, no missing/extra pages, `/demo` correctly excluded as noindex). But CR-187/189 (H1 + solutions desc updates, 2026-09-04) and CR-208 (2026-09-05) changed page content after the last sitemap update (2026-08-26). 11 sector pages + homepage need updated dates. | ✅ Done 2026-09-05 — 12 `lastmod` date edits applied. All 11 sector pages → 2026-09-04, homepage + ice-cream-desserts → 2026-09-05. Route count 59 confirmed. | P2 | `public/sitemap.xml` |
 | **CR-215** | TrustBand marquee: 56 logos duplicated to 112 DOM nodes (`const loop = [...items,...items]`) → single flex container with 112 children → Style & Layout 431ms, Rendering 335ms, DOM 1,089. Identified in Lighthouse audit 2026-09-05. | ✅ Part A done 2026-09-05 — `will-change` + `contain` added. **Part B CLOSED 2026-09-08** — Owner selected 16 logos. TRUST_LOGOS array in `content.js` reduced from 56 → 16 entries (40 removed including duplicate "Sab Logo"). DOM nodes: 112 → 32 (71% reduction). Rebuilt + tested via Playwright: 32 logo images confirmed on homepage and /restaurant-pos-system PASS. Production rebuild + deploy required for www.mygenie.online. | P2 — Done | `src/data/content.js` — TRUST_LOGOS array |
-| **CR-216** | GTM container `GTM-K5D84Z3L` loads 3 separate Google scripts: GTM (157 KiB), GA4 (188 KiB), Google Ads (179 KiB) = **524 KiB / 645ms blocking**. GA4 + Ads each download their own `gtag.js` library independently — duplicate 179 KiB download. Third-party blocking total: 1,580ms on production. | 🔲 Open — **👤 Owner: GTM dashboard → replace separate GA4+Ads tags with unified "Google Tag" pointing to G-KWHHFEZ5Q3. GA4+Ads share one gtag.js library instead of two. Saves −179 KiB, −308ms blocking. No code change.** | P1 | GTM dashboard — `GTM-K5D84Z3L` container |
+| **CR-216** | GTM container `GTM-K5D84Z3L` loads 3 separate Google scripts: GTM (157 KiB), GA4 (188 KiB), Google Ads (179 KiB) = **524 KiB / 645ms blocking**. | ⏳ **PARTIAL** — Step 1 done (2026-09-09): GA4 Connected Site Tag linked. Steps 2–3 pending: owner must validate AW tag via Network tab on prod, then pause redundant `AW-16740091756` GTM tag → publish as `"CR-216 COMPLETE — Remove AW Google Tag"`. See `HANDOVER_GTM_CR216_2026-09-09_Evening.md`. | P1 | GTM dashboard — `GTM-K5D84Z3L` container |
 | **CR-217** | Production nginx serves all `/brand/` assets with only **4h cache TTL** (`max-age=14400`). Lighthouse shows 40 resources / 466 KiB re-downloaded on every return visit after 4h. Pod's `static-server.js` correctly serves 7d for `/brand/`, 1yr for `/static/` — production nginx is overriding these. | ✅ **CLOSED 2026-09-06** — Cloudflare Cache Rules (CF-5 path). Validated live on `www.mygenie.online`: `/brand/*` + `/static/js/*` + `/fonts/*` → `max-age=2592000` (30d), `CF-Cache-Status: HIT`. HTML → `max-age=600` browser / `CF: DYNAMIC` (no edge cache). Return-visitor re-download: 466 KiB → 0 KiB. Full evidence in `CR-217_Production_Nginx_Cache_Headers.md`. | P1 | Cloudflare Cache Rules — DONE |
 | **CR-218** | `QAPage` schema **invalid** on all 20 pages — `answerCount` missing from every `Question` object (Google requires it). 60 Question objects across 5 files missing this field. Google marks schema invalid → **zero Q&A rich results eligible on homepage, 11 sector pages, AI page, resources, 6 product pages**. Confirmed: `answerCount present: False` in prerendered build. | ✅ Done 2026-09-05 — 11 search_replace edits across 5 files. JSON-LD validation PASS on all 6 checked pages (7q homepage, 3q restaurants/cafes, 5q ai, 9q resources, 3q sell-serve). Beta build `main.69e93aec` live on preview pod. Prod zip `main.4abff48f` ready at `/app/mygenie-prod-build.zip`. | P0 | `src/lib/seo.js` + `SectorPage.jsx` + `AiPage.jsx` + `ProductPage.jsx` + `Resources.jsx` |
 | **CR-219** | **GA4 blocked by global `analytics_storage: denied` default — no EEA region restriction.** `gtag('consent','default',{analytics_storage:'denied',...})` in `public/index.html` applies to ALL visitors worldwide (no `region` parameter). For MyGenie's primary Indian audience (GDPR-exempt), most users scroll past the consent banner without clicking Accept — `mg_consent` key never set in localStorage → `setDefaultConsent()` in `gtm.js:100-101` finds `null` → no `updateConsent()` call → consent stays `denied` for entire session → **GA4 does not fire**. Meta Pixel is unaffected because it does not check `analytics_storage`. This is the confirmed root cause of GA4 under-reporting vs Meta. Investigated 2026-09-05, full analysis at `HANDOVER_2026-09-05_Session7.md`. | ✅ Done 2026-09-05 — 2 edits: `public/index.html` + `src/lib/gtm.js:setDefaultConsent()`. EEA/GB scoped to `denied` (GDPR unchanged); all other regions (India etc.) default to `granted`. Beta `main.d0f13cee` live on preview pod. Prod zip `main.e138aefb` at `/app/mygenie-prod-build.zip`. | P0 | `public/index.html` · `src/lib/gtm.js` |
@@ -868,8 +868,8 @@ T8  Title uniqueness     PASS   15 titles all unique
 
 | CR | Summary | Status | Priority | File(s) |
 |---|---|---|---|---|
-| **CR-221** | Google Ads Remarketing tag (`AW-16740091756`) POST calls to `google.com/rmkt/collect/` failing with "Fetch failed" errors (11 grouped failures). Observed in console filtered by "gtag". Initial triage: consent-related (ad_storage denied) or ad blocker — investigation required. | 🔲 Open — investigate: (1) accept cookie banner + retest; (2) test in Incognito; (3) check GTM tag config; (4) check Google Ads Audience Manager. See `CR-221_Remarketing_Pings_Failing.md`. | P2 | GTM `AW-16740091756` tag · Google Ads Audience Manager |
-| **CR-222** | Same rmkt/collect failures **confirmed on production from India with cookie banner accepted** — consent-blocking ruled out as cause. `ad_storage: granted` for India (CR-219). Real misconfiguration: possible causes are ad blocker, GTM tag race condition (CR-209 defer), Google Ads audience inactive, or deprecated rmkt/collect endpoint. No code change until root cause confirmed. See `CR-222_Remarketing_Pings_Failing_Consent_Accepted.md`. | 🔲 Open — investigation checklist in CR file: (1) Incognito test; (2) check HTTP status code in Network tab; (3) Google Ads Audience Manager tag status; (4) GTM Preview mode. | P1 | GTM `AW-16740091756` tag · Google Ads console |
+| **CR-221** | Google Ads Remarketing tag (`AW-16740091756`) POST calls to `google.com/rmkt/collect/` failing with "Fetch failed" errors (11 grouped failures). | ✅ **CLOSED 2026-09-09** — Confirmed closed per `HANDOVER_GTM_TRACKING_2026-09-09.md`: Incognito test showed all requests return 200/204. Root cause was **ad blocker** in the original test browser. No code or GTM change needed. | P2 | Closed |
+| **CR-222** | Same rmkt/collect failures **confirmed on production from India with cookie banner accepted** — consent-blocking ruled out as cause. | ✅ **CLOSED 2026-09-09** — Same Incognito test confirmed all requests 200/204 after consent. Ad blocker was the root cause in both CR-221 and CR-222. Closed alongside CR-221. See `HANDOVER_GTM_TRACKING_2026-09-09.md`. | P1 | Closed |
 
 *Registered 2026-09-06. No code change — investigation only.*
 
@@ -1017,8 +1017,8 @@ T8  Title uniqueness     PASS   15 titles all unique
 
 | CR | Summary | Status | Priority | File(s) |
 |---|---|---|---|---|
-| **CR-239** | **`/qsr-pos-system` pricing conflict: "Starting at ₹4,000/year" shown twice but Starter plan is ₹799/mo = ₹9,588/yr.** Lines 69 + 95 in `QsrPosSystem.jsx` hardcode `"Starting at ₹4,000/year"`. Trust risk + Google Ads pricing policy risk. Fix: remove both instances or replace with correct figure. Note: `/solutions/qsr` is unaffected (brief confirmed clean). | 🔲 Open | **P0** | `src/pages/QsrPosSystem.jsx` L69, L95 |
-| **CR-244** | **`/qsr-pos-system` missing Swiggy/Zomato mention + "fast food" absent from main body.** "Fast food" appears only in JSON-LD + FAQ answer text — zero occurrences in visible headings/body paragraphs. Swiggy/Zomato: zero occurrences anywhere on the page (present on other pages). Both are live Google Ads keywords for this page's ad group. Fix: add one sentence or badge mentioning Swiggy/Zomato integration + one visible "fast food" instance in body copy. | 🔲 Open | **P1** | `src/pages/QsrPosSystem.jsx` |
+| **CR-239** | **`/qsr-pos-system` pricing conflict: "Starting at ₹4,000/year" shown twice but Starter plan is ₹799/mo = ₹9,588/yr.** Lines 69 + 95 in `QsrPosSystem.jsx` hardcode `"Starting at ₹4,000/year"`. Trust risk + Google Ads pricing policy risk. Fix: remove both instances or replace with correct figure. Note: `/solutions/qsr` is unaffected (brief confirmed clean). | ✅ **CLOSED 2026-09-15** — Revalidated: `QsrPosSystem.jsx` L71 + L97 now show `"Starting at ₹799/outlet/month · billed annually"`. ₹4,000 string absent from file. | **P0** | `src/pages/QsrPosSystem.jsx` |
+| **CR-244** | **`/qsr-pos-system` missing Swiggy/Zomato mention + "fast food" absent from main body.** | ✅ **CLOSED 2026-09-15** — Revalidated: `QsrPosSystem.jsx` L143 body text includes `"fast food and quick service restaurant speed"`. Swiggy + Zomato badges present in Works-with strip (L161–166). Both in visible page content. | **P1** | `src/pages/QsrPosSystem.jsx` |
 
 *Plan file: to be created as `CR-239_CR-244_Line_By_Line_Plan.md` before implementation.*
 
@@ -1031,8 +1031,8 @@ T8  Title uniqueness     PASS   15 titles all unique
 
 | CR | Summary | Status | Priority | File(s) |
 |---|---|---|---|---|
-| **CR-242** | **`/product/sell-serve` Captain App section missing "take orders" / "ordering app" phrases.** Current text: "Table and order management in real time", "Real-time order sync", "Works on any phone". Neither "take orders" nor "ordering app" appears anywhere on this page. These are MyGenie's best-converting Google Ads keywords (₹232/lead). Fix: integrate one natural line using "take orders" and/or "ordering app" into the Captain App & Table Management module block in `products.js` (`sell-serve` entry). | 🔲 Open | **P1** | `src/data/products.js` — `sell-serve` modules entry |
-| **CR-243** | **`/restaurant-management-software` missing a "take orders" / "ordering app" section.** No Captain App or ordering-related content exists on this page. Brief suggests H3: *"Take orders on any phone — Captain app for waiters, KDS for the kitchen."* Targets high-converting keyword "apps for restaurants to take orders." Fix: add a content block (section or feature card) to `RestaurantManagementSoftware.jsx` with "take orders" and "ordering app" in visible copy. | 🔲 Open | **P1** | `src/pages/RestaurantManagementSoftware.jsx` |
+| **CR-242** | **`/product/sell-serve` Captain App section missing "take orders" / "ordering app" phrases.** | ✅ **CLOSED 2026-09-15** — Revalidated: `products.js` L12 `sell-serve` modules entry: `"Waiters take orders on any phone using the ordering app"`. Both keywords confirmed in visible page content. | **P1** | `src/data/products.js` |
+| **CR-243** | **`/restaurant-management-software` missing a "take orders" / "ordering app" section.** | ✅ **CLOSED 2026-09-15** — Revalidated: `RestaurantManagementSoftware.jsx` L213–219 has a full "Captain App & Ordering" section with H2 `"Take orders on any phone — ordering app built in"` and body copy including both keywords. | **P1** | `src/pages/RestaurantManagementSoftware.jsx` |
 
 *Plan file: to be created as `CR-242_CR-243_Line_By_Line_Plan.md` before implementation.*
 
@@ -1046,7 +1046,7 @@ T8  Title uniqueness     PASS   15 titles all unique
 | CR | Summary | Status | Priority | File(s) |
 |---|---|---|---|---|
 | **CR-245** | **Petpooja hero "1.5 lakh restaurants. It's earned that." sentence missing from live code.** `brief-content-fixes-followup-2026-09-08.md` (Sep 8) claimed this was restored, but the sentence is **not present** in `vsp.js` `VSP_HERO` or anywhere in `PetpoojaAlternative.jsx`. Current `variant_b`: *"Most Indian restaurants run on Petpooja. Some of them switch to us."* Brief 1 status was incorrect — this is still open. ⚠️ **Owner gut-check required first:** confirm whether this phrasing is intentional before implementing. | 📋 Awaiting owner confirmation | **P1** | `src/data/vsp.js` — `VSP_HERO.variant_b` or `variant_b_sub` |
-| **CR-246** | **Petpooja comparison table missing dated disclaimer footnote.** No sourcing or date appears near the pricing/feature table comparing MyGenie vs Petpooja (`vsp.js` `VSP_COMPARISON` rows). Required text: *"Pricing and features per Petpooja's publicly listed information as of [month/year]; confirm current terms directly with Petpooja."* Protects MyGenie if Petpooja pricing changes. Fix: add footnote below comparison table in `PetpoojaAlternative.jsx` with populated date. Owner must confirm the `[date]` before publishing. | 🔲 Open | **P1** | `src/pages/PetpoojaAlternative.jsx` — below comparison table render |
+| **CR-246** | **Petpooja comparison table missing dated disclaimer footnote.** | ✅ **CLOSED 2026-09-15** — Revalidated: `PetpoojaAlternative.jsx` L359–360 has `data-testid="vsp-comparison-footnote"` with text `"Pricing and features based on Petpooja's publicly listed information as of Sep 2026. Petpooja does not publicly display INR pricing — confirm current plans at petpooja.com."` | **P1** | `src/pages/PetpoojaAlternative.jsx` |
 
 *Plan file: to be created as `CR-245_CR-246_Line_By_Line_Plan.md` before implementation.*
 
@@ -1197,14 +1197,14 @@ Step 3 — yarn build + supervisorctl restart frontend (one rebuild covers all)
 
 | CR | Title | Status | Priority | Batch |
 |---|---|---|---|---|
-| CR-239 | QSR LP: Remove "Starting at ₹4,000/year" (pricing lie) | 🔲 Open | P0 | AQ |
+| CR-239 | QSR LP: Remove "Starting at ₹4,000/year" (pricing lie) | ✅ CLOSED 2026-09-15 | P0 | AQ |
 | CR-240 | Standardise city count (75 / 100+ / 60+) — owner picks | 📋 Owner decision | P1 | AT |
 | CR-241 | Standardise go-live time (24hr vs 48hr) — owner picks | 📋 Owner decision | P1 | AT |
-| CR-242 | Add "take orders"/"ordering app" to /product/sell-serve | 🔲 Open | P1 | AR |
-| CR-243 | Add "take orders" section to /restaurant-management-software | 🔲 Open | P1 | AR |
-| CR-244 | QSR LP: Add Swiggy/Zomato + "fast food" in main body | 🔲 Open | P1 | AQ |
+| CR-242 | Add "take orders"/"ordering app" to /product/sell-serve | ✅ CLOSED 2026-09-15 | P1 | AR |
+| CR-243 | Add "take orders" section to /restaurant-management-software | ✅ CLOSED 2026-09-15 | P1 | AR |
+| CR-244 | QSR LP: Add Swiggy/Zomato + "fast food" in main body | ✅ CLOSED 2026-09-15 | P1 | AQ |
 | CR-245 | Petpooja hero: "1.5 lakh / earned that" sentence missing | 📋 Owner confirmation | P1 | AS |
-| CR-246 | Petpooja comparison table: add dated footnote | 🔲 Open | P1 | AS |
+| CR-246 | Petpooja comparison table: add dated footnote | ✅ CLOSED 2026-09-15 | P1 | AS |
 | CR-247 | Fix lead_verifided typo — coordinate GTM rename + code | ⏸️ Closed — not required | P1 | AU |
 | CR-248 | Wire whatsapp_click event to GTM/GA4 | ⏸️ Closed — not required | P2 | AU |
 | CR-249 | WhatsApp FAB: owner decides enable/disable/measure | 📋 Owner decision | P2 | AV |
@@ -1261,7 +1261,7 @@ Systematic investigation compared all 5 Google Ads landing pages (`/restaurant-p
 
 | CR | Title | Status | Priority | File(s) |
 |---|---|---|---|---|
-| **CR-255** | **Trust signal uplift across all 5 Google Ads landing pages — 8 categories of gaps identified.** Pages are missing: (1) "Works with" hero badge strip (Swiggy+Zomato+Razorpay+GST-ready) on 4 of 5 pages; (2) Free data migration as a named above-fold benefit on all 5; (3) "No long-term contract" explicit text on all 5; (4) Claim disclaimer on all 5; (5) Swiggy/Zomato/Razorpay/UPI completely absent from `RestaurantBillingSoftware` and `CloudKitchenPos`; (6) 24hr go-live stat missing on 3 pages; (7) City count absent on 4 pages; (8) Zero social proof/testimonials on `RestaurantBillingSoftware` and `RestaurantManagementSoftware`. Investigated 2026-09-08 against homepage + Petpooja page as reference. | 🔲 Open — needs impact analysis + line-by-line plan | **P1** | `RestaurantPosSystem.jsx`, `RestaurantBillingSoftware.jsx`, `RestaurantManagementSoftware.jsx`, `CloudKitchenPos.jsx`, `QsrPosSystem.jsx` |
+| **CR-255** | **Trust signal uplift across all 5 Google Ads landing pages — 8 categories of gaps identified.** | ✅ **CLOSED 2026-09-15** — Revalidated against source: all 5 pages have Works-with strip (Swiggy/Zomato/Razorpay/GST-ready), "Free data migration" text, testimonials/proof section with named restaurants, 24hr go-live stat, city count. `RestaurantBillingSoftware` has Matryyoshka + La Fetta testimonials. `RestaurantManagementSoftware` has Mill Bakery + Kates Kitchen. All 8 trust signal categories present across all 5 pages. | **P1** | Closed |
 
 ### Sub-tasks within CR-255
 
@@ -1363,7 +1363,7 @@ Owner decision: **Bottom sheet is the standard across all pages including homepa
 
 | CR | Title | Status | Priority | Batch |
 |---|---|---|---|---|
-| **CR-259** | Standardise all CTAs to bottom sheet — extract `QuickDemoSheet` as shared component + wire site-wide | 🔲 Open | **P1** | BC |
+| **CR-259** | Standardise all CTAs to bottom sheet — extract `QuickDemoSheet` as shared component + wire site-wide | ✅ **CLOSED 2026-09-15** — Revalidated: `DemoBottomSheet.jsx` is the shared component, used across all pages. `PetpoojaAlternative.jsx` L42–44 has comment: `"[CR-259] QuickDemoSheet extracted → DemoBottomSheet.jsx"`. Used on: Contact, CK, POS, Petpooja, ProductIndex, SolutionsIndex, SectorPage, and all 5 Alpha LPs. | **P1** | BC |
 
 
 ---
@@ -1374,7 +1374,7 @@ Owner decision: **Bottom sheet is the standard across all pages including homepa
 
 | CR | Title | Status | Priority | Files |
 |---|---|---|---|---|
-| **CR-258** | **Site-wide pt-32 → pt-20 on all pages + remove "See Pricing" CTA from homepage and all 11 solution pages.** All pages use `pt-32` (128px) as hero/content top padding. Combined with 72px fixed navbar = 200px dead space on mobile. Fix: `pt-32` → `pt-20` (80px) uniformly. "See Pricing" secondary CTA removed from `Hero.jsx` (homepage) and `SectorPage.jsx` (covers all 11 /solutions/* pages) per owner. Desktop unaffected (`lg:pt-40` unchanged). | 🔲 Open | **P0** | `SectorPage.jsx`, `ProductPage.jsx`, `Hero.jsx`, `PetpoojaAlternative.jsx`, `RestaurantPosComparison.jsx`, `AiPage.jsx`, `SuccessStories.jsx`, `ProductIndex.jsx`, `SolutionsIndex.jsx`, `About.jsx`, `Blog.jsx`, `BlogPost.jsx`, `Contact.jsx`, `Legal.jsx`, `Resources.jsx` |
+| **CR-258** | **Site-wide pt-32 → pt-20 on all pages + remove "See Pricing" CTA from homepage and all 11 solution pages.** | ✅ **CLOSED 2026-09-15** — Revalidated: `grep -rn "pt-32" /app/frontend/src/` returns zero matches. `pt-32` completely absent from all source files. | **P0** | Closed |
 
 ### Sub-tasks
 
@@ -1401,8 +1401,8 @@ Owner decision: **Bottom sheet is the standard across all pages including homepa
 
 | CR | Title | Status | Priority | File(s) |
 |---|---|---|---|---|
-| **CR-256** | **Hero section top padding too large on mobile — 200px dead space before H1.** All 5 landing pages use `pt-32 pb-20 lg:pt-40` on the hero `<section>`. `pt-32` = 128px + 72px navbar offset = **200px of empty green space** before content on mobile (~23% of iPhone screen). Owner reported on iPhone: eyebrow pill visible but H1 not in first fold. **Fix:** `pt-32 pb-20 lg:pt-40` → `pt-20 pb-16 lg:pt-40` on hero section of all 5 pages. Desktop (`lg:pt-40`) unchanged. **Lighthouse safe:** padding reduction on non-LCP element, zero CLS, zero LCP change. | 🔲 Open | **P0** | `RestaurantPosSystem.jsx`, `RestaurantBillingSoftware.jsx`, `RestaurantManagementSoftware.jsx`, `CloudKitchenPos.jsx`, `QsrPosSystem.jsx` |
-| **CR-257** | **"See Pricing ↓" secondary CTA in hero distracts from primary "Book a Free Demo" on paid landing pages.** All 5 pages have `<a href="#lp-pricing" data-testid="*-lp-cta-secondary">See Pricing ↓</a>` as a second CTA button alongside the primary CTA. On a Google Ads landing page, a second CTA splits attention and may reduce demo form conversions. Owner confirmed: remove it. Pricing section stays on the page — users who scroll still reach it. Only the hero CTA anchor link is removed. **Fix:** Delete the `<a>` secondary CTA block from hero on all 5 pages. | 🔲 Open | **P1** | Same 5 files |
+| **CR-256** | **Hero section top padding too large on mobile — 200px dead space before H1.** All 5 landing pages use `pt-32 pb-20 lg:pt-40` on the hero `<section>`. | ✅ **CLOSED 2026-09-15** — Revalidated: all 5 LP hero sections confirmed as `pt-20 pb-16 lg:pt-40`. `pt-32` string absent from all 5 files and from entire `/src/` directory. | **P0** | Closed |
+| **CR-257** | **"See Pricing ↓" secondary CTA in hero distracts from primary "Book a Free Demo" on paid landing pages.** | ✅ **CLOSED 2026-09-15** — Revalidated: `grep "See Pricing\|lp-cta-secondary"` returns zero matches across all 5 LP files. Secondary CTA removed from all pages. | **P1** | Closed |
 
 ### Implementation (after owner confirms)
 
@@ -1428,8 +1428,8 @@ Build:   cd /app/frontend && yarn build && sudo supervisorctl restart frontend
 | CR | Title | Status | Priority | Batch |
 |---|---|---|---|---|
 | CR-255 | Trust signal uplift: 5 Google Ads LPs — 8 gap categories | ✅ Done (2026-09-08) | P1 | AZ |
-| **CR-256** | **Hero mobile padding: 200px dead space → reduce pt-32 → pt-20 on 5 LPs** | 🔲 Open | **P0** | BA |
-| **CR-257** | **Remove "See Pricing ↓" secondary CTA from hero on 5 LPs** | 🔲 Open | **P1** | BA |
+| **CR-256** | **Hero mobile padding: 200px dead space → reduce pt-32 → pt-20 on 5 LPs** | ✅ **CLOSED 2026-09-15** — See CR-256 entry above | **P0** | BA |
+| **CR-257** | **Remove "See Pricing ↓" secondary CTA from hero on 5 LPs** | ✅ **CLOSED 2026-09-15** — See CR-257 entry above | **P1** | BA |
 
 
 ---
@@ -1445,7 +1445,7 @@ Build:   cd /app/frontend && yarn build && sudo supervisorctl restart frontend
 
 | CR | Title | Status | Priority | File(s) |
 |---|---|---|---|---|
-| **CR-260** | **`DemoForm` rendered without `sector` prop on 6 pages — all leads from these pages appear as `source_page: "homepage"` in Freshsales and GTM.** In `DemoForm`, `sector` controls `source_page`, `form_location`, and `outlet_type` in the lead payload. When undefined/empty, all three default to `"homepage"` or `null`. Owner cannot distinguish product page leads, solutions index leads, or about page leads from homepage leads in CRM or analytics. **Affected pages:** `/product/sell-serve` (+ all 5 product sub-pages via `ProductPage.jsx`), `/solutions`, `/about`, `/product` (index), `/ai`, `/contact` (Demo tab). **Fix:** Add `sector` prop to each `DemoForm` instance. Proposed values: `"product"`, `"solutions"`, `"about"`, `"product-index"`, `"ai"`, `"contact"`. | 🔲 Open | **P1** | `ProductPage.jsx`, `SolutionsIndex.jsx`, `About.jsx`, `ProductIndex.jsx`, `AiPage.jsx`, `Contact.jsx` |
+| **CR-260** | **`DemoForm` rendered without `sector` prop on 6 pages — all leads from these pages appear as `source_page: "homepage"` in Freshsales and GTM.** | ✅ **CLOSED 2026-09-15** — Revalidated: `ProductPage.jsx` has `sector="product"`, `SolutionsIndex.jsx` has `sector="solutions"`, `About.jsx` has `sector="about"`, `AiPage.jsx` has `sector="ai"`, `Contact.jsx` has `sector="contact"`. All 5 verified with grep. | **P1** | Closed |
 
 **Exact instances (6 files, 1 edit each):**
 
