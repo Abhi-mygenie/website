@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Batch 3 Design Mockups</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f0f0; }
+
+  /* Brand */
+  :root {
+    --green:   #10B981;
+    --green-dk:#059669;
+    --orange:  #f26b33;
+    --sand:    #F6F8F5;
+    --ink:     #14201A;
+    --muted:   #5B6B61;
+    --line:    #E6EAE6;
+    --deep:    #10402A;
+  }
+
+  /* ─── Section labels ─── */
+  .section-label {
+    background: #1e293b; color: #94a3b8;
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; padding: 8px 16px;
+  }
+  .card { background: white; margin: 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+
+  /* ─── NAVBAR ─── */
+  .navbar {
+    background: white;
+    border-bottom: 1px solid var(--line);
+    height: 72px; display: flex; align-items: center;
+    padding: 0 32px; justify-content: space-between;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; color: var(--ink); }
+  .nav-logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .nav-links { display: flex; gap: 28px; font-size: 14px; color: var(--muted); font-weight: 500; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+
+  /* NEW: phone in navbar */
+  .nav-phone {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    text-decoration: none;
+  }
+  .nav-phone svg { color: var(--muted); }
+  .nav-phone:hover { color: var(--green); }
+
+  .btn-demo {
+    background: var(--green); color: white; border: none;
+    border-radius: 999px; padding: 10px 22px; font-size: 14px; font-weight: 600; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(16,185,129,.3);
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 60px 32px 48px;
+    background: linear-gradient(135deg, #fff 60%, #F6F8F5);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(242,107,51,.1); color: var(--orange);
+    border-radius: 999px; padding: 6px 16px; font-size: 13px; font-weight: 600;
+  }
+  .hero-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); }
+  h1.hero-h1 {
+    font-size: 44px; font-weight: 800; line-height: 1.05; color: var(--ink);
+    margin: 16px 0 20px;
+  }
+  h1.hero-h1 span { color: var(--green); }
+  .hero-sub { font-size: 16px; color: var(--muted); line-height: 1.65; margin-bottom: 28px; }
+  .hero-sub strong { color: var(--orange); }
+
+  /* CTA row */
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .btn-hero-demo {
+    background: var(--green); color: white; border-radius: 999px;
+    padding: 14px 28px; font-size: 15px; font-weight: 700; border: none; cursor: pointer;
+    box-shadow: 0 10px 26px rgba(16,185,129,.32);
+  }
+  .btn-hero-pricing {
+    border: 2px solid rgba(242,107,51,.4); color: var(--orange);
+    border-radius: 999px; padding: 14px 28px; font-size: 15px; font-weight: 700;
+    background: transparent; cursor: pointer;
+  }
+
+  /* disclaimer */
+  .hero-disclaimer { font-size: 11px; color: var(--muted); margin-top: 12px; }
+
+  /* NEW: phone below disclaimer — mobile only in real site */
+  .hero-phone {
+    font-size: 12px; color: var(--muted); margin-top: 8px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .hero-phone a { font-weight: 700; color: var(--ink); text-decoration: none; }
+
+  /* NEW: integration badges */
+  .badges-row {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 8px; margin-top: 16px;
+  }
+  .badges-label { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .badge {
+    background: white; border: 1.5px solid var(--line);
+    border-radius: 999px; padding: 4px 12px;
+    font-size: 11px; font-weight: 700; color: var(--ink);
+  }
+
+  /* hero visual placeholder */
+  .hero-visual {
+    background: linear-gradient(135deg, var(--sand), rgba(16,185,129,.08));
+    border-radius: 28px; height: 380px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); font-size: 13px; font-style: italic;
+    position: relative; overflow: hidden;
+  }
+
+  /* ─── ROI BAND (CR-95) ─── */
+  .roi-band {
+    background: var(--sand);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    padding: 32px;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  }
+  .roi-eyebrow {
+    font-size: 10px; font-weight: 800; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--orange); margin-bottom: 8px;
+  }
+  .roi-headline {
+    font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 6px; line-height: 1.2;
+  }
+  .roi-sub { font-size: 13px; color: var(--muted); }
+  .btn-roi {
+    background: var(--orange); color: white; border: none;
+    border-radius: 999px; padding: 14px 28px; font-size: 14px; font-weight: 700;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    box-shadow: 0 6px 16px rgba(242,107,51,.3);
+  }
+  .btn-roi:hover { opacity: .92; }
+
+  /* ─── before/after comparison ─── */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .compare-col { padding: 20px 24px; }
+  .compare-col.before { background: #fef2f2; border-right: 1px solid #fecaca; }
+  .compare-col.after  { background: #f0fdf4; }
+  .compare-heading {
+    font-size: 10px; font-weight: 800; letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,0,0,.08);
+  }
+  .compare-col.before .compare-heading { color: #dc2626; }
+  .compare-col.after  .compare-heading { color: #059669; }
+
+  /* tag */
+  .tag { display: inline-block; background: #dcfce7; color: #059669; border-radius: 4px; font-size: 10px; font-weight: 700; padding: 1px 6px; margin-left: 6px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     CR-97 — Phone number in Navbar (Desktop)
+═══════════════════════════════════════════════════════════ -->
+<div class="section-label">CR-97 · Phone in Navbar — Desktop (≥1024px)</div>
+<div class="card">
+  <div class="compare-grid">
+    <div class="compare-col before">
+      <div class="compare-heading">BEFORE</div>
+      <div class="navbar" style="padding:0 16px;">
+        <div class="nav-logo"><div class="nav-logo-dot"></div>myGenie</div>
+        <div class="nav-links">Solutions ▾ &nbsp; Product ▾ &nbsp; Pricing &nbsp; Customers &nbsp; Resources ▾</div>
+        <div class="nav-right">
+          <button class="btn-demo">Book a Free Demo</button>
+        </div>
+      </div>
+    </div>
+    <div class="compare-col after">
+      <div class="compare-heading">AFTER <span class="tag">NEW</span></div>
+      <div class="navbar" style="padding:0 16px;">
+        <div class="nav-logo"><div class="nav-logo-dot"></div>myGenie</div>
+        <div class="nav-links">Solutions ▾ &nbsp; Product ▾ &nbsp; Pricing &nbsp; Customers &nbsp; Resources ▾</div>
+        <div class="nav-right">
+          <!-- NEW: phone number -->
+          <a class="nav-phone" href="tel:+919104743156">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 9.87a19.79 19.79 0 01-3.07-8.67A2 2 0 012.62 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.64a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            91047 43156
+          </a>
+          <button class="btn-demo">Book a Free Demo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     CR-97 — Phone in Hero (Mobile)
+═══════════════════════════════════════════════════════════ -->
+<div class="section-label" style="margin-top:16px;">CR-97 · Phone in Hero — Mobile (≤1023px, below disclaimer)</div>
+<div class="card">
+  <div class="compare-grid">
+    <div class="compare-col before">
+      <div class="compare-heading">BEFORE</div>
+      <div style="max-width:320px;">
+        <div class="cta-row" style="margin-bottom:10px;">
+          <button class="btn-hero-demo" style="font-size:13px;padding:10px 18px;">Book a Free Demo →</button>
+          <button class="btn-hero-pricing" style="font-size:13px;padding:10px 18px;">See Pricing</button>
+        </div>
+        <p class="hero-disclaimer">*Based on internal case studies & partner results. Individual results may vary.</p>
+      </div>
+    </div>
+    <div class="compare-col after">
+      <div class="compare-heading">AFTER <span class="tag">NEW</span></div>
+      <div style="max-width:320px;">
+        <div class="cta-row" style="margin-bottom:10px;">
+          <button class="btn-hero-demo" style="font-size:13px;padding:10px 18px;">Book a Free Demo →</button>
+          <button class="btn-hero-pricing" style="font-size:13px;padding:10px 18px;">See Pricing</button>
+        </div>
+        <p class="hero-disclaimer">*Based on internal case studies & partner results. Individual results may vary.</p>
+        <!-- NEW phone line -->
+        <p class="hero-phone">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 9.87a19.79 19.79 0 01-3.07-8.67A2 2 0 012.62 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.64a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          Or call us: <a href="tel:+919104743156">91047 43156</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     CR-96 — India trust badges in Hero
+═══════════════════════════════════════════════════════════ -->
+<div class="section-label" style="margin-top:16px;">CR-96 · India Trust Badges in Hero (all viewports, below CTA row)</div>
+<div class="card">
+  <div class="compare-grid">
+    <div class="compare-col before">
+      <div class="compare-heading">BEFORE</div>
+      <div style="max-width:360px;">
+        <div class="hero-badge" style="margin-bottom:12px;">
+          <div class="hero-badge-dot"></div> The Hospitality Operating System
+        </div>
+        <h1 class="hero-h1" style="font-size:28px;margin:10px 0 12px;">Run a more profitable hospitality business — <span>from your phone.</span></h1>
+        <div class="cta-row">
+          <button class="btn-hero-demo" style="font-size:13px;padding:10px 18px;">Book a Free Demo →</button>
+          <button class="btn-hero-pricing" style="font-size:13px;padding:10px 18px;">See Pricing</button>
+        </div>
+        <p class="hero-disclaimer" style="margin-top:10px;">*Based on internal case studies & partner results.</p>
+      </div>
+    </div>
+    <div class="compare-col after">
+      <div class="compare-heading">AFTER <span class="tag">NEW</span></div>
+      <div style="max-width:360px;">
+        <div class="hero-badge" style="margin-bottom:12px;">
+          <div class="hero-badge-dot"></div> The Hospitality Operating System
+        </div>
+        <h1 class="hero-h1" style="font-size:28px;margin:10px 0 12px;">Run a more profitable hospitality business — <span>from your phone.</span></h1>
+        <div class="cta-row">
+          <button class="btn-hero-demo" style="font-size:13px;padding:10px 18px;">Book a Free Demo →</button>
+          <button class="btn-hero-pricing" style="font-size:13px;padding:10px 18px;">See Pricing</button>
+        </div>
+        <p class="hero-disclaimer" style="margin-top:10px;">*Based on internal case studies & partner results.</p>
+        <!-- NEW badges -->
+        <div class="badges-row">
+          <span class="badges-label">Works with:</span>
+          <span class="badge">Swiggy</span>
+          <span class="badge">Zomato</span>
+          <span class="badge">UPI / Paytm</span>
+          <span class="badge">Razorpay</span>
+          <span class="badge">GST-ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     CR-95 — ROI Calculator promo band
+═══════════════════════════════════════════════════════════ -->
+<div class="section-label" style="margin-top:16px;">CR-95 · ROI Calculator Promo Band — between ProblemGrid and BeforeAfter</div>
+<div class="card">
+  <!-- Context: what's above -->
+  <div style="padding:16px 24px; background:#f8fafc; border-bottom:1px dashed #cbd5e1; font-size:12px; color:#64748b; text-align:center;">
+    ↑ ProblemGrid section (pain points)
+  </div>
+
+  <!-- THE NEW BAND -->
+  <div class="roi-band">
+    <div>
+      <div class="roi-eyebrow">Free Tool</div>
+      <div class="roi-headline">See how much profit MyGenie could add<br/>for your restaurant</div>
+      <div class="roi-sub">Enter your outlet details — get an instant estimate in 2 minutes.</div>
+    </div>
+    <button class="btn-roi">Try ROI Calculator →</button>
+  </div>
+
+  <!-- Context: what's below -->
+  <div style="padding:16px 24px; background:#f8fafc; border-top:1px dashed #cbd5e1; font-size:12px; color:#64748b; text-align:center;">
+    ↓ BeforeAfter section (before/after outcomes)
+  </div>
+</div>
+
+<!-- ROI Band — mobile stacked -->
+<div class="section-label" style="margin-top:8px;">CR-95 · ROI Band — Mobile stacked layout (&lt;640px)</div>
+<div class="card" style="max-width:380px;">
+  <div class="roi-band" style="flex-direction:column; align-items:flex-start; padding:24px 20px;">
+    <div>
+      <div class="roi-eyebrow">Free Tool</div>
+      <div class="roi-headline" style="font-size:17px;">See how much profit MyGenie could add for your restaurant</div>
+      <div class="roi-sub">Enter your outlet details — get an instant estimate in 2 minutes.</div>
+    </div>
+    <button class="btn-roi" style="margin-top:16px; width:100%; text-align:center;">Try ROI Calculator →</button>
+  </div>
+</div>
+
+<div style="height:32px;"></div>
+</body>
+</html>

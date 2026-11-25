@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freshsales Custom Fields — Live Labels & Mapping | MyGenie</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.6; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+  h1 { font-size: 24px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+  .subtitle { font-size: 14px; color: #64748b; margin-bottom: 24px; }
+  .updated { font-size: 12px; color: #94a3b8; margin-bottom: 32px; }
+
+  .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #475569; margin: 32px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
+
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 24px; }
+  thead th { background: #f1f5f9; padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  tbody td { padding: 10px 16px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  tbody tr:hover { background: #f8fafc; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+  .badge-text { background: #dcfce7; color: #166534; }
+  .badge-dropdown { background: #fef3c7; color: #92400e; }
+  .badge-number { background: #e0e7ff; color: #3730a3; }
+  .badge-date { background: #fce7f3; color: #9d174d; }
+
+  .status-live { background: #dcfce7; color: #166534; }
+  .status-new { background: #dbeafe; color: #1e40af; }
+  .status-fix { background: #fef3c7; color: #92400e; }
+  .status-abandoned { background: #fee2e2; color: #991b1b; }
+  .status-spare { background: #f1f5f9; color: #64748b; }
+  .status-unused { background: #f8fafc; color: #94a3b8; }
+
+  .code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+
+  .label-current { font-weight: 600; color: #1e293b; }
+  .label-suggested { color: #059669; font-weight: 600; }
+  .label-match { color: #16a34a; }
+  .label-mismatch { color: #dc2626; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0 24px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b; }
+
+  .note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #1e40af; margin: 16px 0; }
+  .warn { background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #92400e; margin: 16px 0; }
+
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Freshsales Custom Fields — Live Labels & Code Mapping</h1>
+<p class="subtitle">Complete reference for all 34 cf_ fields in the MyGenie Freshsales CRM account</p>
+<p class="updated">Live data pulled from Freshsales API · Last updated: 27 June 2026 · Contract v2.1</p>
+
+<div class="legend">
+  <div class="legend-item"><span class="badge badge-text">text</span> Accepts any value</div>
+  <div class="legend-item"><span class="badge badge-dropdown">dropdown</span> Only accepts preset choices</div>
+  <div class="legend-item"><span class="badge badge-number">number</span> Numbers only</div>
+  <div class="legend-item"><span class="badge badge-date">date</span> Date only</div>
+</div>
+
+<div class="warn">
+  <strong>Dropdown fields silently drop values</strong> that don't match their preset choices. Never write free text to a dropdown field — Freshsales returns success but the value is not saved.
+</div>
+
+<!-- Section 1: Attribution Fields (Mapped by code) -->
+<div class="section-title">1. Attribution Fields — Mapped by <code>_attribution_to_crm()</code></div>
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>API Name</th>
+      <th>Current Freshsales Label</th>
+      <th>Suggested Label</th>
+      <th>Stores</th>
+      <th>Type</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><span class="code">cf_pos_satifcation_level</span></td><td class="label-current">Search Keyword</td><td class="label-suggested">Search Keyword</td><td>utm_term from URL</td><td><span class="badge badge-text">text</span></td><td><span class="badge status-live">Live</span></td></tr>
+    <tr><td>2</td><td><span class="code">cf_est_name</span></td><td class="label-current">Ad Set</td><td class="label-suggested">Ad Set</td><td>utm_content from URL</td><td><span class="badge badge-text">text</span></td><td><span class="badge status-live">Live</span></td></tr>
+    <tr><td>3</td><td><span class="code">cf_contact_person</span></td><td class="label-current">Contact person</td><td class="label-suggested">Ad Name / Event ID</td><td>event_id or utm_ad</td><td><span class="badge badge-text">text</span></td><td><span class="badge status-fix">CR-25 fix</span></td></tr>
+    <tr><td>4</td><td><span class="code">cf_latitude</span></td><td class="label-current">fbclid</td><td class="label-suggested">fbclid</td><td>Facebook click ID</td><td><span class="badge badge-text">text</span></td><td><span class="badge status-live">Live</span></td></tr>
+    <tr><td>5</td><td><span class="code">cf_pos_type</span></td><td class="label-current">POS TYPE</td><td class="label-suggested">Google Click ID</td><td>gclid from URL</td><td><span class="badge badge-text">text</span></td><td><span class="badge status-new">CR-28 new</span></td></tr>
+    <tr><td>6</td><td><span class="code">cf_orders_taken_via</span></td><td class="label-current">fpb Cookie</td><td class="label-suggested">fbp Cookie</td><td>_fbp browser cookie</td><td><span class="badge badge-text">text</span></td><td><span class="badge status-live">Live</span></td></tr>
+    <tr><td>7</td><td><span class="code">cf_self_delivery_take_away</span></td><td class="label-current">SELF DELIVERY /TAKE AWAY</td><td class="label-suggested">Ad Creative ID</td><td>ad_id — Meta {{ad.id}} / Google {creative}</td><td><span class="badge badge-text">text</span></td><td><span class="badge status-new">CR-25 new</span></td></tr>
+    <tr><td>8</td><td><span class="code">cf_inventory_used</span></td><td class="label-current">INVENTORY USED</td><td class="label-suggested">Ad Set ID</td><td>adset_id — Meta {{adset.id}} / Google {adgroupid}</td><td><span class="badge badge-text">text</span></td><td><span class="badge status-new">CR-25 new</span></td></tr>
+    <tr><td>9</td><td><span class="code">cf_complete_address</span></td><td class="label-current">Placement</td><td class="label-suggested">Ad Placement</td><td>placement — Feed/Reels/Stories</td><td><span class="badge badge-text">text</span></td><td><span class="badge status-new">CR-25 new</span></td></tr>
+    <tr><td>10</td><td><span class="code">cf_account_software_integrated</span></td><td class="label-current">ACCOUNT SOFTWARE INTEGRATED</td><td class="label-suggested">Campaign ID</td><td>utm_id — Meta {{campaign.id}} / Google {campaignid}</td><td><span class="badge badge-text">text</span></td><td><span class="badge status-new">CR-25 new</span></td></tr>
+    <tr><td>11</td><td><span class="code">cf_aggreator_management</span></td><td class="label-current">AGGREATOR MANAGEMENT</td><td class="label-suggested">Source Platform</td><td>site_source_name — facebook/instagram/google</td><td><span class="badge badge-text">text</span></td><td><span class="badge status-new">CR-25 new</span></td></tr>
+  </tbody>
+</table>
+
+<!-- Section 2: Form Data Fields -->
+<div class="section-title">2. Form Data Fields — Set from form submission</div>
+<table>
+  <thead>
+    <tr><th>#</th><th>API Name</th><th>Current Label</th><th>Stores</th><th>Type</th><th>Set By</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>12</td><td><span class="code">cf_outlet_type</span></td><td class="label-current">Outlet Type</td><td>Outlet type (Cafe/Fine Dine/etc.)</td><td><span class="badge badge-text">text</span></td><td>Demo + Quote forms</td></tr>
+    <tr><td>13</td><td><span class="code">cf_sku</span></td><td class="label-current">Years in Business</td><td>Years in business</td><td><span class="badge badge-text">text</span></td><td>Demo form</td></tr>
+    <tr><td>14</td><td><span class="code">cf_pos_used</span></td><td class="label-current">Currently Using POS?</td><td>Currently using POS?</td><td><span class="badge badge-text">text</span></td><td>Demo form</td></tr>
+    <tr><td>15</td><td><span class="code">cf_pos_name</span></td><td class="label-current">POS NAME</td><td>Current POS name</td><td><span class="badge badge-text">text</span></td><td>Demo form</td></tr>
+    <tr><td>16</td><td><span class="code">cf_first_interest</span></td><td class="label-current">Contact Message</td><td>Contact form message text</td><td><span class="badge badge-text">text</span></td><td>Contact form only</td></tr>
+  </tbody>
+</table>
+
+<!-- Section 3: Server-Side Context -->
+<div class="section-title">3. Server-Side Context — Set from request headers / IP lookup</div>
+<table>
+  <thead>
+    <tr><th>#</th><th>API Name</th><th>Current Label</th><th>Stores</th><th>Type</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>17</td><td><span class="code">cf_longitude</span></td><td class="label-current">IP Address</td><td>Visitor IP (from X-Forwarded-For)</td><td><span class="badge badge-text">text</span></td></tr>
+    <tr><td>18</td><td><span class="code">cf_category</span></td><td class="label-current">User agent</td><td>Browser User-Agent string</td><td><span class="badge badge-text">text</span></td></tr>
+  </tbody>
+</table>
+
+<!-- Section 4: Verification & Booking -->
+<div class="section-title">4. Verification & Booking Fields</div>
+<table>
+  <thead>
+    <tr><th>#</th><th>API Name</th><th>Current Label</th><th>Stores</th><th>Type</th><th>Choices</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>19</td><td><span class="code">cf_rooms</span></td><td class="label-current">OTP Verified</td><td>"Yes" if OTP passed, "No" otherwise</td><td><span class="badge badge-dropdown">dropdown</span></td><td>Yes, No</td></tr>
+    <tr><td>20</td><td><span class="code">cf_channel_manager_name</span></td><td class="label-current">Number of outlets</td><td>Demo date/time IST (from Calendly)</td><td><span class="badge badge-text">text</span></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<!-- Section 5: Abandoned -->
+<div class="section-title">5. Abandoned Fields</div>
+<table>
+  <thead>
+    <tr><th>API Name</th><th>Current Label</th><th>Was Used For</th><th>Why Abandoned</th><th>Replaced By</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="code">cf_demo_fixed</span></td><td class="label-current">Ad Name</td><td>event_id / utm_ad</td><td><span class="badge badge-dropdown">dropdown</span> — silently drops free text</td><td><span class="code">cf_contact_person</span></td></tr>
+  </tbody>
+</table>
+
+<!-- Section 6: Spare -->
+<div class="section-title">6. Spare Fields (available for future use)</div>
+<table>
+  <thead>
+    <tr><th>API Name</th><th>Current Label</th><th>Type</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="code">cf_next_step</span></td><td>NEXT STEP</td><td><span class="badge badge-text">text</span></td></tr>
+  </tbody>
+</table>
+
+<!-- Section 7: Not Usable -->
+<div class="section-title">7. Fields Not Usable for Free Text (dropdown / date / number)</div>
+<table>
+  <thead>
+    <tr><th>API Name</th><th>Current Label</th><th>Type</th><th>Choices</th><th>Used by Code?</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="code">cf_demo_fixed</span></td><td>Ad Name</td><td><span class="badge badge-dropdown">dropdown</span></td><td>Yes, No</td><td><span class="badge status-abandoned">Abandoned</span></td></tr>
+    <tr><td><span class="code">cf_take_away__delivery</span></td><td>Take Away / Delivery</td><td><span class="badge badge-dropdown">dropdown</span></td><td>Yes, No</td><td>No</td></tr>
+    <tr><td><span class="code">cf_basva_contacted</span></td><td>Basva Contacted</td><td><span class="badge badge-dropdown">dropdown</span></td><td>Yes, NO</td><td>No</td></tr>
+    <tr><td><span class="code">cf_channel_manager</span></td><td>Demo Scheduled At</td><td><span class="badge badge-dropdown">dropdown</span></td><td>Yes, No</td><td>No</td></tr>
+    <tr><td><span class="code">cf_menu_uploaded</span></td><td>Menu Uploaded</td><td><span class="badge badge-dropdown">dropdown</span></td><td>Yes, No</td><td>No</td></tr>
+    <tr><td><span class="code">cf_pipeline</span></td><td>Pipeline</td><td><span class="badge badge-dropdown">dropdown</span></td><td>Today, This Week, Next Week, Next Month</td><td>No</td></tr>
+    <tr><td><span class="code">cf_pos</span></td><td>POS</td><td><span class="badge badge-dropdown">dropdown</span></td><td>Yes, No</td><td>No</td></tr>
+    <tr><td><span class="code">cf_priority</span></td><td>Lead Quality</td><td><span class="badge badge-dropdown">dropdown</span></td><td>1-Qualified, 2-Follow up, 3-Demo Scheduled, 4-Demo Given, 5-Trail started</td><td>No</td></tr>
+    <tr><td><span class="code">cf_sp</span></td><td>Sales Priority</td><td><span class="badge badge-dropdown">dropdown</span></td><td>critical, P1, P2, P3</td><td>No</td></tr>
+    <tr><td><span class="code">cf_owner_phone_number</span></td><td>Contact Phone</td><td><span class="badge badge-number">number</span></td><td>—</td><td>No</td></tr>
+    <tr><td><span class="code">cf_renewal_date</span></td><td>Renewal Date</td><td><span class="badge badge-date">date</span></td><td>—</td><td>No</td></tr>
+    <tr><td><span class="code">cf_subscription_start_date</span></td><td>Subscription Start Date</td><td><span class="badge badge-date">date</span></td><td>—</td><td>No</td></tr>
+    <tr><td><span class="code">cf_subscription_end_date</span></td><td>Subscription End Date</td><td><span class="badge badge-date">date</span></td><td>—</td><td>No</td></tr>
+  </tbody>
+</table>
+
+<!-- Section 8: Relabeling Actions -->
+<div class="section-title">8. Freshsales Admin — Labels to Update</div>
+<div class="note">
+  Go to <strong>Freshsales Admin → Settings → Contacts → Fields</strong> and update these labels so your sales team knows what each field stores.
+</div>
+<table>
+  <thead>
+    <tr><th>API Name</th><th>Current Label</th><th style="color: #059669;">New Label</th><th>CR</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="code">cf_self_delivery_take_away</span></td><td>SELF DELIVERY /TAKE AWAY</td><td class="label-suggested">Ad Creative ID</td><td>CR-25</td></tr>
+    <tr><td><span class="code">cf_inventory_used</span></td><td>INVENTORY USED</td><td class="label-suggested">Ad Set ID</td><td>CR-25</td></tr>
+    <tr><td><span class="code">cf_complete_address</span></td><td>Placement</td><td class="label-suggested">Ad Placement</td><td>CR-25</td></tr>
+    <tr><td><span class="code">cf_account_software_integrated</span></td><td>ACCOUNT SOFTWARE INTEGRATED</td><td class="label-suggested">Campaign ID</td><td>CR-25</td></tr>
+    <tr><td><span class="code">cf_aggreator_management</span></td><td>AGGREATOR MANAGEMENT</td><td class="label-suggested">Source Platform</td><td>CR-25</td></tr>
+    <tr><td><span class="code">cf_contact_person</span></td><td>Contact person</td><td class="label-suggested">Ad Name / Event ID</td><td>CR-25</td></tr>
+    <tr><td><span class="code">cf_pos_type</span></td><td>POS TYPE</td><td class="label-suggested">Google Click ID</td><td>CR-28</td></tr>
+  </tbody>
+</table>
+
+<!-- Section 9: Summary -->
+<div class="section-title">9. Summary</div>
+<table>
+  <thead><tr><th>Category</th><th>Count</th></tr></thead>
+  <tbody>
+    <tr><td>Total cf_ fields in Freshsales</td><td><strong>34</strong></td></tr>
+    <tr><td>Mapped by code (active)</td><td><strong>20</strong> (11 attribution + 5 form + 2 server + 2 verification)</td></tr>
+    <tr><td>Abandoned (dropdown bug)</td><td><strong>1</strong> (cf_demo_fixed)</td></tr>
+    <tr><td>Spare (available for future)</td><td><strong>1</strong> (cf_next_step)</td></tr>
+    <tr><td>Not usable (dropdown/date/number)</td><td><strong>12</strong></td></tr>
+  </tbody>
+</table>
+
+<footer>
+  Freshsales Custom Fields Contract v2.1 · MyGenie POS · Generated 27 June 2026<br>
+  Source: <code>/app/Freshsales_Field_Contract_v2.md</code> · Live API data from <code>mygenie-org.myfreshworks.com</code>
+</footer>
+
+</div>
+</body>
+</html>

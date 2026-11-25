@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=390, initial-scale=1"/>
+<title>CR-113 Mobile Design Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"/>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap"/>
+<style>
+  :root {
+    --green:#10B981; --green-dark:#059669; --deep:#10402A;
+    --orange:#f26b33; --yellow:#FFE100; --sand:#F6F8F5;
+    --ink:#14201A; --muted:#5B6B61; --line:#E6EAE6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Poppins',sans-serif;background:#fff;color:var(--ink);width:390px;margin:0 auto;position:relative;}
+  .font-display{font-family:'Clash Display','Poppins',sans-serif;}
+
+  /* ── section label ── */
+  .lbl{background:#1e293b;color:#94a3b8;font-size:10px;font-weight:700;padding:6px 14px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid #334155;}
+  .lbl span{color:#38bdf8;}
+
+  /* ── NAVBAR ── */
+  .navbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;}
+  .navbar-logo{font-family:'Clash Display',sans-serif;font-size:18px;font-weight:700;color:#10402A;}
+  .navbar-logo span{color:var(--green);}
+  .navbar-cta{background:var(--green);color:#fff;font-size:13px;font-weight:700;border:none;border-radius:999px;padding:10px 18px;cursor:pointer;}
+
+  /* ── HERO ── */
+  .hero{padding:32px 20px 40px;background:linear-gradient(140deg,var(--sand) 0%,rgba(16,184,129,.06) 100%);}
+  .hero h1{font-family:'Clash Display','Poppins',sans-serif;font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.01em;color:var(--ink);margin-bottom:14px;}
+  .hero h1 .acc{color:var(--green);}
+  /* compare old vs new size */
+  .hero h1.old-size{font-size:36px;}
+
+  /* ── inline stat chips (mobile-only addition) ── */
+  .stat-chips{display:flex;gap:8px;margin-bottom:14px;}
+  .stat-chip{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 12px;flex:1;}
+  .stat-chip .val{font-family:'Clash Display','Poppins',sans-serif;font-size:20px;font-weight:700;line-height:1;}
+  .stat-chip .lab{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.3;}
+  .stat-chip.green .val{color:var(--green);}
+  .stat-chip.orange .val{color:var(--orange);}
+
+  .hero p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+  .hero-btns{display:flex;gap:10px;margin-bottom:20px;}
+  .hero-btn-primary{background:var(--green);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:999px;padding:14px 24px;flex:1;}
+  .hero-btn-secondary{background:#fff;border:1px solid var(--line);color:var(--ink);font-size:13px;font-weight:600;border-radius:999px;padding:14px 18px;}
+  .trust-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .trust-row span{font-size:11px;color:var(--muted);}
+  .trust-logo{height:24px;width:auto;object-fit:contain;filter:grayscale(1);opacity:.6;}
+
+  /* ── section sep ── */
+  .sep{height:6px;background:#f1f5f9;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;}
+
+  /* ── BOTTOM SHEET (various states) ── */
+  .sheet-backdrop{background:rgba(0,0,0,.5);height:220px;display:flex;align-items:flex-end;}
+  .sheet-backdrop-label{font-size:11px;color:rgba(255,255,255,.5);text-align:center;padding-bottom:8px;width:100%;}
+
+  .sheet{background:#fff;border-radius:20px 20px 0 0;padding:0 0 32px;box-shadow:0 -12px 40px rgba(0,0,0,.2);}
+  .sheet-handle{width:40px;height:4px;background:#e2e8f0;border-radius:4px;margin:12px auto 0;}
+  .sheet-inner{padding:20px 20px 0;}
+  .sheet-title{font-family:'Clash Display','Poppins',sans-serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+  .sheet-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+  .stage-dots{display:flex;gap:6px;margin-bottom:16px;}
+  .stage-dot{height:5px;border-radius:4px;background:var(--line);}
+  .stage-dot.active{width:20px;background:var(--green);}
+  .stage-dot.inactive{width:6px;}
+  .field{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;font-family:'Poppins',sans-serif;color:var(--ink);background:var(--sand);margin-bottom:10px;}
+  .field.optional{border-style:dashed;}
+  .field-opt-label{font-size:10px;color:var(--muted);margin-bottom:3px;margin-top:-6px;}
+  .submit-btn{width:100%;background:var(--green);color:#fff;font-size:15px;font-weight:700;border:none;border-radius:999px;padding:15px;margin-top:4px;}
+  .sheet-foot{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;}
+
+  /* OTP state */
+  .otp-verified{color:var(--green);font-size:11px;font-weight:600;margin-bottom:4px;}
+  .otp-row{display:flex;gap:8px;justify-content:center;margin:16px 0;}
+  .otp-box{width:52px;height:56px;border:2px solid var(--green);border-radius:12px;font-size:22px;font-weight:700;text-align:center;display:flex;align-items:center;justify-content:center;font-family:'Poppins';}
+  .otp-box.filled{background:#f0fdf4;}
+
+  /* Calendly state */
+  .cal-time{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .cal-book-btn{width:100%;background:var(--green);color:#fff;font-size:15px;font-weight:700;border:none;border-radius:999px;padding:15px;display:flex;align-items:center;justify-content:center;gap:8px;}
+
+  /* ── comparison note ── */
+  .compare-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;margin:10px 16px;}
+  .compare-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:4px 0;}
+  .compare-label{color:var(--muted);}
+  .compare-before{color:#dc2626;font-weight:600;}
+  .compare-after{color:#16a34a;font-weight:600;}
+  .compare-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1: HERO — BEFORE vs AFTER
+══════════════════════════════════════════ -->
+<div class="lbl">Hero H1 size — <span>BEFORE (text-4xl = 36px)</span></div>
+<div class="navbar">
+  <div class="navbar-logo">my<span>Genie</span></div>
+</div>
+<div class="hero">
+  <h1 class="old-size">The honest<br><span class="acc">Petpooja</span><br>alternative —<br>see why 500+<br>restaurants<br>switched to<br>MyGenie.</h1>
+  <div class="hero-btns" style="margin-top:16px;">
+    <button class="hero-btn-primary">Book a Free Demo →</button>
+  </div>
+  <p style="font-size:11px;color:#dc2626;margin-top:0;">↑ H1 takes 7 lines. CTA barely visible. Stats not in view.</p>
+</div>
+
+<div class="sep"></div>
+
+<div class="lbl">Hero — <span>AFTER (CR-113): text-3xl = 30px + inline stat chips</span></div>
+<div class="navbar">
+  <div class="navbar-logo">my<span>Genie</span></div>
+  <button class="navbar-cta">Book Free Demo</button>
+</div>
+<div class="hero">
+  <!-- stat chips — new, lg:hidden -->
+  <div class="stat-chips">
+    <div class="stat-chip green">
+      <div class="val">₹1L</div>
+      <div class="lab">leakage caught in 2 weeks</div>
+    </div>
+    <div class="stat-chip orange">
+      <div class="val">40%</div>
+      <div class="lab">lower fixed costs</div>
+    </div>
+  </div>
+  <h1>The honest <span class="acc">Petpooja alternative</span> — see why 500+ restaurants switched to MyGenie.</h1>
+  <p>Petpooja runs 1.5 lakh restaurants. But a holistic OS — billing, inventory, expenses, customers and AI — is a different thing entirely.</p>
+  <div class="hero-btns">
+    <button class="hero-btn-primary">Book a Free Demo →</button>
+    <button class="hero-btn-secondary">Compare ↓</button>
+  </div>
+  <div class="trust-row">
+    <span>Trusted by</span>
+    <img class="trust-logo" src="/brand/hyatt-centric.png" alt="Hyatt"/>
+    <img class="trust-logo" src="/brand/love-bites.png" alt="Love Bites"/>
+    <img class="trust-logo" src="/brand/palm-forest.png" alt="Palm Forest"/>
+    <img class="trust-logo" src="/brand/mill-bakery.png" alt="Mill Bakery"/>
+    <span>across 75 cities</span>
+  </div>
+  <p style="font-size:11px;color:#16a34a;margin-top:12px;">✓ H1 ~5 lines. Stats visible. CTA above fold. Navbar CTA always accessible.</p>
+</div>
+
+<div class="sep"></div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 2: BOTTOM SHEET — FORM STATE
+══════════════════════════════════════════ -->
+<div class="lbl">Bottom Sheet — <span>Stage 1: Mini Form</span></div>
+<div style="background:rgba(0,0,0,.45);padding:16px 0 0;border-bottom:1px solid #334155;">
+  <p style="text-align:center;font-size:11px;color:rgba(255,255,255,.4);padding-bottom:8px;">← page content fades behind backdrop</p>
+</div>
+<div class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-inner">
+    <div class="stage-dots">
+      <div class="stage-dot active"></div>
+      <div class="stage-dot inactive"></div>
+      <div class="stage-dot inactive"></div>
+    </div>
+    <div class="sheet-title">Book a Free Demo</div>
+    <div class="sheet-sub">45-min walkthrough for your outlet type — live, not a slide deck.</div>
+    <input class="field" placeholder="Your name *" type="text"/>
+    <input class="field" placeholder="Phone number *" type="tel"/>
+    <input class="field" placeholder="Email address *" type="email"/>
+    <p class="field-opt-label">Business name (optional)</p>
+    <input class="field optional" placeholder="e.g. The Mill Bakery" type="text"/>
+    <button class="submit-btn">Get My Free Walkthrough →</button>
+    <p class="sheet-foot">No spam. Only used to schedule your demo.</p>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3: BOTTOM SHEET — OTP STATE
+══════════════════════════════════════════ -->
+<div class="lbl">Bottom Sheet — <span>Stage 2: OTP Verify</span></div>
+<div style="background:rgba(0,0,0,.45);padding:12px 0 0;">
+  <p style="text-align:center;font-size:11px;color:rgba(255,255,255,.4);padding-bottom:6px;">← page still visible behind</p>
+</div>
+<div class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-inner">
+    <div class="stage-dots">
+      <div class="stage-dot active"></div>
+      <div class="stage-dot active"></div>
+      <div class="stage-dot inactive"></div>
+    </div>
+    <p class="otp-verified">Details saved!</p>
+    <div class="sheet-title">Verify your phone</div>
+    <div class="sheet-sub">We sent a 4-digit code to +91 ••••• 3156</div>
+    <div class="otp-row">
+      <div class="otp-box filled">8</div>
+      <div class="otp-box filled">4</div>
+      <div class="otp-box filled">2</div>
+      <div class="otp-box">_</div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);text-align:center;">Didn't get it? Resend in 28s</p>
+    <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px;cursor:pointer;">← Back</p>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 4: BOTTOM SHEET — CALENDLY STATE
+══════════════════════════════════════════ -->
+<div class="lbl">Bottom Sheet — <span>Stage 3: Pick a Slot (Calendly popup)</span></div>
+<div style="background:rgba(0,0,0,.45);padding:12px 0 0;">
+  <p style="text-align:center;font-size:11px;color:rgba(255,255,255,.4);padding-bottom:6px;">← page still visible behind</p>
+</div>
+<div class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-inner">
+    <div class="stage-dots">
+      <div class="stage-dot active"></div>
+      <div class="stage-dot active"></div>
+      <div class="stage-dot active"></div>
+    </div>
+    <div class="sheet-title" style="font-size:18px;">Almost there, Abhishek —<br>pick your slot</div>
+    <div class="sheet-sub" style="margin-bottom:14px;">Choose a time for your free <strong>45-minute walkthrough.</strong></div>
+    <div class="cal-time">
+      <span style="font-size:22px;">📅</span>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink);">Calendly opens as a popup</div>
+        <div style="font-size:11px;color:var(--muted);">Name + email pre-filled, phone pre-filled</div>
+      </div>
+    </div>
+    <button class="cal-book-btn">Book My Slot →</button>
+    <p class="sheet-foot" style="margin-top:10px;">Sheet stays open. Calendly popup opens on top.</p>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 5: CHANGE SUMMARY
+══════════════════════════════════════════ -->
+<div class="lbl">Change Summary — <span>CR-113 vs current</span></div>
+<div class="compare-box">
+  <div class="compare-title">Hero section</div>
+  <div class="compare-row"><span class="compare-label">H1 font mobile</span><span class="compare-before">36px (7 lines)</span><span>→</span><span class="compare-after">30px (~5 lines)</span></div>
+  <div class="compare-row"><span class="compare-label">Stat cards</span><span class="compare-before">Below fold</span><span>→</span><span class="compare-after">2 chips above fold</span></div>
+  <div class="compare-row"><span class="compare-label">Navbar</span><span class="compare-before">Logo only</span><span>→</span><span class="compare-after">Logo + Book Free Demo btn</span></div>
+  <div class="compare-row"><span class="compare-label">Persistent CTA</span><span class="compare-before">Bottom sticky bar</span><span>→</span><span class="compare-after">Navbar button (always visible)</span></div>
+</div>
+<div class="compare-box" style="margin-top:0;">
+  <div class="compare-title">Mini form fields</div>
+  <div class="compare-row"><span class="compare-label">Name</span><span style="color:#16a34a;font-weight:600;">✓ Required</span></div>
+  <div class="compare-row"><span class="compare-label">Phone</span><span style="color:#16a34a;font-weight:600;">✓ Required</span></div>
+  <div class="compare-row"><span class="compare-label">Email</span><span style="color:#16a34a;font-weight:600;">✓ Required</span></div>
+  <div class="compare-row"><span class="compare-label">Business name</span><span style="color:#f59e0b;font-weight:600;">Optional</span></div>
+  <div class="compare-row"><span class="compare-label">City</span><span class="compare-before">Removed ✗</span></div>
+  <div class="compare-row"><span class="compare-label">Years in business</span><span class="compare-before">Removed ✗</span></div>
+</div>
+<div class="compare-box" style="margin-top:0;margin-bottom:24px;">
+  <div class="compare-title">Ad tracking</div>
+  <div class="compare-row"><span class="compare-label">form_submitted event</span><span style="color:#16a34a;font-weight:600;">✓ Identical</span></div>
+  <div class="compare-row"><span class="compare-label">thankyou_conversion</span><span style="color:#16a34a;font-weight:600;">✓ Identical</span></div>
+  <div class="compare-row"><span class="compare-label">demo_booked event</span><span style="color:#16a34a;font-weight:600;">✓ Identical</span></div>
+  <div class="compare-row"><span class="compare-label">gclid/fbclid/UTMs</span><span style="color:#16a34a;font-weight:600;">✓ All passed through</span></div>
+  <div class="compare-row"><span class="compare-label">gtm.js / attribution.js</span><span style="color:#16a34a;font-weight:600;">✓ Not touched</span></div>
+</div>
+
+</body>
+</html>
