@@ -41,6 +41,14 @@ Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/website
 - REACT_APP_BACKEND_URL (platform-managed, points to preview backend)
 - WDS_SOCKET_PORT=443, ENABLE_HEALTH_CHECK=false
 
+## Open CRs
+
+| CR | Title | Priority | Status |
+|----|-------|----------|--------|
+| CR-260 | Calendly Webhook Self-Recovery & Missed-Booking Backfill | P0 | Open |
+
+See `/app/memory/CR-260.md` for full spec.
+
 ## Backlog / Not Yet Set
 - FRESHSALES_API_KEY / FRESHSALES_BASE_URL (CRM sync disabled — needs keys)
 - CALENDLY_WEBHOOK_SIGNING_KEY (Calendly webhook signing — startup warning only)
