@@ -1,0 +1,24 @@
+{
+  "summary": "CR-260 Calendly webhook self-recovery fix — all 8 backend tests passed. Verified Bug C (fresh key read) and Bug A (disabled state deletion) fixes, plus endpoint signature validation.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_calendly_webhook_cr260.py",
+    "/app/test_reports/pytest/pytest_cr260.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": ["/app/backend/tests/test_calendly_webhook_cr260.py"],
+  "success_rate": {"backend": "100%", "frontend": "N/A"},
+  "seed_data_creation": "Inserted and deleted one TEST_webhooktest@example.com demo_request document",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-260 fixes verified. Test file at /app/backend/tests/test_calendly_webhook_cr260.py covers: valid sig 200, invalid sig 401, missing sig 400, malformed sig 400, MongoDB update on valid webhook, code structure checks for Bug A and Bug C."
+}
