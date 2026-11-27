@@ -1,0 +1,45 @@
+diff --git a/backend/server.py b/backend/server.py
+index 895f2ef..d6de16d 100644
+--- a/backend/server.py
++++ b/backend/server.py
+@@ -479,12 +479,13 @@ async def demo_booked(payload: DemoBookedCreate):
+     return {"ok": True, "freshsales_contact_id": cid}
+ 
+ 
+-CALENDLY_WEBHOOK_SIGNING_KEY = os.environ.get("CALENDLY_WEBHOOK_SIGNING_KEY")
++# CR-260 Bug C: signing key read fresh inside _verify_calendly_signature — no module-level cache
+ 
+ 
+ def _verify_calendly_signature(body: bytes, signature_header: str | None) -> None:
+     """Verify Calendly's HMAC-SHA256 webhook signature. No-op if no key set."""
+-    if not CALENDLY_WEBHOOK_SIGNING_KEY:
++    key = os.environ.get("CALENDLY_WEBHOOK_SIGNING_KEY")  # CR-260 Bug C: fresh read every request
++    if not key:
+         return
+     if not signature_header:
+         raise HTTPException(status_code=400, detail="Missing Calendly signature")
+@@ -495,7 +496,7 @@ def _verify_calendly_signature(body: bytes, signature_header: str | None) -> Non
+         raise HTTPException(status_code=400, detail="Malformed signature") from exc
+     signed = f"{timestamp}.{body.decode('utf-8')}"
+     digest = hmac.new(
+-        CALENDLY_WEBHOOK_SIGNING_KEY.encode("utf-8"),
++        key.encode("utf-8"),
+         signed.encode("utf-8"),
+         hashlib.sha256,
+     ).hexdigest()
+@@ -1674,12 +1675,12 @@ async def _sync_calendly_webhook() -> None:
+                 logger.info("CR-40: Calendly webhook already active for %s — no action needed", callback_url)
+                 return
+ 
+-            # Step 4: delete stale active subscriptions
++            # Step 4: delete stale active/disabled subscriptions — CR-260 Bug A
+             for s in subs:
+-                if s.get("state") == "active":
++                if s.get("state") in ("active", "disabled"):
+                     sub_id = s["uri"].split("/")[-1]
+                     await client.delete(f"{api}/webhook_subscriptions/{sub_id}", headers=headers)
+-                    logger.info("CR-40: Deleted stale Calendly subscription → %s", s.get("callback_url"))
++                    logger.info("CR-260: Deleted %s Calendly subscription → %s", s.get("state"), s.get("callback_url"))
+ 
+             # Step 5: register current URL
+             reg = await client.post(
