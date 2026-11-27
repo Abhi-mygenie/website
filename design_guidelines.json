@@ -84,17 +84,22 @@
           "purpose": "Maps to Freshsales job_title; Asha references restaurant by name"
         },
         {
-          "name": "business_status",
+          "name": "business_status_years",
           "type": "chip_group",
           "required": true,
-          "label": "Business Status",
-          "test_id": "demo-chips-business-status",
+          "label": "How long have you been running?",
+          "test_id": "demo-chips-business-vintage",
           "options": [
-            { "label": "Running Outlet", "value": "Running", "test_id": "chip-status-running" },
-            { "label": "Opening Soon", "value": "Opening soon", "test_id": "chip-status-opening-soon" }
+            { "label": "Opening soon", "value": "yet-to-open", "test_id": "chip-vintage-opening-soon" },
+            { "label": "Under 2 years", "value": "0-2", "test_id": "chip-vintage-under-2" },
+            { "label": "2+ years", "value": "2+", "test_id": "chip-vintage-2-plus" }
           ],
-          "default": "Running",
-          "purpose": "Tells Asha whether lead has existing billing ops or is pre-launch (determines pitch urgency)"
+          "backend_derives": {
+            "cf_sku": "value directly (yet-to-open / 0-2 / 2+)",
+            "cf_business_status": "yet-to-open → Opening soon | 0-2 or 2+ → Running"
+          },
+          "purpose": "Single chip row replaces separate Business Status + Years in Business fields. Asha gets both signals (pre-launch vs running AND vintage) from one answer.",
+          "replaces": ["business_status (cf_business_status)", "years_in_business (cf_sku)"]
         },
         {
           "name": "using_pos",
@@ -131,6 +136,7 @@
       "placement": "Appears directly after lead creation (either before/after OTP or seamlessly on Thank You page)",
       "headline": "Tell us a bit about your outlet (Optional)",
       "sub": "Helps our POS specialist tailor your live walkthrough.",
+      "note": "years_in_business and business_status are now merged into a single Tier 1 chip row (business_status_years). Tier 2 no longer includes years_in_business.",
       "fields": [
         {
           "name": "outlet_type",
@@ -138,17 +144,9 @@
           "required": false,
           "test_id": "tier2-select-outlet-type",
           "options": [
-            "Fine Dine",
-            "Café",
-            "QSR / Fast Food",
-            "Cloud Kitchen",
-            "Hotel / Resort",
-            "Food Court",
-            "Canteen / Mess",
-            "Bar & Brewery",
-            "Bakery",
-            "Chain / Franchise",
-            "Other"
+            "Fine Dine", "Café", "QSR / Fast Food", "Cloud Kitchen",
+            "Hotel / Resort", "Food Court", "Canteen / Mess",
+            "Bar & Brewery", "Bakery", "Chain / Franchise", "Other"
           ]
         },
         {
@@ -162,17 +160,6 @@
             { "label": "2–3 Outlets", "value": "2-3", "test_id": "chip-outlets-2-3" },
             { "label": "4–10 Outlets", "value": "4-10", "test_id": "chip-outlets-4-10" },
             { "label": "10+ Outlets", "value": "10+", "test_id": "chip-outlets-10-plus" }
-          ]
-        },
-        {
-          "name": "years_in_business",
-          "type": "select",
-          "required": false,
-          "test_id": "tier2-select-years",
-          "options": [
-            { "label": "Yet to open", "value": "yet-to-open" },
-            { "label": "0 – 2 years", "value": "0-2" },
-            { "label": "2+ years", "value": "2+" }
           ]
         }
       ]
