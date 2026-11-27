@@ -45,9 +45,19 @@ Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/website
 
 | CR | Title | Priority | Status |
 |----|-------|----------|--------|
-| CR-260 | Calendly Webhook Self-Recovery & Missed-Booking Backfill | P0 | Open |
+| CR-260 | Calendly Webhook Self-Recovery & Missed-Booking Backfill | P0 | Implemented — pending production deploy |
 
 See `/app/memory/CR-260.md` for full spec.
+See `/app/memory/HANDOVER.md` for session handover and next steps.
+
+## What Was Done (2026-11-27)
+- Investigated Calendly webhook disabled since 6 Nov (203 missed bookings)
+- Registered CR-260 covering 3 root-cause bugs
+- Manually re-registered Calendly webhook subscription with correct signing key
+- Implemented and tested CR-260 fixes (5 lines in server.py, 8/8 tests passed)
+- Validated production server.py diff — only CR-260 lines differ
+- Provided `server_cr260.zip` for production deployment
+- Identified 203 missed bookings (6 Nov–25 Nov) needing backfill
 
 ## Backlog / Not Yet Set
 - FRESHSALES_API_KEY / FRESHSALES_BASE_URL (CRM sync disabled — needs keys)
