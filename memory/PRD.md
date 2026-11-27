@@ -46,9 +46,9 @@ Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/website
 | CR | Title | Priority | Status |
 |----|-------|----------|--------|
 | CR-260 | Calendly Webhook Self-Recovery & Missed-Booking Backfill | P0 | Implemented — pending production deploy |
+| CR-261 | Lead Form Unification + Asha Fields | P1 | Open — awaiting Abhishek approval |
 
-See `/app/memory/CR-260.md` for full spec.
-See `/app/memory/HANDOVER.md` for session handover and next steps.
+See `/app/memory/CR-260.md` and `/app/memory/CR-261.md` for full specs.
 
 ## What Was Done (2026-11-27)
 - Investigated Calendly webhook disabled since 6 Nov (203 missed bookings)
